@@ -1,0 +1,78 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "plugin:react/recommended",
+    "airbnb",
+    "plugin:prettier/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react",
+    "prettier",
+    "react-hooks",
+    "eslint-plugin-import-helpers"
+  ],
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/no-danger": "off",
+    "no-unused-vars": "warn",
+    "react/jsx-props-no-spreading": "off",
+    "no-use-before-define": "off",
+    "react/prop-types": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "import/prefer-default-export": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    ],
+    "prettier/prettier": "warn",
+    "react/button-has-type": "off",
+//    "import-helpers/order-imports": [
+//      "warn",
+//      {
+//        "newlinesBetween": "always",
+//        "groups": ["module", "parent", ["sibling", "index"]],
+//        "alphabetize": {
+//          "order": "asc",
+//          "ignoreCase": true
+//        }
+//      }
+//    ],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "jsx-a11y/label-has-associated-control": "off",
+    "camelcase": "off",
+    "class-methods-use-this": "off",
+    "no-underscore-dangle": "off",
+    "spaced-comment": [ "error", "always", {
+      "line": {
+        "markers": ["#region", "#endregion", "region", "endregion"]
+      }
+    }]
+
+  }
+}
