@@ -9,4 +9,5 @@ export const Container = styled.header`
   min-height: 90px;
   height: 9vh;
   
+  background: red;
 `;
