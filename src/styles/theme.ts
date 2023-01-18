@@ -1,7 +1,7 @@
 export const theme = {
     colors: {
-        primary: "",
-        secondary: "",
+        primary: "#3818D9",
+        secondary: "#FFFFFF",
         tertiary: "",
 
         error: "",
@@ -41,8 +41,8 @@ export const theme = {
             small: '14px',
             normal: '16px',
             medium: '2.2rem',
-            large: '3rem',
-            xlarge: '4rem',
+            large: '4rem',
+            xlarge: '11rem',
         },
         weights: {
             thin: 100,
@@ -57,5 +57,22 @@ export const theme = {
     },
     border: {
         radius: '8px'
-    }
+    },
+    spacing: {
+        quark: '4px',
+        xxxnano: '8px',
+        xxnano: '10px',
+        nano: '12px',
+        xxxsmall: '18px',
+        xxsmall: '22px',
+        xsmall: '30px',
+        small: '38px',
+        medium: '42px',
+        large: '56px',
+        xlarge: '64px',
+        xxlarge: '80px',
+        xxxlarge: '110px',
+        huge: '160px',
+        giant: '200px',
+    },
 }

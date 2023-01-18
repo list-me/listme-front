@@ -17,8 +17,6 @@ export const Container = styled.div`
   background: ${({ theme }) => theme.colors.background.primary};
   font-family: ${({ theme }) => theme.fonts.family.default };
   font-size: ${({ theme }) => theme.fonts.sizes.small};
-  
-  //background: yellow;
 `;
 
 export const Content = styled.div`

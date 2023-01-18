@@ -8,7 +8,5 @@ export const Icon = styled.div`
   align-items: center;
   
   padding: 0;
-  margin: 0 35px 0 0;
-  
-  background: yellow;
+  margin: 0 35px 0 35px;
 `;

@@ -17,8 +17,6 @@ export const Container = styled.div`
   :hover {
     cursor: pointer;
   }
-  
-  background: green;
 `;
 
 export const Icon = styled.div`
