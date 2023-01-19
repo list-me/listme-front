@@ -34,6 +34,6 @@ export const Icon = styled.div`
 export const Label = styled.span`
   margin-right: 10px;
   
-  font-family: "Satoshi Regular";
+  font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
 `;

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Container, Content, Shape, Icon, Label, Functions} from './styles';
+import {Container, Content, Shape, Icon, Label, Functions, Capsule} from './styles';
 // @ts-ignore
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 import {ROUTES} from "../../constants/routes";
@@ -16,6 +16,7 @@ export function Sidebar() {
 
     const options = [
         {
+            order: 1,
             label: 'Templates',
             icon: <TemplateIcon />,
             to: ROUTES.TEMPLATES
@@ -24,11 +25,13 @@ export function Sidebar() {
 
     const functions = [
         {
+            order: 2,
             label: "Configurações",
             icon: <SettingsIcon />,
             to: ROUTES.TEMPLATES
         },
         {
+            order: 3,
             label: "Sair",
             icon: <LogoutIcon />,
             to: ROUTES.TEMPLATES
@@ -38,26 +41,33 @@ export function Sidebar() {
     return (
         <Container>
             <Logo />
-            <Content>
-                {
-                    options.map((item) => (
-                        <Shape>
-                            <Icon> {item.icon} </Icon>
-                            <Label> {item.label} </Label>
-                        </Shape>
-                    ))
-                }
-            </Content>
-            <Functions>
-                {
-                    functions.map((item) => (
-                        <Shape>
-                            <Icon> {item.icon} </Icon>
-                            <Label> {item.label} </Label>
-                        </Shape>
-                    ))
-                }
-            </Functions>
+            <Capsule>
+                <Content>
+                    {
+                        options.map((item) => (
+                            <Shape
+                                position="center"
+                                key={item.order}
+                            >
+                                <Icon> {item.icon} </Icon>
+                                <Label> {item.label} </Label>
+                            </Shape>
+                        ))
+                    }
+                </Content>
+                <Functions>
+                    {
+                        functions.map((item) => (
+                            <Shape
+                                key={item.order}
+                            >
+                                <Icon> {item.icon} </Icon>
+                                <Label> {item.label} </Label>
+                            </Shape>
+                        ))
+                    }
+                </Functions>
+            </Capsule>
         </Container>
     );
 }

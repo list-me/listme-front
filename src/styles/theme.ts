@@ -2,7 +2,7 @@ export const theme = {
     colors: {
         primary: "#3818D9",
         secondary: "#FFFFFF",
-        tertiary: "",
+        tertiary: "#868E96",
 
         error: "",
         warning: '',
@@ -34,6 +34,7 @@ export const theme = {
         family: {
             default: '"Satoshi Regular", sans-serif',
             italic: '"Satoshi Italic", sans-serif',
+            light: '"Satoshi Light", sans-serif'
         },
         sizes: {
             xxsmall: '1.4rem',

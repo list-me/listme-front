@@ -1,41 +1,57 @@
 import styled from "styled-components";
 
-export const Container = styled.div`
+export interface IPositions {
+    position?: string;
+}
 
-  width: 25rem;
+export const Container = styled.div`
+  min-width: 200px;
+  width: 15vw;
   max-height: 100vh;
   height: 100vh;
 
   position: absolute;
+  top: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
 
   margin: 0;
-  padding: 4rem;
   
   background: ${({ theme }) => theme.colors.background.primary};
   font-family: ${({ theme }) => theme.fonts.family.default };
   font-size: ${({ theme }) => theme.fonts.sizes.small};
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    width: 12vw;
+  }
+  
+  svg {
+    position: relative;
+    top: 3%
+  }
+  
+  //background: red;
 `;
 
 export const Content = styled.div`
+  min-width: 170px;
   width: auto;
   height: auto;
   
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: center;
   margin: 10rem 0 0 0;
 `;
 
 export const Functions = styled.div`
-  width: 10rem;
+  width: 100%;
   height: auto;
 
-  position: absolute;
-  bottom: 5%;
-  left: 25%;
   margin: 0;
   padding: 0;
   
@@ -44,12 +60,13 @@ export const Functions = styled.div`
   align-items: center;
 `;
 
-export const Shape = styled.div`
+export const Shape = styled.div<IPositions>`
   width: 100%;
   height: auto;
 
   display: flex;
   align-items: center;
+  justify-content: ${(props) => props?.position ?? "flex-start"};
   flex-direction: row;
   flex-wrap: nowrap;
   
@@ -64,19 +81,42 @@ export const Shape = styled.div`
     transition: all 0.4s ease-in-out;
   }
   
+  span:first-child {
+    margin-right: 7px;
+  }
+  
   letter-spacing: .2px;
+  
+  //background: yellowgreen;
 `;
 
-export const Icon = styled.div`
+export const Icon = styled.span`
   width: auto;
   height: 20px;
   
   padding: 0;
   margin: 0 2px 0 0;
+  
+  //background: purple;
 `;
 
 export const Label = styled.span`
-  font-family: "Satoshi Regular";
+  font-family: ${({ theme }) => theme.fonts.family.default};
   font-weight: 700;
-  font-size: ${({ theme }) => theme.fonts.sizes.small};
+  font-size: ${({ theme }) => theme.fonts.sizes.normal};
+  
+  //background: yellow;
+`;
+
+export const Capsule = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
+  height: 100%;
+  width: 100%;
+  
+  padding: 3rem 4rem;
+
+  //background: pink;
 `;
