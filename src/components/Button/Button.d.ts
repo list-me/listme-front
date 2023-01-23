@@ -4,6 +4,7 @@ export interface IButtonProps {
     width?: string;
     height?: string;
     isSecondary?: boolean;
+    onClickModal?: () => void;
 }
 
 export interface IButtonPropsStyles {

@@ -13,20 +13,12 @@ import { ReactComponent as CopyIcon} from "../../assets/copy-icon.svg";
 // @ts-ignore
 import { ReactComponent as TrashIcon} from "../../assets/trash-icon.svg"
 import {CustomTable} from "../../components/Table/index";
-import {getIcon, ICONS} from "../../assets/index";
-import {templateRequests} from "../../services/apis/requests/template";
+import {getIcon} from "../../assets/index";
+import {CustomModal} from "../../components/Modal";
 
 export const Template = () => {
     const [templates, setTemplates] = useState();
-
-    useEffect(() => {
-        templateRequests
-            .list({limit: 5})
-            .then((response) => {
-                setTemplates(response)
-            })
-            .catch(() => ("ok"))
-    }, [])
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
 
     const columns = [
         {
@@ -217,6 +209,10 @@ export const Template = () => {
         <Capsule>
             <Sidebar />
             <Header />
+            <CustomModal
+                isOpen={modalIsOpen}
+                onClickModal={() => setModalIsOpen(!modalIsOpen)}
+            />
             <Content>
                 <Container>
                     <TitlePage> Catálogos </TitlePage>
@@ -225,6 +221,10 @@ export const Template = () => {
                         width='200px'
                         height='50px'
                         isSecondary
+                        onClickModal={() => {
+                            console.log(modalIsOpen)
+                            setModalIsOpen(!modalIsOpen)
+                        }}
                     >
                         <AddIcon />
                         Novo template
