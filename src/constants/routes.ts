@@ -1,5 +1,6 @@
 export const ROUTES = {
     BASE: '/',
 
-    TEMPLATES: '/templates'
+    TEMPLATES: '/templates',
+    LOGIN: "/login",
 }

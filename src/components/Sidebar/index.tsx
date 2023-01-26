@@ -1,4 +1,6 @@
 import React, {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
 import {Container, Content, Shape, Icon, Label, Functions, Capsule} from './styles';
 // @ts-ignore
 import { ReactComponent as Logo } from '../../assets/logo.svg';
@@ -9,10 +11,31 @@ import { ReactComponent as TemplateIcon} from '../../assets/templates.svg'
 import { ReactComponent as SettingsIcon} from '../../assets/settings.svg'
 // @ts-ignore
 import { ReactComponent as LogoutIcon} from '../../assets/log-out.svg'
+import {STORAGE} from "../../constants/localStorage";
+import {Loading} from "../Loading";
 
 
 export function Sidebar() {
-    const [isOpen, setIsOpen] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        setIsLoading(true)
+        try {
+            window.localStorage.removeItem(STORAGE.TOKEN);
+            navigate(ROUTES.BASE);
+            toast.success("Logout realizado com sucesso");
+            setIsLoading(false);
+        } catch (e) {
+            console.error(e)
+            setIsLoading(false);
+            toast.error("Ocorreu um erro ao realizar o logout, tente novamente");
+        }
+    }
+
+    if (isLoading) {
+        return <Loading />;
+    }
 
     const options = [
         {
@@ -34,7 +57,8 @@ export function Sidebar() {
             order: 3,
             label: "Sair",
             icon: <LogoutIcon />,
-            to: ROUTES.TEMPLATES
+            to: ROUTES.TEMPLATES,
+            action: handleLogout,
         }
     ]
 
@@ -60,6 +84,7 @@ export function Sidebar() {
                         functions.map((item) => (
                             <Shape
                                 key={item.order}
+                                onClick={item.action}
                             >
                                 <Icon> {item.icon} </Icon>
                                 <Label> {item.label} </Label>

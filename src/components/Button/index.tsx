@@ -1,13 +1,16 @@
 import React from "react";
 import {Container, ButtonCustom} from './styles';
-import {IButtonProps} from "./Button.d";
 
-export const Button: React.FC<IButtonProps> = ({ children, onClickModal , isLoading, ...props }) => {
+export const Button: React.FC<any> = ({ children, onClickModal, isLoading, ...props }) => {
     return(
         <Container
             onClick={onClickModal}
         >
-            <ButtonCustom isLoading={isLoading} {...props}>
+            <ButtonCustom
+                isLoading={isLoading}
+                {...props}
+                type="submit"
+            >
                 {children}
             </ButtonCustom>
         </Container>

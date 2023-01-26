@@ -7,7 +7,6 @@ export const Container = styled.div`
   align-items: center;
 `;
 
-
 export const ButtonCustom = styled.button<IButtonPropsStyles>`
   cursor: pointer;
 
@@ -23,7 +22,7 @@ export const ButtonCustom = styled.button<IButtonPropsStyles>`
   height: ${({height}) => height || '100%'};
 
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
-  font-weight: 700;
+  font-weight: 800;
   text-align: center;
   letter-spacing: 1px;
 

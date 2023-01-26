@@ -2,11 +2,8 @@ import axios, {AxiosInstance, AxiosRequestConfig} from "axios";
 import {STORAGE} from "../../constants/localStorage";
 
 const createBaseAPI = (): AxiosInstance => {
-    const baseURL = process.env.REACT_APP_API_BASE_URL as string;
-    console.log(baseURL)
-    const axiosInstance = axios.create({ baseURL });
-
-    return axiosInstance;
+    const baseURL = process.env.REACT_APP_API_BASE_URL;
+    return axios.create({ baseURL });
 };
 
 export const addHeadersInterceptor = (
