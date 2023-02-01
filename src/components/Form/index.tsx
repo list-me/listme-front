@@ -1,7 +1,13 @@
 import React from "react";
 import {Form} from "antd";
 
-export const CustomForm: React.FC<any> = ({children, onFinish = () => {}, layout, ...props}) => {
+export const CustomForm: React.FC<any> = ({
+    children,
+    onFinish = () => {},
+    onClick = () => {},
+    layout,
+    ...props
+}) => {
     return (
         <Form
             style={{
@@ -11,6 +17,7 @@ export const CustomForm: React.FC<any> = ({children, onFinish = () => {}, layout
 
             layout={layout}
             onFinish={onFinish}
+            onClick={onClick}
         >
             {children}
         </Form>

@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Form, Input} from "antd";
 import {toast} from "react-toastify";
@@ -29,24 +29,26 @@ export const Login = () => {
     const [email, setEmail] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
 
-
     const navigate = useNavigate();
 
     const handleSubmit = (e: any) => {
+        setLoading(!loading)
         try {
-            setLoading(true);
             authRequests.login({email, password})
                 .then((response) => {
                     window.localStorage.setItem(STORAGE.TOKEN, response?.access_token);
                     toast.success("Login realizado com sucesso");
+                    setLoading(false);
                     navigate(ROUTES.TEMPLATES);
                 })
                 .catch((error) => {
+                    setLoading(false);
                     console.error(error)
-                    toast.error("Falha ao processar seu login, tente novamente");
+                    toast.error(error.response.data.message);
                 });
             setLoading(false);
         } catch (error: any) {
+            setLoading(false);
             console.error(e)
             toast.error("Falha ao processar sua requisição, tente novamente");
         }
@@ -69,7 +71,10 @@ export const Login = () => {
                     justifyContent="center"
                     padding="2rem"
                     layout="vertical"
-                    onFinish={handleSubmit}
+                    onFinish={(e: any) => {
+                        handleSubmit(e);
+                        setLoading(!loading);
+                    }}
                 >
                     <InputContainer>
                         <Form.Item
@@ -107,7 +112,9 @@ export const Login = () => {
                         />
                         {
                             !loading ?
-                                <Button isLoading={loading} >
+                                <Button
+                                    isLoading={loading}
+                                >
                                     Login
                                 </Button> :
                                 <Loading />

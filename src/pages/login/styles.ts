@@ -1,9 +1,8 @@
 import styled from "styled-components";
 
 export const LoginContainer = styled.div`
-  min-width: 50px;
   width: 416px;
-  height: 60%; 
+  height: 60vh;
   
   display: flex;
   flex-direction: column;
@@ -12,6 +11,15 @@ export const LoginContainer = styled.div`
   padding: 40px;
   border: 1px solid #E9ECEF;
   border-radius: 8px;
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    height: 75vh;
+    margin-top: 4rem;
+    padding: 30px;
+  }
 `;
 
 export const Title = styled.h1`
@@ -20,6 +28,14 @@ export const Title = styled.h1`
   font-family: ${({ theme }) => theme.fonts.family.default };
   font-size: ${({ theme }) => theme.fonts.sizes.medium};;
   font-weight: 800;
+  
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    min-height: 30px;
+    margin-bottom: 5rem;
+  }
 `;
 
 export const Background = styled.div`
@@ -38,8 +54,14 @@ export const LogoContainer = styled.span`
 `;
 
 export const InputContainer = styled.span`
-    
-    margin-top: 24px;
+  margin-top: 24px;
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    margin-top: 10px;
+  }
 `;
 
 export const ButtonContainer = styled.span`
@@ -59,6 +81,13 @@ export const BottomContainer = styled.span`
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
   
   margin-top: 24px;
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    margin-top: 10px;
+  }
 `;
 
 export const ButtonCustom = styled.button`
