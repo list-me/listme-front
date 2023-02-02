@@ -37,7 +37,8 @@ export const theme = {
             light: '"Satoshi Light", sans-serif'
         },
         sizes: {
-            xxsmall: '1.4rem',
+            xxxsmall: '14px',
+            xxsmall: '16px',
             xsmall: '1.6rem',
             small: '14px',
             normal: '16px',

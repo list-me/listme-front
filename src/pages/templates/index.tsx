@@ -11,14 +11,22 @@ import { ReactComponent as EditIcon} from "../../assets/edit-icon.svg"
 // @ts-ignore
 import { ReactComponent as CopyIcon} from "../../assets/copy-icon.svg";
 // @ts-ignore
-import { ReactComponent as TrashIcon} from "../../assets/trash-icon.svg"
+import { ReactComponent as TrashIcon} from "../../assets/trash-icon.svg";
 import {CustomTable} from "../../components/Table/index";
-import {getIcon} from "../../assets/index";
 import {CustomModal} from "../../components/Modal";
+import {templateRequests} from "../../services/apis/requests/template";
 
 export const Template = () => {
     const [templates, setTemplates] = useState();
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+
+    const handleGetTemplates = () => {
+        templateRequests.list({}).then((response) => {
+            setTemplates(response?.templates)
+        }).catch((error) => {
+            console.error(error);
+        })
+    }
 
     const columns = [
         {
@@ -26,13 +34,13 @@ export const Template = () => {
             key: "id",
             dataIndex: "id"
         },
-        {
-            title: "Ícone",
-            key: "icon",
-            dataIndex: "icon",
-            width: "10%",
-            render: (_:any, record: any) => ( getIcon(record.icon.toUpperCase())),
-        },
+        // {
+        //     title: "Ícone",
+        //     key: "icon",
+        //     dataIndex: "icon",
+        //     width: "10%",
+        //     render: (_:any, record: any) => ( getIcon(record.icon.toUpperCase())),
+        // },
         {
             title: "Nome",
             key: "name",
@@ -41,12 +49,13 @@ export const Template = () => {
         },
         {
             title: "Produtos",
-            key: "products",
-            dataIndex: "products",
+            key: "total",
+            dataIndex: "total",
             width: "5%",
+            align: "center",
             render: (_:any, record: any) => {
                 return (
-                    <label style={{color: "#3818D9"}}> {record.products} </label>
+                    <label style={{color: "#3818D9"}}> {record.total} </label>
                 );
             }
         },
@@ -55,18 +64,21 @@ export const Template = () => {
             key: "created_at",
             dataIndex: "created_at",
             width: "13%",
+            align: "center"
         },
         {
             title: "Última edição",
             key: "updated_at",
             dataIndex: "updated_at",
             width: "13%",
+            align: "center",
         },
         {
             title: "Visibilidade",
             key: "is_public",
             dataIndex: "is_public",
             width: "10%",
+            align: "center",
             render: (_: any, record: any) => {
                 const background = record.is_public ? "#3818D9" : "#DEE2E6";
                 const color = record.is_public ? "#FFFFFF" : "#212529";
@@ -103,107 +115,9 @@ export const Template = () => {
         },
     ];
 
-    const data = [
-        {
-            id: "1",
-            icon: "bike_red",
-            created_at: "NOME",
-            updated_at: "NOME",
-            is_public: "public",
-            name: "wanderson",
-            products: 2,
-        },
-        {
-            id: "1",
-            icon: "bike_red",
-            created_at: "NOME",
-            updated_at: "NOME",
-            is_public: false,
-            name: "wanderson",
-            products: 2,
-        },
-        {
-            id: "1",
-            icon: "bike_red",
-            created_at: "NOME",
-            updated_at: "NOME",
-            is_public: "public",
-            name: "wanderson",
-            products: 2,
-        },
-        {
-            id: "1",
-            icon: "bike_red",
-            created_at: "NOME",
-            updated_at: "NOME",
-            is_public: "public",
-            name: "wanderson",
-            products: 2,
-        },
-        {
-            id: "1",
-            icon: "bike_red",
-            created_at: "NOME",
-            updated_at: "NOME",
-            is_public: "public",
-            name: "wanderson",
-            products: 2,
-        },
-        {
-            id: "1",
-            icon: "bike_red",
-            created_at: "NOME",
-            updated_at: "NOME",
-            is_public: "public",
-            name: "wanderson",
-            products: 2,
-        },
-        {
-            id: "1",
-            icon: "bike_red",
-            created_at: "NOME",
-            updated_at: "NOME",
-            is_public: "public",
-            name: "wanderson",
-            products: 2,
-        },
-        {
-            id: "1",
-            icon: "bike_red",
-            created_at: "NOME",
-            updated_at: "NOME",
-            is_public: "public",
-            name: "wanderson",
-            products: 2,
-        },
-        {
-            id: "1",
-            icon: "bike_red",
-            created_at: "NOME",
-            updated_at: "NOME",
-            is_public: "public",
-            name: "wanderson",
-            products: 2,
-        },
-        {
-            id: "1",
-            icon: "bike_red",
-            created_at: "NOME",
-            updated_at: "NOME",
-            is_public: "public",
-            name: "wanderson",
-            products: 2,
-        },
-        {
-            id: "1",
-            icon: "bike_red",
-            created_at: "NOME",
-            updated_at: "NOME",
-            is_public: "public",
-            name: "wanderson",
-            products: 2,
-        }
-    ];
+    useEffect(() => {
+        handleGetTemplates()
+    }, [])
 
     return (
         <Capsule>
@@ -222,7 +136,6 @@ export const Template = () => {
                         height='50px'
                         isSecondary
                         onClickModal={() => {
-                            console.log(modalIsOpen)
                             setModalIsOpen(!modalIsOpen)
                         }}
                     >
@@ -232,7 +145,7 @@ export const Template = () => {
                 </Container>
                 <CustomTable
                     columns={columns}
-                    dataProvider={data}
+                    dataProvider={templates}
                     size="small"
                     styles={{}}
                 />

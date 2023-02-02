@@ -2,13 +2,14 @@ import styled from "styled-components";
 
 export const LoginContainer = styled.div`
   width: 416px;
-  height: 60vh;
+  height: 70vh;
   
   display: flex;
   flex-direction: column;
   align-items: center;
 
   padding: 40px;
+  margin-bottom: 10rem;
   border: 1px solid #E9ECEF;
   border-radius: 8px;
 
@@ -16,14 +17,15 @@ export const LoginContainer = styled.div`
   and (min-device-width: 1200px)
   and (max-device-width: 1600px)
   and (-webkit-min-device-pixel-ratio: 1) {
-    height: 75vh;
+    max-width: 400px;
+    height: 500px;
     margin-top: 4rem;
     padding: 30px;
   }
 `;
 
 export const Title = styled.h1`
-  margin-bottom: 6rem;
+  margin-bottom: 2rem;
 
   font-family: ${({ theme }) => theme.fonts.family.default };
   font-size: ${({ theme }) => theme.fonts.sizes.medium};;
@@ -34,7 +36,7 @@ export const Title = styled.h1`
   and (max-device-width: 1600px)
   and (-webkit-min-device-pixel-ratio: 1) {
     min-height: 30px;
-    margin-bottom: 5rem;
+    margin-bottom: 2rem;
   }
 `;
 
@@ -45,12 +47,30 @@ export const Background = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  
+  padding: 10rem 0;
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    padding: 3rem 0;
+  }
 `;
 
 export const LogoContainer = styled.span`
-  position: absolute;
+  display: flex;
   top: 7%;
+  
+  margin-bottom: 4rem;
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    margin: 0;
+  }
 `;
 
 export const InputContainer = styled.span`
@@ -70,6 +90,17 @@ export const ButtonContainer = styled.span`
   div:last-child {
     margin-top: 18px;
   }
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    margin-top: 10px;
+
+    div:last-child {
+      margin-top: 10px;
+    }
+  }
 `;
 
 export const BottomContainer = styled.span`
@@ -86,7 +117,8 @@ export const BottomContainer = styled.span`
   and (min-device-width: 1200px)
   and (max-device-width: 1600px)
   and (-webkit-min-device-pixel-ratio: 1) {
-    margin-top: 10px;
+    margin-top: 5px;
+    font-size: ${({ theme }) => theme.fonts.sizes.small};
   }
 `;
 
@@ -131,13 +163,15 @@ export const ButtonCustom = styled.button`
     width: 20px;
     height: 20px;
   }
-  
-  @media (max-width: 450px) {
-    width: 100%;
-    height: 100%;
 
-    font-size: 0.9rem;
-    padding: 0.5rem;
-    margin: 0;
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    width: 100%;
+    height: 50px;
+
+    margin: 8px 0;
+    font-size: ${({ theme }) => theme.fonts.sizes.xxsmall};
   }
 `;

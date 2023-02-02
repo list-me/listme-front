@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Menu, MenuProps, Modal} from 'antd';
 import {
     Container,
@@ -25,6 +25,10 @@ interface ICustomModalProps {
 
 export const CustomModal: React.FC<ICustomModalProps> = ({ isOpen, onClickModal = () => {} }) => {
     const [openKeys, setOpenKeys] = useState(["sub1"]);
+
+    const handleGetCategories = () => {
+
+    }
 
     const onOpenChange: MenuProps["onOpenChange"] = (keys) => {
         const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
@@ -70,6 +74,12 @@ export const CustomModal: React.FC<ICustomModalProps> = ({ isOpen, onClickModal 
     const templateContents = [
         "Esporte e Lazer", "Pet Shop", "Decoração", "Musica", "Saude", "Tablet", "Jardinagem", "Ferramentas"
     ];
+
+
+
+    useEffect(() => {
+
+    }, [])
 
     return (
       <Container>

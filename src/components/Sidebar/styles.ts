@@ -28,13 +28,13 @@ export const Container = styled.div`
   and (-webkit-min-device-pixel-ratio: 1) {
     width: 12vw;
   }
+`;
+
+export const LogoContainer = styled.span`
+  min-height: 30px;
   
-  svg {
-    position: relative;
-    top: 3%
-  }
-  
-  //background: red;
+  position: relative;
+  top: 30px;
 `;
 
 export const Content = styled.div`
@@ -52,12 +52,16 @@ export const Functions = styled.div`
   width: 100%;
   height: auto;
 
-  margin: 0;
-  padding: 0;
-  
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    margin:  0 0 2rem .5rem;
+  }
 `;
 
 export const Shape = styled.div<IPositions>`
@@ -70,7 +74,7 @@ export const Shape = styled.div<IPositions>`
   flex-direction: row;
   flex-wrap: nowrap;
   
-  margin-bottom: 9px;
+  margin-bottom: 5px;
   padding: 1.2rem;
 
   :hover {
@@ -80,32 +84,41 @@ export const Shape = styled.div<IPositions>`
     border-radius: ${({ theme }) => theme.border.radius};
     transition: all 0.4s ease-in-out;
   }
-  
+
   span:first-child {
     margin-right: 7px;
   }
   
-  letter-spacing: .2px;
-  
-  //background: yellowgreen;
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    height: 35px;
+    padding: 2rem;
+  }
 `;
 
 export const Icon = styled.span`
   width: auto;
-  height: 20px;
+  height: auto;
   
-  padding: 0;
-  margin: 0 2px 0 0;
-  
-  //background: purple;
+  display: flex;
+  align-items: center;
 `;
 
 export const Label = styled.span`
+  max-width: 100%;
+  text-wrap: normal;
   font-family: ${({ theme }) => theme.fonts.family.default};
-  font-weight: 700;
+  font-weight: 600;
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
-  
-  //background: yellow;
+
+  @media screen
+    and (min-device-width: 1200px)
+    and (max-device-width: 1600px)
+    and (-webkit-min-device-pixel-ratio: 1) {
+      font-size: ${({ theme }) => theme.fonts.sizes.xxxsmall};
+  }
 `;
 
 export const Capsule = styled.div`
@@ -118,5 +131,10 @@ export const Capsule = styled.div`
   
   padding: 3rem 4rem;
 
-  //background: pink;
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    padding: 1rem 2rem;
+  }
 `;

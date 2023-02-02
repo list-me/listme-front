@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
-import {Container, Content, Shape, Icon, Label, Functions, Capsule} from './styles';
+import {Container, Content, Shape, Icon, Label, Functions, Capsule, LogoContainer} from './styles';
 // @ts-ignore
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 import {ROUTES} from "../../constants/routes";
@@ -64,7 +64,9 @@ export function Sidebar() {
 
     return (
         <Container>
-            <Logo />
+            <LogoContainer>
+                <Logo />
+            </LogoContainer>
             <Capsule>
                 <Content>
                     {

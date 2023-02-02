@@ -46,13 +46,13 @@ export const ButtonCustom = styled.button<IButtonPropsStyles>`
     height: ${({ theme }) => theme.spacing.xxsmall};
     animation: rotate 2s linear infinite;
   }
-  
-  @media (max-width: 450px) {
-    width: 100%;
-    height: 100%;
 
-    font-size: 0.9rem;
-    padding: 0.5rem;
-    margin: 0;
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    width: 100%;
+    height: 45px;
+    font-size: ${({ theme }) => theme.fonts.sizes.xxsmall};
   }
 `;

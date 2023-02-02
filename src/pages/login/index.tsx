@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Form, Input} from "antd";
 import {toast} from "react-toastify";
@@ -34,7 +34,10 @@ export const Login = () => {
     const handleSubmit = (e: any) => {
         setLoading(!loading)
         try {
-            authRequests.login({email, password})
+            authRequests.login({
+                email: email.toLowerCase(),
+                password
+            })
                 .then((response) => {
                     window.localStorage.setItem(STORAGE.TOKEN, response?.access_token);
                     toast.success("Login realizado com sucesso");
@@ -44,7 +47,7 @@ export const Login = () => {
                 .catch((error) => {
                     setLoading(false);
                     console.error(error)
-                    toast.error(error.response.data.message);
+                    toast.error(error?.response?.data?.message);
                 });
             setLoading(false);
         } catch (error: any) {
@@ -64,12 +67,10 @@ export const Login = () => {
                     Seja Bem-vindo!
                 </Title>
                 <CustomForm
-                    height="60%"
-                    marginTop="4rem"
+                    height="50%"
                     display="flex"
                     flexDirection="column"
                     justifyContent="center"
-                    padding="2rem"
                     layout="vertical"
                     onFinish={(e: any) => {
                         handleSubmit(e);
@@ -80,7 +81,7 @@ export const Login = () => {
                         <Form.Item
                             label="Seu email: "
                             name="email"
-                            rules={[{required: true, message: "O email não pode ser vazio"}]}
+                            rules={[{required: true, message: "Email inválido", type: "email"}]}
                         >
                             <Input
                                 style={{height: "40px"}}

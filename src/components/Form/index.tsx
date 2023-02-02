@@ -1,5 +1,6 @@
 import React from "react";
 import {Form} from "antd";
+import {Container} from "./styles";
 
 export const CustomForm: React.FC<any> = ({
     children,
@@ -9,17 +10,19 @@ export const CustomForm: React.FC<any> = ({
     ...props
 }) => {
     return (
-        <Form
-            style={{
-                ...props,
-                width: "100%"
-            }}
+        <Container>
+            <Form
+                style={{
+                    ...props,
+                    width: "100%"
+                }}
 
-            layout={layout}
-            onFinish={onFinish}
-            onClick={onClick}
-        >
-            {children}
-        </Form>
+                layout={layout}
+                onFinish={onFinish}
+                onClick={onClick}
+            >
+                {children}
+            </Form>
+        </Container>
     );
 }
