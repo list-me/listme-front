@@ -3,6 +3,7 @@ export const theme = {
         primary: "#3818D9",
         secondary: "#FFFFFF",
         tertiary: "#868E96",
+        fourth: "#000000",
 
         error: "",
         warning: '',
@@ -36,12 +37,13 @@ export const theme = {
             light: '"Satoshi Light", sans-serif'
         },
         sizes: {
-            xxsmall: '1.4rem',
+            xxxsmall: '14px',
+            xxsmall: '16px',
             xsmall: '1.6rem',
             small: '14px',
             normal: '16px',
             xmedium: '20px',
-            medium: '2.2rem',
+            medium: '2rem',
             large: '4rem',
             xlarge: '11rem',
         },

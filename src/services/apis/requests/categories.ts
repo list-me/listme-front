@@ -1,16 +1,11 @@
-import {api} from "../api";
 import {STORAGE} from "../../../constants/localStorage";
+import {api} from "../api";
 
-interface IPagination {
-    page?: number;
-    limit?: number;
-}
-
-export const templateRequests = {
-    list: async ({page = 0, limit = 5}: IPagination): Promise<any> => {
+export const categoriesRequest = {
+    list: async (): Promise<any> => {
         const token = window.localStorage.getItem(STORAGE.TOKEN);
         const response = await api.get(
-            `/templates/?page${page}&limit${limit}`,
+            `/categories`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`

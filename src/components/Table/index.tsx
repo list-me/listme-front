@@ -3,12 +3,14 @@ import {Table, TablePaginationConfig} from "antd";
 import {Container} from './styles';
 
 export const CustomTable = (props: any) => {
+    const w = window.innerWidth;
     const sizeType = props.size ?? "middle";
     const paginationConfig: TablePaginationConfig = {
         position: ["bottomRight"],
         responsive: true,
         style: {margin: "10px"},
-        defaultPageSize: 5
+        size: "small",
+        pageSizeOptions: [15, 5],
     };
 
     return (
