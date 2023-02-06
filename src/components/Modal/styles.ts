@@ -16,58 +16,147 @@ export const Container = styled.div`
 `;
 
 export const SideBar = styled.div`
-  position: relative;
-  
-  width: 23%;
-  height: 700px;
-  
-  padding: 2rem;
+  width: 13vw;
+
+  padding: 20px;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #A8A8A8;
+    border-radius: 20px;
+    
+    padding: 1rem;
+  }
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    width: 6vw;
+    min-width: 200px;
+    height: auto;
+    margin-left: 10px;
+  }
 `;
 
-export const Title = styled.h2`
-  font-family: ${({ theme }) => theme.fonts.family.default};
-  font-size: ${({ theme }) => theme.fonts.sizes.xmedium};
-  color: ${({ theme }) => theme.colors.tertiary};
+export const Contents = styled.div`
+  max-height: 70vw;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+
+  div {
+    flex: 1 240px;
+    padding-right: 1rem;
+
+    @media screen
+    and (min-device-width: 1200px)
+    and (max-device-width: 1600px)
+    and (-webkit-min-device-pixel-ratio: 1) {
+      flex: 1 190px;
+    }
+  }
 `;
 
-export const Templates =  styled.div`
-  height: 700px;
+export const Content =  styled.div`
+  height: 100%;
   width: 70%;
-  
-  margin-left: 2rem;
+
+  margin: 0 2rem 0 2rem;
+  padding: 1.5rem;
+
+  overflow: auto;
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #A8A8A8;
+    border-radius: 20px;
+  }
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    width: 100%;
+    min-width: 400px;
+  }
 `;
 
-export const NewTemplate = styled.div<IItemsProps>`
-  width: 100%;
-  height: 130px;
-  
-  border: 2px dashed ${({theme}) => theme.colors.primary};
-  border-radius: 16px;
-`;
-
-export const TemplateIcon = styled.span`
-  width: 60px;
-  height: 60px;
+export const NewTemplateContent = styled.div<IItemsProps>`
+  height: 100px;
 
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  border-radius: 50%;
-  margin-right: 1rem;
-  background: ${({theme}) => theme.colors.background.tertiary};
+
+  margin: ${(props) => props.isItem ? "2rem 1rem 0 0" : "0"};
+  border: ${({theme, isItem}) =>
+    isItem ?
+        "2px solid #eeeeee" :
+        `2px dashed ${theme.colors.primary}`
+};
+
+  border-radius: 16px;
+
+  :hover {
+    cursor: pointer;
+  }
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    height: 80px;
+    width: ${({isItem}) => isItem === true ? "50px" : "100%"};
+    min-width: ${({isItem}) => isItem === true ? "50px" : "350px"};
+  }
+`;
+
+export const NewTemplate = styled.div<IItemsProps>`
+  background: red;
+`;
+
+export const IconTemplate = styled.span<{ isNew?: boolean }>`
+  width: 45px;
+  height: 45px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: ${({isNew}) =>
+      isNew === true
+      ? '50%'
+      : '10%'
+  };
+
+  background: ${({theme, isNew}) =>
+      isNew === true
+      ? theme.colors.background.tertiary
+      : 'none'
+  };
 `;
 
 export const TemplateLabel = styled.span`
   height: 60px;
   
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   flex-direction: column;
+  
+  margin-left: 1rem;
   
   label {
     font-family: ${({ theme }) => theme.fonts.family.default };
-    font-size: ${({ theme }) => theme.fonts.sizes.xmedium};;
+    font-size: ${({ theme }) => theme.fonts.sizes.normal};
     font-weight: 400;
   }
   
@@ -80,58 +169,60 @@ export const TemplateLabel = styled.span`
     display: flex;
     align-items: center;
     
-    svg {
+    svg:first-child {
       margin-left: 8px;
     }
   }
-`;
 
-export const NewTemplateContent = styled.div<IItemsProps>`
-  height: 100%;
-  
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  margin: ${(props) => props.isItem ? "2rem 1rem 0 0" : "0"};
-  padding: ${(props) => props.isItem ? "2rem" : "0"};
-  border-radius: 16px;
-  border: ${(props) => props.isItem ? "2px solid #eeeeee" : "none"};
-
-  span:first-child {
-    margin-right: ${(props) => props.isItem ? "5rem" : "2rem"};
-  }
-  
   @media screen
   and (min-device-width: 1200px)
   and (max-device-width: 1600px)
   and (-webkit-min-device-pixel-ratio: 1) {
-    height: 100%;
-    max-width: ${(props) => props.isItem ? "300px" : "100%"};
-    
-    background: springgreen;
+    max-height: 500px;
   }
 `;
 
-export const Contents = styled.div`
-  max-height: 70vw;
-  
+export const MyTemplates = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  flex-wrap: wrap;
   
-  div {
-    flex: 1 350px;
+  padding: 2rem;
+
+  :hover {
+    cursor: pointer;
   }
 `;
 
-export const HeaderModal = styled.span`
-  h1 {
-    padding: 2rem 2rem 2rem 0;
-    font-size: ${({ theme }) => theme.fonts.sizes.medium};
-    font-weight: 400;
-    
-    text-align: left;
+export const Item = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  font-family: ${({ theme }) => theme.fonts.family.default };
+  font-size: ${({ theme }) => theme.fonts.sizes.normal};;
+  font-weight: 400;
+`;
+
+export const Information = styled.label`
+  font-family: ${({ theme }) => theme.fonts.family.default };
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
+  color: ${({ theme }) => theme.colors.tertiary};
+  font-weight: 400;
+`;
+
+export const SectionTitle = styled.h3<{ isHeader?: boolean, weight?: number }>`
+  margin-bottom: ${({ isHeader }) => isHeader === true ? '3rem' : '0'};
+  margin-top: ${({ isHeader }) => isHeader === true ? '0' : '32px'};
+
+  font-family: ${({ theme }) => theme.fonts.family.default };
+  font-size: ${({ theme }) => theme.fonts.sizes.xmedium};
+  font-weight: ${({ weight }) => weight ?? 400};
+  text-align: left;
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    margin-top: ${({ isHeader }) => isHeader === true ? '0' : '16px'};
   }
 `;

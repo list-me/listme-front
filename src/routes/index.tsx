@@ -4,6 +4,7 @@ import {Template} from "../pages/templates";
 import PrivateRoutes from "./PrivateRoutes";
 import {Login} from "../pages/login";
 import {PublicRoute} from "./PublicRoute";
+import Table from "../components/CustomTable";
 
 export const Router = () => (
     <Suspense>
@@ -13,6 +14,7 @@ export const Router = () => (
             </Route>
             <Route path="/" element={<PrivateRoutes />}>
                 <Route path="/templates" element={<Template />} />
+                <Route path="/produtos" element={<Table />} />
             </Route>
         </Routes>
     </Suspense>

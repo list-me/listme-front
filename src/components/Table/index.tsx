@@ -18,6 +18,7 @@ export const CustomTable = (props: any) => {
             <Table
                 columns={props.columns}
                 dataSource={props.dataProvider}
+                rowKey={(record) => record.id}
                 size={sizeType}
                 style={{fontFamily: '"Satoshi Regular", sans-serif', color: "red"}}
                 pagination={paginationConfig}

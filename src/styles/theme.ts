@@ -23,7 +23,7 @@ export const theme = {
         background: {
             primary: "#FFFFFF",
             secondary: "",
-            tertiary: "#E2E0FF",
+            tertiary: "#E2E0FF"
         },
         hover: {
             background: "#F7F5FF",
@@ -45,7 +45,7 @@ export const theme = {
             xmedium: '20px',
             medium: '2rem',
             large: '4rem',
-            xlarge: '11rem',
+            xlarge: '11rem'
         },
         weights: {
             thin: 100,

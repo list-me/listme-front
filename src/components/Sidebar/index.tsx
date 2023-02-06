@@ -39,7 +39,7 @@ export function Sidebar() {
 
     const options = [
         {
-            order: 1,
+            order: '0',
             label: 'Templates',
             icon: <TemplateIcon />,
             to: ROUTES.TEMPLATES
@@ -48,13 +48,13 @@ export function Sidebar() {
 
     const functions = [
         {
-            order: 2,
+            order: "2",
             label: "Configurações",
             icon: <SettingsIcon />,
             to: ROUTES.TEMPLATES
         },
         {
-            order: 3,
+            order: "3",
             label: "Sair",
             icon: <LogoutIcon />,
             to: ROUTES.TEMPLATES,
