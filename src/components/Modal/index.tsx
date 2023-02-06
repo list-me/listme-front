@@ -1,22 +1,25 @@
 import React, {useEffect, useState} from "react";
+import {toast} from "react-toastify";
 import {Menu, MenuProps, Modal} from 'antd';
 import {
     Container,
     SideBar,
-    Title,
-    Templates,
+    Content,
     NewTemplate,
     Contents,
-    HeaderModal,
+    SectionTitle,
     NewTemplateContent,
-    TemplateIcon,
-    TemplateLabel
+    IconTemplate,
+    TemplateLabel,
+    MyTemplates,
+    Item,
+    Information
 } from './styles';
-
-// @ts-ignore
 import {ReactComponent as ArrowIcon} from '../../assets/right-arrow.svg';
-// @ts-ignore
 import {ReactComponent as PlusIcon} from '../../assets/plus.svg';
+import {ReactComponent as Flag} from '../../assets/icons/flag.svg';
+import {categoriesRequest} from "../../services/apis/requests/categories";
+import {templateRequests} from "../../services/apis/requests/template";
 
 interface ICustomModalProps {
     isOpen: boolean;
@@ -24,14 +27,29 @@ interface ICustomModalProps {
 }
 
 export const CustomModal: React.FC<ICustomModalProps> = ({ isOpen, onClickModal = () => {} }) => {
-    const [openKeys, setOpenKeys] = useState(["sub1"]);
+    const [openKeys, setOpenKeys] = useState<string[]>();
+    const [categoryCollection, setCategoryCollection] = useState<MenuItem[]>();
+    const [templates, setTemplates] = useState<any[]>();
 
     const handleGetCategories = () => {
+        categoriesRequest.list()
+            .then((response) => {
+                const items = nestCategories(response);
+                setCategoryCollection(items);
+            }).catch((error) => {
+                toast.error(`Ocorreu um erro ao carregar as categorias`)
+                console.error(error);
+        });
+    }
 
+    const handleGetTemplates = () => {
+        templateRequests.list({page: 0, limit: 4})
+            .then((response) => setTemplates(response?.templates))
+            .catch((error) => console.error(error))
     }
 
     const onOpenChange: MenuProps["onOpenChange"] = (keys) => {
-        const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
+        const latestOpenKey = keys.find((key) => openKeys?.indexOf(key) === -1);
         if (rootSubmenuKeys.indexOf(latestOpenKey!) === -1) {
             setOpenKeys(keys);
         } else {
@@ -67,18 +85,45 @@ export const CustomModal: React.FC<ICustomModalProps> = ({ isOpen, onClickModal 
             getItem("Sub Category 2", "2"),
             getItem("Sub Category 3", "3"),
         ]),
+        getItem("Category 3", "sub3", ""),
     ];
+
+    const nestCategories = (categories: any[]) => {
+        const defaultItem = getItem("Meus Templates", "1")
+        const response = categories.map((category) => {
+            return getItem(
+                category?.name,
+                category?.id
+            )
+        });
+
+        return [defaultItem, ...response];
+    }
 
     const rootSubmenuKeys = ["sub1", "sub2"];
 
     const templateContents = [
-        "Esporte e Lazer", "Pet Shop", "Decoração", "Musica", "Saude", "Tablet", "Jardinagem", "Ferramentas"
+        {
+            name: "Esporte e Lazer",
+            id: 1
+        },
+        {
+            name: "Pet Shop",
+            id: 2
+        },
+        {
+            name: "Decoração",
+            id: 3
+        },
+        {
+            name: "Musica",
+            id: 4
+        }
     ];
 
-
-
     useEffect(() => {
-
+        handleGetCategories();
+        handleGetTemplates();
     }, [])
 
     return (
@@ -88,48 +133,79 @@ export const CustomModal: React.FC<ICustomModalProps> = ({ isOpen, onClickModal 
               onCancel={onClickModal}
               onOk={onClickModal}
               centered
-              width="70%"
+              width="60%"
               footer={null}
-              bodyStyle={{ height: "80vh", overflow: "auto", display: "flex" }}
+              bodyStyle={{ height: "78vh", display: "flex" }}
           >
               <SideBar>
-                  <Title> Galeria de Templates </Title>
+                  <SectionTitle
+                      isHeader
+                      weight={700}
+                  >
+                      Buscar templates
+                  </SectionTitle>
                   <Menu
                       mode="inline"
-                      openKeys={openKeys}
+                      // openKeys={openKeys}
                       onOpenChange={onOpenChange}
-                      items={items}
+                      items={categoryCollection}
                   />
               </SideBar>
-              <Templates>
-                  <HeaderModal>
-                      <h1>Templates de produtos</h1>
-                  </HeaderModal>
-                  <NewTemplate>
-                      <NewTemplateContent>
-                          <TemplateIcon>
-                              <PlusIcon />
-                          </TemplateIcon>
-                          <TemplateLabel>
-                              <label> Em branco </label>
-                              <span>
-                                  Iniciar do zero
-                                  <ArrowIcon />
-                              </span>
-                          </TemplateLabel>
-                      </NewTemplateContent>
-                  </NewTemplate>
+              <Content>
+                  <SectionTitle
+                    isHeader
+                  >
+                      Modelos de templates
+                  </SectionTitle>
+                  <NewTemplateContent>
+                      <IconTemplate isNew >
+                          <PlusIcon />
+                      </IconTemplate>
+                      <TemplateLabel>
+                          <label> Em branco </label>
+                          <span>
+                              Iniciar do zero
+                              <ArrowIcon />
+                          </span>
+                      </TemplateLabel>
+                  </NewTemplateContent>
+                  <SectionTitle>
+                    Meus templates
+                  </SectionTitle>
+                  <MyTemplates>
+                      {
+                          templates?.length ?
+                          templates.map((template) => {
+                              return(
+                                  <Item key={template.id}>
+                                      <IconTemplate>
+                                          <Flag />
+                                      </IconTemplate>
+                                      {template.name}
+                                      <Information>
+                                          {template.total} produtos
+                                      </Information>
+                                  </Item>
+                              );
+                          }) :
+                          <></>
+                      }
+                  </MyTemplates>
+                  <SectionTitle>
+                      Mais templates
+                  </SectionTitle>
                   <Contents>
                       {
                           templateContents.map((item) => (
                               <NewTemplateContent
                                 isItem
+                                key={item.id}
                               >
-                                  <TemplateIcon>
-                                      <PlusIcon />
-                                  </TemplateIcon>
+                                  <IconTemplate>
+                                      <Flag />
+                                  </IconTemplate>
                                   <TemplateLabel>
-                                      <label> {item} </label>
+                                      <label> {item.name} </label>
                                       <span>
                                           Ver templates
                                           <ArrowIcon />
@@ -140,7 +216,7 @@ export const CustomModal: React.FC<ICustomModalProps> = ({ isOpen, onClickModal 
                           )
                       }
                   </Contents>
-              </Templates>
+              </Content>
           </Modal>
       </Container>
   );

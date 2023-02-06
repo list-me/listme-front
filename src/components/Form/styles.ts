@@ -7,7 +7,6 @@ export const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  
 
   @media screen
   and (min-device-width: 1200px)

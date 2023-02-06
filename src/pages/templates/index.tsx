@@ -94,7 +94,7 @@ export const Template = () => {
         },
         {
             title: "Ações",
-            key: "id",
+            key: "action",
             width: "15%",
             align: "center",
             render: () => (
