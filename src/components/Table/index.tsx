@@ -7,10 +7,8 @@ export const CustomTable = (props: any) => {
     const sizeType = props.size ?? "middle";
     const paginationConfig: TablePaginationConfig = {
         position: ["bottomRight"],
-        responsive: true,
-        style: {margin: "10px"},
         size: "small",
-        pageSizeOptions: [15, 5],
+        pageSize: 50
     };
 
     return (
@@ -20,10 +18,12 @@ export const CustomTable = (props: any) => {
                 dataSource={props.dataProvider}
                 rowKey={(record) => record.id}
                 size={sizeType}
-                style={{fontFamily: '"Satoshi Regular", sans-serif', color: "red"}}
+                style={{
+                    fontFamily: '"Satoshi Regular", sans-serif',
+                    background: "#F3F4F6",
+                }}
                 pagination={paginationConfig}
-                bordered
-                {...props}
+                rowSelection={props.rowSelection}
             />
         </Container>
     );

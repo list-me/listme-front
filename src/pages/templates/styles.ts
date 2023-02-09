@@ -6,7 +6,7 @@ export const Container = styled.div`
   display: flex;
   justify-content: space-between;
   
-  margin-top: 2rem;
+  margin-top: 32px;
   
   div {
     margin-right: 40px !important;
@@ -14,7 +14,7 @@ export const Container = styled.div`
 `;
 
 export const TitlePage = styled.h2`
-  font-family: ${({ theme }) => theme.fonts.family.default};
+  font-family: ${({ theme }) => theme.fonts.family.bold};
   font-size: ${({ theme }) => theme.fonts.sizes.large};
 
   :hover {
@@ -22,26 +22,70 @@ export const TitlePage = styled.h2`
   }
 `;
 
-export const Content = styled.div`
-  width: 85vw;
+export const Capsule = styled.div`
+    background: red;
+`;
 
-  position: relative;
-  left: 14.6%;
-  
+export const Content = styled.div`
   display: block;
   justify-content: center;
   align-items: center;
-  
-  padding: 0 2rem;
-  
-  @media screen
-      and (min-device-width: 1200px)
-      and (max-device-width: 1600px)
-      and (-webkit-min-device-pixel-ratio: 1) {
-    width: 82%;
-    left: 18.5%;
-  }
-`;
 
-export const Capsule = styled.div`
+  margin: 32px;
+
+  .ant-table-thead .ant-table-cell {
+    background-color: ${({ theme }) => theme.colors.grayscale.eleventh};
+    font-family: ${({ theme }) => theme.fonts.family.default};
+    font-size: ${({ theme }) => theme.fonts.sizes.normal};
+    font-weight: 400;
+    line-height: 150%;
+    
+    :before {
+      display: none !important;
+    }
+    
+    height: 56px;
+    padding: 16px;
+  }
+
+  .ant-table {
+    border: 1px solid #E9ECEF;
+    border-radius: 8px;
+  }
+  
+  .ant-table-cell {
+    font-family: ${({ theme }) => theme.fonts.family.default};
+    font-size: ${({ theme }) => theme.fonts.sizes.normal};
+    font-weight: 400;
+
+    height: 56px;
+  }
+  
+  .ant-checkbox {
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 4px !important;
+  }
+  
+  .ant-checkbox-inner {
+    border: 2px solid #E9ECEF !important;
+  }
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    .ant-table-thead .ant-table-cell {
+      font-size: ${({ theme }) => theme.fonts.sizes.normal};
+      font-weight: 400;
+      line-height: 150%;
+
+      :before {
+        display: none !important;
+      }
+
+      height: 56px;
+      padding: 16px;
+    }
+  }
 `;

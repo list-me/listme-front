@@ -21,7 +21,7 @@ const GlobalStyle = createGlobalStyle`
   }
   
   body {
-    background-color: #FFFFFF;
+    background-color: ${({theme}) => theme.colors.background.default};
     font-family: Satoshi Regular;
     font-weight: 500;
     min-height: 100vh;

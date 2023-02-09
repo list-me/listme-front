@@ -18,6 +18,16 @@ export const templateRequests = {
             }
         );
 
-        return response.data;
+        return response?.data?.templates?.sort((lastItem: any, nextItem: any) => {
+            if (nextItem.created_at < lastItem.created_at) {
+                return 1;
+            }
+
+            if (nextItem.created_at > lastItem.created_at) {
+                return -1;
+            }
+
+            return 0;
+        }).map((item: any, index: number) => ({ order: index+1, ...item }));
     },
 }

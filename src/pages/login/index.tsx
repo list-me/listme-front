@@ -64,7 +64,7 @@ export const Login = () => {
             </LogoContainer>
             <LoginContainer>
                 <Title>
-                    Seja Bem-vindo!
+                    Seja bem-vindo de volta!
                 </Title>
                 <CustomForm
                     height="50%"
@@ -84,7 +84,10 @@ export const Login = () => {
                             rules={[{required: true, message: "Email inválido", type: "email"}]}
                         >
                             <Input
-                                style={{height: "40px"}}
+                                style={{
+                                    height: "64px",
+                                    border: "1px solid #DEE2E6"
+                                }}
                                 value={email}
                                 onChange={(e) => {
                                     setEmail(e.target.value)
@@ -92,19 +95,21 @@ export const Login = () => {
                             />
                         </Form.Item>
                         <Form.Item
-                            label="Sua senha: "
+                            label="Senha: "
                             name="password"
                             rules={[{required: true, message: "Insira sua senha"}]}
                         >
                             <Input.Password
-                                style={{height: "40px"}}
+                                style={{
+                                    height: "64px",
+                                    border: "1px solid #DEE2E6"
+                                }}
                                 value={password}
                                 onChange={(e) => {
                                     setPassword(e.target.value)
                                 }}
                             />
                         </Form.Item>
-
                     </InputContainer>
                     <ButtonContainer>
                         <CheckboxCustom
@@ -115,22 +120,23 @@ export const Login = () => {
                             !loading ?
                                 <Button
                                     isLoading={loading}
+                                    height="60px"
                                 >
                                     Login
                                 </Button> :
                                 <Loading />
                         }
                     </ButtonContainer>
-                    <BottomContainer>
-                        ou
-                        <ButtonCustom>
-                            <GoogleLogoSVG />
-                            Faça login com o Google
-                        </ButtonCustom>
-                        Esqueceu sua senha?
-                    </BottomContainer>
                 </CustomForm>
+                <BottomContainer>
+                    ou
+                    <ButtonCustom>
+                        <GoogleLogoSVG />
+                        Faça login com o Google
+                    </ButtonCustom>
+                    Esqueceu sua senha?
+                </BottomContainer>
             </LoginContainer>
         </Background>
-);
+    );
 }

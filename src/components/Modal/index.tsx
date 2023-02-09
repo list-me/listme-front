@@ -5,7 +5,7 @@ import {
     Container,
     SideBar,
     Content,
-    NewTemplate,
+    Bar,
     Contents,
     SectionTitle,
     NewTemplateContent,
@@ -44,7 +44,7 @@ export const CustomModal: React.FC<ICustomModalProps> = ({ isOpen, onClickModal 
 
     const handleGetTemplates = () => {
         templateRequests.list({page: 0, limit: 4})
-            .then((response) => setTemplates(response?.templates))
+            .then((response) => setTemplates(response))
             .catch((error) => console.error(error))
     }
 
@@ -133,16 +133,17 @@ export const CustomModal: React.FC<ICustomModalProps> = ({ isOpen, onClickModal 
               onCancel={onClickModal}
               onOk={onClickModal}
               centered
-              width="60%"
+              width="928px"
               footer={null}
-              bodyStyle={{ height: "78vh", display: "flex" }}
+              bodyStyle={{ display: "flex"}}
+              className="modalTest"
           >
               <SideBar>
                   <SectionTitle
                       isHeader
                       weight={700}
                   >
-                      Buscar templates
+                      Buscar modelos
                   </SectionTitle>
                   <Menu
                       mode="inline"
@@ -151,6 +152,7 @@ export const CustomModal: React.FC<ICustomModalProps> = ({ isOpen, onClickModal 
                       items={categoryCollection}
                   />
               </SideBar>
+              <Bar />
               <Content>
                   <SectionTitle
                     isHeader
