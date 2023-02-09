@@ -11,12 +11,14 @@ import { ReactComponent as TemplateIcon} from '../../assets/templates.svg'
 import { ReactComponent as SettingsIcon} from '../../assets/settings.svg'
 // @ts-ignore
 import { ReactComponent as LogoutIcon} from '../../assets/log-out.svg'
+import { ReactComponent as KeyIcon} from '../../assets/key-icon.svg'
 import {STORAGE} from "../../constants/localStorage";
 import {Loading} from "../Loading";
 
 
 export function Sidebar() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isSelected, setIsSelected] = useState<boolean>(true);
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -31,6 +33,11 @@ export function Sidebar() {
             setIsLoading(false);
             toast.error("Ocorreu um erro ao realizar o logout, tente novamente");
         }
+    }
+
+    const handleGetCurrentActiveButton = (item: any) => {
+        console.log(window.location.pathname.replace('/', '') === item.label.toLowerCase())
+        return window.location.pathname.replace('/', '') === item.label.toLowerCase()
     }
 
     if (isLoading) {
@@ -55,6 +62,12 @@ export function Sidebar() {
         },
         {
             order: "3",
+            label: "Chaves de API",
+            icon: <KeyIcon />,
+            to: ROUTES.TEMPLATES
+        },
+        {
+            order: "4",
             label: "Sair",
             icon: <LogoutIcon />,
             to: ROUTES.TEMPLATES,
@@ -74,9 +87,11 @@ export function Sidebar() {
                             <Shape
                                 position="center"
                                 key={item.order}
+                                isItem
+                                isActive={handleGetCurrentActiveButton(item)}
                             >
-                                <Icon> {item.icon} </Icon>
-                                <Label> {item.label} </Label>
+                                <Icon>{item.icon}</Icon>
+                                <Label isItem> {item.label} </Label>
                             </Shape>
                         ))
                     }
@@ -87,6 +102,7 @@ export function Sidebar() {
                             <Shape
                                 key={item.order}
                                 onClick={item.action}
+                                isActive={window.location.pathname.toLowerCase() === item.label}
                             >
                                 <Icon> {item.icon} </Icon>
                                 <Label> {item.label} </Label>

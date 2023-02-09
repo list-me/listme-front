@@ -26,6 +26,7 @@
   ],
   "rules": {
     "no-undef": "off",
+    "no-param-reassign": 0,
     "react/destructuring-assignment": ["off"],
     "react/react-in-jsx-scope": "off",
     "react/no-danger": "off",

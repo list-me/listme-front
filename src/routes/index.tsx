@@ -14,7 +14,6 @@ export const Router = () => (
             </Route>
             <Route path="/" element={<PrivateRoutes />}>
                 <Route path="/templates" element={<Template />} />
-                <Route path="/produtos" element={<Table />} />
             </Route>
         </Routes>
     </Suspense>

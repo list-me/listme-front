@@ -2,13 +2,19 @@ import styled from "styled-components";
 
 export const Container = styled.header`
   display: flex;
-  align-self: end;
-  align-items: flex-end;
+  align-items: center;
   justify-content: right;
   
-  position: relative;
-  width: 79%;
-  left: 21%;
+  height: 96px;
   
-  min-height: 55px;
+  background: ${({theme}) => theme.colors.background.primary};
+`;
+
+export const RightContent = styled.div`
+  width: auto;
+  max-height: 45px;
+  
+  display: flex;
+  justify-content: end;
+  align-items: center;
 `;

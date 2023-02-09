@@ -20,7 +20,13 @@ export const theme = {
         light: '',
         gold: '',
 
+        grayscale: {
+            primary: "#212529",
+            eleventh: "#F8F9FA"
+        },
+
         background: {
+            default: "#F3F4F6",
             primary: "#FFFFFF",
             secondary: "",
             tertiary: "#E2E0FF"
@@ -34,7 +40,8 @@ export const theme = {
         family: {
             default: '"Satoshi Regular", sans-serif',
             italic: '"Satoshi Italic", sans-serif',
-            light: '"Satoshi Light", sans-serif'
+            light: '"Satoshi Light", sans-serif',
+            bold: '"Satoshi Bold", sans-serif',
         },
         sizes: {
             xxxsmall: '14px',
@@ -43,7 +50,7 @@ export const theme = {
             small: '14px',
             normal: '16px',
             xmedium: '20px',
-            medium: '2rem',
+            medium: '24px',
             large: '4rem',
             xlarge: '11rem'
         },

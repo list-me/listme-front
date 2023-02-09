@@ -5,20 +5,19 @@ interface IItemsProps {
 }
 
 export const Container = styled.div`
-  width: 70vw;
+  overflow: auto;
+`;
 
-  @media screen
-  and (min-device-width: 1200px)
-  and (max-device-width: 1600px)
-  and (-webkit-min-device-pixel-ratio: 1) {
-    max-height: 800px;
-  }
+export const Bar = styled.div`
+  border: 1px solid #EEEEEE;
+  margin-top: -20px;
+  margin-bottom: 20px;
+  margin-right: 16px;
 `;
 
 export const SideBar = styled.div`
-  width: 13vw;
+  width: 232px;
 
-  padding: 20px;
   overflow: auto;
   ::-webkit-scrollbar {
     width: 4px;
@@ -31,45 +30,46 @@ export const SideBar = styled.div`
     padding: 1rem;
   }
 
+  .ant-menu {
+    border-inline-end: none !important; 
+  }
+  
+  //@media screen
+  //and (min-device-width: 1200px)
+  //and (max-device-width: 1600px)
+  //and (-webkit-min-device-pixel-ratio: 1) {
+  //  width: 6vw;
+  //  min-width: 200px;
+  //  height: auto;
+  //  margin-left: 10px;
+  //}
+  
+  margin: 20px 0 0 16px;
+`;
+
+export const Contents = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  
+  margin-top: 16px;
+  gap: 24px;
+  
+  div {
+    flex: 1 270px;
+  }
+
   @media screen
   and (min-device-width: 1200px)
   and (max-device-width: 1600px)
   and (-webkit-min-device-pixel-ratio: 1) {
-    width: 6vw;
-    min-width: 200px;
     height: auto;
-    margin-left: 10px;
-  }
-`;
-
-export const Contents = styled.div`
-  max-height: 70vw;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  flex-wrap: wrap;
-
-  div {
-    flex: 1 240px;
-    padding-right: 1rem;
-
-    @media screen
-    and (min-device-width: 1200px)
-    and (max-device-width: 1600px)
-    and (-webkit-min-device-pixel-ratio: 1) {
-      flex: 1 190px;
-    }
   }
 `;
 
 export const Content =  styled.div`
-  height: 100%;
-  width: 70%;
-
-  margin: 0 2rem 0 2rem;
-  padding: 1.5rem;
-
+  width: 564px;
   overflow: auto;
 
   ::-webkit-scrollbar {
@@ -81,23 +81,29 @@ export const Content =  styled.div`
     border-radius: 20px;
   }
 
+  margin: 20px 16px;
+
   @media screen
   and (min-device-width: 1200px)
   and (max-device-width: 1600px)
   and (-webkit-min-device-pixel-ratio: 1) {
-    width: 100%;
-    min-width: 400px;
+    height: auto;
+    margin: 15px 12px;
   }
 `;
 
 export const NewTemplateContent = styled.div<IItemsProps>`
-  height: 100px;
+  height: 96px;
+  width: ${(props) => props.isItem ? "270px" : "100%"};
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  margin: ${(props) => props.isItem ? "2rem 1rem 0 0" : "0"};
+  div:first-line {
+    margin: ${(props) => props.isItem ? "0 24px 24px 0" : "0"};
+  }
+  
   border: ${({theme, isItem}) =>
     isItem ?
         "2px solid #eeeeee" :
@@ -108,15 +114,6 @@ export const NewTemplateContent = styled.div<IItemsProps>`
 
   :hover {
     cursor: pointer;
-  }
-
-  @media screen
-  and (min-device-width: 1200px)
-  and (max-device-width: 1600px)
-  and (-webkit-min-device-pixel-ratio: 1) {
-    height: 80px;
-    width: ${({isItem}) => isItem === true ? "50px" : "100%"};
-    min-width: ${({isItem}) => isItem === true ? "50px" : "350px"};
   }
 `;
 
@@ -152,12 +149,13 @@ export const TemplateLabel = styled.span`
   justify-content: center;
   flex-direction: column;
   
-  margin-left: 1rem;
+  margin-left: 16px;
   
   label {
     font-family: ${({ theme }) => theme.fonts.family.default };
     font-size: ${({ theme }) => theme.fonts.sizes.normal};
     font-weight: 400;
+    line-height: 20px;
   }
   
   span {
@@ -185,12 +183,14 @@ export const TemplateLabel = styled.span`
 export const MyTemplates = styled.div`
   display: flex;
   align-items: center;
+  justify-content: start;
   
-  padding: 2rem;
-
+  margin-top: 6px;
+  
   :hover {
     cursor: pointer;
   }
+  
 `;
 
 export const Item = styled.div`
@@ -199,8 +199,17 @@ export const Item = styled.div`
   align-items: center;
 
   font-family: ${({ theme }) => theme.fonts.family.default };
-  font-size: ${({ theme }) => theme.fonts.sizes.normal};;
-  font-weight: 400;
+  font-size: ${({ theme }) => theme.fonts.sizes.normal};
+  font-weight: 700;
+  line-height: 150%;
+  text-align: center;
+
+  width: 120px;
+  height: 109px;
+  
+  span:first-child {
+    margin-bottom: 8px;
+  }
 `;
 
 export const Information = styled.label`
@@ -211,13 +220,14 @@ export const Information = styled.label`
 `;
 
 export const SectionTitle = styled.h3<{ isHeader?: boolean, weight?: number }>`
-  margin-bottom: ${({ isHeader }) => isHeader === true ? '3rem' : '0'};
+  margin-bottom: ${({ isHeader }) => isHeader === true ? '30px' : '0'};
   margin-top: ${({ isHeader }) => isHeader === true ? '0' : '32px'};
 
-  font-family: ${({ theme }) => theme.fonts.family.default };
+  font-family: ${({ theme, weight }) => weight !== undefined ? theme.fonts.family.bold : theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.xmedium};
   font-weight: ${({ weight }) => weight ?? 400};
   text-align: left;
+  line-height: 150%;
 
   @media screen
   and (min-device-width: 1200px)
