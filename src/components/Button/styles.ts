@@ -13,21 +13,22 @@ export const ButtonCustom = styled.button<IButtonPropsStyles>`
   outline: none;
   border: none;
   border-radius: ${({ theme }) => theme.border.radius};
-  
-  padding: 16px 24px;
+
+  padding: 12px 16px;
 
   min-width: 100px;
-  
   width: ${({width}) => width || '100%'};
   height: ${({height}) => height || '100%'};
 
-  font-size: ${({ theme }) => theme.fonts.sizes.normal};
+  font-family: ${({ theme }) => theme.fonts.family.bold};
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
+  font-style: normal;
   font-weight: 800;
+  line-height: 150%;
   text-align: center;
-  letter-spacing: 1px;
 
   color: ${(props) => props.isSecondary ? props.theme.colors.primary : props.theme.colors.secondary};
-  background-color: ${(props) => props.isSecondary ? props.theme.colors.secondary : props.theme.colors.primary };
+  background-color: ${(props) => props.isSecondary ? props.theme.colors.background.default : props.theme.colors.primary };
 
   &:hover {
     transition: opacity linear 0.4s;
@@ -36,15 +37,15 @@ export const ButtonCustom = styled.button<IButtonPropsStyles>`
 
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
 
   svg {
     min-width: ${({ theme }) => theme.spacing.xxxsmall};
     min-height: ${({ theme }) => theme.spacing.xxxsmall};
 
-    width: ${({ theme }) => theme.spacing.xxsmall};
-    height: ${({ theme }) => theme.spacing.xxsmall};
     animation: rotate 2s linear infinite;
+    
+    margin-right: 8px;
   }
 
   @media screen

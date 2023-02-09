@@ -2,42 +2,30 @@ import styled from "styled-components";
 
 export const LoginContainer = styled.div`
   width: 416px;
-  height: 70vh;
+  height: 672px;
   
   display: flex;
   flex-direction: column;
   align-items: center;
 
   padding: 40px;
-  margin-bottom: 10rem;
   border: 1px solid #E9ECEF;
   border-radius: 8px;
-
-  @media screen
-  and (min-device-width: 1200px)
-  and (max-device-width: 1600px)
-  and (-webkit-min-device-pixel-ratio: 1) {
-    max-width: 400px;
-    height: 500px;
-    margin-top: 4rem;
-    padding: 30px;
-  }
+  
+  margin-bottom: 162px;
+  margin-top: 80px;
+  
+  background: ${({theme}) => theme.colors.background.primary};
 `;
 
 export const Title = styled.h1`
-  margin-bottom: 2rem;
-
-  font-family: ${({ theme }) => theme.fonts.family.default };
-  font-size: ${({ theme }) => theme.fonts.sizes.medium};;
-  font-weight: 800;
+  margin-bottom: 24px;
   
-  @media screen
-  and (min-device-width: 1200px)
-  and (max-device-width: 1600px)
-  and (-webkit-min-device-pixel-ratio: 1) {
-    min-height: 30px;
-    margin-bottom: 2rem;
-  }
+  font-family: ${({ theme }) => theme.fonts.family.bold};
+  font-size: ${({ theme }) => theme.fonts.sizes.medium};
+  font-weight: 700;
+  line-height: 150%;
+  text-align: center;
 `;
 
 export const Background = styled.div`
@@ -51,55 +39,59 @@ export const Background = styled.div`
   
   padding: 10rem 0;
 
-  @media screen
-  and (min-device-width: 1200px)
-  and (max-device-width: 1600px)
-  and (-webkit-min-device-pixel-ratio: 1) {
-    padding: 3rem 0;
-  }
+  background: ${({theme}) => theme.colors.background.default};
 `;
 
 export const LogoContainer = styled.span`
   display: flex;
-  top: 7%;
-  
-  margin-bottom: 4rem;
-
-  @media screen
-  and (min-device-width: 1200px)
-  and (max-device-width: 1600px)
-  and (-webkit-min-device-pixel-ratio: 1) {
-    margin: 0;
-  }
+  margin-top: -20px;
 `;
 
 export const InputContainer = styled.span`
-  margin-top: 24px;
-
-  @media screen
-  and (min-device-width: 1200px)
-  and (max-device-width: 1600px)
-  and (-webkit-min-device-pixel-ratio: 1) {
-    margin-top: 10px;
+  .ant-form-item-label{
+    height: 24px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .ant-form-item-required {
+    color: ${({theme}) => theme.colors.fourth} !important;
+    font-size: ${({ theme }) => theme.fonts.sizes.normal} !important;
+    font-family: ${({ theme }) => theme.fonts.family.default} !important;
+    
+    :before {
+      display: none !important;
+    }
+  }
+  
+  .ant-form-item-row{
+    margin-bottom: 24px !important;
+  }
+  
+  .ant-input {
+    color: ${({theme}) => theme.colors.fourth} !important;
+    font-size: ${({ theme }) => theme.fonts.sizes.normal} !important;
+    font-family: ${({ theme }) => theme.fonts.family.default} !important;
   }
 `;
 
 export const ButtonContainer = styled.span`
-  margin-top: 24px;
-
   div:last-child {
-    margin-top: 18px;
+    margin-top: 24px;
   }
-
-  @media screen
-  and (min-device-width: 1200px)
-  and (max-device-width: 1600px)
-  and (-webkit-min-device-pixel-ratio: 1) {
-    margin-top: 10px;
-
-    div:last-child {
-      margin-top: 10px;
-    }
+  
+  button {
+    font-family: ${({ theme }) => theme.fonts.family.default};
+    font-size: ${({ theme }) => theme.fonts.sizes.normal};
+    font-weight: 700;
+    line-height: 20px;
+    text-align: center;
+  }
+  
+  .ant-checkbox-wrapper {
+    font-family: ${({ theme }) => theme.fonts.family.default};
+    font-size: ${({ theme }) => theme.fonts.sizes.normal};
+    font-weight: 400;
+    line-height: 150%;
   }
 `;
 
@@ -112,14 +104,8 @@ export const BottomContainer = styled.span`
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
   
   margin-top: 24px;
-
-  @media screen
-  and (min-device-width: 1200px)
-  and (max-device-width: 1600px)
-  and (-webkit-min-device-pixel-ratio: 1) {
-    margin-top: 5px;
-    font-size: ${({ theme }) => theme.fonts.sizes.small};
-  }
+  
+  width: 100%;
 `;
 
 export const ButtonCustom = styled.button`
@@ -129,20 +115,19 @@ export const ButtonCustom = styled.button`
   border-radius: ${({ theme }) => theme.border.radius};
   border: 1px solid #E9ECEF;
   
-  padding: 16px 24px;
+  padding: 20px;
   margin: 24px 0;
 
-  min-width: 100px;
-  
   width: 100%;
-  height: 100%;
+  height: 64px;
 
+  font-family: ${({ theme }) => theme.fonts.family.bold};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
-  font-weight: 800;
+  font-weight: 700;
+  line-height: 20px;
   text-align: center;
-  letter-spacing: 1px;
+  color: ${({theme}) => theme.colors.grayscale.primary};
 
-  color: ${({theme}) => theme.colors.fourth};
   background: ${({theme}) => theme.colors.background.primary};
 
   &:hover {
@@ -152,7 +137,7 @@ export const ButtonCustom = styled.button`
 
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
 
   svg {
     // min-width: ${({ theme }) => theme.spacing.xxxsmall};
@@ -160,18 +145,8 @@ export const ButtonCustom = styled.button`
     // width: ${({ theme }) => theme.spacing.xxsmall};
     // height: ${({ theme }) => theme.spacing.xxsmall};
     
-    width: 20px;
-    height: 20px;
-  }
-
-  @media screen
-  and (min-device-width: 1200px)
-  and (max-device-width: 1600px)
-  and (-webkit-min-device-pixel-ratio: 1) {
-    width: 100%;
-    height: 50px;
-
-    margin: 8px 0;
-    font-size: ${({ theme }) => theme.fonts.sizes.xxsmall};
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
   }
 `;
