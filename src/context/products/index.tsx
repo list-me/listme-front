@@ -44,8 +44,7 @@ export const ProductContextProvider = ({children}: any) => {
     const [products, setProducts] = useState([]);
     const [template, setTemplate] = useState<any>();
     const [headerTable, setHeaderTable] = useState<IHeaderTable[]>([]);
-    const navigate = useNavigate();
-    const [form] = Form.useForm();
+
 
     const handleGetProducts = (templateId: string) => {
         productRequests.list({page: 0, limit: 4}, templateId).then((response) => {
@@ -98,7 +97,6 @@ export const ProductContextProvider = ({children}: any) => {
                     }
                 });
 
-                console.log({headers})
                 setHeaderTable(headers);
         });
     }

@@ -1,5 +1,5 @@
 import {useNavigate} from "react-router-dom";
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useState} from "react";
 import {ReactComponent as EllipsisIcon} from "../../assets/ellipsis.svg";
 import {ReactComponent as DownloadIcon} from "../../assets/download.svg";
 import {ReactComponent as PlusIcon} from "../../assets/add.svg";
@@ -28,33 +28,48 @@ import {ROUTES} from "../../constants/routes";
 import {Button} from "../../components/Button";
 import Table from "../../components/CustomTable";
 import {productContext} from "../../context/products";
+import {Loading} from "../../components/Loading";
 
 export const Products = () => {
-    const {products, headerTable, handleRedirectAndGetProducts} = useContext(productContext);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    const {products, headerTable, handleRedirectAndGetProducts} = useContext(productContext);
     const navigate = useNavigate();
 
     useEffect(() => {
-        handleRedirectAndGetProducts(window.location.pathname.substring(10))
-    }, [])
+        setIsLoading(true)
+        try {
+            handleRedirectAndGetProducts(window.location.pathname.substring(10))
+            setIsLoading(false)
+        } catch (e) {
+            setIsLoading(false)
+            console.error(e)
+        }
+    }, [isLoading])
+
+    if (isLoading) return <Loading />
 
     const items = [
         {
+            id: 1,
             name: "Visualização",
             icon: <MenuIcon />,
             rightIcon: true
         },
         {
+            id: 2,
             name: "Ocultar campos",
             icon: <EyeOffIcon />,
             rightIcon: true
         },
         {
+            id: 3,
             name: "Filtrar",
             icon: <FilterIcon />,
             rightIcon: false
         },
         {
+            id: 4,
             name: "Buscar",
             icon: <SearchIcon />,
             rightIcon: false
@@ -100,7 +115,7 @@ export const Products = () => {
                 <Contents>
                     {items.map((item) => {
                         return (
-                            <Item>
+                            <Item key={item.id}>
                                 {item.icon}
                                 {item.name}
                                 {item.rightIcon ? <ChevronDownIcon /> : <> </>}
@@ -116,11 +131,15 @@ export const Products = () => {
                 </Contents>
             </Filters>
             <Container>
-                <Table
-                    dataProvider={products}
-                    columns={headerTable}
-                    bordered
-                />
+                {
+                    isLoading ?
+                        <Loading /> :
+                        <Table
+                            dataProvider={products}
+                            columns={headerTable}
+                            bordered
+                        />
+                }
             </Container>
         </Content>
     );

@@ -16,7 +16,7 @@ export const Container = styled.div`
     color: #868E96;
     font-weight: 400;
     line-height: 150%;
-    
+
     svg {
       margin-right: 8px;
     }
