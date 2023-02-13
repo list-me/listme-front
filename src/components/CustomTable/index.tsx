@@ -1,11 +1,20 @@
-export const TableCustom = () => {
+import {Table} from "antd";
 
+import React from "react";
+import {CustomTableProps} from "./CustomTable.d";
+
+const CustomTable: React.FC<CustomTableProps> = ({dataProvider, columns}) => {
     return (
-        <>
-        </>
+        <Table
+            columns={columns}
+            dataSource={dataProvider}
+            // scroll={{x: "max-content"}}
+            pagination={false}
+        />
     )
 }
 
+export default CustomTable;
 
 // import React, { useContext, useEffect, useRef, useState } from "react";
 // import type { InputRef } from "antd";

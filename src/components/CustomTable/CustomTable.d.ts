@@ -8,7 +8,10 @@ interface DataType {
     value: string;
 }
 
-export interface CustomProps {
+export interface CustomTableProps {
     dataProvider: DataType[],
-    columns: ColumnTypes
+    columns: ColumnTypes,
+    bordered?: boolean,
 };
+
+export type {CustomTableProps};

@@ -1,10 +1,20 @@
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import {IButtonPropsStyles} from "./Button.d";
 
 export const Container = styled.div`
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
+`;
+
+const Secondary = css`
+  color: ${({theme}) => theme.colors.primary};
+  background-color: ${({theme}) => theme.colors.background.default};
+  border: 1px solid ${({theme}) => theme.colors.primary };
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export const ButtonCustom = styled.button<IButtonPropsStyles>`
@@ -27,8 +37,8 @@ export const ButtonCustom = styled.button<IButtonPropsStyles>`
   line-height: 150%;
   text-align: center;
 
-  color: ${(props) => props.isSecondary ? props.theme.colors.primary : props.theme.colors.secondary};
-  background-color: ${(props) => props.isSecondary ? props.theme.colors.background.default : props.theme.colors.primary };
+  color: ${({theme}) => theme.colors.secondary};
+  background-color: ${({theme}) => theme.colors.primary };
 
   &:hover {
     transition: opacity linear 0.4s;
@@ -47,6 +57,8 @@ export const ButtonCustom = styled.button<IButtonPropsStyles>`
     
     margin-right: 8px;
   }
+  
+  ${({isSecondary}) => isSecondary && Secondary};
 
   @media screen
   and (min-device-width: 1200px)
