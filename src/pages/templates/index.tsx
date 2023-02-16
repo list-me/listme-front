@@ -44,7 +44,6 @@ export const Template = () => {
     };
 
     const handleClick = (record: any, rowIndex: number | undefined): void => {
-        console.log(record)
     }
 
     const data = [

@@ -121,7 +121,21 @@ export const Container = styled.div`
 
     padding: 16px;
   }
-  
+
+  .editable-cell {
+    position: relative;
+  }
+
+  .editable-cell-value-wrap {
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+
+  .editable-row:hover .editable-cell-value-wrap {
+    //padding: 4px 11px;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+  }
 `;
 
 export const Filters = styled.div`

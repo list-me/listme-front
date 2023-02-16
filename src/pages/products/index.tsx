@@ -29,12 +29,21 @@ import {Button} from "../../components/Button";
 import Table from "../../components/CustomTable";
 import {productContext} from "../../context/products";
 import {Loading} from "../../components/Loading";
+import {EditableRow} from "../../components/EditableRow";
+import {EditableCell} from "../../components/EditableCell";
 
 export const Products = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const {products, headerTable, handleRedirectAndGetProducts} = useContext(productContext);
+    const {products, headerTable, handleRedirectAndGetProducts, handleAdd} = useContext(productContext);
     const navigate = useNavigate();
+
+    const components = {
+        body: {
+            row: EditableRow,
+            cell: EditableCell
+        }
+    };
 
     useEffect(() => {
         setIsLoading(true)
@@ -105,6 +114,7 @@ export const Products = () => {
                         height="52px"
                         width="226px"
                         className="secondButton"
+                        onClick={handleAdd}
                     >
                         Adicionar produto
                         <PlusIcon />
@@ -137,7 +147,8 @@ export const Products = () => {
                         <Table
                             dataProvider={products}
                             columns={headerTable}
-                            bordered
+                            rowClassName={() => 'editable-row'}
+                            components={components}
                         />
                 }
             </Container>

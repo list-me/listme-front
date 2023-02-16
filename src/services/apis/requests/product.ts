@@ -20,4 +20,32 @@ export const productRequests = {
 
         return response.data;
     },
+    save: async (product: any): Promise<any> => {
+        const token = window.localStorage.getItem(STORAGE.TOKEN);
+        const response = await api.post(
+            `/product`,
+            product,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
+
+        return response.data;
+    },
+    update: async ({id, fields}: any): Promise<any> => {
+        const token = window.localStorage.getItem(STORAGE.TOKEN);
+        const response = await api.post(
+            `/product/${id}`,
+            fields,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
+
+        return response.data;
+    }
 }
