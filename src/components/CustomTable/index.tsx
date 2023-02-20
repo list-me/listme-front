@@ -27,13 +27,9 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, columns, colHead
                     }
                 },
             }}
-            afterMenu
-            dragToScroll
             colWidths="197px"
             rowHeights="52px"
-            width="100%"
-            height="auto"
-            preventOverflow="horizontal"
+            dragToScroll={false}
             licenseKey="non-commercial-and-evaluation"
             afterChange={(changes, source) => {
                 if (changes?.length) {

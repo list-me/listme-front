@@ -96,23 +96,22 @@ export const MoreOptions = styled.div`
 
 export const HeaderContent = styled.div`
   display: flex;
-  width: auto;
   border: none;
 `;
 
 export const Container = styled.div`
-  background: red;
    .handsontable {
+    
      padding: 0;
    }
 
    .htCore {
      width: auto;
+     
    }
   
   tbody {
     tr {
-      overflow: scroll;
       td {
         border-right: 1px solid #DEE2E6 !important;
         border-left: 1px solid #DEE2E6 !important;

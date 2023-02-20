@@ -131,7 +131,6 @@ export const ProductContextProvider = ({children}: any) => {
                     product_template_id: window.location.pathname.substring(10),
                     is_public: true,
                     fields: fields,
-                    ean: "222asdasTRAS"
                 };
                 await handlePost(product);
             }
