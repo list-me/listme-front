@@ -1,3 +1,4 @@
+import 'handsontable/dist/handsontable.full.min.css';
 import '../fonts/fontStyle.css';
 import { createGlobalStyle } from 'styled-components';
 

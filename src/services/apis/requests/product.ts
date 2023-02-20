@@ -36,9 +36,9 @@ export const productRequests = {
     },
     update: async ({id, fields}: any): Promise<any> => {
         const token = window.localStorage.getItem(STORAGE.TOKEN);
-        const response = await api.post(
+        const response = await api.patch(
             `/product/${id}`,
-            fields,
+            {fields},
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -47,5 +47,18 @@ export const productRequests = {
         );
 
         return response.data;
-    }
+    },
+    delete: async (id: string): Promise<any> => {
+        const token = window.localStorage.getItem(STORAGE.TOKEN);
+        const response = await api.delete(
+            `/product/${id}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
+
+        return response.data;
+    },
 }

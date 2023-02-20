@@ -15,9 +15,9 @@ export const EditableCell: React.FC<EditableCellProps> = ({
        key,
        ...restProps
    }) => {
-    // const [editing, setEditing] = useState(false);
+    const [editing, setEditing] = useState(false);
     const inputRef = useRef<InputRef>(null);
-    const {form, editing, setEditing} = useContext(editableContext);
+    const {form} = useContext(editableContext);
 
     useEffect(() => {
         if (editing) {

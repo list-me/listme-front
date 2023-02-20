@@ -94,47 +94,47 @@ export const MoreOptions = styled.div`
   margin-right: 9px;
 `;
 
+export const HeaderContent = styled.div`
+  display: flex;
+  width: auto;
+  border: none;
+`;
 
 export const Container = styled.div`
-  background: white;
+  background: red;
+   .handsontable {
+     padding: 0;
+   }
+
+   .htCore {
+     width: auto;
+   }
   
-  .ant-table-thead .ant-table-cell {
-    background-color: ${({ theme }) => theme.colors.grayscale.ninth};
-    font-family: ${({ theme }) => theme.fonts.family.default};
-    font-size: ${({ theme }) => theme.fonts.sizes.small};
-    color: ${({ theme }) => theme.colors.grayscale.fourth};
-    font-weight: 400;
-    line-height: 150%;
+  tbody {
+    tr {
+      overflow: scroll;
+      td {
+        border-right: 1px solid #DEE2E6 !important;
+        border-left: 1px solid #DEE2E6 !important;
+        border-top: none;
+        border-bottom: .5px solid #DEE2E6 !important;
 
-    min-width: 197px;
-    max-height: 51px !important;
-    padding: 16px !important;
+        font-family: ${({ theme }) => theme.fonts.family.default};
+        font-size: ${({ theme }) => theme.fonts.sizes.small};
+        color: #495057;
+        font-weight: 400;
+        line-height: 150%;
+        
+        align-self: center;
+        padding-left: 16px;
 
-    border: 1px solid #DEE2E6;
-  }
-  
-  .ant-table-cell {
-    border: 1px solid #DEE2E6;
 
-    height: 51px !important;
-    border-radius: 0 !important;
-
-    padding: 16px;
-  }
-
-  .editable-cell {
-    position: relative;
-  }
-
-  .editable-cell-value-wrap {
-    padding: 5px 12px;
-    cursor: pointer;
-  }
-
-  .editable-row:hover .editable-cell-value-wrap {
-    //padding: 4px 11px;
-    border: 1px solid #d9d9d9;
-    border-radius: 2px;
+        div:first-child {
+          background: red !important;
+          border-radius: 20px;
+        }
+      }
+    }
   }
 `;
 

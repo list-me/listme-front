@@ -4,9 +4,16 @@ export const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  height: 53px;
+  min-width: 197px;
   
-  height: 100%;
-  
+  padding: 15px;
+  border-top: 1px solid #DEE2E6;
+  border-right: 1px solid #DEE2E6;
+  border-left: 1px solid #DEE2E6;
+  background-color: ${({ theme }) => theme.colors.grayscale.ninth};
+
   label {
     display: flex;
     align-items: center;
@@ -25,9 +32,9 @@ export const Container = styled.div`
 
 export const Options = styled.div`
   display: flex;
-  
+    
   svg:first-child {
-    margin-right: 12px;
+    margin-right: 8px;
   }
   
   &:hover {

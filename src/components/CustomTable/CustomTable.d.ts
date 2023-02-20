@@ -19,6 +19,7 @@ export interface CustomTableProps {
     bordered?: boolean,
     rowClassName?: () => string;
     components?: {};
+    colHeaders: string[];
 };
 
 export type {CustomTableProps};

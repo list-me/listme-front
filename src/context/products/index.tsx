@@ -16,12 +16,15 @@ interface IHeaderTable {
 
 interface ITypeProductContext {
     products: any[];
+    setProducts: Function,
     handleRedirectAndGetProducts: (template: any) => void;
     headerTable: IHeaderTable[];
     handleAdd: Function,
     handleSave: Function,
     editing: boolean,
-    setEditing: Function
+    setEditing: Function,
+    colHeaders: string[],
+    handleDelete: Function
 }
 
 interface IField {
@@ -40,20 +43,44 @@ const NOT_EDITABLE_CELLS = ['created_at', 'updated_at'];
 
 export const productContext = createContext<ITypeProductContext>({
     products: [],
+    setProducts: () => {},
     handleRedirectAndGetProducts: (template: any) => {},
     headerTable: [],
     handleAdd: () => {},
     handleSave: () => {},
     editing: false,
-    setEditing: () => {}
+    setEditing: () => {},
+    colHeaders: [],
+    handleDelete: () => {}
 });
 
 export const ProductContextProvider = ({children}: any) => {
     const [products, setProducts] = useState<any[]>([]);
     const [template, setTemplate] = useState<any>();
     const [headerTable, setHeaderTable] = useState<IHeaderTable[]>([]);
+    const [colHeaders, setColHeaders] = useState<any[]>([]);
     const [editing, setEditing] = useState<boolean>(false);
 
+    const handleDelete = (product: any) => {
+        try {
+            const currentProducts = products.filter((itemProduct: any) => {
+                if (itemProduct.id !== product.id) {
+                    return itemProduct;
+                }
+            });
+
+            productRequests.delete(product.id).then((response: any) => {
+                setProducts(currentProducts);
+                toast.success("Produto exlcuido com sucesso");
+            }).catch((error) => {
+                throw error
+            })
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Ocorreu um erro na tentativa de deletar este produto");
+        }
+    }
 
     const handleGetProducts = (templateId: string) => {
         productRequests.list({page: 0, limit: 4}, templateId).then((response) => {
@@ -64,7 +91,13 @@ export const ProductContextProvider = ({children}: any) => {
                 productFields.push({...object, id: item.id, created_at: item.created_at})
             });
 
+            if (!productFields.length) {
+                return handleAdd();
+            }
             setProducts(productFields);
+        }).catch((error) => {
+            console.error(error);
+            toast.error("Não foi possível carregar os produtos, por favor tente novamente!")
         });
     }
 
@@ -79,39 +112,59 @@ export const ProductContextProvider = ({children}: any) => {
     }
 
     const handlePost = async (product: any) => {
-        await Promise.resolve(productRequests.save(product));
+        await Promise.resolve(productRequests.save(product)).catch((error) => {
+            throw error
+        });;
     }
 
     const handleSave = async (value: any) => {
-        let obj: any = [];
-        if (value.id) {
-            console.log('update')
-        } else {
-            console.log('insert')
-            Object.keys(value).forEach((item: any) => {
-                if (value[item]) {
+        const fields = buildProduct(value);
+        try {
+            console.log({value, fields})
+            if (value?.id) {
+                await Promise.resolve(productRequests.update({id: value.id, fields})).catch((error) => {
+                    throw error
+                });
+                return;
+            } else {
+                const product = {
+                    product_template_id: window.location.pathname.substring(10),
+                    is_public: true,
+                    fields: fields,
+                    ean: "222asdasTRAS"
+                };
+                await handlePost(product);
+            }
+            handleGetProducts(window.location.pathname.substring(10));
+        } catch (error: any) {
+            console.error(error.response.data.message[0]);
+            toast.error(error.response.data.message)
+        }
+
+    }
+
+    const buildProduct = (fields: any) => {
+        const obj: any[] = [];
+        if (Object.keys(fields).length) {
+            Object.keys(fields).forEach((field: any) => {
+                if (fields[field] && field !== "id") {
                     obj.push({
-                        id: item,
-                        value: value[item]
-                    })
+                        id: field,
+                        value: fields[field]
+                    });
                 }
             });
-
-            const product = {
-                product_template_id: window.location.pathname.substring(10),
-                is_public: true,
-                fields: obj,
-                ean: "A0012232"
-            };
-            await handlePost(product);
         }
-        handleGetProducts(window.location.pathname.substring(10));
+
+        return obj;
     }
 
     const handleAdd = () => {
-        const newField = headerTable.map((item: any) => ({ [item.dataIndex]: ""}));
-        newField.push({"1": "true"});
-        setProducts([newField, ...products]);
+        if (products.find((product: any) => !Object.keys(product).length)) {
+            toast.error("Preencha o novo produto em branco!");
+            return;
+        }
+        setProducts([{}, ...products]);
     }
 
     const handleGetTemplates = (templateId: string) => {
@@ -120,79 +173,33 @@ export const ProductContextProvider = ({children}: any) => {
             .then((response) => {
                 setTemplate(response)
                 const fields = response?.fields;
+                const headersCell: any[] = [];
                 const headers = fields?.fields?.map((item: IField) => {
-                    if (NOT_EDITABLE_CELLS.includes(item.title)) {
-                        return {
-                            key: item.id,
-                            title: (
-                                <Cell
-                                    key={item.id}
-                                    label={item.title.charAt(0).toUpperCase() + item.title.slice(1)}
-                                    icon={<TextAltIcon />}
-                                />
-                                // <div>
-                                //     <ChevronDownIcon />
-                                //     {item.title.charAt(0).toUpperCase() + item.title.slice(1)}
-                                // </div>
-                            ),
-                            dataIndex: item.id,
-                            editable: false
-                        }
-                    }
-
+                    headersCell.push(item.title);
                     return {
-                        key: item.id,
-                        title: (
-                            <Cell
-                                key={item.id}
-                                label={item.title.charAt(0).toUpperCase() + item.title.slice(1)}
-                                icon={<TextAltIcon />}
-                            />
-                            // <div>
-                            //     <ChevronDownIcon />
-                            //     {item.title.charAt(0).toUpperCase() + item.title.slice(1)}
-                            // </div>
-                        ),
-                        dataIndex: item.id,
-                        onCell: (record: any) => ({
-                            record,
-                            editable: true,
-                            dataIndex: item.id,
-                            title: item.title,
-                            handleSave,
-                        }),
-                        editable: true
-                        // key: item.id,
-                        // title: (
-                        //     <Cell
-                        //         label={item.title.charAt(0).toUpperCase() + item.title.slice(1)}
-                        //         icon={<TextAltIcon />}
-                        //     />
-                        //     // <div>
-                        //     //     <ChevronDownIcon />
-                        //     //     {item.title.charAt(0).toUpperCase() + item.title.slice(1)}
-                        //     // </div>
-                        // ),
-                        // dataIndex: item.id,
+                        data: item.id,
+                        className: "htLeft htMiddle"
                     }
                 });
-
+                setColHeaders(headersCell)
                 setHeaderTable(headers);
+        }).catch((error) => {
+            console.error(error);
+            toast.error("Não foi possível carregar o template, tente novamente!")
         });
     }
 
-    useEffect(() => {
-
-    }, [])
-
     const value: ITypeProductContext = {
         products,
+        setProducts,
         handleRedirectAndGetProducts,
         headerTable,
         handleAdd,
         handleSave,
         editing,
-        setEditing
+        setEditing,
+        colHeaders,
+        handleDelete
     }
 
     return <productContext.Provider value={value}> {children} </productContext.Provider>

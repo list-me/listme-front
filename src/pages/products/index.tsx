@@ -1,5 +1,5 @@
 import {useNavigate} from "react-router-dom";
-import {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {ReactComponent as EllipsisIcon} from "../../assets/ellipsis.svg";
 import {ReactComponent as DownloadIcon} from "../../assets/download.svg";
 import {ReactComponent as PlusIcon} from "../../assets/add.svg";
@@ -22,28 +22,21 @@ import {
     Title,
     Filters,
     Contents,
-    Item, Content
+    Item, Content, HeaderContent
 } from "./styles";
 import {ROUTES} from "../../constants/routes";
 import {Button} from "../../components/Button";
 import Table from "../../components/CustomTable";
 import {productContext} from "../../context/products";
 import {Loading} from "../../components/Loading";
-import {EditableRow} from "../../components/EditableRow";
-import {EditableCell} from "../../components/EditableCell";
+import {Cell} from "../../components/Cell";
+import {ReactComponent as TextAltIcon} from "../../assets/text-alt.svg";
 
 export const Products = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const {products, headerTable, handleRedirectAndGetProducts, handleAdd} = useContext(productContext);
+    const {products, headerTable, handleRedirectAndGetProducts, handleAdd, colHeaders, setProducts} = useContext(productContext);
     const navigate = useNavigate();
-
-    const components = {
-        body: {
-            row: EditableRow,
-            cell: EditableCell
-        }
-    };
 
     useEffect(() => {
         setIsLoading(true)
@@ -90,7 +83,10 @@ export const Products = () => {
             <Header>
                 <LeftContent>
                     <ArrowIcon
-                        onClick={() => navigate(ROUTES.TEMPLATES)}
+                        onClick={() => {
+                            setProducts([]);
+                            navigate(ROUTES.TEMPLATES)
+                        }}
                     />
                     <IconTemplate>
                         <FlagIcon />
@@ -141,14 +137,26 @@ export const Products = () => {
                 </Contents>
             </Filters>
             <Container>
+                <HeaderContent>
+                    {
+                        colHeaders.map((item) => {
+                            return (
+                                <Cell
+                                    key={Math.random()}
+                                    label={item.charAt(0).toUpperCase() + item.slice(1)}
+                                    icon={<TextAltIcon />}
+                                />
+                            )
+                        })
+                    }
+                </HeaderContent>
                 {
                     isLoading ?
                         <Loading /> :
                         <Table
                             dataProvider={products}
                             columns={headerTable}
-                            rowClassName={() => 'editable-row'}
-                            components={components}
+                            colHeaders={colHeaders}
                         />
                 }
             </Container>
