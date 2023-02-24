@@ -3,12 +3,23 @@ import {Table} from "antd";
 type EditableTableProps = Parameters<typeof Table>[0];
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
-interface DataType {
+interface Values {
     id: string;
     value: string;
 }
 
-export interface CustomProps {
-    dataProvider: DataType[],
-    columns: ColumnTypes
+interface DataType {
+    productId: string;
+    data: Values[];
+}
+
+export interface CustomTableProps {
+    dataProvider: any[],
+    columns: ColumnTypes,
+    bordered?: boolean,
+    rowClassName?: () => string;
+    components?: {};
+    colHeaders: string[];
 };
+
+export type {CustomTableProps};

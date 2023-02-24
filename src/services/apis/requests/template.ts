@@ -30,4 +30,17 @@ export const templateRequests = {
             return 0;
         }).map((item: any, index: number) => ({ order: index+1, ...item }));
     },
+    get: async (id: string): Promise<any> => {
+        const token = window.localStorage.getItem(STORAGE.TOKEN);
+        const response = await api.get(
+            `/template/${id}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
+
+        return response.data[0];
+    }
 }

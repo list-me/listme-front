@@ -59,6 +59,10 @@ export const Content = styled.div`
     font-weight: 400;
 
     height: 56px;
+    
+    &:hover {
+      cursor: pointer;
+    }
   }
   
   .ant-checkbox {

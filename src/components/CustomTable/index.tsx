@@ -1,245 +1,100 @@
-export const TableCustom = () => {
+import 'handsontable/dist/handsontable.full.min.css';
+import { registerAllModules } from 'handsontable/registry';
+import React, {useContext, useState} from "react";
+
+import {HotColumn, HotTable} from '@handsontable/react';
+
+import {CustomTableProps} from "./CustomTable.d";
+import {productContext} from "../../context/products";
+import {isEquivalent} from "../../utils";
+import {Cell} from "../Cell";
+import TextAltIcon from "../../assets/text-alt.svg";
+import ChevronDownIcon from "../../assets/chevron-down-small.svg";
+import EyeIcon from "../../assets/eye-small.svg";
+
+registerAllModules();
+
+const CustomTable: React.FC<CustomTableProps> = ({dataProvider, columns, colHeaders, ...props}) => {
+    const {handleSave, handleDelete} = useContext(productContext);
+    const [currentCell, setCurrentCell] = useState<any>(undefined);
+    const [currentRow, setCurrentRow] = useState<number|undefined>(undefined);
 
     return (
-        <>
-        </>
+        <HotTable
+            height="100%"
+            colHeaders={colHeaders}
+            columns={columns}
+            data={dataProvider}
+            contextMenu={{
+                items: {
+                    'remove_row': {
+                        name: 'Excluir produto',
+                        callback(key: string, selection: Selection[], clickEvent: MouseEvent) {
+                            handleDelete(dataProvider[selection[0].start.row]);
+                        }
+                    }
+                },
+                className: "menuContext"
+            }}
+            colWidths="197px"
+            rowHeights="52px"
+            licenseKey="non-commercial-and-evaluation"
+            afterChange={(changes, source) => {
+                if (changes?.length && (changes[0][2] !== changes[0][3])) {
+                    setCurrentCell(dataProvider[changes[0][0]])
+                }
+            }}
+            afterSelectionEnd={(row, column, row2, column2) => {
+                if (row !== currentRow && currentCell) {
+                    setCurrentCell(undefined);
+                    handleSave(currentCell);
+                }
+
+                setCurrentRow(row);
+            }}
+            selectionMode="single"
+            afterGetColHeader={(column, TH, headerLevel) => {
+                if (TH.querySelector(".componentCustom")) {
+                    return;
+                }
+
+                const svg = document.createElement("img")
+                svg.src = TextAltIcon;
+
+                const eyeIcon = document.createElement("img");
+                eyeIcon.src = EyeIcon;
+
+                const chevronIcon = document.createElement("img");
+                chevronIcon.src = ChevronDownIcon;
+
+                const content = document.createElement("div")
+                content.className = "componentCustom";
+
+                const infos = document.createElement("div") as HTMLElement;
+                infos.className = "infos";
+
+                const span: HTMLElement = TH.querySelector(".colHeader") as HTMLElement;
+                const label: HTMLElement = document.createElement("label") as HTMLElement;
+                label.innerText = span.innerText.charAt(0).toUpperCase() + span.innerText.slice(1);
+
+                infos.append(svg);
+                infos.append(label);
+
+                const secondContent = document.createElement("span");
+                secondContent.className = "options";
+                secondContent.append(eyeIcon, chevronIcon);
+
+                content.append(infos);
+                content.append(secondContent);
+
+                const container = TH.querySelector(".relative");
+                container.replaceWith(content);
+                TH.appendChild(content);
+            }}
+            beforeOnCellMouseDown={(event, coords, TD, controller) => {
+            }}
+        />
     )
 }
 
-
-// import React, { useContext, useEffect, useRef, useState } from "react";
-// import type { InputRef } from "antd";
-// import { Button, Form, Input, Popconfirm, Table } from "antd";
-// import type { FormInstance } from "antd/es/form";
-//
-// const EditableContext = React.createContext<FormInstance<any> | null>(null);
-//
-// interface Item {
-//     key: string;
-//     name: string;
-//     age: string;
-//     address: string;
-// }
-//
-// interface EditableRowProps {
-//     index: number;
-// }
-//
-// const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
-//     const [form] = Form.useForm();
-//     return (
-//         <Form form={form} component={false}>
-//             <EditableContext.Provider value={form}>
-//                 <tr {...props} />
-//             </EditableContext.Provider>
-//         </Form>
-//     );
-// };
-//
-// interface EditableCellProps {
-//     title: React.ReactNode;
-//     editable: boolean;
-//     children: React.ReactNode;
-//     dataIndex: keyof Item;
-//     record: Item;
-//     handleSave: (record: Item) => void;
-//     handleAdd: () => void;
-// }
-//
-// const EditableCell: React.FC<EditableCellProps> = ({
-//        title,
-//        editable,
-//        children,
-//        dataIndex,
-//        record,
-//        handleSave,
-//        handleAdd,
-//        ...restProps
-//    }) => {
-//     const [editing, setEditing] = useState(false);
-//     const inputRef = useRef<InputRef>(null);
-//     const form = useContext(EditableContext)!;
-//
-//     useEffect(() => {
-//         if (editing) {
-//             inputRef.current!.focus();
-//         }
-//     }, [editing]);
-//
-//     const toggleEdit = () => {
-//         setEditing(!editing);
-//         form.setFieldsValue({ [dataIndex]: record[dataIndex] });
-//     };
-//
-//     const save = async () => {
-//         try {
-//             const values = await form.validateFields();
-//
-//             toggleEdit();
-//             handleSave({ ...record, ...values });
-//             handleAdd();
-//         } catch (errInfo) {
-//             console.log("Save failed:", errInfo);
-//         }
-//     };
-//
-//     let childNode = children;
-//
-//     if (editable) {
-//         childNode = editing ? (
-//             <Form.Item
-//                 style={{ margin: 0 }}
-//                 name={dataIndex}
-//                 rules={[
-//                     {
-//                         required: true,
-//                         message: `${title} is required.`
-//                     }
-//                 ]}
-//             >
-//                 <Input ref={inputRef} onPressEnter={save} onBlur={save} />
-//             </Form.Item>
-//         ) : (
-//             <div
-//                 className="editable-cell-value-wrap"
-//                 style={{ paddingRight: 24 }}
-//                 onClick={toggleEdit}
-//             >
-//                 {children}
-//             </div>
-//         );
-//     }
-//
-//     return <td {...restProps}>{childNode}</td>;
-// };
-//
-// type EditableTableProps = Parameters<typeof Table>[0];
-//
-// interface DataType {
-//     key: React.Key;
-//     name: string;
-//     age: string;
-//     address: string;
-// }
-//
-// type ColumnTypes = Exclude<EditableTableProps["columns"], undefined>;
-//
-// const TableCustom: React.FC = () => {
-//     const [dataSource, setDataSource] = useState<DataType[]>([
-//         {
-//             key: "0",
-//             name: "Edward King 0",
-//             age: "32",
-//             address: "London, Park Lane no. 0"
-//         },
-//         {
-//             key: "1",
-//             name: "Edward King 1",
-//             age: "32",
-//             address: "London, Park Lane no. 1"
-//         }
-//     ]);
-//
-//     const [count, setCount] = useState(2);
-//
-//     const handleDelete = (key: React.Key) => {
-//         const newData = dataSource.filter((item) => item.key !== key);
-//         setDataSource(newData);
-//     };
-//
-//     const defaultColumns: (ColumnTypes[number] & {
-//         editable?: boolean;
-//         dataIndex: string;
-//     })[] = [
-//         {
-//             title: "name",
-//             dataIndex: "name",
-//             width: "30%",
-//             editable: true
-//         },
-//         {
-//             title: "age",
-//             dataIndex: "age",
-//             editable: true
-//         },
-//         {
-//             title: "address",
-//             dataIndex: "address"
-//         },
-//         {
-//             title: "operation",
-//             dataIndex: "operation",
-//             render: (_, record: { key: React.Key }) =>
-//                 dataSource.length >= 1 ? (
-//                     <Popconfirm
-//                         title="Sure to delete?"
-//                         onConfirm={() => handleDelete(record.key)}
-//                     >
-//                         <a>Delete</a>
-//                     </Popconfirm>
-//                 ) : null
-//         }
-//     ];
-//
-//     const handleAdd = () => {
-//         const newData: DataType = {
-//             key: count,
-//             name: ``,
-//             age: "",
-//             address: ``
-//         };
-//         setDataSource([...dataSource, newData]);
-//         setCount(count + 1);
-//     };
-//
-//     const handleSave = (row: DataType) => {
-//         const newData = [...dataSource];
-//         const index = newData.findIndex((item) => row.key === item.key);
-//         const item = newData[index];
-//         newData.splice(index, 1, {
-//             ...item,
-//             ...row
-//         });
-//         setDataSource(newData);
-//     };
-//
-//     const components = {
-//         body: {
-//             row: EditableRow,
-//             cell: EditableCell
-//         }
-//     };
-//
-//     const columns = defaultColumns.map((col) => {
-//         if (!col.editable) {
-//             return col;
-//         }
-//         return {
-//             ...col,
-//             onCell: (record: DataType) => ({
-//                 record,
-//                 editable: col.editable,
-//                 dataIndex: col.dataIndex,
-//                 title: col.title,
-//                 handleSave
-//             })
-//         };
-//     });
-//
-//     return (
-//         <div>
-//             <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-//                 Add a row
-//             </Button>
-//             <Table
-//                 components={components}
-//                 rowClassName={() => "editable-row"}
-//                 bordered
-//                 dataSource={dataSource}
-//                 columns={columns as ColumnTypes}
-//             />
-//         </div>
-//     );
-// };
-//
-// export default TableCustom;
+export default CustomTable;

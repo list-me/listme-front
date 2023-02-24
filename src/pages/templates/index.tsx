@@ -1,4 +1,5 @@
 import React, {ReactComponentElement, useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import {Space, Table, Tag} from "antd";
 import {TableRowSelection} from "antd/es/table/interface";
 import {Sidebar} from "../../components/Sidebar";
@@ -23,6 +24,7 @@ export const Template = () => {
     const [templates, setTemplates] = useState();
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+    const navigate = useNavigate();
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         setSelectedRowKeys(newSelectedRowKeys);
@@ -31,7 +33,6 @@ export const Template = () => {
     const handleGetTemplates = () => {
         templateRequests.list({}).then((response) => {
             setTemplates(response)
-            console.log(response)
         }).catch((error) => {
             console.error(error);
         })
@@ -41,6 +42,9 @@ export const Template = () => {
         selectedRowKeys,
         onChange: onSelectChange,
     };
+
+    const handleClick = (record: any, rowIndex: number | undefined): void => {
+    }
 
     const data = [
         {
@@ -1009,7 +1013,7 @@ export const Template = () => {
 
     useEffect(() => {
         handleGetTemplates()
-    }, [])
+    }, [modalIsOpen])
 
     return (
         <TemplateDefault>
