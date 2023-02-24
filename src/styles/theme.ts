@@ -22,12 +22,7 @@ export const theme = {
 
         grayscale: {
             primary: "#212529",
-            fourth: "#868E96",
-            seventh: "#DEE2E6",
-            eighth: "#E9ECEF",
-            ninth: "#F1F3F5",
-            tenth: "#F3F4F6",
-            eleventh: "#F8F9FA",
+            eleventh: "#F8F9FA"
         },
 
         background: {
@@ -57,7 +52,7 @@ export const theme = {
             xmedium: '20px',
             medium: '24px',
             large: '4rem',
-            xlarge: '36px'
+            xlarge: '11rem'
         },
         weights: {
             thin: 100,

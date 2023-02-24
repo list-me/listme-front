@@ -36,6 +36,7 @@ export function Sidebar() {
     }
 
     const handleGetCurrentActiveButton = (item: any) => {
+        console.log(window.location.pathname.replace('/', '') === item.label.toLowerCase())
         return window.location.pathname.replace('/', '') === item.label.toLowerCase()
     }
 
