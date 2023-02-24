@@ -1013,7 +1013,6 @@ export const Template = () => {
 
     useEffect(() => {
         handleGetTemplates()
-        console.log("reiniciei")
     }, [modalIsOpen])
 
     return (

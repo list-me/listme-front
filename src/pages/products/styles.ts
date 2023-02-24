@@ -1,8 +1,6 @@
 import styled from "styled-components";
 
 export const Content = styled.div`
-  background: white;
-  
   height: 100vh;
 `;
 
@@ -100,15 +98,71 @@ export const HeaderContent = styled.div`
 `;
 
 export const Container = styled.div`
+  height: 80vh;
+  
+  .htMenu.htContextMenu.handsontable {
+    .current.highlight {            
+        background: red;
+    }
+  }
+  
+  .menuContext{
+    background: red !important;
+    border-radius: 20px;
+  }
+  
    .handsontable {
-    
      padding: 0;
    }
 
    .htCore {
      width: auto;
-     
    }
+  
+  thead {
+    th {
+      .componentCustom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        height: 53px;
+        min-width: 197px;
+
+        border-top: 1px solid #DEE2E6;
+        border-right: 1px solid #DEE2E6;
+        border-left: 1px solid #DEE2E6;
+        background-color: ${({ theme }) => theme.colors.grayscale.ninth};
+
+        font-family: ${({ theme }) => theme.fonts.family.default};
+        font-size: ${({ theme }) => theme.fonts.sizes.small};
+        color: #868E96;
+        font-weight: 400;
+        line-height: 150%;
+        
+        .infos {
+          margin-left: 16px;
+          img {
+            margin-right: 8px;
+          }
+        }
+
+        .options {
+          margin-right: 16px;
+          display: flex;
+
+          img:first-child {
+            margin-right: 8px;
+          }
+
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+      
+  }
   
   tbody {
     tr {
@@ -126,12 +180,6 @@ export const Container = styled.div`
         
         align-self: center;
         padding-left: 16px;
-
-
-        div:first-child {
-          background: red !important;
-          border-radius: 20px;
-        }
       }
     }
   }

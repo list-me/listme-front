@@ -120,7 +120,6 @@ export const ProductContextProvider = ({children}: any) => {
     const handleSave = async (value: any) => {
         const fields = buildProduct(value);
         try {
-            console.log({value, fields})
             if (value?.id) {
                 await Promise.resolve(productRequests.update({id: value.id, fields})).catch((error) => {
                     throw error
@@ -146,7 +145,7 @@ export const ProductContextProvider = ({children}: any) => {
         const obj: any[] = [];
         if (Object.keys(fields).length) {
             Object.keys(fields).forEach((field: any) => {
-                if (fields[field] && field !== "id") {
+                if (fields[field] && !["id", "created_at"].includes(field)) {
                     obj.push({
                         id: field,
                         value: fields[field]

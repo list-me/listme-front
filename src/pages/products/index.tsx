@@ -137,19 +137,6 @@ export const Products = () => {
                 </Contents>
             </Filters>
             <Container>
-                <HeaderContent>
-                    {
-                        colHeaders.map((item) => {
-                            return (
-                                <Cell
-                                    key={Math.random()}
-                                    label={item.charAt(0).toUpperCase() + item.slice(1)}
-                                    icon={<TextAltIcon />}
-                                />
-                            )
-                        })
-                    }
-                </HeaderContent>
                 {
                     isLoading ?
                         <Loading /> :
