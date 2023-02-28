@@ -1,4 +1,5 @@
 import {Table} from "antd";
+import { BaseRenderer } from "handsontable/renderers";
 
 type EditableTableProps = Parameters<typeof Table>[0];
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
@@ -13,13 +14,17 @@ interface DataType {
     data: Values[];
 }
 
-export interface CustomTableProps {
+interface CustomTableProps {
     dataProvider: any[],
     columns: ColumnTypes,
     bordered?: boolean,
     rowClassName?: () => string;
     components?: {};
     colHeaders: string[];
-};
+}
 
-export type {CustomTableProps};
+interface ICustomColumns {
+    [key: string]: string[];
+}
+
+export type {CustomTableProps, ICustomColumns, ColumnTypes};

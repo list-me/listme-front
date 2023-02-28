@@ -1,18 +1,25 @@
 /* eslint-disable */
 
-import React, {createContext, ReactElement, useEffect, useState} from "react";
+import React, {createContext, ReactElement, useEffect, useMemo, useState} from "react";
 import {toast} from "react-toastify";
 import {productRequests} from "../../services/apis/requests/product";
 import {templateRequests} from "../../services/apis/requests/template";
 import {ReactComponent as TextAltIcon} from "../../assets/text-alt.svg";
 import {Cell} from "../../components/Cell";
+import { HotColumn } from "@handsontable/react";
+import Handsontable from "handsontable";
+import ReactDOM from "react-dom";
 
 interface IHeaderTable {
     title: ReactElement;
     key: string;
     dataIndex?: string;
     render?: (_:any, record: any) => any;
+    type: string;
+    data: string;
+    className: string;
 }
+
 
 interface ITypeProductContext {
     products: any[];
@@ -24,7 +31,7 @@ interface ITypeProductContext {
     editing: boolean,
     setEditing: Function,
     colHeaders: string[],
-    handleDelete: Function
+    handleDelete: Function,
 }
 
 interface IField {
@@ -61,6 +68,7 @@ export const ProductContextProvider = ({children}: any) => {
     const [colHeaders, setColHeaders] = useState<any[]>([]);
     const [editing, setEditing] = useState<boolean>(false);
 
+    
     const handleDelete = (product: any) => {
         try {
             const currentProducts = products.filter((itemProduct: any) => {
@@ -176,7 +184,8 @@ export const ProductContextProvider = ({children}: any) => {
                     headersCell.push(item.title);
                     return {
                         data: item.id,
-                        className: "htLeft htMiddle"
+                        className: "htLeft htMiddle",
+                        type: item.type
                     }
                 });
                 setColHeaders(headersCell)
@@ -197,7 +206,7 @@ export const ProductContextProvider = ({children}: any) => {
         editing,
         setEditing,
         colHeaders,
-        handleDelete
+        handleDelete,
     }
 
     return <productContext.Provider value={value}> {children} </productContext.Provider>

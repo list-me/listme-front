@@ -22,15 +22,13 @@ import {
     Title,
     Filters,
     Contents,
-    Item, Content, HeaderContent
+    Item, Content
 } from "./styles";
 import {ROUTES} from "../../constants/routes";
 import {Button} from "../../components/Button";
 import Table from "../../components/CustomTable";
 import {productContext} from "../../context/products";
 import {Loading} from "../../components/Loading";
-import {Cell} from "../../components/Cell";
-import {ReactComponent as TextAltIcon} from "../../assets/text-alt.svg";
 
 export const Products = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -139,12 +137,12 @@ export const Products = () => {
             <Container>
                 {
                     isLoading ?
-                        <Loading /> :
-                        <Table
-                            dataProvider={products}
-                            columns={headerTable}
-                            colHeaders={colHeaders}
-                        />
+                    <Loading /> :
+                    <Table
+                        dataProvider={products}
+                        columns={headerTable}
+                        colHeaders={colHeaders}
+                    />
                 }
             </Container>
         </Content>
