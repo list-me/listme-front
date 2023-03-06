@@ -167,6 +167,7 @@ export const Container = styled.div`
   tbody {
     tr {
       td {
+        min-width: 193px;
         border-right: 1px solid #DEE2E6 !important;
         border-left: 1px solid #DEE2E6 !important;
         border-top: none;
@@ -180,6 +181,7 @@ export const Container = styled.div`
         
         align-self: center;
         padding-left: 16px;
+        padding-right: 16px;
       }
     }
   }

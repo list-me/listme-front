@@ -2,24 +2,20 @@
 
 import React, {createContext, ReactElement, useEffect, useMemo, useState} from "react";
 import {toast} from "react-toastify";
+
+import {TableField} from "../../components/TableField/index";
+
 import {productRequests} from "../../services/apis/requests/product";
 import {templateRequests} from "../../services/apis/requests/template";
 import {ReactComponent as TextAltIcon} from "../../assets/text-alt.svg";
-import {Cell} from "../../components/Cell";
-import { HotColumn } from "@handsontable/react";
-import Handsontable from "handsontable";
-import ReactDOM from "react-dom";
+import { ICustomCellType } from "./product.context";
 
 interface IHeaderTable {
-    title: ReactElement;
-    key: string;
-    dataIndex?: string;
-    render?: (_:any, record: any) => any;
     type: string;
     data: string;
     className: string;
+    options: string[];
 }
-
 
 interface ITypeProductContext {
     products: any[];
@@ -32,6 +28,8 @@ interface ITypeProductContext {
     setEditing: Function,
     colHeaders: string[],
     handleDelete: Function,
+    COMPONENT_CELL_PER_TYPE: ICustomCellType,
+    handleTesting: Function
 }
 
 interface IField {
@@ -58,7 +56,9 @@ export const productContext = createContext<ITypeProductContext>({
     editing: false,
     setEditing: () => {},
     colHeaders: [],
-    handleDelete: () => {}
+    handleDelete: () => {},
+    COMPONENT_CELL_PER_TYPE: {},
+    handleTesting: () => {},
 });
 
 export const ProductContextProvider = ({children}: any) => {
@@ -67,8 +67,18 @@ export const ProductContextProvider = ({children}: any) => {
     const [headerTable, setHeaderTable] = useState<IHeaderTable[]>([]);
     const [colHeaders, setColHeaders] = useState<any[]>([]);
     const [editing, setEditing] = useState<boolean>(false);
+    const [isVisible] = useState<boolean>(true);
 
-    
+    const COMPONENT_CELL_PER_TYPE: ICustomCellType = {
+        RADIO: "radio",
+        LIST: "select",
+        CHECKED: "checkbox"
+    }
+
+    const handleTesting = () => {
+        console.log("OK")
+    }
+
     const handleDelete = (product: any) => {
         try {
             const currentProducts = products.filter((itemProduct: any) => {
@@ -90,7 +100,7 @@ export const ProductContextProvider = ({children}: any) => {
         }
     }
 
-    const handleGetProducts = (templateId: string) => {
+    const handleGetProducts = async (templateId: string) => {
         productRequests.list({page: 0, limit: 4}, templateId).then((response) => {
             const productFields: any = [];
             response?.products?.forEach((item: any) => {
@@ -109,10 +119,12 @@ export const ProductContextProvider = ({children}: any) => {
         });
     }
 
-    const handleRedirectAndGetProducts = (id: string) => {
+    const handleRedirectAndGetProducts = async (id: string) => {
         try {
-            handleGetTemplates(id);
-            handleGetProducts(id);
+            await Promise.all([
+                handleGetTemplates(id),
+                handleGetProducts(id),
+            ])
         } catch (error) {
             console.error(error);
             toast.error("Ocorreu um erro com sua solicitação de produtos, tente novamente");
@@ -141,7 +153,7 @@ export const ProductContextProvider = ({children}: any) => {
                 };
                 await handlePost(product);
             }
-            handleGetProducts(window.location.pathname.substring(10));
+            // handleGetProducts(window.location.pathname.substring(10));
         } catch (error: any) {
             console.error(error.response.data.message[0]);
             toast.error(error.response.data.message)
@@ -173,7 +185,7 @@ export const ProductContextProvider = ({children}: any) => {
         setProducts([{}, ...products]);
     }
 
-    const handleGetTemplates = (templateId: string) => {
+    const handleGetTemplates = async (templateId: string) => {
         templateRequests
             .get(templateId)
             .then((response) => {
@@ -185,7 +197,8 @@ export const ProductContextProvider = ({children}: any) => {
                     return {
                         data: item.id,
                         className: "htLeft htMiddle",
-                        type: item.type
+                        type: item.type,
+                        options: item.options
                     }
                 });
                 setColHeaders(headersCell)
@@ -207,6 +220,8 @@ export const ProductContextProvider = ({children}: any) => {
         setEditing,
         colHeaders,
         handleDelete,
+        COMPONENT_CELL_PER_TYPE,
+        handleTesting
     }
 
     return <productContext.Provider value={value}> {children} </productContext.Provider>

@@ -1,5 +1,8 @@
+/* eslint-disable */
+
+import ReactDOM from "react-dom";
 import ReactDOMServer from "react-dom/server";
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, {useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
 
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.min.css';
@@ -11,67 +14,92 @@ import {productContext} from "../../context/products";
 import TextAltIcon from "../../assets/text-alt.svg";
 import ChevronDownIcon from "../../assets/chevron-down-small.svg";
 import EyeIcon from "../../assets/eye-small.svg";
+import { TableField } from "../TableField";
+import { CellValue } from "handsontable/common";
 
 registerAllModules();
 
-interface CustomComponentProps {
-    data: { value: string };    
-}
-
-function CustomComponent(props?: any) {
-    return (
-    <div className='customComponent'>
-        <button>Xirlinha</button>
-    </div>
-    );
-}
-
-const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders, ...props}) =>  {
+const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders, columns,...props}) =>  {
     const hotRef = useRef<Handsontable | null>(null);
-    const {handleSave, handleDelete, headerTable} = useContext(productContext);
+    const {
+        handleSave,
+        handleDelete,
+        COMPONENT_CELL_PER_TYPE,
+        headerTable,
+    } = useContext(productContext);
     const [currentCell, setCurrentCell] = useState<any>(undefined);
     const [currentRow, setCurrentRow] = useState<number|undefined>(undefined);
     // const [customColumns, setCustomColumns] = useState<ICustomColumns[]>([{}]);
     const [cols, setCols] = useState<ColumnTypes>();
-    
+
     const customRenderer = (
         instance: Handsontable,
         td: HTMLTableCellElement,
         row: number,
         col: number,
-        prop: string | number | undefined,
-        value: any,
-        cellProperties: Handsontable.CellProperties
-    ) => {
-        td.innerHTML = ReactDOMServer.renderToString(<CustomComponent />);
-        return td;
-    }
+        prop: string,
+        value: CellValue,
+        cellProperties: Handsontable.CellProperties,
+        customComponent: React.ReactElement
+    ): void => {
+        ReactDOM.render(customComponent, td);
+        td.className = "customComponent htMiddle";
+    };
 
     const handleMountColumns: Function = (): void => {
-        const columns: ColumnTypes = headerTable.map((col) => {
-            if (col.type === "file") {
-                delete col.type;
-                return {
-                    data: col.data,
-                    className: col.className,
-                    renderer: customRenderer
-                }
+        const columnsCustom: any[] = [];
+        headerTable.forEach((column) => {
+            if (Object.keys(COMPONENT_CELL_PER_TYPE).includes(column.type?.toString().toUpperCase())) {
+                columnsCustom.push({
+                    data: column.data,
+                    className: column.className,
+                    readOnly: true,
+                    renderer: (
+                        instance: Handsontable,
+                        td: HTMLTableCellElement,
+                        row: number,
+                        col: number,
+                        prop: string,
+                        value: CellValue,
+                        cellProperties: Handsontable.CellProperties
+                        ): void => { 
+                            // const CustomElement: React.ReactElement<any> = COMPONENT_CELL_PER_TYPE[column.type.toString().toUpperCase()];
+                            // const customElementWithProps = React.cloneElement(CustomElement, { value: dataProvider[row]?.[column.data] });
+                            const initialValue = typeof dataProvider[row]?.[column.data] !== "object" ? [dataProvider[row]?.[column.data]] : dataProvider[row]?.[column.data];
+                            customRenderer(
+                                instance,
+                                td,
+                                row, col, prop, value, cellProperties,
+                                <TableField
+                                    value={initialValue}
+                                    type={column.type}
+                                    options={column.options}
+                                    handleGetNewValue={(e: string|number) => {
+                                        console.log({e})
+                                        const value = typeof e === "object"? e : [e];
+                                        instance.setDataAtCell(row, col, value)
+                                    }}
+                                />);
+                    },
+                    rendererOptions: {column}
+                });
+
+                return;
             }
 
-            delete col.type;
             // setCustomColumns((customs) => ([col.type]?.push(col.data), [...customs]));
-            return {
-                data: col.data,
-                className: col.className,
-            }
+            columnsCustom.push({
+                data: column.data,
+                className: column.className,
+            });
         })
 
-        setCols(columns);
+        setCols(columnsCustom);
     }
 
     useEffect(() => {
-        handleMountColumns();
-    }, [headerTable]);
+        handleMountColumns()
+    }, []);
 
     return (
         <HotTable
@@ -91,24 +119,26 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders, ...p
                 },
                 className: "menuContext"
             }}
-            colWidths="197px"
+            // colWidths="197px"
             rowHeights="52px"
             licenseKey="non-commercial-and-evaluation"
             afterChange={(changes, source) => {
                 if (changes?.length && (changes[0][2] !== changes[0][3])) {
-                    setCurrentCell(dataProvider[changes[0][0]])
+                    setCurrentCell(dataProvider[changes[0][0]]);
+                    handleSave(dataProvider[changes[0][0]]);
                 }
             }}
             afterSelection={(row, column, row2, column2) => {
-                setCurrentCell({row, column})
+                setCurrentCell(dataProvider[row])
             }}
             afterSelectionEnd={(row, column, row2, column2) => {
-                if (row !== currentRow && !currentCell) {
-                    setCurrentCell(undefined);
-                    handleSave(currentCell);
-                }
+                // if (row !== currentRow && currentCell) {
+                //     console.log({currentCell})
+                //     setCurrentCell(undefined);
+                //     // handleSave(currentCell);
+                // }
 
-                setCurrentRow(row);
+                // setCurrentRow(row);
             }}
             selectionMode="single"
             afterGetColHeader={(column, TH, headerLevel) => {
@@ -149,9 +179,13 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders, ...p
                 container.replaceWith(content);
                 TH.appendChild(content);
             }}
-            beforeOnCellMouseDown={() => {
+            beforeOnCellMouseDown={(events, coords, element) => {
+                // if (element.getElementsByTagName("div")) {
+                //     element.className = "noChange"
+                // }
+                // console.log(events, coords, element)
             }}
-        />
+        /> 
     )
 };
 

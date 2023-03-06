@@ -32,6 +32,7 @@ import {Loading} from "../../components/Loading";
 
 export const Products = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const {products, headerTable, handleRedirectAndGetProducts, handleAdd, colHeaders, setProducts} = useContext(productContext);
     const navigate = useNavigate();
@@ -45,9 +46,11 @@ export const Products = () => {
             setIsLoading(false)
             console.error(e)
         }
-    }, [isLoading])
+    }, [window.location.pathname.substring(10)])
 
-    if (isLoading) return <Loading />
+    if (isLoading) {
+        return <Loading />
+    }
 
     const items = [
         {
@@ -135,15 +138,11 @@ export const Products = () => {
                 </Contents>
             </Filters>
             <Container>
-                {
-                    isLoading ?
-                    <Loading /> :
-                    <Table
-                        dataProvider={products}
-                        columns={headerTable}
-                        colHeaders={colHeaders}
-                    />
-                }
+                <Table
+                    dataProvider={products}
+                    columns={headerTable}
+                    colHeaders={colHeaders}
+                />
             </Container>
         </Content>
     );
