@@ -5,21 +5,19 @@ export const Container = styled.div`
   align-items: center;
   justify-content: space-between;
 
-  height: 53px;
-  min-width: 197px;
-  
-  padding: 15px;
-  border-top: 1px solid #DEE2E6;
-  border-right: 1px solid #DEE2E6;
-  border-left: 1px solid #DEE2E6;
-  background-color: ${({ theme }) => theme.colors.grayscale.ninth};
+  padding: 16px;
+  /* border-top: 1px solid #DEE2E6; */
+  /* border-right: 1px solid #DEE2E6;
+  border-left: 1px solid #DEE2E6; */
+  background-color: #F1F3F5;
+  margin: 0;
 
   label {
     display: flex;
     align-items: center;
     
-    font-family: ${({ theme }) => theme.fonts.family.default};
-    font-size: ${({ theme }) => theme.fonts.sizes.small};
+    font-family: "Satoshi Regular", sans-serif;
+    font-size: 14px;
     color: #868E96;
     font-weight: 400;
     line-height: 150%;
@@ -28,16 +26,35 @@ export const Container = styled.div`
       margin-right: 8px;
     }
   }
+
+  
 `;
 
 export const Options = styled.div`
   display: flex;
     
   svg:first-child {
-    margin-right: 8px;
+    /* margin-right: 8px; */
   }
   
   &:hover {
     cursor: pointer;
+  }
+`;
+
+export const Content = styled.div`
+  .ant-btn-default {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 32px;
+    gap: 10px;
+
+    width: 183px;
+    height: 52px;
+
+    background: #F7F5FF !important;
+    border-radius: 6px;
   }
 `;

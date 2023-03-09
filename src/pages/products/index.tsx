@@ -29,28 +29,32 @@ import {Button} from "../../components/Button";
 import Table from "../../components/CustomTable";
 import {productContext} from "../../context/products";
 import {Loading} from "../../components/Loading";
+import { DropdownMenu } from "../../components/DropdownMenu";
 
 export const Products = () => {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    const {products, headerTable, handleRedirectAndGetProducts, handleAdd, colHeaders, setProducts} = useContext(productContext);
+    const {
+        products,
+        headerTable,
+        setHeaderTable,
+        handleRedirectAndGetProducts,
+        handleAdd,
+        colHeaders,
+        setProducts
+    } = useContext(productContext);
     const navigate = useNavigate();
 
     useEffect(() => {
         setIsLoading(true)
         try {
             handleRedirectAndGetProducts(window.location.pathname.substring(10))
-            setIsLoading(false)
+                .then(() => setIsLoading(false))
         } catch (e) {
             setIsLoading(false)
             console.error(e)
         }
-    }, [window.location.pathname.substring(10)])
-
-    if (isLoading) {
-        return <Loading />
-    }
+    }, [])
 
     const items = [
         {
@@ -82,10 +86,15 @@ export const Products = () => {
     return (
         <Content>
             <Header>
+                {/* <DropdownMenu
+                    width="220px"
+                    heigth="500px"
+                /> */}
                 <LeftContent>
                     <ArrowIcon
                         onClick={() => {
                             setProducts([]);
+                            setHeaderTable([]);
                             navigate(ROUTES.TEMPLATES)
                         }}
                     />
@@ -111,7 +120,7 @@ export const Products = () => {
                         height="52px"
                         width="226px"
                         className="secondButton"
-                        onClick={handleAdd}
+                        // onClick={handleAdd}
                     >
                         Adicionar produto
                         <PlusIcon />
@@ -138,11 +147,15 @@ export const Products = () => {
                 </Contents>
             </Filters>
             <Container>
-                <Table
-                    dataProvider={products}
-                    columns={headerTable}
-                    colHeaders={colHeaders}
-                />
+                {
+                    isLoading 
+                        ? <Loading />
+                        : <Table
+                            dataProvider={products}
+                            columns={headerTable}
+                            colHeaders={colHeaders}
+                        />
+                }
             </Container>
         </Content>
     );

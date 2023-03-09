@@ -11,35 +11,39 @@ import {HotTable} from '@handsontable/react';
 
 import {ColumnTypes, CustomTableProps} from "./CustomTable.d";
 import {productContext} from "../../context/products";
-import TextAltIcon from "../../assets/text-alt.svg";
+import {ReactComponent as AddColumnIcon} from "../../assets/add-column.svg";
 import ChevronDownIcon from "../../assets/chevron-down-small.svg";
 import EyeIcon from "../../assets/eye-small.svg";
 import { TableField } from "../TableField";
 import { CellValue } from "handsontable/common";
+import {Cell} from "../Cell/index"
+import { DropdownMenu } from "../DropdownMenu";
+import { PersonalModal } from "../CustomModa";
+import { CellProperties } from "handsontable/settings";
+import { hostname } from "os";
+import { AddColumn } from "./styles";
+import { NewColumn } from "../NewColumn";
 
 registerAllModules();
 
-const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders, columns,...props}) =>  {
+const CustomTable: React.FC<CustomTableProps> = ({
+    dataProvider,
+    colHeaders,
+    columns
+}) =>  {
     const hotRef = useRef<Handsontable | null>(null);
     const {
         handleSave,
         handleDelete,
+        handleAdd,
+        template,
         COMPONENT_CELL_PER_TYPE,
-        headerTable,
     } = useContext(productContext);
-    const [currentCell, setCurrentCell] = useState<any>(undefined);
-    const [currentRow, setCurrentRow] = useState<number|undefined>(undefined);
-    // const [customColumns, setCustomColumns] = useState<ICustomColumns[]>([{}]);
     const [cols, setCols] = useState<ColumnTypes>();
+    const [openModal, setOpenModal] = useState(false);
 
     const customRenderer = (
-        instance: Handsontable,
         td: HTMLTableCellElement,
-        row: number,
-        col: number,
-        prop: string,
-        value: CellValue,
-        cellProperties: Handsontable.CellProperties,
         customComponent: React.ReactElement
     ): void => {
         ReactDOM.render(customComponent, td);
@@ -48,7 +52,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders, colu
 
     const handleMountColumns: Function = (): void => {
         const columnsCustom: any[] = [];
-        headerTable.forEach((column) => {
+        columns.sort().forEach((column) => {
             if (Object.keys(COMPONENT_CELL_PER_TYPE).includes(column.type?.toString().toUpperCase())) {
                 columnsCustom.push({
                     data: column.data,
@@ -59,23 +63,19 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders, colu
                         td: HTMLTableCellElement,
                         row: number,
                         col: number,
-                        prop: string,
-                        value: CellValue,
-                        cellProperties: Handsontable.CellProperties
-                        ): void => { 
-                            // const CustomElement: React.ReactElement<any> = COMPONENT_CELL_PER_TYPE[column.type.toString().toUpperCase()];
-                            // const customElementWithProps = React.cloneElement(CustomElement, { value: dataProvider[row]?.[column.data] });
-                            const initialValue = typeof dataProvider[row]?.[column.data] !== "object" ? [dataProvider[row]?.[column.data]] : dataProvider[row]?.[column.data];
+                        ): void => {
+                            let initialValue: any[] = typeof dataProvider[row]?.[column.data] !== "object" ? [dataProvider[row]?.[column.data]] : dataProvider[row]?.[column.data];
+                            
+                            if (initialValue.includes(undefined)) {
+                                initialValue = [""];
+                            }
                             customRenderer(
-                                instance,
                                 td,
-                                row, col, prop, value, cellProperties,
                                 <TableField
                                     value={initialValue}
                                     type={column.type}
                                     options={column.options}
                                     handleGetNewValue={(e: string|number) => {
-                                        console.log({e})
                                         const value = typeof e === "object"? e : [e];
                                         instance.setDataAtCell(row, col, value)
                                     }}
@@ -95,97 +95,127 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders, colu
         })
 
         setCols(columnsCustom);
-    }
+    };
 
     useEffect(() => {
-        handleMountColumns()
-    }, []);
+        handleMountColumns();
+    }, [dataProvider, hotRef, template]);
 
     return (
-        <HotTable
-            ref={hotRef}
-            height="100%"
-            colHeaders={colHeaders}
-            columns={cols}
-            data={dataProvider}
-            contextMenu={{
-                items: {
-                    'remove_row': {
-                        name: 'Excluir produto',
-                        callback(key: string, selection: Selection[], clickEvent: MouseEvent) {
-                            handleDelete(dataProvider[selection[0].start.row]);
+        <>
+            <HotTable
+                ref={hotRef}
+                height="100%"
+                colHeaders={colHeaders}
+                columns={cols}
+                data={dataProvider}
+                contextMenu={{
+                    items: {
+                        'remove_row': {
+                            name: 'Excluir produto',
+                            callback(key: string, selection: Selection[], clickEvent: MouseEvent) {
+                                handleDelete(dataProvider[selection[0].start.row]);
+                            }
                         }
+                    },
+                    className: "menuContext"
+                }}
+                // colWidths="197px"
+                rowHeights="52px"
+                licenseKey="non-commercial-and-evaluation"
+                afterChange={(changes, source) => {
+                    if (changes?.length && (changes[0][2] !== changes[0][3])) {
+                        handleSave(dataProvider[changes[0][0]]);
                     }
-                },
-                className: "menuContext"
-            }}
-            // colWidths="197px"
-            rowHeights="52px"
-            licenseKey="non-commercial-and-evaluation"
-            afterChange={(changes, source) => {
-                if (changes?.length && (changes[0][2] !== changes[0][3])) {
-                    setCurrentCell(dataProvider[changes[0][0]]);
-                    handleSave(dataProvider[changes[0][0]]);
-                }
-            }}
-            afterSelection={(row, column, row2, column2) => {
-                setCurrentCell(dataProvider[row])
-            }}
-            afterSelectionEnd={(row, column, row2, column2) => {
-                // if (row !== currentRow && currentCell) {
-                //     console.log({currentCell})
-                //     setCurrentCell(undefined);
-                //     // handleSave(currentCell);
-                // }
+                }}
+                selectionMode="single"
+                afterRenderer={(TD, row, col, prop, value, cellProperties) => {
+                    if (col+1 === colHeaders.length) { // Verifica se é a coluna 12
+                      TD.style.display = 'none'; // Esconde a célula
+                    }
+                }}
+                afterGetColHeader={(column: number, TH: HTMLTableHeaderCellElement, headerLevel: number) => {
+                    if (TH.querySelector(".customHeader")) {
+                        return ;
+                    }
 
-                // setCurrentRow(row);
-            }}
-            selectionMode="single"
-            afterGetColHeader={(column, TH, headerLevel) => {
-                if (TH.querySelector(".componentCustom")) {
-                    return;
-                }
+                    const test = TH.querySelector(".relative")
+                    test.style.display = "none";
+                    const thNode = ReactDOM.findDOMNode(TH);
+                    const myComponent = document.createElement('div');
+                    myComponent.className = "customHeader"
+                    thNode.appendChild(myComponent);
 
-                const svg = document.createElement("img")
-                svg.src = TextAltIcon;
+                    const col = template?.fields.fields.find((item) => {
+                        if (item.id === columns[column]?.data) {
+                            return item
+                        }
+                    });
 
-                const eyeIcon = document.createElement("img");
-                eyeIcon.src = EyeIcon;
+                    if (colHeaders[column] === " ") {
+                        ReactDOM.render(
+                            <NewColumn />, myComponent);
+                    } else {
+                        ReactDOM.render(<Cell label={colHeaders[column]} column={col} template={template} />, myComponent);
+                    }
 
-                const chevronIcon = document.createElement("img");
-                chevronIcon.src = ChevronDownIcon;
+                    // setIsOpen(!isOpen)
+                    
+                    // console.log(document.querySelector(".ht__highlight"))
+                    // const test = document.querySelector(".ht__highlight");
+                    // if (TH.querySelector(".componentCustom")) {
+                    //     return;
+                    // }
 
-                const content = document.createElement("div")
-                content.className = "componentCustom";
+                    // const svg = document.createElement("img")
+                    // svg.src = TextAltIcon;
 
-                const infos = document.createElement("div") as HTMLElement;
-                infos.className = "infos";
+                    // const eyeIcon = document.createElement("img");
+                    // eyeIcon.src = EyeIcon;
 
-                const span: HTMLElement = TH.querySelector(".colHeader") as HTMLElement;
-                const label: HTMLElement = document.createElement("label") as HTMLElement;
-                label.innerText = span.innerText.charAt(0).toUpperCase() + span.innerText.slice(1);
+                    // const chevronIcon = document.createElement("img");
+                    // chevronIcon.src = ChevronDownIcon;
 
-                infos.append(svg);
-                infos.append(label);
+                    // const content = document.createElement("div")
+                    // content.className = "componentCustom";
 
-                const secondContent = document.createElement("span");
-                secondContent.className = "options";
-                secondContent.append(eyeIcon, chevronIcon);
+                    // const infos = document.createElement("div") as HTMLElement;
+                    // infos.className = "infos";
 
-                content.append(infos);
-                content.append(secondContent);
+                    // const span: HTMLElement = TH.querySelector(".colHeader") as HTMLElement;
+                    // const label: HTMLElement = document.createElement("label") as HTMLElement;
+                    // label.innerText = span.innerText.charAt(0).toUpperCase() + span.innerText.slice(1);
 
-                const container = TH.querySelector(".relative");
-                container.replaceWith(content);
-                TH.appendChild(content);
-            }}
-            beforeOnCellMouseDown={(events, coords, element) => {
-                // if (element.getElementsByTagName("div")) {
-                //     element.className = "noChange"
-                // }
-                // console.log(events, coords, element)
-            }}
-        /> 
+                    // infos.append(svg);
+                    // infos.append(label);
+
+                    // const secondContent = document.createElement("span");
+                    // secondContent.className = "options";
+                    // secondContent.append(eyeIcon, chevronIcon);
+                    // secondContent.onclick = (e) => {
+                    //     console.log(e)
+                    //     setIsOpen(!isOpen)
+                    // };
+
+                    // content.append(infos);
+                    // content.append(secondContent);
+
+                    // const container = TH.querySelector(".relative");
+                    // container.replaceWith(content);
+                    // TH.appendChild(content);
+                }}
+                beforeOnCellMouseDown={(events, coords, element) => {
+                   
+                    // if (element.getElementsByTagName("div")) {
+                    //     element.className = "noChange"
+                    // }
+                    // console.log(events, coords, element)
+                }}
+                afterOnCellMouseDown={(event, coords, TD) => {
+                    // console.log(coords.col)
+                }}
+            /> 
+        </>
     )
 };
 

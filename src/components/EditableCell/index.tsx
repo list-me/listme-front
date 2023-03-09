@@ -28,7 +28,6 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     const handleFocus = useCallback((e: any) => {
         if (editing) {
             const id = e.target.id;
-            console.log(e.target)
             inputRef.current!.focus();
         }
     }, [editing])
@@ -41,7 +40,6 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     const save = async (e: any) => {
         e.preventDefault();
         try {
-            console.log(e)
             const values = await form!.validateFields();
             toggleEdit();
             await handleSave({...values});

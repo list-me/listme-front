@@ -1,8 +1,8 @@
 /* eslint-disable */
 
 import { Radio, RadioChangeEvent, Space } from "antd"
-import { useEffect, useState } from "react";
-import { Container } from "./styles";
+import { useState } from "react";
+import { Container   } from "./styles";
 
 interface IProps {
   options: string[];
@@ -20,7 +20,13 @@ export const CustomRadio = ({options, value, handleGetNewValue}: IProps) => {
 
   return (
     <Container>
-      <Radio.Group buttonStyle="solid" value={newValue} onChange={handleState} options={options}>
+      <Radio.Group
+        buttonStyle="solid"
+        value={newValue}
+        onChange={handleState}
+        options={options}
+        className="radio-group"
+      >
         <Space direction="vertical">
           {
             options.map((option: string) => {

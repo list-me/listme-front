@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Checkbox, Space } from "antd"
 import { CheckboxValueType } from "antd/es/checkbox/Group";
-import { Container } from "./styles";
+import { Container, StyledCheckbox } from "./styles";
 
 interface IProps {
   options: string[];
@@ -22,7 +22,26 @@ export const CustomCheckBox = ({options, defaultCheckedList, handleGetNewValue}:
   return (
     <Container>
       <Space direction="vertical">
-        <Checkbox.Group options={options} value={checkedList} onChange={onChange} />
+        <Checkbox.Group options={options} value={checkedList} onChange={onChange}>
+          {
+            options.map((option) => {
+              return (
+                <Checkbox
+                  key={option}
+                  value={option}
+                  
+                >
+                  <label
+                    className="itemValue"
+                  >
+
+                  {option}
+                  </label>
+                </Checkbox>
+              )
+            })
+          }
+        </Checkbox.Group>
       </Space>
     </Container>
   )

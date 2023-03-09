@@ -71,8 +71,7 @@ export const Container = styled.div<{type: string}>`
 `;
 
 export const SuspenseMenu = styled.div`
-  height: fit-content;
-  min-height: 215px;
+  height: auto;
   width: 236px;
 
   border-radius: 8px;
@@ -88,40 +87,24 @@ export const SuspenseMenu = styled.div`
   justify-content: space-between;
   margin-top: 10px;
 
-  padding: 16px 16px 0;
-
-  .firstContent {
-    hr {
-      margin-top: 17px;
-      border: 1px solid #EEEEEE;
-      flex: none;
-      order: 4;
-      align-self: stretch;
-      flex-grow: 0;
-
-      width:100%;
-      height: 0px;
-    }
-  }
+  padding: 16px;
 `;
 
 export const Select = styled.div`
   display: flex;
   flex-direction: column;
+
+  width: 100%;
 `;
 
 export const Item = styled.div`
     border-radius: 8px;
-
     padding: 8px;
 
     display: flex;
     align-items: center;
     justify-content: left;
-    
 
-    min-width: 184px;
-    width: fit-content;
     height: 35px;
 
     font-family: 'Satoshi regular', sans-serif;
@@ -144,8 +127,8 @@ export const Item = styled.div`
 `;
 
 export const Footer =  styled.span`
-  height: 51px;
   width: 100%;
+  height: 19px;
 
   display: flex;
   align-items: center;
@@ -157,5 +140,9 @@ export const Footer =  styled.span`
 
   svg {
     margin-right: 17px;
+  }
+
+  &:hover {
+    cursor: pointer;
   }
 `;

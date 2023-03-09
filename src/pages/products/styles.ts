@@ -118,20 +118,31 @@ export const Container = styled.div`
    .htCore {
      width: auto;
    }
+
+   .ht_clone_top .handsontable {
+     position: absolute;
+   }
   
   thead {
     th {
+      .customHeader {
+        width: 100%;
+        height: 51px;
+      }
+
       .componentCustom {
         display: flex;
         align-items: center;
         justify-content: space-between;
 
-        height: 53px;
-        min-width: 197px;
+        height: 51px;
+        /* min-width: 197px; */
+        width: fit-content;
 
         border-top: 1px solid #DEE2E6;
         border-right: 1px solid #DEE2E6;
         border-left: 1px solid #DEE2E6;
+        
         background-color: ${({ theme }) => theme.colors.grayscale.ninth};
 
         font-family: ${({ theme }) => theme.fonts.family.default};
@@ -168,10 +179,10 @@ export const Container = styled.div`
     tr {
       td {
         min-width: 193px;
-        border-right: 1px solid #DEE2E6 !important;
+        /* border-right: 1px solid #DEE2E6 !important;
         border-left: 1px solid #DEE2E6 !important;
         border-top: none;
-        border-bottom: .5px solid #DEE2E6 !important;
+        border-bottom: .5px solid #DEE2E6 !important; */
 
         font-family: ${({ theme }) => theme.fonts.family.default};
         font-size: ${({ theme }) => theme.fonts.sizes.small};

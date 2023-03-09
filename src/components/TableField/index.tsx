@@ -10,10 +10,16 @@ import {ReactComponent as PencilIcon} from "../../assets/pencei-icon.svg";
 import { CustomRadio } from '../Radio';
 import { CustomCheckBox } from '../CustomCheckBox';
 
-const TableField: React.FC<ITableFieldProps> = ({value, type, options, handleGetNewValue = () => {}}) => {
+const TableField: React.FC<ITableFieldProps> = ({
+  value,
+  type,
+  options,
+  handleGetNewValue = () => {},
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const modalRef = useRef(null);
-  const [newValue, setNewValue] = useState(value);
+  const iconRef = useRef(null);
+  const [newValue, setNewValue] = useState<string[]>(value);
 
   const handleAccertOptions = (options: string[]) => {
     return options.map((option) => {
@@ -24,10 +30,14 @@ const TableField: React.FC<ITableFieldProps> = ({value, type, options, handleGet
     })
   }
 
-  const onClose = (): void => setIsOpen(false); 
+  const onClose = (): void => setIsOpen(!open); 
 
   useEffect(() => {
     function handleOutsideClick(event) {
+      if (iconRef.current && iconRef.current!.contains(event.target)) {
+        return;
+      }
+
       if (modalRef.current && !modalRef.current!.contains(event.target)) {
         onClose();
       }
@@ -39,13 +49,13 @@ const TableField: React.FC<ITableFieldProps> = ({value, type, options, handleGet
       document.removeEventListener('mousedown', handleOutsideClick);
     };
 
-  }, [onClose, modalRef]);
+  }, [onClose, modalRef, iconRef]);
 
   return (
     <>
       <Container type={type}>
         <label> 
-          {newValue.map((valueItem: string, index) => {
+          {newValue?.map((valueItem: string, index) => {
             if (newValue.length > 1 && index < newValue.length -1) {
               return `${valueItem}, `
             }
@@ -54,6 +64,7 @@ const TableField: React.FC<ITableFieldProps> = ({value, type, options, handleGet
           })}
         </label>
         <span
+          ref={iconRef}
           onClick={() => setIsOpen(!isOpen)}
         >
           <ChevronDownIcon />
@@ -96,12 +107,16 @@ const TableField: React.FC<ITableFieldProps> = ({value, type, options, handleGet
                       }}
                     />)
                 }
-                <Divider />
+                {/* <Divider
+                  style={{marginTop: "16px", marginBottom:"16px"}}
+                /> */}
               </span>
-              <Footer>
+              {/* <Footer
+                onClick={() => handleOpenModal()}
+              >
                 <PencilIcon />
                 Editar campo
-              </Footer>
+              </Footer> */}
           </SuspenseMenu> :
           <></>
       }
