@@ -196,6 +196,10 @@ export const Container = styled.div`
       }
     }
   }
+
+  #handsontable-container {
+    width: 100% !important; /* ou outro valor adequado */
+  }
 `;
 
 export const Filters = styled.div`

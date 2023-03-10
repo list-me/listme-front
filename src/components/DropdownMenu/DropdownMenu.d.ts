@@ -4,6 +4,7 @@ interface DropdownMenuProps {
   icoRef: any;
   openModal: Function;
   options: any[];
+  left: any;
 }
 
 interface DropdownMenuStyleProps {

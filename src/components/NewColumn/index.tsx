@@ -5,11 +5,18 @@ import {ReactComponent as EyeIcon} from "../../assets/eye-small.svg";
 import { DropdownMenu } from "../DropdownMenu";
 import { PersonalModal } from "../CustomModa";
 
-export const NewColumn = () => {
+interface NewColumnProps {
+  template: any;
+}
+
+export const NewColumn: React.FC<NewColumnProps> = ({template}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [data, setData] = useState({});
+  const [position, setPosition] = useState<number|null>(null);
+
   const iconRef = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   const options = [
     {
@@ -17,11 +24,11 @@ export const NewColumn = () => {
       icon: <EyeIcon />,
       type: "text"
     },
-    {
-      label: "Parágrafo",
-      icon: <EyeIcon />,
-      type: "paragraph"
-    },
+    // {
+    //   label: "Parágrafo",
+    //   icon: <EyeIcon />,
+    //   type: "paragraph"
+    // },
     {
       label: "Escolha única",
       icon: <EyeIcon />,
@@ -40,31 +47,40 @@ export const NewColumn = () => {
   ]
 
   useEffect(() => {
-  }, []);
+    const pai = ref.current;
+    if (pai) {
+        const left = pai.getBoundingClientRect().left + window.scrollX
+        setPosition(left);
+    }
+  }, [isOpen]);
   
   return (
     <>
-      <PersonalModal isOpen={isOpenModal} onClickModal={() => setIsOpenModal(!isOpenModal)}
-      data={data}
-        template={{}} onUpdate={(e)=> console.log(e)}/>
-      <AddColumn onClick={() => setIsOpen(!isOpen)} ref={iconRef}>
-        <AddColumnIcon ref={iconRef}/>
+      <PersonalModal
+        isOpen={isOpenModal}
+        onClickModal={() => setIsOpenModal(!isOpenModal)}
+        data={data}
+        template={template}
+        onUpdate={(e)=> window.location.reload()}
+      />
+      <AddColumn ref={ref}>
+        <AddColumnIcon
+          ref={iconRef}
+            onClick={() => setIsOpen(!isOpen)}
+        />
         <DropdownMenu
-                changeOpen={() => setIsOpen(!isOpen)}
-                isOpen={isOpen}
-                icoRef={iconRef}
-                openModal={(e) => {
-                    setIsOpen(!isOpen)
-                    setIsOpenModal(!isOpenModal)
-                    setData({type: e?.type})
-                }}
-                options={options}
+          changeOpen={() => setIsOpen(!isOpen)}
+          isOpen={isOpen}
+          icoRef={iconRef}
+          openModal={(e) => {
+              setIsOpen(!isOpen)
+              setIsOpenModal(!isOpenModal)
+              setData({type: e?.type})
+          }}
+          options={options}
+          left={position}
         /> 
       </AddColumn>
-      {/* {
-        isOpen ?
-          : <> </>
-      } */}
     </>
   )
 }

@@ -10,9 +10,11 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   isOpen,
   icoRef,
   openModal = () => {},
-  options
+  options,
+  left
 }) => {
   const modalRef = useRef(null);
+  const [leftItem, setLeftItem] = useState<number|null>(null);
   const onClose = (): void => changeOpen(); 
 
   const variable = []
@@ -44,20 +46,20 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
       document.removeEventListener('mousedown', handleOutsideClick);
     };
 
-  }, [onClose, modalRef]);
+  }, [onClose, modalRef, isOpen]);
 
   return (
     <>
       {
         isOpen ? 
-          <SuspenseMenu ref={modalRef} >
+          <SuspenseMenu left={left} ref={modalRef}>
             {
               options.map((item) => {
                 if (variable.length === 2) {
                   variable.pop()
                   return (
                     <>
-                      <Divider style={{marginTop: "20px", marginBottom:"4px"}} />
+                      <Divider style={{marginTop: "20px", marginBottom:"4px"}} key={item?.label} />
                       <Item
                         key={item?.label}
                         onClick={() => openModal(item)}

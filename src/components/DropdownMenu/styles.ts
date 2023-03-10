@@ -14,7 +14,7 @@ export const Container = styled.div<DropdownMenuStyleProps>`
   justify-content: space-between;
 `;
 
-export const SuspenseMenu = styled.div`
+export const SuspenseMenu = styled.div<{left?: number|null}>`
   height: 230px;
   width: 220px;
 
@@ -22,13 +22,14 @@ export const SuspenseMenu = styled.div`
   box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.07);
 
   background: white;
-
   position: fixed;
+  left: ${({left}) => `${left}px`};
+  top: 26%;
 
   display: flex;
   flex-direction: column;
   
-  margin-top: 32rem;
+  /* margin-top: 32rem; */
   padding: 16px;
 
   span:not(:first-child) {

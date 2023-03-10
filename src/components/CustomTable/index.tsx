@@ -41,6 +41,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
     } = useContext(productContext);
     const [cols, setCols] = useState<ColumnTypes>();
     const [openModal, setOpenModal] = useState(false);
+    const [components, setComponents] = useState<Record<string, React.ReactInstance>>({});
 
     const customRenderer = (
         td: HTMLTableCellElement,
@@ -72,6 +73,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
                             customRenderer(
                                 td,
                                 <TableField
+                                    // key={row+col}
                                     value={initialValue}
                                     type={column.type}
                                     options={column.options}
@@ -79,9 +81,9 @@ const CustomTable: React.FC<CustomTableProps> = ({
                                         const value = typeof e === "object"? e : [e];
                                         instance.setDataAtCell(row, col, value)
                                     }}
-                                />);
+                            />);
                     },
-                    rendererOptions: {column}
+                    // rendererOptions: {column}
                 });
 
                 return;
@@ -97,8 +99,35 @@ const CustomTable: React.FC<CustomTableProps> = ({
         setCols(columnsCustom);
     };
 
+    const unmountComponent = (key: string): void => {
+        if (components[key]) {
+            ReactDOM.unmountComponentAtNode(components[key].parentNode as Element);
+            setComponents((prev) => ({...prev, [key]: null}));
+        }
+    };
+
+    const updateComponent = (td: HTMLTableCellElement, component: React.ReactElement): void => {
+        const key = td.dataset.key;
+
+        unmountComponent(key);
+
+        const container = document.createElement("div");
+        td.appendChild(container);
+
+        ReactDOM.render(component, container, () => {
+            setComponents((prev) => ({ ...prev, [key]: container.firstChild }));
+        });
+    };
+
+    const handleUnmount = (): void => {
+        console.log({components})
+        Object.keys(components).forEach((key) => unmountComponent(key));
+    };
+
     useEffect(() => {
         handleMountColumns();
+
+        // return () => handleUnmount();
     }, [dataProvider, hotRef, template]);
 
     return (
@@ -128,11 +157,33 @@ const CustomTable: React.FC<CustomTableProps> = ({
                         handleSave(dataProvider[changes[0][0]]);
                     }
                 }}
-                selectionMode="single"
+                viewportColumnRenderingOffset={10}
+                // selectionMode="single"
                 afterRenderer={(TD, row, col, prop, value, cellProperties) => {
                     if (col+1 === colHeaders.length) { // Verifica se é a coluna 12
                       TD.style.display = 'none'; // Esconde a célula
                     }
+
+                    // if (TD.dataset.key) {
+                    //     console.log("entrei")
+                    //     updateComponent(TD, (
+                    //         <TableField
+                    //             value={value}
+                    //             type={columns[col]?.type}
+                    //             options={columns[col]?.options}
+                    //             handleGetNewValue={(e: CellValue, row: number, column: number) => {
+                    //                 const cellProperties = hotRef.current?.getCellMeta(row, column);
+                    //                 const type = cellProperties?.type;
+                    //                 const oldValue = cellProperties?.originalValue;
+                    //                 const newValue = type === "numeric" ? parseFloat(e as string) : e;
+
+                    //                 if (newValue !== oldValue) {
+                    //                     hotRef.current?.setDataAtCell(row, column, newValue);
+                    //                 }
+                    //             }}
+                    //         />
+                    //     ));
+                    // }
                 }}
                 afterGetColHeader={(column: number, TH: HTMLTableHeaderCellElement, headerLevel: number) => {
                     if (TH.querySelector(".customHeader")) {
@@ -144,7 +195,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
                     const thNode = ReactDOM.findDOMNode(TH);
                     const myComponent = document.createElement('div');
                     myComponent.className = "customHeader"
-                    thNode.appendChild(myComponent);
 
                     const col = template?.fields.fields.find((item) => {
                         if (item.id === columns[column]?.data) {
@@ -154,11 +204,12 @@ const CustomTable: React.FC<CustomTableProps> = ({
 
                     if (colHeaders[column] === " ") {
                         ReactDOM.render(
-                            <NewColumn />, myComponent);
+                            <NewColumn template={template} />, myComponent);
                     } else {
                         ReactDOM.render(<Cell label={colHeaders[column]} column={col} template={template} />, myComponent);
                     }
 
+                    thNode.appendChild(myComponent);
                     // setIsOpen(!isOpen)
                     
                     // console.log(document.querySelector(".ht__highlight"))

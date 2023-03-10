@@ -11,6 +11,7 @@ export const Container = styled.div`
   border-left: 1px solid #DEE2E6; */
   background-color: #F1F3F5;
   margin: 0;
+  position: relative;
 
   label {
     display: flex;
@@ -26,8 +27,6 @@ export const Container = styled.div`
       margin-right: 8px;
     }
   }
-
-  
 `;
 
 export const Options = styled.div`
@@ -56,5 +55,7 @@ export const Content = styled.div`
 
     background: #F7F5FF !important;
     border-radius: 6px;
+
+    background: red;
   }
 `;

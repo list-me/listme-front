@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useRef, useState } from "react";
 import {Container, Content, Options} from "./styles";
 import {ICellProps} from "./Cell.d";
@@ -11,8 +12,10 @@ import { PersonalModal } from "../CustomModa";
 export const Cell: React.FC<ICellProps> = ({label, column, template}) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+    const ref = useRef<HTMLDivElement>(null);
     const iconRef = useRef(null);
     const [titleHeader, setTitleHeader] = useState<string>(label)
+    const [posicaoPai, setPosicaoPai] = useState<number|null>(null);
 
     const options = [
         {
@@ -23,12 +26,20 @@ export const Cell: React.FC<ICellProps> = ({label, column, template}) => {
           label: "Duplicar Campo",
           icon: <CopyIcon />
         }
-      ]
+    ]
 
     useEffect(() => {
-    }, [])
+        console.log({label})
+
+        const pai = ref.current;
+        if (pai) {
+            const left = pai.getBoundingClientRect().left + window.scrollX
+            setPosicaoPai(left);
+        }
+    }, [isOpen]);
+
     return (
-        <Content>
+        <Content ref={ref}>
             <PersonalModal isOpen={isOpenModal} onClickModal={() => setIsOpenModal(!isOpenModal)} data={column} template={template} onUpdate={(e)=> setTitleHeader(e.title)}/>
             <Container>
                 <label>
@@ -38,17 +49,18 @@ export const Cell: React.FC<ICellProps> = ({label, column, template}) => {
                 <Options>
                     <ChevronDownIcon ref={iconRef} onClick={() => setIsOpen(!isOpen)} />
                 </Options>
-                <DropdownMenu
-                    changeOpen={() => setIsOpen(!isOpen)}
-                    isOpen={isOpen}
-                    icoRef={iconRef}
-                    openModal={() => {
-                        setIsOpen(!isOpen)
-                        setIsOpenModal(!isOpenModal)
-                    }}
-                    options={options}
-                />
             </Container>
+            <DropdownMenu
+                changeOpen={() => setIsOpen(!isOpen)}
+                isOpen={isOpen}
+                icoRef={iconRef}
+                openModal={() => {
+                    setIsOpen(!isOpen)
+                    setIsOpenModal(!isOpenModal)
+                }}
+                options={options}
+                left={posicaoPai}
+            />
         </Content>
     )
 }

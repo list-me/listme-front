@@ -217,7 +217,7 @@ export const ProductContextProvider = ({children}: any) => {
                 headers = [...headers,  {}];
                 setColHeaders(headersCell)
                 setHeaderTable(headers);
-                headers = [];
+                // headers = [];
         }).catch((error) => {
             console.error(error);
             toast.error("Não foi possível carregar o template, tente novamente!")

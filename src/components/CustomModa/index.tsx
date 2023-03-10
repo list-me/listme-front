@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import { Divider, Form, Input, Modal, Select, Switch } from "antd"
-import { useContext, useEffect, useState } from "react";
+import { ReactEventHandler, useCallback, useContext, useEffect, useState } from "react";
 import { BodyContent, Container, Description, InputContainer, Title, Item, ButtonContainer, PrimaryButton, Principal } from "./styles";
 import {ReactComponent as ChevronDownIcon} from "../../assets/chevron-down-small.svg";
 import { productContext } from "../../context/products";
@@ -12,10 +12,12 @@ interface PropsModal {
   data: any;
   template: any;
   onUpdate: Function;
-}
+};
+
 export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, onUpdate}: PropsModal) => {
-  const [title, setTitle] = useState(data?.title ?? '');
-  const [type, setType] = useState("");
+  const [title, setTitle] = useState<string>(data?.title ?? '');
+  const [type, setType] = useState<string>(data?.type);
+  const [required, setRequired] = useState<boolean>(data?.required ?? false);
   const [isUpdate, setIsUpdate] = useState<boolean>(data?.id);
   const options = [
     {
@@ -26,22 +28,22 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
       label: "Texto longo",
       value: "paragraph"
     },
-    {
-      label: "Lista suspensa",
-      value: "checked"
-    },
-    {
-      label: "Caixa de seleção",
-      value: "list"
-    },
-    {
-      label: "Escolha única",
-      value: "radio"
-    },
-    {
-      label: "Imagem",
-      value: "files"
-    },
+    // {
+    //   label: "Lista suspensa",
+    //   value: "checked"
+    // },
+    // {
+    //   label: "Caixa de seleção",
+    //   value: "list"
+    // },
+    // {
+    //   label: "Escolha única",
+    //   value: "radio"
+    // },
+    // {
+    //   label: "Imagem",
+    //   value: "files"
+    // },
   ];
 
   const TYPES = {
@@ -68,32 +70,48 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
     
   }
 
-  const handleUpdateTemplate = () => {
+  const handleUpdateTemplate = async (): Promise<any> => {
+    let templateUpdated = []
     if (isUpdate) {
-      const templateUpdated = template.fields.fields.map((item) => {
+      templateUpdated = template.fields.fields.map((item) => {
           if (item.id === data.id) {
               item = data;
               return item;
           }
   
           return item;
-      })
-  
-      templateRequests.update(template?.id, {fields: templateUpdated})
-        .then((response)=> {
-          toast.success("Template atualizado com sucesso");
-        }).catch((error) => {
-          console.log({error})
-          console.error(error)
-          toast.error("Não foi possível")
-        })
+      });
     } else {
-      console.log("create")
+      templateUpdated.push(...template.fields.fields);
+      templateUpdated.push({
+        id: Math.floor(100000 + Math.random() * 900000).toString(),
+        type,
+        title,
+        options: [""],
+        required,
+        is_public: true,
+        help_text: "This fiedl will help you to make a new product register",
+        description: "Completly random description"
+      });
+    };
+
+    try {
+      await templateRequests.update(template?.id, { fields: templateUpdated });
+      console.log("apareci primeiro");
+      toast.success("Template atualizado com sucesso");
+    } catch (error) {
+      console.log({ error });
+      console.error(error);
+      toast.error("Não foi possível");
     }
+
+    console.log("aparecer dps")
   }
 
   useEffect(() => {
-    }, [isOpen])
+    setType(data?.type)
+  }, [isOpen, data]);
+
   return (
     <>
       <Modal
@@ -106,16 +124,15 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
       >
         <Container>
           <div>
-            <Title> {TYPES[data?.type]?.label}</Title>
-            <Description>{TYPES[data?.type]?.description}</Description>
+            <Title> {TYPES[type]?.label} </Title>
+            <Description>{TYPES[type]?.description}</Description>
           </div>
           <BodyContent>
             <InputContainer>
               <Form.Item
                 label="Titulo do campo"
                 name="title"
-                rules={[{required: true, message: "Insira o título do campo"}]
-              }
+                rules={[{required: true, message: "Insira o título do campo"}]}
               >
                 <Input
                   style={{
@@ -123,32 +140,33 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                     border: "1px solid #DEE2E6"
                   }}
                   value={title}
-                  defaultValue={title}
                   onChange={(e) => {
                       setTitle(e.target.value)
                   }}
+                  defaultValue={title}
                   placeholder="Informe o nome do campo"
                 />
               </Form.Item>
-              {/* <Form.Item
+              <Form.Item
                   label="Escolha o tipo de valor"
                   name="type"
-                  rules={[{required: true, message: "Escolha o tipo de valor"}]
-              }>
+                  rules={[{required: true, message: "Escolha o tipo de valor"}]}
+              >
                 <Select
                   style={{
                     height: "64px",
                     border: "1px solid #DEE2E6"
                   }}
-                  value={title}
+                  value={type}
                   removeIcon
-                  // onChange={(e) => {
-                  //     setTitle(e.target.value)
-                  // }}
+                  onChange={(e: string) => {
+                    setType(e);
+                  }}
                   placeholder="Informe o nome do campo"
                   options={options}
+                  defaultValue="text"
                 />
-              </Form.Item> */}
+              </Form.Item>
             </InputContainer>
             <Item>
               Descrição
@@ -162,7 +180,11 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
             </Item>
             <Item>
               Campo obrigatório
-              <Switch size="small"/>
+              <Switch
+                size="small"
+                onChange={() => setRequired(!required)}
+                defaultChecked={required}
+              />
             </Item>
             <Divider
               style={{marginTop: "38px", marginBottom:"0"}}
@@ -170,9 +192,9 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
             <ButtonContainer>
               <PrimaryButton onClick={() => onClickModal()}> Cancelar </PrimaryButton>
               <Principal
-                onClick={() => {
+                onClick={async () => {
                   data.title = title;
-                  handleUpdateTemplate()
+                  await handleUpdateTemplate()
                   onUpdate(data)
                   onClickModal()
                 }}
