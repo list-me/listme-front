@@ -29,18 +29,20 @@ export const Cell: React.FC<ICellProps> = ({label, column, template}) => {
     ]
 
     useEffect(() => {
-        console.log({label})
-
         const pai = ref.current;
         if (pai) {
-            const left = pai.getBoundingClientRect().left + window.scrollX
+            const left = pai?.getBoundingClientRect().left + window.scrollX
             setPosicaoPai(left);
         }
     }, [isOpen]);
 
     return (
         <Content ref={ref}>
-            <PersonalModal isOpen={isOpenModal} onClickModal={() => setIsOpenModal(!isOpenModal)} data={column} template={template} onUpdate={(e)=> setTitleHeader(e.title)}/>
+            <PersonalModal isOpen={isOpenModal} onClickModal={() => setIsOpenModal(!isOpenModal)} data={column} template={template}
+            onUpdate={(e) => {
+                setTitleHeader(e.title);
+                window.location.reload()
+            }}/>
             <Container>
                 <label>
                     <AltText />
@@ -51,7 +53,9 @@ export const Cell: React.FC<ICellProps> = ({label, column, template}) => {
                 </Options>
             </Container>
             <DropdownMenu
-                changeOpen={() => setIsOpen(!isOpen)}
+                changeOpen={() => {
+                    setIsOpen(!isOpen)
+                }}
                 isOpen={isOpen}
                 icoRef={iconRef}
                 openModal={() => {
@@ -60,6 +64,7 @@ export const Cell: React.FC<ICellProps> = ({label, column, template}) => {
                 }}
                 options={options}
                 left={posicaoPai}
+                setIsOpen={() => {setIsOpen(false)}}
             />
         </Content>
     )

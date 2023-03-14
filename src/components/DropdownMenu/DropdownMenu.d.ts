@@ -5,6 +5,7 @@ interface DropdownMenuProps {
   openModal: Function;
   options: any[];
   left: any;
+  setIsOpen?: Function;
 }
 
 interface DropdownMenuStyleProps {

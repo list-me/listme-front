@@ -11,42 +11,39 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   icoRef,
   openModal = () => {},
   options,
-  left
+  left,
+  setIsOpen = () => {}
 }) => {
   const modalRef = useRef(null);
   const [leftItem, setLeftItem] = useState<number|null>(null);
   const onClose = (): void => changeOpen(); 
 
   const variable = []
-  // const options = [
-  //   {
-  //     label: "Editar Campo",
-  //     icon: <PencilIcon />
-  //   },
-  //   {
-  //     label: "Duplicar Campo",
-  //     icon: <CopyIcon />
-  //   }
-  // ]
 
   useEffect(() => {
+    const handleScroll = (e) => {
+      setIsOpen()
+    }
+
     function handleOutsideClick(event) {
       if (icoRef.current && icoRef.current!.contains(event.target)) {
         return;
       }
 
       if (modalRef.current && !modalRef.current!.contains(event.target)) {
-        onClose();
+        setIsOpen();
       }
     }
   
     document.addEventListener('mousedown', handleOutsideClick);
+    window.addEventListener('wheel', handleScroll);
   
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
+      window.removeEventListener('wheel', handleScroll);
     };
 
-  }, [onClose, modalRef, isOpen]);
+  }, [modalRef]);
 
   return (
     <>

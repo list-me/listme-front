@@ -11,7 +11,46 @@ export const Container = styled.div`
   align-items: flex-start;
   padding: 20px;
 
-  
+  .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
+    background-color: unset !important;
+  }
+
+  .ant-tree .ant-tree-node-content-wrapper:hover {
+    background-color: unset !important;
+  }
+
+  .dragger {
+    width: fit-content;
+    /* max-height: 250px; */
+
+    font-family: 'Satoshi Regular';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 150%;
+    color: #212529;
+
+    input:first-child {
+      margin-top: 8px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px; /* largura da barra de rolagem */
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: unset; /* cor de fundo da pista da barra de rolagem */
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #CCCCCC; /* cor do botão da barra de rolagem */
+      border-radius: 4px; /* raio da borda do botão da barra de rolagem */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #3818D9; /* cor do botão da barra de rolagem quando hover */
+    }
+  }
 `;
 
 export const Title = styled.h1`
@@ -45,9 +84,12 @@ export const Description = styled.h2`
 `;
 
 export const BodyContent = styled.div`
-  /* display: flex;
-  flex-direction: column; */
   height: 100%;
+  
+  .encapsulator {
+    overflow: auto;
+    max-height: 630px;
+  }
 `;
 
 export const InputContainer = styled.div`
@@ -78,13 +120,6 @@ export const InputContainer = styled.div`
   }
   
   .ant-input {
-    /* font-family: 'Satoshi Regular', sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 150%;
-    color: #ADB5BD; */
-
     font-family: 'Satoshi Regular', sans-serif;
     font-style: normal;
     font-weight: 400;
@@ -191,6 +226,14 @@ export const ButtonContainer = styled.div`
   height: 92px;
 `;
 
+export const ButtonContainer2 = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100% ;
+  height: 92px;
+`;
+
 export const PrimaryButton = styled.button`
   display: flex;
   flex-direction: row;
@@ -217,7 +260,65 @@ export const PrimaryButton = styled.button`
   color: #A899F1;
 `;
 
-export const Principal = styled.div`
+export const BulkButton = styled.button`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  /* primary / second */
+  width: auto;
+  height: 52px;
+
+  /* primary / second */
+
+  border-radius: 6px;
+  background: unset;
+
+  font-family: 'Satoshi Bold', sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 18px;
+  border: 0;
+  color: #3818D9;
+`;
+
+export const AddNew = styled.button`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  gap: 10px;
+
+  width: auto;
+  height: 36px;
+
+  background: unset;
+  border-radius: 6px;
+
+  border: 1px solid #3818D9;
+  outline: none;
+
+  font-family: 'Satoshi Bold', sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 18px;
+
+  text-align: center;
+
+  color: #3818D9;
+
+  margin-left: 24px;
+  &:hover {
+    cursor: pointer;
+  }
+`
+
+export const Principal = styled.button`
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -230,6 +331,9 @@ export const Principal = styled.div`
 
   background: #3818D9;
   border-radius: 6px;
+
+  border: none;
+  outline: none;
 
   font-family: 'Satoshi Bold', sans-serif;
   font-style: normal;
@@ -246,3 +350,17 @@ export const Principal = styled.div`
     cursor: pointer;
   }
 `
+
+export const IconContent = styled.span`
+  padding: 0;
+
+  width: 12px;
+  height: 13.33px;
+
+  margin-left: 18px;
+
+  &:hover {
+    filter: brightness(0.2);
+    transition: 0.5s;
+  }
+`;

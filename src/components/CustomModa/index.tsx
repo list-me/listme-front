@@ -1,9 +1,17 @@
+/* eslint-disable */
 import { toast } from "react-toastify";
 import { Divider, Form, Input, Modal, Select, Switch } from "antd"
-import { ReactEventHandler, useCallback, useContext, useEffect, useState } from "react";
-import { BodyContent, Container, Description, InputContainer, Title, Item, ButtonContainer, PrimaryButton, Principal } from "./styles";
+import { ReactEventHandler, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { Dragger } from "../Dragger";
+import { BodyContent, Container,
+  Description, InputContainer, Title, Item, ButtonContainer, PrimaryButton, Principal, IconContent, BulkButton,
+  AddNew, 
+  ButtonContainer2} from "./styles";
 import {ReactComponent as ChevronDownIcon} from "../../assets/chevron-down-small.svg";
-import { productContext } from "../../context/products";
+import {ReactComponent as TrashIcon} from "../../assets/trash-icon.svg";
+import {ReactComponent as PlusIcon} from "../../assets/plus-small.svg";
+
+
 import { templateRequests } from "../../services/apis/requests/template";
 
 interface PropsModal {
@@ -19,6 +27,10 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
   const [type, setType] = useState<string>(data?.type);
   const [required, setRequired] = useState<boolean>(data?.required ?? false);
   const [isUpdate, setIsUpdate] = useState<boolean>(data?.id);
+  const [draggerOptions, setDraggerOptions] = useState<any[]>(data.options ?? ['']);
+  const [dragg, setDragg] = useState<any[]>();
+  const formRef = useRef<HTMLFormElement>(null);
+
   const options = [
     {
       label: "Texto curto",
@@ -70,11 +82,15 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
     
   }
 
+  const MULTI_SELECT = ["checked", "radio", "list"]
+
   const handleUpdateTemplate = async (): Promise<any> => {
+    console.log({draggerOptions})
     let templateUpdated = []
     if (isUpdate) {
       templateUpdated = template.fields.fields.map((item) => {
           if (item.id === data.id) {
+              data.options = draggerOptions;
               item = data;
               return item;
           }
@@ -87,7 +103,7 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
         id: Math.floor(100000 + Math.random() * 900000).toString(),
         type,
         title,
-        options: [""],
+        options: draggerOptions,
         required,
         is_public: true,
         help_text: "This fiedl will help you to make a new product register",
@@ -97,20 +113,51 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
 
     try {
       await templateRequests.update(template?.id, { fields: templateUpdated });
-      console.log("apareci primeiro");
       toast.success("Template atualizado com sucesso");
     } catch (error) {
-      console.log({ error });
       console.error(error);
-      toast.error("Não foi possível");
+      toast.error("Não foi possível alterar o template, tente novamente!");
     }
+  };
 
-    console.log("aparecer dps")
+  const mountOptions = (): any[] => {
+    return draggerOptions.map((item, index) => {
+      return {
+        title: <>
+          <Input
+            value={item.value ?? item}
+            onChange={(e) => {
+              const {value} = e.target;
+              setDraggerOptions(prevState => {
+                const newState = [...prevState];
+                newState[index] = value;
+                return newState;
+              });
+            }}
+            name={index.toString()} 
+          />
+          <IconContent onClick={() => {
+            if (draggerOptions.length === 1) {
+              toast.warning("Necessário conter ao menos uma opção")
+              return;
+            }
+
+            let newState = [...draggerOptions];
+            newState.splice(index, 1)
+            setDraggerOptions(newState);
+          }}>
+            <TrashIcon />
+          </IconContent>
+        </>,
+        key: index,
+        value: item
+      }
+    })
   }
 
   useEffect(() => {
     setType(data?.type)
-  }, [isOpen, data]);
+  }, [isOpen, data, draggerOptions]);
 
   return (
     <>
@@ -119,7 +166,7 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
         onCancel={onClickModal}
         onOk={onClickModal}
         width="470px"
-        style={{height: "fitContent", padding: "0"}}
+        style={{ marginBottom: '2vh', top: 50}}
         footer={null}
       >
         <Container>
@@ -128,78 +175,130 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
             <Description>{TYPES[type]?.description}</Description>
           </div>
           <BodyContent>
-            <InputContainer>
-              <Form.Item
-                label="Titulo do campo"
-                name="title"
-                rules={[{required: true, message: "Insira o título do campo"}]}
-              >
-                <Input
-                  style={{
-                    height: "64px",
-                    border: "1px solid #DEE2E6"
-                  }}
-                  value={title}
-                  onChange={(e) => {
-                      setTitle(e.target.value)
-                  }}
-                  defaultValue={title}
-                  placeholder="Informe o nome do campo"
+            <form
+              ref={formRef}
+              
+              className="form"
+            >
+              <div className="encapsulator">
+                <InputContainer>
+                  <Form.Item
+                    label="Titulo do campo"
+                    name="title"
+                    rules={[{required: true, message: "Insira o título do campo"}]}
+                  >
+                    <Input
+                      style={{
+                        height: "64px",
+                        border: "1px solid #DEE2E6"
+                      }}
+                      value={title}
+                      onChange={(e) => {
+                        setTitle(e.target.value)
+                      }}
+                      defaultValue={title}
+                      placeholder="Informe o nome do campo"
+                    />
+                  </Form.Item>
+                  {
+                    !MULTI_SELECT.includes(data.type) ? 
+                      <Form.Item
+                        label="Escolha o tipo de valor"
+                        name="type"
+                        rules={[{required: true, message: "Escolha o tipo de valor"}]}
+                        >
+                        <Select
+                          style={{
+                            height: "64px",
+                            border: "1px solid #DEE2E6"
+                          }}
+                          value={type}
+                          removeIcon
+                          onChange={(e: string) => {
+                            setType(e);
+                          }}
+                          placeholder="Informe o nome do campo"
+                          options={options}
+                          defaultValue="text"
+                        />
+                      </Form.Item> : 
+                      <></>
+                  }
+                </InputContainer>
+                {
+                  MULTI_SELECT.includes(data.type) ?
+                    <div className="dragger">
+                      Opções
+                      <Dragger
+                        options={mountOptions()}
+                        handleOnDrop={(info) => {
+                          const { dropToGap, node, dragNode } = info;
+  
+                          const newTreeData = [...draggerOptions];
+                          const dragNodeIndex = newTreeData.findIndex((n: any) => n.key === dragNode.key);
+                          newTreeData.splice(dragNodeIndex, 1);
+                          const targetIndex = node ? newTreeData.findIndex((n: any) => n.key === node.key) : 0;
+                          const dropPosition = info.dropPosition - Number(info.dropToGap);
+                          const newIndex = dropPosition === -1 ? targetIndex : targetIndex + 1;
+                          const { title, key, value } = dragNode;
+                          const newNode = { title, key, value };
+                          newTreeData.splice(newIndex, 0, newNode);
+                          setDraggerOptions(newTreeData);
+                        }}
+                      />
+                      <ButtonContainer2>
+                        <BulkButton type="button" onClick={() => onClickModal()}> Adicionar opções em massa </BulkButton>
+                        <AddNew
+                          type="button"
+                          onClick={() => {
+                            setDraggerOptions(prevState => [...prevState, '']);
+                          }}
+                        >
+                          <PlusIcon />
+                          Adicionar opção
+                        </AddNew>  
+                      </ButtonContainer2>
+                    </div> :
+                    <></>
+                }
+                <Item>
+                  Descrição
+                <Switch
+                  size="small"
+                  />
+                </Item>
+                <Item >
+                  Texto de ajuda
+                  <Switch size="small"/>
+                </Item>
+                <Item>
+                  Campo obrigatório
+                  <Switch
+                    size="small"
+                    onChange={() => setRequired(!required)}
+                    defaultChecked={required}
+                    />
+                </Item>
+                <Divider
+                  style={{marginTop: "38px", marginBottom:"0"}}
                 />
-              </Form.Item>
-              <Form.Item
-                  label="Escolha o tipo de valor"
-                  name="type"
-                  rules={[{required: true, message: "Escolha o tipo de valor"}]}
-              >
-                <Select
-                  style={{
-                    height: "64px",
-                    border: "1px solid #DEE2E6"
+              </div>
+              <ButtonContainer>
+                <PrimaryButton type="button" onClick={() => onClickModal()}> Cancelar </PrimaryButton>
+                <Principal
+                  type="button"
+                  onClick={async (e) => {
+                    e.preventDefault()
+                    data.title = title;
+                    await handleUpdateTemplate()
+                    onUpdate(e);
+                    onClickModal();
                   }}
-                  value={type}
-                  removeIcon
-                  onChange={(e: string) => {
-                    setType(e);
-                  }}
-                  placeholder="Informe o nome do campo"
-                  options={options}
-                  defaultValue="text"
-                />
-              </Form.Item>
-            </InputContainer>
-            <Item>
-              Descrição
-              <Switch
-                size="small"
-              />
-            </Item>
-            <Item >
-              Texto de ajuda
-              <Switch size="small"/>
-            </Item>
-            <Item>
-              Campo obrigatório
-              <Switch
-                size="small"
-                onChange={() => setRequired(!required)}
-                defaultChecked={required}
-              />
-            </Item>
-            <Divider
-              style={{marginTop: "38px", marginBottom:"0"}}
-            />
-            <ButtonContainer>
-              <PrimaryButton onClick={() => onClickModal()}> Cancelar </PrimaryButton>
-              <Principal
-                onClick={async () => {
-                  data.title = title;
-                  await handleUpdateTemplate()
-                  onUpdate(data)
-                  onClickModal()
-                }}
-              > Salvar </Principal>
-            </ButtonContainer>
+                >
+                  Salvar
+                </Principal>  
+              </ButtonContainer>
+            </form>
           </BodyContent>
         </Container>
       </Modal>

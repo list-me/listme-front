@@ -86,10 +86,6 @@ export const Products = () => {
     return (
         <Content>
             <Header>
-                {/* <DropdownMenu
-                    width="220px"
-                    heigth="500px"
-                /> */}
                 <LeftContent>
                     <ArrowIcon
                         onClick={() => {

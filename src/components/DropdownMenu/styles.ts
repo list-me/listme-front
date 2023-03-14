@@ -15,7 +15,7 @@ export const Container = styled.div<DropdownMenuStyleProps>`
 `;
 
 export const SuspenseMenu = styled.div<{left?: number|null}>`
-  height: 230px;
+  height: auto;
   width: 220px;
 
   border-radius: 8px;
@@ -34,6 +34,13 @@ export const SuspenseMenu = styled.div<{left?: number|null}>`
 
   span:not(:first-child) {
     margin-top: 16px;
+  }
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    top: 25rem;
   }
 `;
 

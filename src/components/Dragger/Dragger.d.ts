@@ -1,5 +1,6 @@
 interface IDraggerProps {
-  options: string[];
+  options: any[];
+  handleOnDrop?: Function;
 }
 
 export type {IDraggerProps}

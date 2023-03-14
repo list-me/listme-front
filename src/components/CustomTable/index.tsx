@@ -40,8 +40,9 @@ const CustomTable: React.FC<CustomTableProps> = ({
         COMPONENT_CELL_PER_TYPE,
     } = useContext(productContext);
     const [cols, setCols] = useState<ColumnTypes>();
-    const [openModal, setOpenModal] = useState(false);
+    const [openModal, setOpenModal] = useState(false);  
     const [components, setComponents] = useState<Record<string, React.ReactInstance>>({});
+    const [totalWidth, setTotalWidth] = useState();
 
     const customRenderer = (
         td: HTMLTableCellElement,
@@ -58,6 +59,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
                 columnsCustom.push({
                     data: column.data,
                     className: column.className,
+                    // width: "fit-content",
                     readOnly: true,
                     renderer: (
                         instance: Handsontable,
@@ -99,35 +101,8 @@ const CustomTable: React.FC<CustomTableProps> = ({
         setCols(columnsCustom);
     };
 
-    const unmountComponent = (key: string): void => {
-        if (components[key]) {
-            ReactDOM.unmountComponentAtNode(components[key].parentNode as Element);
-            setComponents((prev) => ({...prev, [key]: null}));
-        }
-    };
-
-    const updateComponent = (td: HTMLTableCellElement, component: React.ReactElement): void => {
-        const key = td.dataset.key;
-
-        unmountComponent(key);
-
-        const container = document.createElement("div");
-        td.appendChild(container);
-
-        ReactDOM.render(component, container, () => {
-            setComponents((prev) => ({ ...prev, [key]: container.firstChild }));
-        });
-    };
-
-    const handleUnmount = (): void => {
-        console.log({components})
-        Object.keys(components).forEach((key) => unmountComponent(key));
-    };
-
     useEffect(() => {
         handleMountColumns();
-
-        // return () => handleUnmount();
     }, [dataProvider, hotRef, template]);
 
     return (
@@ -138,6 +113,13 @@ const CustomTable: React.FC<CustomTableProps> = ({
                 colHeaders={colHeaders}
                 columns={cols}
                 data={dataProvider}
+                // width="120%"
+                stretchH="all"
+                manualColumnResize={true}
+                manualRowResize={true}
+                viewportRowRenderingOffset={9999}
+                viewportColumnRenderingOffset={9999}
+                renderAllRows={false}
                 contextMenu={{
                     items: {
                         'remove_row': {
@@ -157,7 +139,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
                         handleSave(dataProvider[changes[0][0]]);
                     }
                 }}
-                viewportColumnRenderingOffset={10}
                 // selectionMode="single"
                 afterRenderer={(TD, row, col, prop, value, cellProperties) => {
                     if (col+1 === colHeaders.length) { // Verifica se é a coluna 12

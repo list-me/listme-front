@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { AddColumn } from "./styles"
 import {ReactComponent as AddColumnIcon} from "../../assets/add-column.svg";
-import {ReactComponent as EyeIcon} from "../../assets/eye-small.svg";
+import {ReactComponent as TextIcon} from "../../assets/text-icon.svg";
+import {ReactComponent as RadioIcon} from "../../assets/radio-icon.svg";
+import {ReactComponent as CheckBoxIcon} from "../../assets/checkbox-icon.svg";
+import {ReactComponent as ListIcon} from "../../assets/list-icon.svg";
+
 import { DropdownMenu } from "../DropdownMenu";
 import { PersonalModal } from "../CustomModa";
 
@@ -21,7 +25,7 @@ export const NewColumn: React.FC<NewColumnProps> = ({template}) => {
   const options = [
     {
       label: "Campo de texto",
-      icon: <EyeIcon />,
+      icon: <TextIcon />,
       type: "text"
     },
     // {
@@ -31,17 +35,17 @@ export const NewColumn: React.FC<NewColumnProps> = ({template}) => {
     // },
     {
       label: "Escolha única",
-      icon: <EyeIcon />,
+      icon: <RadioIcon />,
       type: "radio" 
     },
     {
       label: "Caixa de seleção",
-      icon: <EyeIcon />,
+      icon: <CheckBoxIcon />,
       type: "checked"
     },
     {
       label: "Lista suspensa",
-      icon: <EyeIcon />,
+      icon: <ListIcon />,
       type: "list"
     },
   ]
@@ -49,8 +53,8 @@ export const NewColumn: React.FC<NewColumnProps> = ({template}) => {
   useEffect(() => {
     const pai = ref.current;
     if (pai) {
-        const left = pai.getBoundingClientRect().left + window.scrollX
-        setPosition(left);
+      const left = pai?.getBoundingClientRect().left + window.scrollX
+      setPosition(left);
     }
   }, [isOpen]);
   
