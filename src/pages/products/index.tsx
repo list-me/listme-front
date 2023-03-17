@@ -22,34 +22,39 @@ import {
     Title,
     Filters,
     Contents,
-    Item, Content, HeaderContent
+    Item, Content
 } from "./styles";
 import {ROUTES} from "../../constants/routes";
 import {Button} from "../../components/Button";
 import Table from "../../components/CustomTable";
 import {productContext} from "../../context/products";
 import {Loading} from "../../components/Loading";
-import {Cell} from "../../components/Cell";
-import {ReactComponent as TextAltIcon} from "../../assets/text-alt.svg";
+import { DropdownMenu } from "../../components/DropdownMenu";
 
 export const Products = () => {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    const {products, headerTable, handleRedirectAndGetProducts, handleAdd, colHeaders, setProducts} = useContext(productContext);
+    const {
+        products,
+        // headerTable,
+        setHeaderTable,
+        handleRedirectAndGetProducts,
+        handleAdd,
+        colHeaders,
+        setProducts
+    } = useContext(productContext);
     const navigate = useNavigate();
 
     useEffect(() => {
         setIsLoading(true)
         try {
             handleRedirectAndGetProducts(window.location.pathname.substring(10))
-            setIsLoading(false)
+                .then(() => setIsLoading(false))
         } catch (e) {
             setIsLoading(false)
             console.error(e)
         }
-    }, [isLoading])
-
-    if (isLoading) return <Loading />
+    }, [])
 
     const items = [
         {
@@ -85,6 +90,7 @@ export const Products = () => {
                     <ArrowIcon
                         onClick={() => {
                             setProducts([]);
+                            setHeaderTable([]);
                             navigate(ROUTES.TEMPLATES)
                         }}
                     />
@@ -110,7 +116,7 @@ export const Products = () => {
                         height="52px"
                         width="226px"
                         className="secondButton"
-                        onClick={handleAdd}
+                        // onClick={handleAdd}
                     >
                         Adicionar produto
                         <PlusIcon />
@@ -138,11 +144,11 @@ export const Products = () => {
             </Filters>
             <Container>
                 {
-                    isLoading ?
-                        <Loading /> :
-                        <Table
+                    isLoading 
+                        ? <Loading />
+                        : <Table
                             dataProvider={products}
-                            columns={headerTable}
+                            // columns={headerTable}
                             colHeaders={colHeaders}
                         />
                 }

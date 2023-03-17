@@ -1,30 +1,37 @@
 /* eslint-disable */
 
-import React, {createContext, ReactElement, useEffect, useState} from "react";
+import React, {createContext, ReactElement, useEffect, useMemo, useState} from "react";
 import {toast} from "react-toastify";
+
+import {TableField} from "../../components/TableField/index";
+
 import {productRequests} from "../../services/apis/requests/product";
 import {templateRequests} from "../../services/apis/requests/template";
 import {ReactComponent as TextAltIcon} from "../../assets/text-alt.svg";
-import {Cell} from "../../components/Cell";
+import { ICustomCellType } from "./product.context";
 
-interface IHeaderTable {
-    title: ReactElement;
-    key: string;
-    dataIndex?: string;
-    render?: (_:any, record: any) => any;
+export interface IHeaderTable {
+    type: string;
+    data: string;
+    className: string;
+    options: string[];
 }
 
 interface ITypeProductContext {
     products: any[];
     setProducts: Function,
-    handleRedirectAndGetProducts: (template: any) => void;
+    handleRedirectAndGetProducts: (template: any) => Promise<void>;
     headerTable: IHeaderTable[];
-    handleAdd: Function,
-    handleSave: Function,
-    editing: boolean,
-    setEditing: Function,
-    colHeaders: string[],
-    handleDelete: Function
+    setHeaderTable: Function;
+    handleAdd: Function;
+    handleSave: Function;
+    editing: boolean;
+    setEditing: Function;
+    colHeaders: string[];
+    handleDelete: Function;
+    COMPONENT_CELL_PER_TYPE: ICustomCellType;
+    handleUpdateTemplate: Function;
+    template: any;
 }
 
 interface IField {
@@ -44,14 +51,18 @@ const NOT_EDITABLE_CELLS = ['created_at', 'updated_at'];
 export const productContext = createContext<ITypeProductContext>({
     products: [],
     setProducts: () => {},
-    handleRedirectAndGetProducts: (template: any) => {},
+    handleRedirectAndGetProducts: (): Promise<void> => {return},
     headerTable: [],
+    setHeaderTable: () => {},
     handleAdd: () => {},
     handleSave: () => {},
     editing: false,
     setEditing: () => {},
     colHeaders: [],
-    handleDelete: () => {}
+    handleDelete: () => {},
+    COMPONENT_CELL_PER_TYPE: {},
+    handleUpdateTemplate: () => {},
+    template: {}
 });
 
 export const ProductContextProvider = ({children}: any) => {
@@ -60,6 +71,16 @@ export const ProductContextProvider = ({children}: any) => {
     const [headerTable, setHeaderTable] = useState<IHeaderTable[]>([]);
     const [colHeaders, setColHeaders] = useState<any[]>([]);
     const [editing, setEditing] = useState<boolean>(false);
+    const [isVisible] = useState<boolean>(true);
+
+    const COMPONENT_CELL_PER_TYPE: ICustomCellType = {
+        RADIO: "radio",
+        LIST: "select",
+        CHECKED: "checkbox"
+    }
+
+    const handleUpdateTemplate = (field: any) => {
+    }
 
     const handleDelete = (product: any) => {
         try {
@@ -82,8 +103,8 @@ export const ProductContextProvider = ({children}: any) => {
         }
     }
 
-    const handleGetProducts = (templateId: string) => {
-        productRequests.list({page: 0, limit: 4}, templateId).then((response) => {
+    const handleGetProducts = async (templateId: string) => {
+        return productRequests.list({}, templateId).then((response) => {
             const productFields: any = [];
             response?.products?.forEach((item: any) => {
                 let object: any = {};
@@ -92,7 +113,7 @@ export const ProductContextProvider = ({children}: any) => {
             });
 
             if (!productFields.length) {
-                return handleAdd();
+                productFields.push({[template[0]]: ""})
             }
             setProducts(productFields);
         }).catch((error) => {
@@ -101,10 +122,10 @@ export const ProductContextProvider = ({children}: any) => {
         });
     }
 
-    const handleRedirectAndGetProducts = (id: string) => {
+    const handleRedirectAndGetProducts = async (id: string) => {
         try {
-            handleGetTemplates(id);
-            handleGetProducts(id);
+            await handleGetTemplates(id)
+            await handleGetProducts(id)
         } catch (error) {
             console.error(error);
             toast.error("Ocorreu um erro com sua solicitação de produtos, tente novamente");
@@ -133,7 +154,7 @@ export const ProductContextProvider = ({children}: any) => {
                 };
                 await handlePost(product);
             }
-            handleGetProducts(window.location.pathname.substring(10));
+            // handleGetProducts(window.location.pathname.substring(10));
         } catch (error: any) {
             console.error(error.response.data.message[0]);
             toast.error(error.response.data.message)
@@ -162,25 +183,41 @@ export const ProductContextProvider = ({children}: any) => {
             toast.error("Preencha o novo produto em branco!");
             return;
         }
-        setProducts([{}, ...products]);
+
+        // let newLine;
+        // Object.keys(products[0]).forEach((item: any) => {
+        //     if (!["created_at", "id"].includes(item)) {
+        //         newLine = {[item]: "", ...newLine};
+        //     }
+        // })
+
+        // console.log({newLine})
+
+        setProducts((old) => [{}, ...old]);
     }
 
-    const handleGetTemplates = (templateId: string) => {
-        templateRequests
+    const handleGetTemplates = async (templateId: string) => {
+        return templateRequests
             .get(templateId)
             .then((response) => {
                 setTemplate(response)
                 const fields = response?.fields;
-                const headersCell: any[] = [];
-                const headers = fields?.fields?.map((item: IField) => {
+                let headersCell: any[] = [];
+                var headers = fields?.fields?.map((item: IField) => {
                     headersCell.push(item.title);
                     return {
                         data: item.id,
-                        className: "htLeft htMiddle"
+                        className: "htLeft htMiddle",
+                        type: item.type,
+                        options: item.options
                     }
                 });
+
+                headersCell = [...headersCell, ' '];
+                headers = [...headers,  {}];
                 setColHeaders(headersCell)
                 setHeaderTable(headers);
+                // headers = [];
         }).catch((error) => {
             console.error(error);
             toast.error("Não foi possível carregar o template, tente novamente!")
@@ -192,12 +229,16 @@ export const ProductContextProvider = ({children}: any) => {
         setProducts,
         handleRedirectAndGetProducts,
         headerTable,
+        setHeaderTable,
         handleAdd,
         handleSave,
         editing,
         setEditing,
         colHeaders,
-        handleDelete
+        handleDelete,
+        COMPONENT_CELL_PER_TYPE,
+        handleUpdateTemplate,
+        template
     }
 
     return <productContext.Provider value={value}> {children} </productContext.Provider>

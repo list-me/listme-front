@@ -1,6 +1,16 @@
 import {Select} from "antd";
 
-const CustomSelect = ({children}: any) => {
+interface IOption {
+    label: string;
+    value: string;
+}
+
+interface IProp {
+    value: string;
+    options: IOption[];
+}
+
+const CustomSelect = ({value, options}: IProp) => {
     const mock = [
         {
             label: "Delete",
@@ -12,7 +22,7 @@ const CustomSelect = ({children}: any) => {
         <>
             <Select
                 value="Ações em massa"
-                options={mock}
+                options={options}
             />
         </>
     );
