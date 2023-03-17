@@ -1,8 +1,6 @@
 /* eslint-disable */
-
 import ReactDOM from "react-dom";
-import ReactDOMServer from "react-dom/server";
-import React, {useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useContext, useEffect, useRef, useState} from "react";
 
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.min.css';
@@ -11,25 +9,20 @@ import {HotTable} from '@handsontable/react';
 
 import {ColumnTypes, CustomTableProps} from "./CustomTable.d";
 import {productContext} from "../../context/products";
-import {ReactComponent as AddColumnIcon} from "../../assets/add-column.svg";
-import ChevronDownIcon from "../../assets/chevron-down-small.svg";
-import EyeIcon from "../../assets/eye-small.svg";
 import { TableField } from "../TableField";
-import { CellValue } from "handsontable/common";
 import {Cell} from "../Cell/index"
-import { DropdownMenu } from "../DropdownMenu";
-import { PersonalModal } from "../CustomModa";
-import { CellProperties } from "handsontable/settings";
-import { hostname } from "os";
-import { AddColumn } from "./styles";
 import { NewColumn } from "../NewColumn";
+import { toast } from "react-toastify";
+import { CellChange, ChangeSource } from "handsontable/common";
 
 registerAllModules();
-
+interface CellType {
+    row: number;
+    col: number;
+}
 const CustomTable: React.FC<CustomTableProps> = ({
     dataProvider,
-    colHeaders,
-    columns
+    colHeaders
 }) =>  {
     const hotRef = useRef<Handsontable | null>(null);
     const {
@@ -38,11 +31,13 @@ const CustomTable: React.FC<CustomTableProps> = ({
         handleAdd,
         template,
         COMPONENT_CELL_PER_TYPE,
+        headerTable
     } = useContext(productContext);
     const [cols, setCols] = useState<ColumnTypes>();
-    const [openModal, setOpenModal] = useState(false);  
-    const [components, setComponents] = useState<Record<string, React.ReactInstance>>({});
-    const [totalWidth, setTotalWidth] = useState();
+    const [columns, setColumns] = useState(headerTable);
+    const [newHeader, setNewHeader] = useState(colHeaders);
+    const [currentTemplate, setCurrentTemplate] = useState(template.fields.fields);
+    const [currentCell, setCurrentCell] = useState<CellType|undefined>(undefined);
 
     const customRenderer = (
         td: HTMLTableCellElement,
@@ -101,25 +96,81 @@ const CustomTable: React.FC<CustomTableProps> = ({
         setCols(columnsCustom);
     };
 
+    const afterGetColHeaders = (column: number, TH: HTMLTableHeaderCellElement, headerLevel: number) => {
+        if (TH.querySelector(".customHeader") && column === -1) {
+            TH.replaceChildren('')
+            return ;
+        } else if (TH.querySelector(".customHeader")) {
+            return;
+        }
+
+        const test = TH.querySelector(".relative")
+        test.style.display = "none";
+        const thNode = ReactDOM.findDOMNode(TH);
+        const myComponent = document.createElement('div');
+        myComponent.className = "customHeader"
+
+        const col = currentTemplate.find((item) => {
+            if (item.id === columns[column]?.data) {
+                return item
+            }
+        });
+
+        if (newHeader[column] === " ") {
+            ReactDOM.render(
+                <NewColumn 
+                    template={template}
+                    newColumn={template}
+                    setNewColumn={(newColumn) => {
+                        // setCurrentTemplate(prev => [...prev, newColumn])
+
+                        // setNewHeader(prev => {
+                        //     const newColumns = [...prev];
+                        //     const position = newColumns.length - 1; // penúltima posição
+                        //     newColumns.splice(position, 0, newColumn?.title);
+                        //     return newColumns;
+                        // })
+
+                        // setColumns(prev => {
+                        //     const newColumns = [...prev];
+                        //     const position = newColumns.length - 1; // penúltima posição
+                        //     newColumns.splice(position, 0, newColumn);
+                        //     return newColumns;
+                        // });
+                    }
+                } />, myComponent);
+        } else {
+            ReactDOM.render(<Cell label={newHeader[column]} column={col} template={template} />, myComponent);
+        }
+
+        return thNode.appendChild(myComponent);
+    }
+
     useEffect(() => {
         handleMountColumns();
-    }, [dataProvider, hotRef, template]);
+        if (hotRef.current) {
+            hotRef.current?.updateSettings({columns: })
+        }
+    }, [dataProvider, columns, newHeader]);
 
     return (
         <>
             <HotTable
                 ref={hotRef}
                 height="100%"
-                colHeaders={colHeaders}
+                colHeaders={newHeader}
                 columns={cols}
                 data={dataProvider}
-                // width="120%"
-                stretchH="all"
+                width="100%"
+                // stretchH="all"
                 manualColumnResize={true}
                 manualRowResize={true}
-                viewportRowRenderingOffset={9999}
+                // viewportRowRenderingOffset={9999}
                 viewportColumnRenderingOffset={9999}
-                renderAllRows={false}
+                // renderAllRows={false}
+                rowHeaders
+                autoRowSize
+                // allowInsertColumn
                 contextMenu={{
                     items: {
                         'remove_row': {
@@ -131,121 +182,37 @@ const CustomTable: React.FC<CustomTableProps> = ({
                     },
                     className: "menuContext"
                 }}
-                // colWidths="197px"
                 rowHeights="52px"
                 licenseKey="non-commercial-and-evaluation"
+                beforeChange={(changes: Array<CellChange | null>, source: ChangeSource) => {
+                    const currentCellValue = changes[0][2];
+                    const newValue = changes[0][3];
+                    const row = changes[0][0];
+                    const col = cols.findIndex((col) => col?.data === changes[0][1]);
+                    const columnType = columns[col]?.type;
+
+                    if (columnType === 'text' && newValue.length > 100) {
+                        toast.warn("The text field cannot be longer than 100 characters");
+                        return false; // Prevent the change and keep the cell in the editing state
+                    }
+                    if (columnType === 'paragraph' && newValue.length > 255) {
+                        toast.warn("O campo parágrafo deve conter até 200 caractéres");
+                        return false; // Prevent the change and keep the cell in the editing state
+                    }
+                    return true;
+                }}
                 afterChange={(changes, source) => {
                     if (changes?.length && (changes[0][2] !== changes[0][3])) {
                         handleSave(dataProvider[changes[0][0]]);
                     }
                 }}
-                // selectionMode="single"
                 afterRenderer={(TD, row, col, prop, value, cellProperties) => {
-                    if (col+1 === colHeaders.length) { // Verifica se é a coluna 12
-                      TD.style.display = 'none'; // Esconde a célula
+                    if (col+1 === colHeaders.length) {
+                      TD.style.display = 'none';
                     }
-
-                    // if (TD.dataset.key) {
-                    //     console.log("entrei")
-                    //     updateComponent(TD, (
-                    //         <TableField
-                    //             value={value}
-                    //             type={columns[col]?.type}
-                    //             options={columns[col]?.options}
-                    //             handleGetNewValue={(e: CellValue, row: number, column: number) => {
-                    //                 const cellProperties = hotRef.current?.getCellMeta(row, column);
-                    //                 const type = cellProperties?.type;
-                    //                 const oldValue = cellProperties?.originalValue;
-                    //                 const newValue = type === "numeric" ? parseFloat(e as string) : e;
-
-                    //                 if (newValue !== oldValue) {
-                    //                     hotRef.current?.setDataAtCell(row, column, newValue);
-                    //                 }
-                    //             }}
-                    //         />
-                    //     ));
-                    // }
                 }}
-                afterGetColHeader={(column: number, TH: HTMLTableHeaderCellElement, headerLevel: number) => {
-                    if (TH.querySelector(".customHeader")) {
-                        return ;
-                    }
-
-                    const test = TH.querySelector(".relative")
-                    test.style.display = "none";
-                    const thNode = ReactDOM.findDOMNode(TH);
-                    const myComponent = document.createElement('div');
-                    myComponent.className = "customHeader"
-
-                    const col = template?.fields.fields.find((item) => {
-                        if (item.id === columns[column]?.data) {
-                            return item
-                        }
-                    });
-
-                    if (colHeaders[column] === " ") {
-                        ReactDOM.render(
-                            <NewColumn template={template} />, myComponent);
-                    } else {
-                        ReactDOM.render(<Cell label={colHeaders[column]} column={col} template={template} />, myComponent);
-                    }
-
-                    thNode.appendChild(myComponent);
-                    // setIsOpen(!isOpen)
-                    
-                    // console.log(document.querySelector(".ht__highlight"))
-                    // const test = document.querySelector(".ht__highlight");
-                    // if (TH.querySelector(".componentCustom")) {
-                    //     return;
-                    // }
-
-                    // const svg = document.createElement("img")
-                    // svg.src = TextAltIcon;
-
-                    // const eyeIcon = document.createElement("img");
-                    // eyeIcon.src = EyeIcon;
-
-                    // const chevronIcon = document.createElement("img");
-                    // chevronIcon.src = ChevronDownIcon;
-
-                    // const content = document.createElement("div")
-                    // content.className = "componentCustom";
-
-                    // const infos = document.createElement("div") as HTMLElement;
-                    // infos.className = "infos";
-
-                    // const span: HTMLElement = TH.querySelector(".colHeader") as HTMLElement;
-                    // const label: HTMLElement = document.createElement("label") as HTMLElement;
-                    // label.innerText = span.innerText.charAt(0).toUpperCase() + span.innerText.slice(1);
-
-                    // infos.append(svg);
-                    // infos.append(label);
-
-                    // const secondContent = document.createElement("span");
-                    // secondContent.className = "options";
-                    // secondContent.append(eyeIcon, chevronIcon);
-                    // secondContent.onclick = (e) => {
-                    //     console.log(e)
-                    //     setIsOpen(!isOpen)
-                    // };
-
-                    // content.append(infos);
-                    // content.append(secondContent);
-
-                    // const container = TH.querySelector(".relative");
-                    // container.replaceWith(content);
-                    // TH.appendChild(content);
-                }}
-                beforeOnCellMouseDown={(events, coords, element) => {
-                   
-                    // if (element.getElementsByTagName("div")) {
-                    //     element.className = "noChange"
-                    // }
-                    // console.log(events, coords, element)
-                }}
-                afterOnCellMouseDown={(event, coords, TD) => {
-                    // console.log(coords.col)
-                }}
+                afterGetColHeader={afterGetColHeaders}
+                hiddenColumns
             /> 
         </>
     )

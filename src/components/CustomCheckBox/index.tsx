@@ -29,7 +29,7 @@ export const CustomCheckBox = ({options, defaultCheckedList, handleGetNewValue}:
                 <Checkbox
                   key={option}
                   value={option}
-                  
+                  indeterminate
                 >
                   <label
                     className="itemValue"

@@ -34,22 +34,7 @@ export const Container = styled.div`
       margin-top: 8px;
     }
 
-    ::-webkit-scrollbar {
-      width: 8px; /* largura da barra de rolagem */
-    }
-
-    ::-webkit-scrollbar-track {
-      background-color: unset; /* cor de fundo da pista da barra de rolagem */
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background-color: #CCCCCC; /* cor do botão da barra de rolagem */
-      border-radius: 4px; /* raio da borda do botão da barra de rolagem */
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background-color: #3818D9; /* cor do botão da barra de rolagem quando hover */
-    }
+    
   }
 `;
 
@@ -89,6 +74,30 @@ export const BodyContent = styled.div`
   .encapsulator {
     overflow: auto;
     max-height: 630px;
+
+    ::-webkit-scrollbar {
+      width: 8px; /* largura da barra de rolagem */
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: unset;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #CCCCCC; /* cor do botão da barra de rolagem */
+      border-radius: 4px; /* raio da borda do botão da barra de rolagem */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #3818D9; /* cor do botão da barra de rolagem quando hover */
+    }
+
+    @media screen
+    and (min-device-width: 1200px)
+    and (max-device-width: 1600px)
+    and (-webkit-min-device-pixel-ratio: 1) {
+      max-height: 440px;
+    }
   }
 `;
 

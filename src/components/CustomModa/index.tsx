@@ -13,6 +13,7 @@ import {ReactComponent as PlusIcon} from "../../assets/plus-small.svg";
 
 
 import { templateRequests } from "../../services/apis/requests/template";
+import { productContext } from "../../context/products";
 
 interface PropsModal {
   isOpen: boolean;
@@ -24,12 +25,15 @@ interface PropsModal {
 
 export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, onUpdate}: PropsModal) => {
   const [title, setTitle] = useState<string>(data?.title ?? '');
+  const [id, setId] = useState<string>('');
   const [type, setType] = useState<string>(data?.type);
   const [required, setRequired] = useState<boolean>(data?.required ?? false);
   const [isUpdate, setIsUpdate] = useState<boolean>(data?.id);
-  const [draggerOptions, setDraggerOptions] = useState<any[]>(data.options ?? ['']);
+  const [draggerOptions, setDraggerOptions] = useState<any[]>(data?.options ?? ['']);
   const [dragg, setDragg] = useState<any[]>();
   const formRef = useRef<HTMLFormElement>(null);
+
+  const {headerTable, setHeaderTable} = useContext(productContext);
 
   const options = [
     {
@@ -82,15 +86,16 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
     
   }
 
-  const MULTI_SELECT = ["checked", "radio", "list"]
+  const MULTI_SELECT = ["checked", "radio", "list"];
 
   const handleUpdateTemplate = async (): Promise<any> => {
-    console.log({draggerOptions})
-    let templateUpdated = []
+    let templateUpdated = [];;
+    let newField;
     if (isUpdate) {
       templateUpdated = template.fields.fields.map((item) => {
           if (item.id === data.id) {
               data.options = draggerOptions;
+              data.type = type;
               item = data;
               return item;
           }
@@ -99,7 +104,7 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
       });
     } else {
       templateUpdated.push(...template.fields.fields);
-      templateUpdated.push({
+      newField = {
         id: Math.floor(100000 + Math.random() * 900000).toString(),
         type,
         title,
@@ -108,11 +113,14 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
         is_public: true,
         help_text: "This fiedl will help you to make a new product register",
         description: "Completly random description"
-      });
+      };
+      templateUpdated.push(newField);
     };
 
     try {
       await templateRequests.update(template?.id, { fields: templateUpdated });
+      setId(newField?.id)
+      // setHeaderTable((prev) => [...prev, {data: newField?.id, type,  className: 'htLeft htMiddle',  options: draggerOptions}])
       toast.success("Template atualizado com sucesso");
     } catch (error) {
       console.error(error);
@@ -134,7 +142,15 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                 return newState;
               });
             }}
-            name={index.toString()} 
+            name={index.toString()}
+            onPressEnter={() => {
+              if (draggerOptions.length === 12) {
+                toast.warn("Este campo não pode conter mais que 12 opções")
+                return;
+              }
+              setDraggerOptions(prevState => [...prevState, ''])
+            }}
+            autoFocus={index === draggerOptions.length - 1}
           />
           <IconContent onClick={() => {
             if (draggerOptions.length === 1) {
@@ -201,7 +217,7 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                     />
                   </Form.Item>
                   {
-                    !MULTI_SELECT.includes(data.type) ? 
+                    !MULTI_SELECT.includes(data?.type) ? 
                       <Form.Item
                         label="Escolha o tipo de valor"
                         name="type"
@@ -215,6 +231,7 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                           value={type}
                           removeIcon
                           onChange={(e: string) => {
+                            console.log({e})
                             setType(e);
                           }}
                           placeholder="Informe o nome do campo"
@@ -226,14 +243,13 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                   }
                 </InputContainer>
                 {
-                  MULTI_SELECT.includes(data.type) ?
+                  MULTI_SELECT.includes(data?.type) ?
                     <div className="dragger">
                       Opções
                       <Dragger
                         options={mountOptions()}
                         handleOnDrop={(info) => {
                           const { dropToGap, node, dragNode } = info;
-  
                           const newTreeData = [...draggerOptions];
                           const dragNodeIndex = newTreeData.findIndex((n: any) => n.key === dragNode.key);
                           newTreeData.splice(dragNodeIndex, 1);
@@ -243,7 +259,7 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                           const { title, key, value } = dragNode;
                           const newNode = { title, key, value };
                           newTreeData.splice(newIndex, 0, newNode);
-                          setDraggerOptions(newTreeData);
+                          // setDraggerOptions(newTreeData);
                         }}
                       />
                       <ButtonContainer2>
@@ -251,6 +267,10 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                         <AddNew
                           type="button"
                           onClick={() => {
+                            if (draggerOptions.length === 12) {
+                              toast.warn("Este campo não pode conter mais que 12 opções")
+                              return;
+                            }
                             setDraggerOptions(prevState => [...prevState, '']);
                           }}
                         >
@@ -290,9 +310,9 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                   onClick={async (e) => {
                     e.preventDefault()
                     data.title = title;
-                    await handleUpdateTemplate()
-                    onUpdate(e);
+                    await handleUpdateTemplate();
                     onClickModal();
+                    onUpdate(data);
                   }}
                 >
                   Salvar

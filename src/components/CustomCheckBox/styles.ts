@@ -2,7 +2,6 @@ import { Checkbox } from "antd";
 import styled from "styled-components";
 
 export const Container = styled.div`
-  
   .firstContent {
     display: flex;
     flex-direction: column;
@@ -14,13 +13,15 @@ export const Container = styled.div`
     flex-direction: column;
 
     label {
+      min-width: 100px;
+      
       font-family: "Satoshi Regular", sans-serif !important;
       font-style: normal;
       font-size: 14px !important;
       line-height: 150% !important;
 
       margin-bottom: 15px;
-
+      margin-left: 0;
     }
 
     .ant-checkbox-inner::after {
@@ -38,7 +39,7 @@ export const Container = styled.div`
 export const StyledCheckbox = styled(Checkbox)`
 display: flex;
 flex-direction: column;
-margin: 0;
+/* margin: 0; */
   /* estilos padrão */
   & + span {
     font-size: 16px;

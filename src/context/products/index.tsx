@@ -10,7 +10,7 @@ import {templateRequests} from "../../services/apis/requests/template";
 import {ReactComponent as TextAltIcon} from "../../assets/text-alt.svg";
 import { ICustomCellType } from "./product.context";
 
-interface IHeaderTable {
+export interface IHeaderTable {
     type: string;
     data: string;
     className: string;

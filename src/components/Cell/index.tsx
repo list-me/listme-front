@@ -34,7 +34,7 @@ export const Cell: React.FC<ICellProps> = ({label, column, template}) => {
             const left = pai?.getBoundingClientRect().left + window.scrollX
             setPosicaoPai(left);
         }
-    }, [isOpen]);
+    }, [isOpen, column]);
 
     return (
         <Content ref={ref}>

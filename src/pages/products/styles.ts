@@ -98,11 +98,18 @@ export const HeaderContent = styled.div`
 `;
 
 export const Container = styled.div`
-  height: 80vh;
-  
+  height: 80%;
+
+  @media screen
+  and (min-device-width: 1200px)
+  and (max-device-width: 1600px)
+  and (-webkit-min-device-pixel-ratio: 1) {
+    height: 72%;
+  }
+
   .htMenu.htContextMenu.handsontable {
     .current.highlight {            
-        background: red;
+        /* background: red; */
     }
   }
   
@@ -115,8 +122,29 @@ export const Container = styled.div`
      padding: 0;
    }
 
+   .wtHolder {
+    ::-webkit-scrollbar {
+      width: 8px !important;
+      height: 8px !important; /* largura da barra de rolagem */
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: unset !important;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #CCCCCC !important; /* cor do botão da barra de rolagem */
+      border-radius: 4px !important; /* raio da borda do botão da barra de rolagem */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #3818D9 !important; /* cor do botão da barra de rolagem quando hover */
+    }
+   }
+
    .htCore {
-     width: auto;
+     /* width: 100%; */
+     /* padding: 0; */
    }
 
    .ht_clone_top .handsontable {
@@ -126,8 +154,9 @@ export const Container = styled.div`
   thead {
     th {
       .customHeader {
-        width: 100%;
         height: 51px;
+        /* padding-right: 16px; */
+        background: #F1F3F5;
       }
 
       .componentCustom {
@@ -136,8 +165,7 @@ export const Container = styled.div`
         justify-content: space-between;
 
         height: 51px;
-        /* min-width: 197px; */
-        width: fit-content;
+        min-width: 197px;
 
         border-top: 1px solid #DEE2E6;
         border-right: 1px solid #DEE2E6;
@@ -150,7 +178,7 @@ export const Container = styled.div`
         color: #868E96;
         font-weight: 400;
         line-height: 150%;
-        
+
         .infos {
           margin-left: 16px;
           img {
@@ -172,33 +200,54 @@ export const Container = styled.div`
         }
       }
     }
-      
+  }
+
+  thead tr th {
+    background-color: ${({ theme }) => theme.colors.grayscale.ninth};
+  }
+
+  tbody tr th {
+    background-color: ${({ theme }) => theme.colors.grayscale.ninth};
+    font-family: ${({ theme }) => theme.fonts.family.default} !important;
+    font-size: ${({ theme }) => theme.fonts.sizes.small} !important;
+    color: #495057 !important;
+    font-weight: 400;
+    line-height: 150%;
+    
+    display: flex;
+    align-items: center;
+    padding-left: 16px;
+    padding-right: 16px;
   }
   
   tbody {
-    tr {
-      td {
-        min-width: 193px;
-        /* border-right: 1px solid #DEE2E6 !important;
-        border-left: 1px solid #DEE2E6 !important;
-        border-top: none;
-        border-bottom: .5px solid #DEE2E6 !important; */
+    margin: 0 !important;
+    td {
+      min-width: 193px;
+      width: fit-content;
+      max-width: 500px;
 
-        font-family: ${({ theme }) => theme.fonts.family.default};
-        font-size: ${({ theme }) => theme.fonts.sizes.small};
-        color: #495057;
-        font-weight: 400;
-        line-height: 150%;
-        
-        align-self: center;
-        padding-left: 16px;
-        padding-right: 16px;
-      }
+      word-wrap: normal;
+
+      font-family: ${({ theme }) => theme.fonts.family.default};
+      font-size: ${({ theme }) => theme.fonts.sizes.small};
+      color: #495057;
+      font-weight: 400;
+      line-height: 150%;
+      
+      align-self: center;
+      padding-left: 16px;
+      padding-right: 16px;
     }
-  }
+    }
 
-  #handsontable-container {
-    width: 100% !important; /* ou outro valor adequado */
+  /* #handsontable-container {
+    width: 100% !important;
+    background: red;
+  } */
+
+  .ht_master .handsontable {
+    background: brown;
   }
 `;
 

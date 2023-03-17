@@ -36,7 +36,7 @@ export const Products = () => {
 
     const {
         products,
-        headerTable,
+        // headerTable,
         setHeaderTable,
         handleRedirectAndGetProducts,
         handleAdd,
@@ -148,7 +148,7 @@ export const Products = () => {
                         ? <Loading />
                         : <Table
                             dataProvider={products}
-                            columns={headerTable}
+                            // columns={headerTable}
                             colHeaders={colHeaders}
                         />
                 }

@@ -11,9 +11,11 @@ import { PersonalModal } from "../CustomModa";
 
 interface NewColumnProps {
   template: any;
+  setNewColumn: Function;
+  newColumn: any;
 }
 
-export const NewColumn: React.FC<NewColumnProps> = ({template}) => {
+export const NewColumn: React.FC<NewColumnProps> = ({template, setNewColumn, newColumn}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [data, setData] = useState({});
@@ -56,7 +58,7 @@ export const NewColumn: React.FC<NewColumnProps> = ({template}) => {
       const left = pai?.getBoundingClientRect().left + window.scrollX
       setPosition(left);
     }
-  }, [isOpen]);
+  }, [isOpen, newColumn]);
   
   return (
     <>
@@ -67,7 +69,7 @@ export const NewColumn: React.FC<NewColumnProps> = ({template}) => {
         template={template}
         onUpdate={(e)=> window.location.reload()}
       />
-      <AddColumn ref={ref}>
+      <AddColumn ref={ref} className="testing">
         <AddColumnIcon
           ref={iconRef}
             onClick={() => setIsOpen(!isOpen)}
@@ -83,6 +85,7 @@ export const NewColumn: React.FC<NewColumnProps> = ({template}) => {
           }}
           options={options}
           left={position}
+          setIsOpen={() => setIsOpen(false)}
         /> 
       </AddColumn>
     </>

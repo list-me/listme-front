@@ -19,12 +19,10 @@ export const Dragger: React.FC<IDraggerProps> = ({options, handleOnDrop = () => 
     const { title, key } = dragNode;
     const newNode = { title, key };
     newTreeData.splice(newIndex, 0, newNode);
-    console.log(newTreeData)
     setTreeData(newTreeData);
   };
 
   useEffect(() => {
-    console.log({options})
   }, [options])
 
   return (
