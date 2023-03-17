@@ -41,7 +41,8 @@ export const Products = () => {
         handleRedirectAndGetProducts,
         handleAdd,
         colHeaders,
-        setProducts
+        setProducts,
+        template
     } = useContext(productContext);
     const navigate = useNavigate();
 
@@ -97,7 +98,7 @@ export const Products = () => {
                     <IconTemplate>
                         <FlagIcon />
                     </IconTemplate>
-                    <Title> Louças </Title>
+                    <Title> {template.name} </Title>
                     <EditIcon />
                 </LeftContent>
                 <RightContent>

@@ -148,9 +148,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
 
     useEffect(() => {
         handleMountColumns();
-        if (hotRef.current) {
-            hotRef.current?.updateSettings({columns: })
-        }
     }, [dataProvider, columns, newHeader]);
 
     return (
