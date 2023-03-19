@@ -16,14 +16,8 @@ import { toast } from "react-toastify";
 import { CellChange, ChangeSource } from "handsontable/common";
 
 registerAllModules();
-interface CellType {
-    row: number;
-    col: number;
-}
-const CustomTable: React.FC<CustomTableProps> = ({
-    dataProvider,
-    colHeaders
-}) =>  {
+
+const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => {
     const hotRef = useRef<Handsontable | null>(null);
     const {
         handleSave,
@@ -37,7 +31,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
     const [columns, setColumns] = useState(headerTable);
     const [newHeader, setNewHeader] = useState(colHeaders);
     const [currentTemplate, setCurrentTemplate] = useState(template.fields.fields);
-    const [currentCell, setCurrentCell] = useState<CellType|undefined>(undefined);
 
     const customRenderer = (
         td: HTMLTableCellElement,

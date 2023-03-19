@@ -262,6 +262,22 @@ export const Filters = styled.div`
   border: 1px solid #E9ECEF;
 `;
 
+export const Line = styled.div`
+  display: flex;
+  height: 21px;
+
+  font-family: ${({ theme }) => theme.fonts.family.default};
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
+  font-style: normal;
+  font-weight: 400;
+  line-height: 14px;
+  text-align: center;
+
+  label {
+    margin-left: 8px;
+  }
+`;
+
 export const Item = styled.span`
   font-family: ${({ theme }) => theme.fonts.family.bold};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
@@ -276,6 +292,9 @@ export const Item = styled.span`
 
   svg:last-child {
     margin-left: 8px;
+    &:hover {
+      cursor: pointer;
+    }
   }
   
   display: flex;

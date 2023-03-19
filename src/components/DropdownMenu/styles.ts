@@ -28,7 +28,7 @@ export const SuspenseMenu = styled.div<{left?: number|null}>`
 
   display: flex;
   flex-direction: column;
-  
+
   /* margin-top: 32rem; */
   padding: 16px;
 

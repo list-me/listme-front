@@ -16,7 +16,6 @@ interface DataType {
 
 interface CustomTableProps {
     dataProvider?: any[],
-    columns?: any,
     bordered?: boolean,
     rowClassName?: () => string;
     components?: {};

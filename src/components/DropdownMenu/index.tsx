@@ -1,9 +1,7 @@
 import { Divider } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {DropdownMenuProps} from "./DropdownMenu.d";
-import { Container, SuspenseMenu, Item } from "./styles";
-import {ReactComponent as PencilIcon} from "../../assets/pencei-icon.svg";
-import {ReactComponent as CopyIcon} from "../../assets/copy-icon.svg";
+import { SuspenseMenu, Item } from "./styles";
 
 export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   changeOpen = () => {},
@@ -15,13 +13,11 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   setIsOpen = () => {}
 }) => {
   const modalRef = useRef(null);
-  const [leftItem, setLeftItem] = useState<number|null>(null);
-  const onClose = (): void => changeOpen(); 
 
-  const variable = []
+  const variable = [];
 
   useEffect(() => {
-    const handleScroll = (e) => {
+    const handleScroll = () => {
       setIsOpen()
     }
 
