@@ -57,4 +57,18 @@ export const templateRequests = {
 
         return response.data[0];
     },
+    customView: async (id: string, fields: any): Promise<any> => {
+        const token = window.localStorage.getItem(STORAGE.TOKEN);
+        const response = await api.post(
+            `/template/${id}/custom`,
+            fields,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
+
+        return response.data[0];
+    },
 }

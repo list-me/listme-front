@@ -60,7 +60,7 @@ export const Temp: React.FC<IProps> = ({options}) => {
           return (
               <Item
                   key={item.id}
-                  onClick={() => console.log("ok")}
+                  // onClick={() => console.log("ok")}
               >
                   {item.icon}
                   {item.name}

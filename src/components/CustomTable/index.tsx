@@ -25,7 +25,9 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         handleAdd,
         template,
         COMPONENT_CELL_PER_TYPE,
-        headerTable
+        headerTable,
+        hidden,
+        handleResize
     } = useContext(productContext);
     const [cols, setCols] = useState<ColumnTypes>();
     const [columns, setColumns] = useState(headerTable);
@@ -44,10 +46,14 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         const columnsCustom: any[] = [];
         columns.sort().forEach((column) => {
             if (Object.keys(COMPONENT_CELL_PER_TYPE).includes(column.type?.toString().toUpperCase())) {
+                console.log({column})
                 columnsCustom.push({
                     data: column.data,
                     className: column.className,
-                    // width: "fit-content",
+                    // order: column.order,
+                    // hidden: column.hidden,
+                    width: column.width,
+                    // frozen: column.frozen,
                     readOnly: true,
                     renderer: (
                         instance: Handsontable,
@@ -83,9 +89,16 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
             columnsCustom.push({
                 data: column.data,
                 className: column.className,
+                // order: column.order,
+                // hidden: column.hidden,
+                width: column.width,
+                // frozen: column.frozen,
             });
         })
 
+        // const toHidden = columnsCustom.filter((item) => item.hidden).map((element) => element.order);
+        // setHidden(columnsCustom.filter((item) => item.hidden).map((element) => element.order))
+        
         setCols(columnsCustom);
     };
 
@@ -140,6 +153,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
     }
 
     useEffect(() => {
+        console.log({columns})
         handleMountColumns();
     }, [dataProvider, columns, newHeader]);
 
@@ -157,7 +171,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                 manualRowResize={true}
                 // viewportRowRenderingOffset={9999}
                 viewportColumnRenderingOffset={9999}
-                // renderAllRows={false}
+                renderAllRows={false}
                 rowHeaders
                 autoRowSize
                 // allowInsertColumn
@@ -202,7 +216,13 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                     }
                 }}
                 afterGetColHeader={afterGetColHeaders}
-                hiddenColumns
+                hiddenColumns={{
+                    columns: hidden,
+                    indicators: true
+                }}
+                afterColumnResize={(newSize: number, column: number, isDoubleClick: boolean) => {
+                    handleResize(column, newSize, template)
+                }}
             /> 
         </>
     )

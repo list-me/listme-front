@@ -231,7 +231,6 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                           value={type}
                           removeIcon
                           onChange={(e: string) => {
-                            console.log({e})
                             setType(e);
                           }}
                           placeholder="Informe o nome do campo"

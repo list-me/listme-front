@@ -10,11 +10,29 @@ import {templateRequests} from "../../services/apis/requests/template";
 import {ReactComponent as TextAltIcon} from "../../assets/text-alt.svg";
 import { ICustomCellType } from "./product.context";
 
+export interface ICustomField {
+    hidden?: boolean;
+    width?: string;
+    frozen?: boolean;
+    order?: string;
+}
+
+export interface ICustom {
+    show?: boolean;
+    width?: string;
+    frozen?: boolean;
+    order?: string;
+}
+
 export interface IHeaderTable {
     type: string;
     data: string;
     className: string;
     options: string[];
+    hidden?: boolean;
+    width?: string;
+    frozen?: boolean;
+    order?: string;
 }
 
 interface ITypeProductContext {
@@ -32,6 +50,10 @@ interface ITypeProductContext {
     COMPONENT_CELL_PER_TYPE: ICustomCellType;
     handleUpdateTemplate: Function;
     template: any;
+    hidden: number[];
+    handleHidden: Function;
+    setHidden: Function;
+    handleResize: Function;
 }
 
 interface IField {
@@ -44,6 +66,10 @@ interface IField {
     help_text: string;
     is_public: string;
     description: string;
+    order?: string;
+    hidden?: boolean;
+    width?: string;
+    frozen?: boolean;
 }
 
 const NOT_EDITABLE_CELLS = ['created_at', 'updated_at'];
@@ -62,7 +88,11 @@ export const productContext = createContext<ITypeProductContext>({
     handleDelete: () => {},
     COMPONENT_CELL_PER_TYPE: {},
     handleUpdateTemplate: () => {},
-    template: {}
+    template: {},
+    hidden: [],
+    handleHidden: () => {},
+    setHidden: () => {},
+    handleResize: () => {}
 });
 
 export const ProductContextProvider = ({children}: any) => {
@@ -71,7 +101,8 @@ export const ProductContextProvider = ({children}: any) => {
     const [headerTable, setHeaderTable] = useState<IHeaderTable[]>([]);
     const [colHeaders, setColHeaders] = useState<any[]>([]);
     const [editing, setEditing] = useState<boolean>(false);
-    const [isVisible] = useState<boolean>(true);
+    const [hidden, setHidden] = useState<any[]>([]);
+    const [customFields, setCustomFields] = useState([]);
 
     const COMPONENT_CELL_PER_TYPE: ICustomCellType = {
         RADIO: "radio",
@@ -203,13 +234,17 @@ export const ProductContextProvider = ({children}: any) => {
                 setTemplate(response)
                 const fields = response?.fields;
                 let headersCell: any[] = [];
-                var headers = fields?.fields?.map((item: IField) => {
+                var headers = fields?.fields?.map((item: IField, index) => {
                     headersCell.push(item.title);
                     return {
                         data: item.id,
                         className: "htLeft htMiddle",
                         type: item.type,
-                        options: item.options
+                        options: item.options,
+                        order: item.order ? item.order : index.toString(),
+                        hidden: item.hidden ? item.hidden : false,
+                        width: item.width ? item.width : "300px",
+                        frozen: item.frozen ? item.frozen : false
                     }
                 });
 
@@ -217,12 +252,122 @@ export const ProductContextProvider = ({children}: any) => {
                 headers = [...headers,  {}];
                 setColHeaders(headersCell)
                 setHeaderTable(headers);
+                setHidden(headers.filter((item) => item.hidden).map((element) => Number(element.order)))
+                setCustomFields(headers.filter((element) => {
+                    if (Object.keys(element).length) {
+                        return element
+                    }
+                }).map((item) => {
+                    const {order, hidden, width, frozen, data} = item;
+                    return {order, hidden, width, frozen, id: data}
+                }))
                 // headers = [];
         }).catch((error) => {
             console.error(error);
             toast.error("Não foi possível carregar o template, tente novamente!")
         });
     }
+
+    const handleResize = (col: number, newSize: number, template: any) => {
+        const custom = buildCustomFields(template.fields.fields, {width: `${newSize.toString()}`}, col);
+        templateRequests.customView(template.id, {fields: custom})
+            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
+    }
+
+    const handleHidden = (col: number, template: any, able: boolean) => {
+        setHidden((prev) => {
+            const content = [...prev]
+            let newValue;
+            if (content.includes(col)) {
+               newValue = content.filter((element) => element != col)
+            } else {
+                newValue = [...content, col]
+            }
+            return newValue
+        });
+
+        const custom = buildCustomFields(template?.fields?.fields, {show: able}, col);
+        // setCustomFields(prev => [...prev, custom])
+        // console.log({customFields})
+        const test = [...customFields]
+        console.log({test, col, custom})
+        setCustomFields(custom)
+        templateRequests.customView(template.id, {fields: custom})
+            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"))
+    }
+
+    const buildCustomFields = (fields: any, {order, show, width, frozen}: ICustom, col: number) => {
+        // customFields.map((field) => {
+        //     // console.log({field, col})
+        //     if (col == field?.order) {
+        //         const newField = {
+        //             id: field?.id,
+        //             order: order ? order.toString() : field.order,
+        //             hidden: hidden !== undefined ? show : field?.hidden,
+        //             width: width ? width : field?.width,
+        //             frozen: frozen ? frozen : false,
+        //         }
+
+        const testing = [...customFields]
+
+        // return testing.map((prev) => {
+            return testing?.map(custom => {
+                if (custom?.order == col) {
+                    return {
+                        id: custom?.id,
+                        order: order ? order.toString() : custom?.order,
+                        hidden: show !== undefined ? show : custom?.hidden,
+                        width: width ? width : custom?.width,
+                        frozen: frozen ? frozen : false,
+                    };
+                }
+                console.log({custom})
+                return custom;
+            });
+            // return updatedField;
+        // })
+            // }
+
+            // const item = customFields.find((element) => element?.order == col)
+            // console.log({item, customFields})
+            // if (item) {
+            //     return item;
+            // }
+
+            // const custom = {
+            //     id: field?.id,
+            //     order: field?.order,
+            //     hidden: field?.hidden,
+            //     width: field?.width,
+            //     frozen: field?.frozen,
+            // };
+
+            // return custom
+
+            // setCustomFields(prev => [...prev, custom])
+            // customFields.find((custom) => console.log({custom}))
+            // const test = customFields.find((custom) => custom?.order === col)
+            // console.log({test})
+            // return customFields.find((custom) => custom.order == col)
+        // })
+
+        // const custom = customs.find((element) => {
+        //     if (col === element?.order) {
+        //         return {
+        //             id: element?.id,
+        //             order: order ? order : element?.order,
+        //             hidden: hidden !== undefined ? hidden : element?.hidden,
+        //             width: width ? width : element?.width,
+        //             frozen: frozen ? frozen : false,
+        //         }
+        //     }
+        // })
+
+    }
+
+    useEffect(() => {
+        console.log({customFields})
+    }, [customFields])
 
     const value: ITypeProductContext = {
         products,
@@ -238,7 +383,11 @@ export const ProductContextProvider = ({children}: any) => {
         handleDelete,
         COMPONENT_CELL_PER_TYPE,
         handleUpdateTemplate,
-        template
+        template,
+        hidden,
+        handleHidden,
+        setHidden,
+        handleResize
     }
 
     return <productContext.Provider value={value}> {children} </productContext.Provider>

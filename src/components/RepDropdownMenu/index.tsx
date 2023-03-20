@@ -1,22 +1,22 @@
 import { Divider, Input, Switch } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { IDropdownMenuProps } from "./RepDropdownMenu.d";
 import { Container, Line } from "./styles";
 import {ReactComponent as SearchIcon} from "../../assets/search-gray.svg";
+import { productContext } from "../../context/products";
 
 const DropdownMenu: React.FC<IDropdownMenuProps> = ({left, iconRef, handleOpen, isOpen, colHeaders}) => {
   const modalRef = useRef(null);
   const [inputValue, setInputValue] = useState('');
   const [filteredItems, setFilteredItems] = useState<any[]>([]);
 
+  const {handleHidden, hidden, template} = useContext(productContext);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   }
 
   useEffect(() => {
-    console.log({colHeaders})
-
     setFilteredItems(colHeaders.filter(item => item.toLowerCase().includes(inputValue.toLowerCase())));
 
     const handleScroll = () => {
@@ -51,10 +51,12 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({left, iconRef, handleOpen, 
             <Input bordered={false} placeholder="Buscar campos" addonAfter={<SearchIcon />} onChange={handleInputChange}/>
             <Divider style={{marginTop: "16px", marginBottom:"16px"}} />
             {
-              filteredItems.map((item) => {
+              filteredItems.map((item, index) => {
                 return (
                 <Line>
-                  <Switch size="small" />
+                  <Switch size="small" onChange={(e) => {
+                    handleHidden(colHeaders.indexOf(item), template, e)
+                  }} checked={hidden.includes(colHeaders.indexOf(item))}/>
                   <label>{item}</label>
                 </Line>
               )})
