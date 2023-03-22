@@ -219,15 +219,6 @@ export const ProductContextProvider = ({children}: any) => {
             return;
         }
 
-        // let newLine;
-        // Object.keys(products[0]).forEach((item: any) => {
-        //     if (!["created_at", "id"].includes(item)) {
-        //         newLine = {[item]: "", ...newLine};
-        //     }
-        // })
-
-        // console.log({newLine})
-
         setProducts((old) => [{}, ...old]);
     }
 
@@ -281,22 +272,27 @@ export const ProductContextProvider = ({children}: any) => {
         return custom;
     }
 
-    const handleHidden = (col: number, template: any, able: boolean) => {
-        setHidden((prev) => {
-            const content = [...prev]
-            let newValue;
-            if (content.includes(col)) {
-               newValue = content.filter((element) => element != col)
-            } else {
-                newValue = [...content, col]
-            }
-            return newValue
-        });
+    const handleHidden = (col: number, template: any, able: boolean): number[] => {
+        const content = [...hidden]
+        let newValue;
+        if (content.includes(col)) {
+            newValue = content.filter((element) => element != col)
+        } else {
+            newValue = [...content, col]
+        };
+
+        setHidden(newValue);
 
         const custom = buildCustomFields(template?.fields?.fields, {show: able}, col);
-        setCustomFields(custom)
+        setCustomFields(custom);
+
+        // const columns = [...headerTable];
+        // columns.splice(col, 1);
+
         templateRequests.customView(template?.id, {fields: custom})
-            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"))
+            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
+
+        return newValue;
     }
 
     const buildCustomFields = (fields: any, {order, show, width, frozen}: ICustom, col: number) => {

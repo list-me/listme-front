@@ -22,7 +22,7 @@ const NewColumnMemo = React.memo(NewColumn);
 const TableFieldMemo = React.memo(TableField);
 
 const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => {
-    const hotRef = useRef<Handsontable | null>(null);
+    const hotRef = useRef<HotTable>(null);
     const {
         handleSave,
         handleDelete,
@@ -35,10 +35,10 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         handleHidden,
         handleFreeze,
     } = useContext(productContext);
-    const [cols, setCols] = useState<ColumnTypes>();
+    const [cols, setCols] = useState<any[]>([]);
     const [columns, setColumns] = useState(headerTable);
     const [frozen, setFrozen] = useState<number>(undefined);
-    const [rendered, setRendered] = useState<number[]>([]);
+    const [headers, setHeaders] = useState<string[]>(colHeaders)
     
     const customRenderer = (
         td: HTMLTableCellElement,
@@ -56,9 +56,54 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         tdNode.appendChild(myComponent);
     }
 
+    const updateHeadersBasedOnHidden = useCallback(() => {
+        const updatedHeaders = colHeaders.map((item, index) => {
+            if (hidden.includes(index)) {
+                return null;
+            }
+            return item;
+        });
+        setHeaders(updatedHeaders);
+    }, [hidden, colHeaders]);
+
     const customHidden = useCallback((col: any) => {
-        return handleHidden(Number(col?.order), template, true);
+        // handleHidden(Number(col?.order), template, true);
+
+        setHeaders(prev => {
+            const updatedHeaders = [...prev];
+            updatedHeaders[col.order] = null;
+            return updatedHeaders;
+        });
+    
+        const instance = hotRef.current!.hotInstance;
+        console.log({instance})
+        instance.render();
+        // if (instance) {
+        //     updateHeadersBasedOnHidden();
+        // }
     }, []);
+
+    const customUnhidden = useCallback((col: any) => {
+        handleHidden(Number(col?.order), template, false);
+    
+        setHeaders(prev => {
+            const updatedHeaders = [...prev];
+            updatedHeaders[col.order] = colHeaders[col.order];
+            return updatedHeaders;
+        });
+    
+        const instance = hotRef.current!?.__hotInstance;
+        console.log({instance})
+        if (instance) {
+            instance.render();
+            updateHeadersBasedOnHidden();
+        }
+    }, []);
+
+    useEffect(() => {
+        const visibleHeaders = colHeaders.filter((_, index) => !hidden.includes(index));
+        setHeaders(visibleHeaders);
+    }, [hidden, colHeaders]);
 
     const handleMountColumns = () => {
         const columnsCustom: any[] = [];
@@ -70,6 +115,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                     order: column.order,
                     width: column.width,
                     frozen: column.frozen,
+                    hidden: column.hidden,
                     readOnly: true,
                     renderer: (
                         instance: Handsontable,
@@ -108,6 +154,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                 width: (column?.order == undefined) ? '193' : column.width,
                 frozen: column.frozen,
                 order: column.order,
+                hidden: column.hidden,
                 // columnSorting: {
                 //     indicator: true,
                 //     headerAction: false,
@@ -117,7 +164,14 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
             });
 
             const toFreeze = columnsCustom.filter((item) => item?.frozen === true)
-            setFrozen(toFreeze.length)
+            setFrozen(toFreeze.length);
+
+            const testing = headers.filter((item, index) => !hidden.includes(index) ?? item);
+            console.log({testing, hidden});
+            setHeaders(testing)
+            // setHeaders(prev => {
+            //     return prev.filter((item, index) => !toFreeze.includes(index) ?? item);
+            // })
         })
         
         // const toHidden = columnsCustom.filter((item) => item.hidden).map((element) => element.order);
@@ -125,7 +179,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         setCols(columnsCustom);
     }
 
-    const afterGetColHeaders = (column: number, TH: HTMLTableHeaderCellElement, headerLevel: number) => {
+    const afterGetColHeaders = useCallback((column: number, TH: HTMLTableHeaderCellElement, headerLevel: number) => {
         if (TH.querySelector(".customHeader") && column === -1) {
             TH.replaceChildren('')
             return ;
@@ -150,7 +204,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
             }
         });
 
-        if (colHeaders[column] === " ") {
+        if (headers[column] === " ") {
             ReactDOM.render(
                 <NewColumnMemo 
                     template={template}
@@ -176,10 +230,17 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         } else {
             ReactDOM.render(
             <CellMemo
-                label={colHeaders[column]}
+                label={headers[column]}
                 column={col}
                 template={template}
-                handleHidden={() => customHidden(col)}
+                handleHidden={(e, second) => {
+                    console.log({e, second})
+                    if (second) {
+                        customHidden(col)
+                    } else {
+                        customUnhidden(col)
+                    }
+                }}
                 handleFrozen={(e, operation) => {
                     if (operation == "unfreeze") {
                         setFrozen(undefined);
@@ -240,10 +301,17 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         }
         
         thNode.appendChild(myComponent);
-    }
+    }, [headers]);
+
+    const updateHeaders = () => {
+        const instance = hotRef.current!?.__hotInstance;
+        if (instance) {
+            instance.render();
+        }
+    };
 
     useEffect(() => {
-        handleMountColumns()
+        handleMountColumns();
     }, []);
 
     return (
@@ -251,7 +319,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
             <HotTable
                 ref={hotRef}
                 height="100%"
-                colHeaders={colHeaders}
+                colHeaders={headers}
                 columns={cols}
                 data={dataProvider}
                 width="100%"
@@ -309,15 +377,16 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                     }
                 }}
                 afterRenderer={(TD, row, col, prop, value, cellProperties) => {
-                    if (col+1 === colHeaders.length) {
+                    if (col+1 === headers.length) {
                       TD.style.display = 'none';
                     }
                 }}
                 fixedColumnsLeft={frozen}
                 afterGetColHeader={afterGetColHeaders}
+                // hiddenColumns
                 hiddenColumns={{
                     columns: hidden,
-                    indicators: true
+                    indicators: true,
                 }}
                 afterColumnResize={async (newSize: number, column: number, isDoubleClick: boolean) => {
                     await handleResize(column, newSize, template)

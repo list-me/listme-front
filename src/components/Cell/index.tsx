@@ -102,13 +102,13 @@ export const HeaderCell: React.FC<ICellProps> = ({
                     }}
                     isOpen={isOpen}
                     icoRef={iconRef}
-                    openModal={async (e, col) => {
-                        console.log({e})
+                    openModal={(e, col) => {
+                        // console.log({e})
                         if (e.label.includes("Ordenar")) {
                             handleSort(e, e?.operation);
                         } else if (e?.label.includes("Esconder")) {
-                            await handleHidden(e);
-                            setIsOpen(!isOpen);
+                            handleHidden(e, column?.hidden);
+                            // setIsOpen(!isOpen);
                             return;
                         } else if (e.operation === "freeze") {
                             if (!frozen) {
