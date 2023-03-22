@@ -107,22 +107,7 @@ export const Container = styled.div`
     height: 72%;
   }
 
-  .htMenu.htContextMenu.handsontable {
-    .current.highlight {            
-        /* background: red; */
-    }
-  }
-  
-  .menuContext{
-    background: red !important;
-    border-radius: 20px;
-  }
-  
-   .handsontable {
-     padding: 0;
-   }
-
-   .wtHolder {
+  .ht_master .handsontable {
     ::-webkit-scrollbar {
       width: 8px !important;
       height: 8px !important; /* largura da barra de rolagem */
@@ -140,18 +125,65 @@ export const Container = styled.div`
     ::-webkit-scrollbar-thumb:hover {
       background-color: #3818D9 !important; /* cor do botão da barra de rolagem quando hover */
     }
+  }
+
+  .htMenu.htContextMenu.handsontable {
+    .current.highlight {            
+        /* background: red; */
+    }
+  }
+  
+  .menuContext{
+    background: red !important;
+    border-radius: 20px;
+  }
+  
+   .handsontable {
+     /* padding: 0; */
+   }
+
+   .handsontable.htColumnHeaders .ht_clone_top {
+      margin-right: 0 !important;
+    }
+
+   .wtHolder {
+    margin-right: 20px;
+
+    
+/* 
+    margin: 0 !important;
+    padding: 0 !important; */
    }
 
    .htCore {
      /* width: 100%; */
      /* padding: 0; */
+
+     /* ::-webkit-scrollbar {
+        width: 8px !important;
+        height: 8px !important;
+
+        ::-webkit-scrollbar-track {
+          background-color: unset !important;
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background-color: #CCCCCC !important;
+          border-radius: 4px !important;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+          background-color: #3818D9 !important;
+        }
+      }  */
    }
 
    .ht_clone_top .handsontable {
-     position: absolute;
+     /* position: absolute; */
    }
   
   thead {
+    /* padding-right: 16px; */
     th {
       .customHeader {
         height: 51px;
@@ -165,7 +197,7 @@ export const Container = styled.div`
         justify-content: space-between;
 
         height: 51px;
-        min-width: 197px;
+        /* min-width: 197px; */
 
         border-top: 1px solid #DEE2E6;
         border-right: 1px solid #DEE2E6;
@@ -223,7 +255,7 @@ export const Container = styled.div`
   tbody {
     margin: 0 !important;
     td {
-      min-width: 193px;
+      /* min-width: 193px; */
       width: fit-content;
       max-width: 500px;
 
@@ -238,8 +270,12 @@ export const Container = styled.div`
       align-self: center;
       padding-left: 16px;
       padding-right: 16px;
+
+      div {
+        margin-top: 8px;
+      }
     }
-    }
+  }
 
   /* #handsontable-container {
     width: 100% !important;

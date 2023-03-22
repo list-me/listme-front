@@ -210,6 +210,8 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                       }}
                       value={title}
                       onChange={(e) => {
+                        e.preventDefault()
+                       
                         setTitle(e.target.value)
                       }}
                       defaultValue={title}
@@ -307,8 +309,17 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                 <Principal
                   type="button"
                   onClick={async (e) => {
+                    
+
                     e.preventDefault()
                     data.title = title;
+
+                    console.log("ok", title.length, title)
+                    if (title.length >= 20) {
+                      toast.warn("O titulo não pode conter mais de 40 caracteres");
+                      return;
+                    }
+
                     await handleUpdateTemplate();
                     onClickModal();
                     onUpdate(data);

@@ -2,7 +2,7 @@ interface ITableFieldProps {
   options?: string[];
   value: string[];
   type: string;
-  handleGetNewValue: Function;
+  handleSetNewValue?: Function;
 }
 
 export type {ITableFieldProps};

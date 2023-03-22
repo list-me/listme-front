@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const AddColumn = styled.div`
   background-color: #F1F3F5;
-  width: 100%;
+  width: 193px;
   height: 100%;
 
   display: flex;

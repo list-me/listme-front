@@ -5,6 +5,9 @@ interface ICellProps {
     // icon: ReactElement;
     column: any;
     template: any;
+    handleFrozen: Function;
+    handleSort: Function;
+    handleHidden: Function;
 }
 
 export type {ICellProps};

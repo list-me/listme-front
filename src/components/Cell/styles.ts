@@ -26,8 +26,7 @@ export const Container = styled.div`
       margin-right: 8px;
     }
   }
-  /* background: blue; */
-  min-width: 193px;
+  /* min-width: 193px; */
   /* width: 100%; */
 `;
 
@@ -53,7 +52,7 @@ export const Content = styled.div`
     padding: 16px 32px;
     gap: 10px;
 
-    width: 183px;
+    /* width: 183px; */
     height: 52px;
 
     background: #F7F5FF !important;

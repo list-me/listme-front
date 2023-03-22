@@ -1,5 +1,5 @@
 import { Divider, Input, Switch } from "antd";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { IDropdownMenuProps } from "./RepDropdownMenu.d";
 import { Container, Line } from "./styles";
 import {ReactComponent as SearchIcon} from "../../assets/search-gray.svg";
@@ -11,6 +11,10 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({left, iconRef, handleOpen, 
   const [filteredItems, setFilteredItems] = useState<any[]>([]);
 
   const {handleHidden, hidden, template} = useContext(productContext);
+
+  const customHidden = useCallback((item: any, state: boolean) => {
+    return handleHidden(colHeaders.indexOf(item), template, state)
+  }, [])
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -55,7 +59,7 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({left, iconRef, handleOpen, 
                 return (
                 <Line>
                   <Switch size="small" onChange={(e) => {
-                    handleHidden(colHeaders.indexOf(item), template, e)
+                    customHidden(item, e);
                   }} checked={hidden.includes(colHeaders.indexOf(item))}/>
                   <label>{item}</label>
                 </Line>

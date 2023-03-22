@@ -67,12 +67,13 @@ export const Container = styled.div<{type: string}>`
       cursor: pointer;
     }
   }
-
 `;
 
 export const SuspenseMenu = styled.div`
   height: auto;
   width: 236px;
+
+  max-height: 500px;
 
   border-radius: 8px;
   box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.07);

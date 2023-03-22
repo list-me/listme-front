@@ -12,6 +12,8 @@ export const Container = styled.div<DropdownMenuStyleProps>`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+
+  z-index: 999;
 `;
 
 export const SuspenseMenu = styled.div<{left?: number|null}>`

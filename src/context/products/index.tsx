@@ -54,6 +54,8 @@ interface ITypeProductContext {
     handleHidden: Function;
     setHidden: Function;
     handleResize: Function;
+    setColHeaders: Function;
+    handleFreeze: Function;
 }
 
 interface IField {
@@ -92,7 +94,9 @@ export const productContext = createContext<ITypeProductContext>({
     hidden: [],
     handleHidden: () => {},
     setHidden: () => {},
-    handleResize: () => {}
+    handleResize: () => {},
+    setColHeaders: () => {},
+    handleFreeze: () => {}
 });
 
 export const ProductContextProvider = ({children}: any) => {
@@ -270,8 +274,11 @@ export const ProductContextProvider = ({children}: any) => {
 
     const handleResize = (col: number, newSize: number, template: any) => {
         const custom = buildCustomFields(template.fields.fields, {width: `${newSize.toString()}`}, col);
+        console.log({custom})
         templateRequests.customView(template.id, {fields: custom})
             .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
+        
+        return custom;
     }
 
     const handleHidden = (col: number, template: any, able: boolean) => {
@@ -287,87 +294,76 @@ export const ProductContextProvider = ({children}: any) => {
         });
 
         const custom = buildCustomFields(template?.fields?.fields, {show: able}, col);
-        // setCustomFields(prev => [...prev, custom])
-        // console.log({customFields})
-        const test = [...customFields]
-        console.log({test, col, custom})
         setCustomFields(custom)
-        templateRequests.customView(template.id, {fields: custom})
+        templateRequests.customView(template?.id, {fields: custom})
             .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"))
     }
 
     const buildCustomFields = (fields: any, {order, show, width, frozen}: ICustom, col: number) => {
-        // customFields.map((field) => {
-        //     // console.log({field, col})
-        //     if (col == field?.order) {
-        //         const newField = {
-        //             id: field?.id,
-        //             order: order ? order.toString() : field.order,
-        //             hidden: hidden !== undefined ? show : field?.hidden,
-        //             width: width ? width : field?.width,
-        //             frozen: frozen ? frozen : false,
-        //         }
-
         const testing = [...customFields]
 
-        // return testing.map((prev) => {
-            return testing?.map(custom => {
-                if (custom?.order == col) {
-                    return {
-                        id: custom?.id,
-                        order: order ? order.toString() : custom?.order,
-                        hidden: show !== undefined ? show : custom?.hidden,
-                        width: width ? width : custom?.width,
-                        frozen: frozen ? frozen : false,
-                    };
-                }
-                console.log({custom})
-                return custom;
-            });
-            // return updatedField;
-        // })
-            // }
-
-            // const item = customFields.find((element) => element?.order == col)
-            // console.log({item, customFields})
-            // if (item) {
-            //     return item;
-            // }
-
-            // const custom = {
-            //     id: field?.id,
-            //     order: field?.order,
-            //     hidden: field?.hidden,
-            //     width: field?.width,
-            //     frozen: field?.frozen,
-            // };
-
-            // return custom
-
-            // setCustomFields(prev => [...prev, custom])
-            // customFields.find((custom) => console.log({custom}))
-            // const test = customFields.find((custom) => custom?.order === col)
-            // console.log({test})
-            // return customFields.find((custom) => custom.order == col)
-        // })
-
-        // const custom = customs.find((element) => {
-        //     if (col === element?.order) {
-        //         return {
-        //             id: element?.id,
-        //             order: order ? order : element?.order,
-        //             hidden: hidden !== undefined ? hidden : element?.hidden,
-        //             width: width ? width : element?.width,
-        //             frozen: frozen ? frozen : false,
-        //         }
-        //     }
-        // })
-
+        return testing?.map(custom => {
+            if (custom?.order == col) {
+                return {
+                    id: custom?.id,
+                    order: order ? order.toString() : custom?.order,
+                    hidden: show !== undefined ? show : custom?.hidden,
+                    width: width ? width : custom?.width,
+                    frozen: frozen ? frozen : custom?.frozen,
+                };
+            }
+            return custom;
+        });
     }
 
-    useEffect(() => {
-        console.log({customFields})
-    }, [customFields])
+    const handleFreeze = (col: number, state: boolean, operation?: string) => {
+        let changeState;
+        if (operation && operation == 'unfreeze') {
+            changeState = customFields.map((customs) => {
+                return {
+                    ...customs,
+                    frozen: false,
+                }
+            });
+
+            setCustomFields(changeState);
+        } else {
+            changeState = customFields.map((customs) => {
+                if (Number(customs?.order) <= col) {
+                    return {
+                        ...customs,
+                        frozen: true,
+                    }
+                }
+
+                return {
+                    ...customs,
+                    frozen: false,
+                }
+            })
+
+            setCustomFields(customFields)
+        }
+
+        // setHeaderTable(prev => {    
+        //     return prev.map((item, index) => {
+        //         return {
+        //             ...item,
+        //             width: changeState[index]?.width,
+        //             order: changeState[index]?.order,
+        //             frozen: changeState[index]?.frozen,
+        //             hidden: changeState[index]?.hidden,
+        //         }
+        //     })
+        // })
+
+        // const custom = buildCustomFields(template.fields.fields, {frozen: state}, col);
+        console.log({changeState})
+        templateRequests.customView(template.id, {fields: changeState})
+            .catch((error) => toast.error("Ocorreu um erro ao definir o freeze da coluna"));
+        
+        return customFields;
+    }
 
     const value: ITypeProductContext = {
         products,
@@ -387,7 +383,9 @@ export const ProductContextProvider = ({children}: any) => {
         hidden,
         handleHidden,
         setHidden,
-        handleResize
+        handleResize,
+        setColHeaders,
+        handleFreeze
     }
 
     return <productContext.Provider value={value}> {children} </productContext.Provider>

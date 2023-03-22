@@ -69,10 +69,14 @@ export const NewColumn: React.FC<NewColumnProps> = ({template, setNewColumn, new
         template={template}
         onUpdate={(e)=> window.location.reload()}
       />
-      <AddColumn ref={ref} className="testing">
+      <AddColumn
+        ref={ref} 
+        className="testing"
+        onClick={() => setIsOpen(!isOpen)}
+      >
         <AddColumnIcon
           ref={iconRef}
-            onClick={() => setIsOpen(!isOpen)}
+          onClick={() => setIsOpen(!isOpen)}
         />
         <DropdownMenu
           changeOpen={() => setIsOpen(!isOpen)}

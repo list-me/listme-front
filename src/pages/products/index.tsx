@@ -62,7 +62,7 @@ export const Products = () => {
             setIsLoading(false)
             console.error(e)
         }
-    }, [])
+    }, []);
 
     const items = [
         {
@@ -98,21 +98,6 @@ export const Products = () => {
             <label>{item}</label>
         </Line>
     })
-
-    // const testing = useMemo(() => {
-    //     return items.map((item) => {
-    //         return (
-    //             <Item
-    //                 key={item.id}
-                    
-    //             >
-    //                 {item.icon}
-    //                 {item.name}
-    //                 <ChevronDownIcon ref={iconRef} onClick={handleSome} />
-    //             </Item>
-    //         )
-    //     })
-    // }, [])
 
     return (
         <Content>

@@ -10,11 +10,11 @@ import {ReactComponent as PencilIcon} from "../../assets/pencei-icon.svg";
 import { CustomRadio } from '../Radio';
 import { CustomCheckBox } from '../CustomCheckBox';
 
-const TableField: React.FC<ITableFieldProps> = ({
+export const TableField: React.FC<ITableFieldProps> = ({
   value,
   type,
   options,
-  handleGetNewValue = () => {},
+  handleSetNewValue = () => {},
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const modalRef = useRef(null);
@@ -49,7 +49,7 @@ const TableField: React.FC<ITableFieldProps> = ({
       document.removeEventListener('mousedown', handleOutsideClick);
     };
 
-  }, [onClose, modalRef, iconRef]);
+  }, [iconRef, modalRef, isOpen]);
 
   return (
     <>
@@ -64,10 +64,13 @@ const TableField: React.FC<ITableFieldProps> = ({
           })}
         </label>
         <span
-          ref={iconRef}
-          onClick={() => setIsOpen(!isOpen)}
+          // ref={iconRef}
+          // onClick={() => setIsOpen(true)}
         >
-          <ChevronDownIcon />
+          <ChevronDownIcon 
+            ref={iconRef}
+            onClick={() => setIsOpen(!isOpen)}
+          />
         </span>
       </Container>
       {
@@ -76,35 +79,35 @@ const TableField: React.FC<ITableFieldProps> = ({
               <span className='firstContent'>
                 {
                   type === "radio" ?
-                  <CustomRadio
-                    options={options}
-                    value={newValue[0]}
-                    handleGetNewValue={(item) => {
-                      setNewValue([item])
-                      handleGetNewValue(item)
-                    }}
-                  />
-                    : (type === "list" ?
+                    <CustomRadio
+                      options={options}
+                      value={newValue[0]}
+                      handleGetNewValue={(item) => {
+                        setNewValue([item])
+                        handleSetNewValue(item)
+                      }}
+                    />
+                  : (type === "list" ?
                     <Select>
                       {
                         options.map((option)=> {
                           return (
                             <Item onClick={() => {
-                              handleGetNewValue(option);
+                              handleSetNewValue(option);
                               setNewValue([option])
-                              setIsOpen(false);
+                              // setIsOpen(false);
                             }}>{option}</Item>
                           )
                         })
                       }
-                    </Select>
-                    : <CustomCheckBox
-                      options={options}
-                      defaultCheckedList={value}
-                      handleGetNewValue={(e: any) => {
-                        setNewValue(e)
-                        handleGetNewValue(e)
-                      }}
+                    </Select> :
+                    <CustomCheckBox
+                        options={options}
+                        defaultCheckedList={value}
+                        handleGetNewValue={(e: any) => {
+                          setNewValue(e)
+                          handleSetNewValue(e)
+                        }}
                     />)
                 }
                 {/* <Divider
@@ -124,4 +127,9 @@ const TableField: React.FC<ITableFieldProps> = ({
   );
 }
 
-export {TableField};
+// const areEqual = (prevProps, nextProps) => {
+//   return JSON.stringify(prevProps.value) === JSON.stringify(nextProps.value);
+// };
+
+// export const TableField = React.memo(Cell, areEqual);
+// // export {TableField};
