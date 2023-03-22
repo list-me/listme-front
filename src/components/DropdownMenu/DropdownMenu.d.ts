@@ -6,6 +6,8 @@ interface DropdownMenuProps {
   options: any[];
   left: any;
   setIsOpen?: Function;
+  col?: any;
+  template?: any;
 }
 
 interface DropdownMenuStyleProps {

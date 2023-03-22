@@ -1,5 +1,6 @@
 import {useNavigate} from "react-router-dom";
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useMemo, useRef, useState} from "react";
+import { Switch } from "antd";
 import {ReactComponent as EllipsisIcon} from "../../assets/ellipsis.svg";
 import {ReactComponent as DownloadIcon} from "../../assets/download.svg";
 import {ReactComponent as PlusIcon} from "../../assets/add.svg";
@@ -22,28 +23,35 @@ import {
     Title,
     Filters,
     Contents,
-    Item, Content
+    Item, Content, Line
 } from "./styles";
 import {ROUTES} from "../../constants/routes";
 import {Button} from "../../components/Button";
 import Table from "../../components/CustomTable";
 import {productContext} from "../../context/products";
 import {Loading} from "../../components/Loading";
-import { DropdownMenu } from "../../components/DropdownMenu";
+import DropdownMenu from "../../components/RepDropdownMenu";
+import { Temp } from "../../components/Temp";
 
 export const Products = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+
+    const handleSome = () => {
+        setIsOpen(!isOpen)
+    }
 
     const {
         products,
-        // headerTable,
         setHeaderTable,
         handleRedirectAndGetProducts,
         handleAdd,
         colHeaders,
-        setProducts
+        setProducts,
+        template
     } = useContext(productContext);
     const navigate = useNavigate();
+
 
     useEffect(() => {
         setIsLoading(true)
@@ -54,7 +62,7 @@ export const Products = () => {
             setIsLoading(false)
             console.error(e)
         }
-    }, [])
+    }, []);
 
     const items = [
         {
@@ -67,21 +75,29 @@ export const Products = () => {
             id: 2,
             name: "Ocultar campos",
             icon: <EyeOffIcon />,
-            rightIcon: true
+            rightIcon: true,
+            // onClick: () => setIsOpen(!isOpen)
         },
         {
             id: 3,
             name: "Filtrar",
             icon: <FilterIcon />,
-            rightIcon: false
+            rightIcon: false,
         },
         {
             id: 4,
             name: "Buscar",
             icon: <SearchIcon />,
-            rightIcon: false
+            rightIcon: false,
         },
     ]
+
+    const options = colHeaders.map((item) => {
+        return <Line>
+            <Switch size="small" />
+            <label>{item}</label>
+        </Line>
+    })
 
     return (
         <Content>
@@ -97,7 +113,7 @@ export const Products = () => {
                     <IconTemplate>
                         <FlagIcon />
                     </IconTemplate>
-                    <Title> Louças </Title>
+                    <Title> {template?.name} </Title>
                     <EditIcon />
                 </LeftContent>
                 <RightContent>
@@ -124,17 +140,7 @@ export const Products = () => {
                 </RightContent>
             </Header>
             <Filters>
-                <Contents>
-                    {items.map((item) => {
-                        return (
-                            <Item key={item.id}>
-                                {item.icon}
-                                {item.name}
-                                {item.rightIcon ? <ChevronDownIcon /> : <> </>}
-                            </Item>
-                        )
-                    })}
-                </Contents>
+                <Temp options={colHeaders} />
                 <Contents>
                     <Item>
                         <HelpIcon />
@@ -148,7 +154,6 @@ export const Products = () => {
                         ? <Loading />
                         : <Table
                             dataProvider={products}
-                            // columns={headerTable}
                             colHeaders={colHeaders}
                         />
                 }

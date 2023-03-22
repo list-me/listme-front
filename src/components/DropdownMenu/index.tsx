@@ -1,9 +1,8 @@
 import { Divider } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
+import { productContext } from "../../context/products";
 import {DropdownMenuProps} from "./DropdownMenu.d";
-import { Container, SuspenseMenu, Item } from "./styles";
-import {ReactComponent as PencilIcon} from "../../assets/pencei-icon.svg";
-import {ReactComponent as CopyIcon} from "../../assets/copy-icon.svg";
+import { SuspenseMenu, Item } from "./styles";
 
 export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   changeOpen = () => {},
@@ -12,16 +11,15 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   openModal = () => {},
   options,
   left,
-  setIsOpen = () => {}
+  setIsOpen = () => {},
+  col,
+  template
 }) => {
   const modalRef = useRef(null);
-  const [leftItem, setLeftItem] = useState<number|null>(null);
-  const onClose = (): void => changeOpen(); 
-
-  const variable = []
+  const variable = [];
 
   useEffect(() => {
-    const handleScroll = (e) => {
+    const handleScroll = () => {
       setIsOpen()
     }
 
@@ -56,16 +54,17 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   variable.pop()
                   return (
                     <>
-                      <Divider style={{marginTop: "20px", marginBottom:"4px"}} key={item?.label} />
+                      <Divider style={{marginTop: "20px", marginBottom:"4px"}} key={Math.random()} />
                       <Item
-                        key={item?.label}
-                        onClick={() => openModal(item)}
+                        key={Math.random()}
+                        onClick={() => {
+                          openModal(item, col)
+                        }}
                       >
                         {item?.icon}
                         {item?.label}
                       </Item>
                   </>
-                    
                   )
                 }
 
@@ -74,7 +73,9 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   <>
                     <Item
                       key={item?.label}
-                      onClick={() => openModal(item)}
+                      onClick={() => {
+                        openModal(item, col)
+                      }}
                     >
                       {item?.icon}
                       {item?.label}
