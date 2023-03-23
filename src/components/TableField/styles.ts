@@ -4,18 +4,23 @@ const RADIO_TYPE = css`
   background: #FFFFFF;
   border: 1px solid #DEE2E6;
   border-radius: 24px;
+  width: 90px !important;
 `;
 
 const CHECKED_TYPE = css`
   background: #F8F9FA;
   border-radius: 24px;
+  width: fit-content;
+  min-width: 100px;
 `;
 
 const LIST_TYPE = css`
   background: #FFFFFF;
   border: 1px solid #DEE2E6;
   border-radius: 8px;
-  width: 200px !important;
+  width: 100% !important;
+  max-width: 200px;
+  min-width: 100px;
 `;
 
 
@@ -40,6 +45,7 @@ export const Container = styled.div<{type: string}>`
 
   label {
     width: auto;
+    overflow: hidden;
     
     font-family: "Satoshi Regular", sans-serif;
     font-style: normal;
@@ -52,7 +58,7 @@ export const Container = styled.div<{type: string}>`
     align-items: center;
     justify-content: left;
     flex-wrap: nowrap;
-    margin: 4px 8px;
+    margin: 4px 6px 4px 8px;
   }
 
   span {
@@ -72,7 +78,6 @@ export const Container = styled.div<{type: string}>`
 export const SuspenseMenu = styled.div`
   height: auto;
   width: 236px;
-
   max-height: 500px;
 
   border-radius: 8px;

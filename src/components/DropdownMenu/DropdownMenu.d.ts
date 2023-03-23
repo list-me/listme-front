@@ -8,6 +8,7 @@ interface DropdownMenuProps {
   setIsOpen?: Function;
   col?: any;
   template?: any;
+  frozen?: boolean;
 }
 
 interface DropdownMenuStyleProps {

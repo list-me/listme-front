@@ -20,7 +20,8 @@ export const HeaderCell: React.FC<ICellProps> = ({
     template,
     handleFrozen = () => {},
     handleSort = () => {},
-    handleHidden = () => {}
+    handleHidden = () => {},
+    freeze,
 }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
@@ -28,56 +29,46 @@ export const HeaderCell: React.FC<ICellProps> = ({
     const iconRef = useRef(null);
     const [titleHeader, setTitleHeader] = useState<string>(label)
     const [posicaoPai, setPosicaoPai] = useState<number|null>(null);
-    const [frozen, setFrozen] = useState<boolean>(column?.frozen == true ? true : false);
-
-    const options = [
-        {
-          label: "Editar Campo",
-          icon: <PencilIcon />
-        },
-        {
-          label: "Duplicar Campo",
-          icon: <CopyIcon />
-        },
-        {
-            label: "Esconder Campo",
-            icon: <EyeOffIcon />
-        },
-        {
-            label: frozen ? "Descongelar Campo" : "Congelar Campo",
-            icon: <FrozenIcon />,
-            operation: "freeze"
-        },
-        {
-            label: "Ordenar de A a Z",
-            icon: <AscIcon />,
-            operation: "asc"
-        },
-        ,
-        {
-            label: "Ordenar de Z a A",
-            icon: <DescIcon />,
-            operation: "desc"
-        }
-    ]
+    const [options, setOptions] = useState<any[]>();
 
     useEffect(() => {
-        if ([0, 1, 2].includes(column?.order)) {
-            console.log({freeze: column})
-        }
-        
-        if (column?.frozen) {
-            setFrozen(true)
-        } else {
-            setFrozen(false)
-        }
+        const customOptions = [
+            {
+                label: "Editar Campo",
+                icon: <PencilIcon />
+            },
+            {
+                label: "Duplicar Campo",
+                icon: <CopyIcon />
+            },
+            {
+                label: "Esconder Campo",
+                icon: <EyeOffIcon />
+            },
+            {
+                label: freeze ? "Descongelar Campo" : "Congelar Campo",
+                icon: <FrozenIcon />,
+                operation: "freeze"
+            },
+            {
+                label: "Ordenar de A a Z",
+                icon: <AscIcon />,
+                operation: "asc"
+            },
+            {
+                label: "Ordenar de Z a A",
+                icon: <DescIcon />,
+                operation: "desc"
+            }
+        ];
+        setOptions([...customOptions]);
 
         const pai = ref.current;
         if (pai) {
             const left = pai?.getBoundingClientRect().left + window.scrollX
             setPosicaoPai(left);
         }
-    }, [isOpen, column]);
+    }, [isOpen, column, freeze]);
 
     return (
         <ProductContextProvider >
@@ -107,22 +98,21 @@ export const HeaderCell: React.FC<ICellProps> = ({
                         if (e.label.includes("Ordenar")) {
                             handleSort(e, e?.operation);
                         } else if (e?.label.includes("Esconder")) {
-                            handleHidden(e, column?.hidden);
-                            // setIsOpen(!isOpen);
-                            return;
+                            handleHidden(e, !column?.hidden);
                         } else if (e.operation === "freeze") {
-                            if (!frozen) {
+                            if (!freeze) {
                                 handleFrozen(col, "");
                             } else {
                                 handleFrozen(col, "unfreeze");
                             }
 
-                            const test = !frozen;
-                            setFrozen(test)
+                            const test = !freeze;
+                            // setFrozen(test)
                         } else {
                             setIsOpenModal(!isOpenModal)
-                            setIsOpen(!isOpen);
-                        }
+                        };
+
+                        setIsOpen(!isOpen);
                     }}
                     options={options}
                     left={posicaoPai}

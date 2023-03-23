@@ -108,21 +108,21 @@ export const Container = styled.div`
   }
 
   .ht_master .handsontable {
-    ::-webkit-scrollbar {
+    .handsontable ::-webkit-scrollbar {
       width: 8px !important;
       height: 8px !important; /* largura da barra de rolagem */
     }
 
-    ::-webkit-scrollbar-track {
+    .handsontable ::-webkit-scrollbar-track {
       background-color: unset !important;
     }
 
-    ::-webkit-scrollbar-thumb {
+    .handsontable ::-webkit-scrollbar-thumb {
       background-color: #CCCCCC !important; /* cor do botão da barra de rolagem */
       border-radius: 4px !important; /* raio da borda do botão da barra de rolagem */
     }
 
-    ::-webkit-scrollbar-thumb:hover {
+    .handsontable ::-webkit-scrollbar-thumb:hover {
       background-color: #3818D9 !important; /* cor do botão da barra de rolagem quando hover */
     }
   }
@@ -138,19 +138,13 @@ export const Container = styled.div`
     border-radius: 20px;
   }
   
-   .handsontable {
-     /* padding: 0; */
-   }
-
    .handsontable.htColumnHeaders .ht_clone_top {
       margin-right: 0 !important;
     }
 
    .wtHolder {
     margin-right: 20px;
-
-    
-/* 
+    /* 
     margin: 0 !important;
     padding: 0 !important; */
    }
@@ -176,7 +170,7 @@ export const Container = styled.div`
           background-color: #3818D9 !important;
         }
       }  */
-   }
+    }
 
    .ht_clone_top .handsontable {
      /* position: absolute; */
@@ -248,18 +242,21 @@ export const Container = styled.div`
     
     display: flex;
     align-items: center;
+    justify-content: center;
     padding-left: 16px;
     padding-right: 16px;
   }
   
   tbody {
     margin: 0 !important;
+
     td {
       /* min-width: 193px; */
       width: fit-content;
       max-width: 500px;
+      max-height: 51px;
 
-      word-wrap: normal;
+      white-space: pre;
 
       font-family: ${({ theme }) => theme.fonts.family.default};
       font-size: ${({ theme }) => theme.fonts.sizes.small};

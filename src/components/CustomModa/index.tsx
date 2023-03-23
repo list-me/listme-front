@@ -314,9 +314,8 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                     e.preventDefault()
                     data.title = title;
 
-                    console.log("ok", title.length, title)
-                    if (title.length >= 20) {
-                      toast.warn("O titulo não pode conter mais de 40 caracteres");
+                    if (title.length > 20) {
+                      toast.warn("O titulo não pode conter mais de 20 caracteres");
                       return;
                     }
 

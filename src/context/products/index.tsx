@@ -265,7 +265,6 @@ export const ProductContextProvider = ({children}: any) => {
 
     const handleResize = (col: number, newSize: number, template: any) => {
         const custom = buildCustomFields(template.fields.fields, {width: `${newSize.toString()}`}, col);
-        console.log({custom})
         templateRequests.customView(template.id, {fields: custom})
             .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
         
@@ -281,16 +280,19 @@ export const ProductContextProvider = ({children}: any) => {
             newValue = [...content, col]
         };
 
+        console.log({newValue})
         setHidden(newValue);
-
-        const custom = buildCustomFields(template?.fields?.fields, {show: able}, col);
-        setCustomFields(custom);
+        
+        // const custom = buildCustomFields(template?.fields?.fields, {show: able}, col);
+        // setCustomFields(custom);
 
         // const columns = [...headerTable];
         // columns.splice(col, 1);
 
-        templateRequests.customView(template?.id, {fields: custom})
-            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
+        // console.log({custom})
+
+        // templateRequests.customView(template?.id, {fields: custom})
+        //     .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
 
         return newValue;
     }
@@ -322,6 +324,8 @@ export const ProductContextProvider = ({children}: any) => {
                 }
             });
 
+            console.log({changeState})
+
             setCustomFields(changeState);
         } else {
             changeState = customFields.map((customs) => {
@@ -332,29 +336,25 @@ export const ProductContextProvider = ({children}: any) => {
                     }
                 }
 
-                return {
-                    ...customs,
-                    frozen: false,
-                }
+                return customs;
             })
 
             setCustomFields(customFields)
         }
 
-        // setHeaderTable(prev => {    
-        //     return prev.map((item, index) => {
-        //         return {
-        //             ...item,
-        //             width: changeState[index]?.width,
-        //             order: changeState[index]?.order,
-        //             frozen: changeState[index]?.frozen,
-        //             hidden: changeState[index]?.hidden,
-        //         }
-        //     })
-        // })
+        setHeaderTable(prev => {    
+            return prev.map((item, index) => {
+                return {
+                    ...item,
+                    width: changeState[index]?.width,
+                    order: changeState[index]?.order,
+                    frozen: changeState[index]?.frozen,
+                    hidden: changeState[index]?.hidden,
+                }
+            })
+        })
 
         // const custom = buildCustomFields(template.fields.fields, {frozen: state}, col);
-        console.log({changeState})
         templateRequests.customView(template.id, {fields: changeState})
             .catch((error) => toast.error("Ocorreu um erro ao definir o freeze da coluna"));
         
