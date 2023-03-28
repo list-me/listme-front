@@ -1,7 +1,7 @@
 import { Divider, Input, Switch } from "antd";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { IDropdownMenuProps } from "./RepDropdownMenu.d";
-import { Container, Line } from "./styles";
+import { Container, Line, SwitchCustom } from "./styles";
 import {ReactComponent as SearchIcon} from "../../assets/search-gray.svg";
 import { productContext } from "../../context/products";
 
@@ -9,11 +9,13 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({left, iconRef, handleOpen, 
   const modalRef = useRef(null);
   const [inputValue, setInputValue] = useState('');
   const [filteredItems, setFilteredItems] = useState<any[]>([]);
+  const [currentHidden, setCurrentHidden] = useState<any[]>([]);
 
   const {handleHidden, hidden, template} = useContext(productContext);
 
   const customHidden = useCallback((item: any, state: boolean) => {
-    return handleHidden(colHeaders.indexOf(item), template, state)
+    setCurrentHidden(prev => [...prev, Number(item?.order)])
+    return handleHidden(Number(item?.order), template, state)
   }, [])
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,7 +23,17 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({left, iconRef, handleOpen, 
   }
 
   useEffect(() => {
-    setFilteredItems(colHeaders.filter(item => item.toLowerCase().includes(inputValue.toLowerCase())));
+    setCurrentHidden(hidden);
+
+    setFilteredItems(
+      colHeaders?.filter(item => 
+        item?.title?.toLowerCase().includes(inputValue.toLowerCase())
+      ).map((element) => {
+        return {
+          title: element?.title,
+          order: element?.order
+        }}
+      ));
 
     const handleScroll = () => {
       handleOpen()
@@ -44,7 +56,6 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({left, iconRef, handleOpen, 
       document.removeEventListener('mousedown', handleOutsideClick);
       // window.removeEventListener('wheel', handleScroll);
     };
-
   }, [modalRef, isOpen, inputValue]);
 
   return (
@@ -54,17 +65,21 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({left, iconRef, handleOpen, 
           <Container left={left} ref={modalRef}>
             <Input bordered={false} placeholder="Buscar campos" addonAfter={<SearchIcon />} onChange={handleInputChange}/>
             <Divider style={{marginTop: "16px", marginBottom:"16px"}} />
-            {
-              filteredItems.map((item, index) => {
-                return (
-                <Line>
-                  <Switch size="small" onChange={(e) => {
-                    customHidden(item, e);
-                  }} checked={hidden.includes(colHeaders.indexOf(item))}/>
-                  <label>{item}</label>
-                </Line>
-              )})
-            }
+            <div className="content">
+              {
+                filteredItems.map((item) => {
+                  return (
+                  <Line>
+                    <SwitchCustom
+                      size="small"
+                      onChange={(e) => customHidden(item, e)}
+                      checked={hidden.includes(Number(item?.order))}
+                    />
+                    <label>{item?.title}</label>
+                  </Line>
+                )})
+              }
+            </div>
           </Container> :
           <></>
       }

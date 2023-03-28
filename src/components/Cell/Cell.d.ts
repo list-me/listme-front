@@ -8,6 +8,7 @@ interface ICellProps {
     handleFrozen: Function;
     handleSort: Function;
     handleHidden: Function;
+    freeze: boolean;
 }
 
 export type {ICellProps};

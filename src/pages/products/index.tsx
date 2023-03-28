@@ -48,10 +48,11 @@ export const Products = () => {
         handleAdd,
         colHeaders,
         setProducts,
-        template
+        template,
+        headerTable,
+        // filteredData
     } = useContext(productContext);
     const navigate = useNavigate();
-
 
     useEffect(() => {
         setIsLoading(true)
@@ -140,7 +141,7 @@ export const Products = () => {
                 </RightContent>
             </Header>
             <Filters>
-                <Temp options={colHeaders} />
+                <Temp options={template?.fields?.fields} />
                 <Contents>
                     <Item>
                         <HelpIcon />

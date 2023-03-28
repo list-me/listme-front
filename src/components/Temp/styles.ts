@@ -30,4 +30,8 @@ export const Item = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;

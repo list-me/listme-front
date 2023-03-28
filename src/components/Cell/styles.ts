@@ -34,7 +34,7 @@ export const Options = styled.div`
   display: flex;
     
   svg:first-child {
-    /* margin-right: 8px; */
+    margin-left: 8px;
   }
   
   &:hover {

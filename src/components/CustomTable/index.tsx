@@ -34,12 +34,15 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         handleResize,
         handleHidden,
         handleFreeze,
+        handleNewColumn
     } = useContext(productContext);
     const [cols, setCols] = useState<any[]>([]);
     const [columns, setColumns] = useState(headerTable);
-    const [frozen, setFrozen] = useState<number>(undefined);
-    const [headers, setHeaders] = useState<string[]>(colHeaders)
-    
+    const [frozen, setFrozen] = useState<number>(0);
+    const [headers, setHeaders] = useState<string[]>(colHeaders);
+    const [filteredData, setFilteredData] = useState(dataProvider);
+    const [filterText, setFilterText] = useState('');
+
     const customRenderer = (
         td: HTMLTableCellElement,
         customComponent: React.ReactElement
@@ -66,44 +69,9 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         setHeaders(updatedHeaders);
     }, [hidden, colHeaders]);
 
-    const customHidden = useCallback((col: any) => {
-        // handleHidden(Number(col?.order), template, true);
-
-        setHeaders(prev => {
-            const updatedHeaders = [...prev];
-            updatedHeaders[col.order] = null;
-            return updatedHeaders;
-        });
-    
-        const instance = hotRef.current!.hotInstance;
-        console.log({instance})
-        instance.render();
-        // if (instance) {
-        //     updateHeadersBasedOnHidden();
-        // }
+    const customHidden =  useCallback((col: any) => {
+        handleHidden(Number(col?.order), template, true);
     }, []);
-
-    const customUnhidden = useCallback((col: any) => {
-        handleHidden(Number(col?.order), template, false);
-    
-        setHeaders(prev => {
-            const updatedHeaders = [...prev];
-            updatedHeaders[col.order] = colHeaders[col.order];
-            return updatedHeaders;
-        });
-    
-        const instance = hotRef.current!?.__hotInstance;
-        console.log({instance})
-        if (instance) {
-            instance.render();
-            updateHeadersBasedOnHidden();
-        }
-    }, []);
-
-    useEffect(() => {
-        const visibleHeaders = colHeaders.filter((_, index) => !hidden.includes(index));
-        setHeaders(visibleHeaders);
-    }, [hidden, colHeaders]);
 
     const handleMountColumns = () => {
         const columnsCustom: any[] = [];
@@ -163,12 +131,9 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                 // }
             });
 
-            const toFreeze = columnsCustom.filter((item) => item?.frozen === true)
-            setFrozen(toFreeze.length);
-
-            const testing = headers.filter((item, index) => !hidden.includes(index) ?? item);
-            console.log({testing, hidden});
-            setHeaders(testing)
+            // const testing = headers.filter((item, index) => !hidden.includes(index) ?? item);
+            // console.log({testing, hidden});
+            // setHeaders(testing)
             // setHeaders(prev => {
             //     return prev.filter((item, index) => !toFreeze.includes(index) ?? item);
             // })
@@ -179,140 +144,156 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         setCols(columnsCustom);
     }
 
-    const afterGetColHeaders = useCallback((column: number, TH: HTMLTableHeaderCellElement, headerLevel: number) => {
+    const renderHeaderComponent = useCallback((column: number, TH: HTMLTableHeaderCellElement) => {
         if (TH.querySelector(".customHeader") && column === -1) {
             TH.replaceChildren('')
             return ;
-        } else if (TH.querySelector(".customHeader")) {
-            return;
         }
 
-        // const myComponent = TH.querySelector(".customHeader");
-        const thNode = ReactDOM.findDOMNode(TH);
-        const test = TH.querySelector(".relative")
-        test.style.display = "none";
-        const myComponent = document.createElement("div");
-        myComponent.className = "customHeader"
-        // const thNode = ReactDOM.findDOMNode(TH);
-        // const myComponent = document.createElement('div');
+        const existent = TH.querySelector(".customHeader");
+        if (existent) {
+            // ReactDOM.unmountComponentAtNode(existent);
+            const myComponent = document.createElement("div");
+            myComponent.className = "customHeader"
 
-        // console.log("Refeito deps de alteração", {columns})
+            const col = template?.fields?.fields.find((item) => {
+                if (item.id === columns[column]?.data) {
+                    return item
+                }
+            });
 
-        const col = columns.find((item) => {
-            if (item.data === columns[column]?.data) {
-                return item
-            }
-        });
+            if (headers[column] === " ") {
+                ReactDOM.render(
+                    <NewColumnMemo
+                        template={template}
+                        newColumn={template}
+                        setNewColumn={(newColumn) => {
+                            //  = Math.floor(100000 + Math.random() * 900000).toString();
+                            // console.log({newColumn, headerTable})
+                            // handleNewColumn(newColumn);
+                            // const newHeaders = headerTable.map((item) => item?.title);
+                            // newHeaders.push(' ');
+                            // console.log({newHeaders})
+                            // setHeaders(newHeaders)
+                            // setCurrentTemplate(prev => [...prev, newColumn])
+                            // setHeaders(prev => {
+                            //     return headerTable.map((item) => item?.title)
+                            // })
 
-        if (headers[column] === " ") {
-            ReactDOM.render(
-                <NewColumnMemo 
+                            // setNewHeader(prev => {
+                            //     const newColumns = [...prev];
+                            //     const position = newColumns.length - 1; // penúltima posição
+                            //     newColumns.splice(position, 0, newColumn?.title);
+                            //     return newColumns;
+                            // })
+
+                            // setColumns(prev => {
+                            //     const newColumns = [...prev];
+                            //     const position = newColumns.length - 1; // penúltima posição
+                            //     newColumns.splice(position, 0, newColumn);
+                            //     return newColumns;
+                            // });
+                        }
+                    } />,
+                    myComponent
+                );
+            } else {
+                ReactDOM.render(
+                <CellMemo
+                    label={headers[column]}
+                    column={col}
                     template={template}
-                    newColumn={template}
-                    setNewColumn={(newColumn) => {
-                        // setCurrentTemplate(prev => [...prev, newColumn])
-
-                        // setNewHeader(prev => {
-                        //     const newColumns = [...prev];
-                        //     const position = newColumns.length - 1; // penúltima posição
-                        //     newColumns.splice(position, 0, newColumn?.title);
-                        //     return newColumns;
-                        // })
-
-                        // setColumns(prev => {
-                        //     const newColumns = [...prev];
-                        //     const position = newColumns.length - 1; // penúltima posição
-                        //     newColumns.splice(position, 0, newColumn);
-                        //     return newColumns;
-                        // });
-                    }
-                } />, myComponent);
-        } else {
-            ReactDOM.render(
-            <CellMemo
-                label={headers[column]}
-                column={col}
-                template={template}
-                handleHidden={(e, second) => {
-                    console.log({e, second})
-                    if (second) {
-                        customHidden(col)
-                    } else {
-                        customUnhidden(col)
-                    }
-                }}
-                handleFrozen={(e, operation) => {
-                    if (operation == "unfreeze") {
-                        setFrozen(undefined);
-                        handleFreeze(Number(e), false, operation);
-
-                        setColumns(prev => {
-                            return prev.map((item) => {
-                                return {
-                                    ...item,
-                                    frozen: false
-                                }
-                            })
-                        })
-
-                        return false;
-                    } else {
-                        if (col?.order == e) {
-                            const colWidth = columns.filter((item) => {
-                                if (Number(item?.order) <= Number(e)) return item
-                            }).map((element) =>
-                                Number(element?.width.replace('px', ''))
-                            ).reduce((before, after) => before + after);
-    
-                            const tableWidth = hotRef.current!?.__hotInstance.rootElement.clientWidth
-                            if (colWidth && tableWidth && colWidth > tableWidth * 0.65) {
-                                toast.warn("A coluna selecionada excede o limite de visualização da tela")
-                            return false;
-                            }
-    
-                            setFrozen(Number(e)+1);
-                            handleFreeze(Number(e), true);
+                    handleHidden={() => handleHidden(Number(col?.order), template, true)}
+                    handleFrozen={(e, operation) => {
+                        if (operation == "unfreeze") {
+                            setFrozen(0);
+                            handleFreeze(column, false, "unfreeze");
 
                             setColumns(prev => {
                                 return prev.map((item) => {
-                                    const position = item.order as unknown as number;
-                                    if (position <= Number(col.order)) {
-                                        return {
-                                            ...item,
-                                            frozen: true,
-                                        }
+                                    return {
+                                        ...item,
+                                        frozen: false
                                     }
-                                    return item;
                                 })
                             })
 
                             return true;
-                        }
-                    }
-                }}
-                handleSort={(e, operation) => {
-                    // setData(data.sort((a, b) => {
-                    //     if (a[col?.data] == b[col?.data]) return 0;
-                    //     if (a[col?.data] < b[col?.data]) return 1
-                    //     return -1;
-                    // }))
-                }}
-            />, myComponent);
-        }
+                        } else {
+                            if (col?.order == e) {
+                                const colWidth = columns.filter((item) => {
+                                    if (Number(item?.order) <= Number(e)) return item
+                                }).map((element) =>
+                                    Number(element?.width.replace('px', ''))
+                                ).reduce((before, after) => before + after);
         
-        thNode.appendChild(myComponent);
-    }, [headers]);
+                                const tableWidth = hotRef.current!?.__hotInstance.rootElement.clientWidth
+                                if (colWidth && tableWidth && colWidth > tableWidth * 0.65) {
+                                    toast.warn("A coluna selecionada excede o limite de visualização da tela")
+                                    return false;
+                                }
+        
+                                handleFreeze(column, true);
+                                setColumns(prev => {
+                                    return prev.map((item, index) => { 
+                                        if (index == column) {
+                                            return {
+                                                ...item,
+                                                frozen: true,
+                                            }
+                                        }
+                                        return item;
+                                    })
+                                })
 
-    const updateHeaders = () => {
-        const instance = hotRef.current!?.__hotInstance;
-        if (instance) {
-            instance.render();
+                                setFrozen(column+1)
+                            }
+                            return true;
+                        }
+                    }}
+                    freeze={headerTable[column]?.frozen}
+                    handleSort={(e, operation) => {
+                        // setData(data.sort((a, b) => {
+                        //     if (a[col?.data] == b[col?.data]) return 0;
+                        //     if (a[col?.data] < b[col?.data]) return 1
+                        //     return -1;
+                        // }))
+                    }}
+                />, myComponent);
+            }
+            
+            TH.replaceChildren(myComponent);
+            return;
         }
+
+        const myComponent = document.createElement("div");
+        myComponent.className = "customHeader";
+        
+        TH.replaceChildren(myComponent)
+    }, [headerTable, hidden]);
+
+    const filterData = () => {
+        const filterWords = filterText.split(' ').filter(word => word !== '');
+    
+        const filtered = dataProvider.filter(row => {
+          return filterWords.some(word => {
+            return row.some(cell => {
+              return cell.toString().toLowerCase().includes(word.toLowerCase());
+            });
+          });
+        });
+    
+        setFilteredData(filtered);
     };
 
     useEffect(() => {
+        const toFreeze = headerTable.filter((item) => item?.frozen === true);
+        if (toFreeze.length > 0) {
+            setFrozen(toFreeze.length);
+        }
+
         handleMountColumns();
-    }, []);
+    }, [headerTable, frozen, hidden]);
 
     return (
         <>
@@ -321,26 +302,21 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                 height="100%"
                 colHeaders={headers}
                 columns={cols}
-                data={dataProvider}
+                data={filteredData}
                 width="100%"
                 stretchH="all"
                 manualColumnResize={true}
-                manualRowResize={true}
-                // beforeColumnFreeze={(columnIndex: number, isFreezingPerformed: boolean) => {
-                //     console.log({columnIndex, isFreezingPerformed})
-                // }}
-                manualColumnMove
-                viewportRowRenderingOffset={100}
-                viewportColumnRenderingOffset={100}
-                // renderAllRows={false}
-                rowHeaders
+                manualRowResize
+                // manualColumnMove
+                viewportRowRenderingOffset={10}
+                viewportColumnRenderingOffset={999}
+                renderAllRows={false}
+                maxRowHeight={51}
                 rerenderOnColumnResize={false}
+                rowHeaders
                 autoRowSize
                 // allowInsertColumn
-                columnSorting={{
-                    sortEmptyCells: false,
-                    headerAction: false,
-                }}
+                columnSorting={{sortEmptyCells: false, headerAction: false}}
                 contextMenu={{
                     items: {
                         'remove_row': {
@@ -382,21 +358,21 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                     }
                 }}
                 fixedColumnsLeft={frozen}
-                afterGetColHeader={afterGetColHeaders}
-                // hiddenColumns
-                hiddenColumns={{
-                    columns: hidden,
-                    indicators: true,
-                }}
+                afterGetColHeader={renderHeaderComponent}
+                hiddenColumns={{columns: hidden, indicators: true}}
                 afterColumnResize={async (newSize: number, column: number, isDoubleClick: boolean) => {
                     await handleResize(column, newSize, template)
                 }}
-                afterColumnMove={(movedColumns: number[], finalIndex: number, dropIndex: number | undefined, movePossible: boolean, orderChanged: boolean) => {
-                    // const test = [...colHeaders];
-                    // const item = test.splice(movedColumns[0], 1)[0];
-                    // test.splice(finalIndex, 0, item)
-                    // setNewHeader(test)
-                }}
+                // afterColumnMove={(movedColumns: number[], finalIndex: number, dropIndex: number | undefined, movePossible: boolean, orderChanged: boolean) => {
+                //     const newColumns = [...columns];
+                //     movedColumns.forEach((oldIndex) => {
+                //     const movedColumn = newColumns.splice(oldIndex, 1)[0];
+                //     newColumns.splice(finalIndex, 0, movedColumn);
+                //     finalIndex += 1;
+                //     });
+
+                //     handleMove(newColumns);
+                // }}
             />
         </>
     )
