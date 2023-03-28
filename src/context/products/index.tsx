@@ -25,6 +25,7 @@ export interface ICustom {
 }
 
 export interface IHeaderTable {
+    title?: string;
     type: string;
     data: string;
     className: string;
@@ -56,6 +57,8 @@ interface ITypeProductContext {
     handleResize: Function;
     setColHeaders: Function;
     handleFreeze: Function;
+    handleMove: Function;
+    handleNewColumn: Function;
 }
 
 interface IField {
@@ -96,7 +99,9 @@ export const productContext = createContext<ITypeProductContext>({
     setHidden: () => {},
     handleResize: () => {},
     setColHeaders: () => {},
-    handleFreeze: () => {}
+    handleFreeze: () => {},
+    handleMove: () => {},
+    handleNewColumn: () => {},
 });
 
 export const ProductContextProvider = ({children}: any) => {
@@ -107,6 +112,7 @@ export const ProductContextProvider = ({children}: any) => {
     const [editing, setEditing] = useState<boolean>(false);
     const [hidden, setHidden] = useState<any[]>([]);
     const [customFields, setCustomFields] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
 
     const COMPONENT_CELL_PER_TYPE: ICustomCellType = {
         RADIO: "radio",
@@ -151,6 +157,7 @@ export const ProductContextProvider = ({children}: any) => {
                 productFields.push({[template[0]]: ""})
             }
             setProducts(productFields);
+            setFilteredData(productFields);
         }).catch((error) => {
             console.error(error);
             toast.error("Não foi possível carregar os produtos, por favor tente novamente!")
@@ -174,6 +181,11 @@ export const ProductContextProvider = ({children}: any) => {
     }
 
     const handleSave = async (value: any) => {
+        // const fieldsTest = Object.keys(value).filter((item) => {
+        //     const element = template.fields?.fields?.find((item) => item?.id == item?.data);
+        //     if (element) return item;
+        // })
+
         const fields = buildProduct(value);
         try {
             if (value?.id) {
@@ -264,14 +276,38 @@ export const ProductContextProvider = ({children}: any) => {
     }
 
     const handleResize = (col: number, newSize: number, template: any) => {
+        setCustomFields(prev => {
+            return prev.map((item) => {
+                if (item?.order == col.toString()) {
+                    return {
+                        ...item,
+                        width: newSize.toString(),
+                    }
+                }
+
+                return item;
+            })
+        });
+
         const custom = buildCustomFields(template.fields.fields, {width: `${newSize.toString()}`}, col);
         templateRequests.customView(template.id, {fields: custom})
-            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
-        
+            .catch((error) => toast.error("Ocorreu um erro ao alterar o tamanho do campo"));
+
         return custom;
     }
 
     const handleHidden = (col: number, template: any, able: boolean): number[] => {
+        const freezed = headerTable.filter((item) => {
+            if (Number(item?.order) <= col && item?.frozen) {
+                return item;
+            }
+        })
+
+        // if (freezed) {
+        //     toast.warn("Não é possível ocultar uma coluna fixada");
+        //     return;
+        // }
+
         const content = [...hidden]
         let newValue;
         if (content.includes(col)) {
@@ -280,19 +316,23 @@ export const ProductContextProvider = ({children}: any) => {
             newValue = [...content, col]
         };
 
-        console.log({newValue})
         setHidden(newValue);
+        setCustomFields(prev => {
+            return prev.map((item) => {
+                if (item?.order == col.toString()) {
+                    return {
+                        ...item,
+                        hidden: able,
+                    }
+                }
+
+                return item;
+            })
+        })
         
-        // const custom = buildCustomFields(template?.fields?.fields, {show: able}, col);
-        // setCustomFields(custom);
-
-        // const columns = [...headerTable];
-        // columns.splice(col, 1);
-
-        // console.log({custom})
-
-        // templateRequests.customView(template?.id, {fields: custom})
-        //     .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
+        const custom = buildCustomFields(template?.fields?.fields, {show: able}, col);
+        templateRequests.customView(template?.id, {fields: custom})
+            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
 
         return newValue;
     }
@@ -323,8 +363,6 @@ export const ProductContextProvider = ({children}: any) => {
                     frozen: false,
                 }
             });
-
-            console.log({changeState})
 
             setCustomFields(changeState);
         } else {
@@ -361,6 +399,40 @@ export const ProductContextProvider = ({children}: any) => {
         return customFields;
     }
 
+    const handleMove = (changes: any) => {
+        // console.log({changes})
+        setHeaderTable(changes);
+    }
+
+    const handleNewColumn = (col: any) => {
+        col = {
+            ...col,
+            className: "htLeft htMiddle",
+            order: headerTable.length.toString(),
+            hidden: false,
+            width: "300px",
+            frozen: false
+        }
+        const test = [...headerTable, col]
+        test.splice(test.length-2 , 1)
+        test.push({});
+
+        // setHeaderTable(test);
+        console.log({template: template?.fields?.fields, test})
+
+        /*const filterWords = filterText.split(' ').filter(word => word !== '');
+        const filtered = filteredData.filter(row => {
+            return filterWords.some(word => {
+              console.log({word})
+            return Object.keys(row).some(cell => {
+              return cell.toString().toLowerCase().includes(word.toLowerCase());
+            });
+          });
+        });
+    
+        setFilteredData(filtered);*/
+    };
+
     const value: ITypeProductContext = {
         products,
         setProducts,
@@ -381,7 +453,9 @@ export const ProductContextProvider = ({children}: any) => {
         setHidden,
         handleResize,
         setColHeaders,
-        handleFreeze
+        handleFreeze,
+        handleMove,
+        handleNewColumn
     }
 
     return <productContext.Provider value={value}> {children} </productContext.Provider>

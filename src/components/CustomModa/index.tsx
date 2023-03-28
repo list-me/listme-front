@@ -88,13 +88,13 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
 
   const MULTI_SELECT = ["checked", "radio", "list"];
 
-  const handleUpdateTemplate = async (): Promise<any> => {
+  const handleUpdateTemplate = async (filtered: string[]): Promise<any> => {
     let templateUpdated = [];;
     let newField;
     if (isUpdate) {
       templateUpdated = template.fields.fields.map((item) => {
           if (item.id === data.id) {
-              data.options = draggerOptions;
+              data.options = filtered;
               data.type = type;
               item = data;
               return item;
@@ -108,7 +108,7 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
         id: Math.floor(100000 + Math.random() * 900000).toString(),
         type,
         title,
-        options: draggerOptions,
+        options: filtered,
         required,
         is_public: true,
         help_text: "This fiedl will help you to make a new product register",
@@ -135,12 +135,16 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
           <Input
             value={item.value ?? item}
             onChange={(e) => {
+              console.log("ON change")
               const {value} = e.target;
-              setDraggerOptions(prevState => {
-                const newState = [...prevState];
-                newState[index] = value;
-                return newState;
-              });
+              const newState = [...draggerOptions];
+              newState[index] = value;
+              if (newState[index].length > 15) {
+                toast.warn("Uma opção não pode conter mais de 15 caracteres");
+                return;
+              }
+
+              setDraggerOptions(newState);
             }}
             name={index.toString()}
             onPressEnter={() => {
@@ -153,8 +157,8 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
             autoFocus={index === draggerOptions.length - 1}
           />
           <IconContent onClick={() => {
-            if (draggerOptions.length === 1) {
-              toast.warning("Necessário conter ao menos uma opção")
+            if (draggerOptions.length <= 2) {
+              toast.warning("Necessário conter ao menos duas opções")
               return;
             }
 
@@ -309,19 +313,49 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                 <Principal
                   type="button"
                   onClick={async (e) => {
-                    
-
-                    e.preventDefault()
-                    data.title = title;
+                    if (title.length == 0) {
+                      toast.warn("O Titulo nao pode ser vazio")
+                      return;
+                    }
 
                     if (title.length > 20) {
                       toast.warn("O titulo não pode conter mais de 20 caracteres");
                       return;
                     }
 
-                    await handleUpdateTemplate();
+                    let filtered;
+                    if (draggerOptions.length > 2) {
+                      filtered = draggerOptions.filter((item) => {
+                        item = item.replace(/ /g, '');
+                        if (item !== "") {
+                          return item;
+                        }
+                      }) 
+
+                      setDraggerOptions(filtered);
+                    } else {
+                      for(const draggOption of draggerOptions) {
+                        if (draggerOptions.includes("") || /^[^a-zA-Z0-9]+$/.test(draggOption)) {
+                          toast.warn(`As opções não podem ser vazias`);
+                          return;
+                        }
+                      }
+
+                      filtered = [...draggerOptions];
+                    }
+
+                    if (draggerOptions.length < 2 && MULTI_SELECT.includes(type)) {
+                      toast.warn(`Os campos do to tipo ${TYPES[type]?.label} devem conter mais de uma opção`)
+                      return;
+                    }
+
+                    e.preventDefault()
+                    data.title = title;
+
+                    await handleUpdateTemplate(filtered);
                     onClickModal();
-                    onUpdate(data);
+                    const newColumn = {...data, data: id, options: filtered};
+                    onUpdate(newColumn);
                   }}
                 >
                   Salvar

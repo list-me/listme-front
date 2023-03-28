@@ -11,6 +11,7 @@ export const AddColumn = styled.div`
 
   box-sizing: border-box !important;
   border-bottom: 1px solid #CCCCCC;
+  border-right: 1px solid #CCCCCC;
 
   &:hover {
     cursor: pointer;

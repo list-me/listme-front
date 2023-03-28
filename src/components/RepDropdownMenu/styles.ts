@@ -1,3 +1,4 @@
+import { Switch } from "antd";
 import styled from "styled-components";
 import { IStyleProps } from "./RepDropdownMenu.d";
 
@@ -6,8 +7,8 @@ export const Container = styled.div<IStyleProps>`
   max-height: 500px;
   width: 320px;
 
-  overflow-y: auto;
-  overflow-x: hidden;
+  /* overflow-y: auto; */
+  /* overflow-x: hidden; */
 
   border-radius: 8px;
   box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.07);
@@ -32,7 +33,7 @@ export const Container = styled.div<IStyleProps>`
   and (min-device-width: 1200px)
   and (max-device-width: 1600px)
   and (-webkit-min-device-pixel-ratio: 1) {
-    top: 25rem;
+    top: 25%;
     max-height: 450px;
     
     .ant-input-group-wrapper {
@@ -56,7 +57,12 @@ export const Container = styled.div<IStyleProps>`
     border: none;
   }
 
-  ::-webkit-scrollbar {
+  
+
+    .content {
+      overflow-y: auto;
+
+      ::-webkit-scrollbar {
       width: 8px !important;
       height: 8px !important; /* largura da barra de rolagem */
     }
@@ -72,6 +78,7 @@ export const Container = styled.div<IStyleProps>`
 
     ::-webkit-scrollbar-thumb:hover {
       background-color: #3818D9 !important; /* cor do botão da barra de rolagem quando hover */
+    }
     }
 `;
 
@@ -93,4 +100,10 @@ export const Line = styled.div`
   }
 
   margin-bottom: 16px;
+`;
+
+export const SwitchCustom = styled(Switch)`
+ &.ant-switch-checked {
+    background-color: #3818D9 !important; // Altere a cor de fundo do switch quando está ativado
+  }
 `;

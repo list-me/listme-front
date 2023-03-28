@@ -4,14 +4,17 @@ const RADIO_TYPE = css`
   background: #FFFFFF;
   border: 1px solid #DEE2E6;
   border-radius: 24px;
-  width: 90px !important;
+  /* width: 100px !important; */
+  width: 100% !important;
+
 `;
 
 const CHECKED_TYPE = css`
   background: #F8F9FA;
   border-radius: 24px;
-  width: fit-content;
+  /* width: fit-content;  */
   min-width: 100px;
+  width: 100% !important;
 `;
 
 const LIST_TYPE = css`
@@ -19,7 +22,7 @@ const LIST_TYPE = css`
   border: 1px solid #DEE2E6;
   border-radius: 8px;
   width: 100% !important;
-  max-width: 200px;
+  /* max-width: 200px; */
   min-width: 100px;
 `;
 

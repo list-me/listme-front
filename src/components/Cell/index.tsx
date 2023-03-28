@@ -42,7 +42,7 @@ export const HeaderCell: React.FC<ICellProps> = ({
                 icon: <CopyIcon />
             },
             {
-                label: "Esconder Campo",
+                label: "Ocultar Coluna",
                 icon: <EyeOffIcon />
             },
             {
@@ -94,11 +94,12 @@ export const HeaderCell: React.FC<ICellProps> = ({
                     isOpen={isOpen}
                     icoRef={iconRef}
                     openModal={(e, col) => {
-                        // console.log({e})
                         if (e.label.includes("Ordenar")) {
                             handleSort(e, e?.operation);
-                        } else if (e?.label.includes("Esconder")) {
-                            handleHidden(e, !column?.hidden);
+                        } else if (e?.label.includes("Ocultar")) {
+                            setIsOpen(!isOpen);
+                            handleHidden(e, column?.hidden);
+                            return;
                         } else if (e.operation === "freeze") {
                             if (!freeze) {
                                 handleFrozen(col, "");
