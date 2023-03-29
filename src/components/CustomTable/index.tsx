@@ -40,8 +40,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
     const [columns, setColumns] = useState(headerTable);
     const [frozen, setFrozen] = useState<number>(0);
     const [headers, setHeaders] = useState<string[]>(colHeaders);
-    const [filteredData, setFilteredData] = useState(dataProvider);
-    const [filterText, setFilterText] = useState('');
+    const [currentTemplate, setCurrentTemplate] = useState<any>(template);
 
     const customRenderer = (
         td: HTMLTableCellElement,
@@ -59,23 +58,9 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         tdNode.appendChild(myComponent);
     }
 
-    const updateHeadersBasedOnHidden = useCallback(() => {
-        const updatedHeaders = colHeaders.map((item, index) => {
-            if (hidden.includes(index)) {
-                return null;
-            }
-            return item;
-        });
-        setHeaders(updatedHeaders);
-    }, [hidden, colHeaders]);
-
-    const customHidden =  useCallback((col: any) => {
-        handleHidden(Number(col?.order), template, true);
-    }, []);
-
     const handleMountColumns = () => {
         const columnsCustom: any[] = [];
-        columns.sort().forEach((column) => {
+        headerTable.sort().forEach((column) => {
             if (Object.keys(COMPONENT_CELL_PER_TYPE).includes(column.type?.toString().toUpperCase())) {
                 columnsCustom.push({
                     data: column.data,
@@ -115,7 +100,6 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                 return;
             }
 
-            // setCustomColumns((customs) => ([col.type]?.push(col.data), [...customs]));
             columnsCustom.push({
                 data: column.data,
                 className: column.className,
@@ -123,24 +107,9 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                 frozen: column.frozen,
                 order: column.order,
                 hidden: column.hidden,
-                // columnSorting: {
-                //     indicator: true,
-                //     headerAction: false,
-                //     compareFunctionFactory(sortOrder, columnMeta) {
-                //     }
-                // }
             });
-
-            // const testing = headers.filter((item, index) => !hidden.includes(index) ?? item);
-            // console.log({testing, hidden});
-            // setHeaders(testing)
-            // setHeaders(prev => {
-            //     return prev.filter((item, index) => !toFreeze.includes(index) ?? item);
-            // })
         })
-        
-        // const toHidden = columnsCustom.filter((item) => item.hidden).map((element) => element.order);
-        // setHidden(columnsCustom.filter((item) => item.hidden).map((element) => Number(element?.order)));
+
         setCols(columnsCustom);
     }
 
@@ -152,58 +121,53 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
 
         const existent = TH.querySelector(".customHeader");
         if (existent) {
-            // ReactDOM.unmountComponentAtNode(existent);
+            ReactDOM.unmountComponentAtNode(existent);
             const myComponent = document.createElement("div");
             myComponent.className = "customHeader"
 
-            const col = template?.fields?.fields.find((item) => {
-                if (item.id === columns[column]?.data) {
+            const col = currentTemplate?.fields?.fields.find((item) => {
+                if (item.id === headerTable[column]?.data) {
                     return item
                 }
             });
 
             if (headers[column] === " ") {
                 ReactDOM.render(
-                    <NewColumnMemo
-                        template={template}
-                        newColumn={template}
-                        setNewColumn={(newColumn) => {
-                            //  = Math.floor(100000 + Math.random() * 900000).toString();
-                            // console.log({newColumn, headerTable})
-                            // handleNewColumn(newColumn);
-                            // const newHeaders = headerTable.map((item) => item?.title);
-                            // newHeaders.push(' ');
-                            // console.log({newHeaders})
-                            // setHeaders(newHeaders)
-                            // setCurrentTemplate(prev => [...prev, newColumn])
-                            // setHeaders(prev => {
-                            //     return headerTable.map((item) => item?.title)
-                            // })
+                    <NewColumn
+                        template={currentTemplate}
+                        newColumn={currentTemplate}
+                        setNewColumn={(newColumn, templateUpdated) => {
+                            const fields = currentTemplate;
+                            fields.fields.fields = templateUpdated;
+                            setCurrentTemplate(fields);
 
-                            // setNewHeader(prev => {
-                            //     const newColumns = [...prev];
-                            //     const position = newColumns.length - 1; // penúltima posição
-                            //     newColumns.splice(position, 0, newColumn?.title);
-                            //     return newColumns;
-                            // })
+                            newColumn = {
+                                ...newColumn,
+                                className: "htLeft htMiddle",
+                                frozen: false,
+                                hidden: false,
+                                order: headerTable.length.toString(),
+                                width: "300"
+                            };
 
-                            // setColumns(prev => {
-                            //     const newColumns = [...prev];
-                            //     const position = newColumns.length - 1; // penúltima posição
-                            //     newColumns.splice(position, 0, newColumn);
-                            //     return newColumns;
-                            // });
+                            handleNewColumn(newColumn, templateUpdated);
+
+                            const contentHeaders = headerTable.map((item) => item?.title);
+                            contentHeaders.splice(headerTable.length -1, 1);
+                            contentHeaders.push(newColumn?.title);
+                            contentHeaders.push(" ");
+                            setHeaders(contentHeaders);
                         }
                     } />,
                     myComponent
                 );
             } else {
                 ReactDOM.render(
-                <CellMemo
+                <Cell
                     label={headers[column]}
                     column={col}
-                    template={template}
-                    handleHidden={() => handleHidden(Number(col?.order), template, true)}
+                    template={currentTemplate}
+                    handleHidden={() => handleHidden(column, currentTemplate, true)}
                     handleFrozen={(e, operation) => {
                         if (operation == "unfreeze") {
                             setFrozen(0);
@@ -221,7 +185,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                             return true;
                         } else {
                             if (col?.order == e) {
-                                const colWidth = columns.filter((item) => {
+                                const colWidth = headerTable.filter((item) => {
                                     if (Number(item?.order) <= Number(e)) return item
                                 }).map((element) =>
                                     Number(element?.width.replace('px', ''))
@@ -270,21 +234,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         myComponent.className = "customHeader";
         
         TH.replaceChildren(myComponent)
-    }, [headerTable, hidden]);
-
-    const filterData = () => {
-        const filterWords = filterText.split(' ').filter(word => word !== '');
-    
-        const filtered = dataProvider.filter(row => {
-          return filterWords.some(word => {
-            return row.some(cell => {
-              return cell.toString().toLowerCase().includes(word.toLowerCase());
-            });
-          });
-        });
-    
-        setFilteredData(filtered);
-    };
+    }, [headerTable, hidden, headers, currentTemplate]);
 
     useEffect(() => {
         const toFreeze = headerTable.filter((item) => item?.frozen === true);
@@ -293,7 +243,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         }
 
         handleMountColumns();
-    }, [headerTable, frozen, hidden]);
+    }, [headerTable, frozen, hidden, currentTemplate]);
 
     return (
         <>
@@ -302,12 +252,12 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                 height="100%"
                 colHeaders={headers}
                 columns={cols}
-                data={filteredData}
+                data={dataProvider}
                 width="100%"
                 stretchH="all"
                 manualColumnResize={true}
                 manualRowResize
-                // manualColumnMove
+                manualColumnMove
                 viewportRowRenderingOffset={10}
                 viewportColumnRenderingOffset={999}
                 renderAllRows={false}
@@ -335,7 +285,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                     const newValue = changes[0][3];
                     const row = changes[0][0];
                     const col = cols.findIndex((col) => col?.data === changes[0][1]);
-                    const columnType = columns[col]?.type;
+                    const columnType = headerTable[col]?.type;
 
                     if (columnType === 'text' && newValue.length > 100) {
                         toast.warn("The text field cannot be longer than 100 characters");
@@ -361,18 +311,19 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                 afterGetColHeader={renderHeaderComponent}
                 hiddenColumns={{columns: hidden, indicators: true}}
                 afterColumnResize={async (newSize: number, column: number, isDoubleClick: boolean) => {
-                    await handleResize(column, newSize, template)
+                    await handleResize(column, newSize, currentTemplate)
                 }}
-                // afterColumnMove={(movedColumns: number[], finalIndex: number, dropIndex: number | undefined, movePossible: boolean, orderChanged: boolean) => {
-                //     const newColumns = [...columns];
-                //     movedColumns.forEach((oldIndex) => {
-                //     const movedColumn = newColumns.splice(oldIndex, 1)[0];
-                //     newColumns.splice(finalIndex, 0, movedColumn);
-                //     finalIndex += 1;
-                //     });
+                afterColumnMove={(movedColumns: number[], finalIndex: number, dropIndex: number | undefined, movePossible: boolean, orderChanged: boolean) => {
+                    const newColumns = [...columns];
+                    movedColumns.forEach((oldIndex) => {
+                    const movedColumn = newColumns.splice(oldIndex, 1)[0];
+                    newColumns.splice(finalIndex, 0, movedColumn);
+                    finalIndex += 1;
+                    });
 
-                //     handleMove(newColumns);
-                // }}
+                    console.log({newColumns})
+                    // handleMove(newColumns);
+                }}
             />
         </>
     )

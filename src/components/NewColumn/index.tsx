@@ -67,11 +67,7 @@ export const NewColumn: React.FC<NewColumnProps> = ({template, setNewColumn, new
         onClickModal={() => setIsOpenModal(!isOpenModal)}
         data={data}
         template={template}
-        onUpdate={(e)=> {
-          window.location.reload();
-          // setNewColumn(e)
-          // console.log({e});
-        }}
+        onUpdate={(e, fields) => setNewColumn(e, fields)}
       />
       <AddColumn
         ref={ref} 
