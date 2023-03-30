@@ -13,11 +13,12 @@ export const Container = styled.div<DropdownMenuStyleProps>`
   align-items: center;
   justify-content: space-between;
 
-  z-index: 999;
+  z-index: 9999;
 `;
 
 export const SuspenseMenu = styled.div<{left?: number|null}>`
-  z-index: 999;
+  position: relative;
+  z-index: 10000;
 
   height: auto;
   width: 220px;

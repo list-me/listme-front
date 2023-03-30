@@ -56,8 +56,10 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                     <>
                       <Divider style={{marginTop: "20px", marginBottom:"4px"}} key={Math.random()} />
                       <Item
+                        className="item"
                         key={Math.random()}
-                        onClick={() => {
+                        onClick={(e) => {
+                          console.log("Capturei o click")
                           openModal(item, col)
                         }}
                       >
@@ -72,6 +74,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                 return (
                   <>
                     <Item
+                      className="item"
                       key={item?.label}
                       onClick={() => {
                         openModal(item, col)

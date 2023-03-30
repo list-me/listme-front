@@ -141,7 +141,7 @@ export const Products = () => {
                 </RightContent>
             </Header>
             <Filters>
-                <Temp options={template?.fields?.fields} />
+                <Temp options={headerTable} />
                 <Contents>
                     <Item>
                         <HelpIcon />

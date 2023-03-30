@@ -11,11 +11,11 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({left, iconRef, handleOpen, 
   const [filteredItems, setFilteredItems] = useState<any[]>([]);
   const [currentHidden, setCurrentHidden] = useState<any[]>([]);
 
-  const {handleHidden, hidden, template} = useContext(productContext);
+  const {handleHidden, hidden, headerTable} = useContext(productContext);
 
   const customHidden = useCallback((item: any, state: boolean) => {
     setCurrentHidden(prev => [...prev, Number(item?.order)])
-    return handleHidden(Number(item?.order), template, state)
+    return handleHidden(Number(item?.order), headerTable, state)
   }, [])
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +26,7 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({left, iconRef, handleOpen, 
     setCurrentHidden(hidden);
 
     setFilteredItems(
-      colHeaders?.filter(item => 
+      headerTable?.filter(item => 
         item?.title?.toLowerCase().includes(inputValue.toLowerCase())
       ).map((element) => {
         return {
@@ -56,7 +56,7 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({left, iconRef, handleOpen, 
       document.removeEventListener('mousedown', handleOutsideClick);
       // window.removeEventListener('wheel', handleScroll);
     };
-  }, [modalRef, isOpen, inputValue]);
+  }, [modalRef, isOpen, inputValue, headerTable]);
 
   return (
     <>

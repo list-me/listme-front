@@ -30,7 +30,6 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
   const [required, setRequired] = useState<boolean>(data?.required ?? false);
   const [isUpdate, setIsUpdate] = useState<boolean>(data?.id);
   const [draggerOptions, setDraggerOptions] = useState<any[]>(data?.options ?? ['']);
-  const [dragg, setDragg] = useState<any[]>();
   const formRef = useRef<HTMLFormElement>(null);
 
   const {headerTable, setHeaderTable} = useContext(productContext);
@@ -120,8 +119,8 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
     try {
       await templateRequests.update(template?.id, { fields: templateUpdated });
       setId(newField?.id)
-      // setHeaderTable((prev) => [...prev, {data: newField?.id, type,  className: 'htLeft htMiddle',  options: draggerOptions}])
       toast.success("Template atualizado com sucesso");
+      return templateUpdated;
     } catch (error) {
       console.error(error);
       toast.error("Não foi possível alterar o template, tente novamente!");
@@ -135,7 +134,6 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
           <Input
             value={item.value ?? item}
             onChange={(e) => {
-              console.log("ON change")
               const {value} = e.target;
               const newState = [...draggerOptions];
               newState[index] = value;
@@ -312,7 +310,7 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                 <PrimaryButton type="button" onClick={() => onClickModal()}> Cancelar </PrimaryButton>
                 <Principal
                   type="button"
-                  onClick={async (e) => {
+                  onClick={(e) => {
                     if (title.length == 0) {
                       toast.warn("O Titulo nao pode ser vazio")
                       return;
@@ -333,7 +331,7 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                       }) 
 
                       setDraggerOptions(filtered);
-                    } else {
+                    } else if (MULTI_SELECT.includes(type)) {
                       for(const draggOption of draggerOptions) {
                         if (draggerOptions.includes("") || /^[^a-zA-Z0-9]+$/.test(draggOption)) {
                           toast.warn(`As opções não podem ser vazias`);
@@ -341,6 +339,8 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                         }
                       }
 
+                      filtered = [...draggerOptions];
+                    } else {
                       filtered = [...draggerOptions];
                     }
 
@@ -352,10 +352,13 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                     e.preventDefault()
                     data.title = title;
 
-                    await handleUpdateTemplate(filtered);
-                    onClickModal();
-                    const newColumn = {...data, data: id, options: filtered};
-                    onUpdate(newColumn);
+                    handleUpdateTemplate(filtered)
+                      .then((response) => {
+                        const newColumn = {...data, data: response[response.length-1]?.id, options: filtered};
+                        onUpdate(newColumn, response);
+                        onClickModal();
+                      }
+                    );
                   }}
                 >
                   Salvar

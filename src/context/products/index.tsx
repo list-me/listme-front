@@ -201,7 +201,6 @@ export const ProductContextProvider = ({children}: any) => {
                 };
                 await handlePost(product);
             }
-            // handleGetProducts(window.location.pathname.substring(10));
         } catch (error: any) {
             console.error(error.response.data.message[0]);
             toast.error(error.response.data.message)
@@ -244,6 +243,7 @@ export const ProductContextProvider = ({children}: any) => {
                 var headers = fields?.fields?.map((item: IField, index) => {
                     headersCell.push(item.title);
                     return {
+                        title: item.title,
                         data: item.id,
                         className: "htLeft htMiddle",
                         type: item.type,
@@ -255,9 +255,26 @@ export const ProductContextProvider = ({children}: any) => {
                     }
                 });
 
-                headersCell = [...headersCell, ' '];
-                headers = [...headers,  {}];
-                setColHeaders(headersCell)
+                const test = headers.sort((a, b) => {
+                    return Number(a.order) - Number(b.order)
+                })
+
+
+                const test1 = headers.map((item) => {
+                    return item?.title;
+                })
+                // const test1 = headersCell.sort((a, b) => {
+                //     const itemA = headers.find(item => item.title === a);
+                //     const itemB = headers.find(item => item.title === b);
+
+                //     return itemA.order - itemB.order;
+                // })
+
+                console.log({test, headersCell, test1})
+
+                headersCell = [...test1, ' '];
+                headers = [...test,  {}];
+                setColHeaders(headersCell);
                 setHeaderTable(headers);
                 setHidden(headers.filter((item) => item.hidden).map((element) => Number(element.order)))
                 setCustomFields(headers.filter((element) => {
@@ -297,17 +314,6 @@ export const ProductContextProvider = ({children}: any) => {
     }
 
     const handleHidden = (col: number, template: any, able: boolean): number[] => {
-        const freezed = headerTable.filter((item) => {
-            if (Number(item?.order) <= col && item?.frozen) {
-                return item;
-            }
-        })
-
-        // if (freezed) {
-        //     toast.warn("Não é possível ocultar uma coluna fixada");
-        //     return;
-        // }
-
         const content = [...hidden]
         let newValue;
         if (content.includes(col)) {
@@ -328,10 +334,11 @@ export const ProductContextProvider = ({children}: any) => {
 
                 return item;
             })
-        })
-        
+        });
+
         const custom = buildCustomFields(template?.fields?.fields, {show: able}, col);
-        templateRequests.customView(template?.id, {fields: custom})
+        console.log({custom})
+        templateRequests.customView(window.location.pathname.substring(10), {fields: custom})
             .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
 
         return newValue;
@@ -392,45 +399,42 @@ export const ProductContextProvider = ({children}: any) => {
             })
         })
 
-        // const custom = buildCustomFields(template.fields.fields, {frozen: state}, col);
         templateRequests.customView(template.id, {fields: changeState})
             .catch((error) => toast.error("Ocorreu um erro ao definir o freeze da coluna"));
         
         return customFields;
     }
 
-    const handleMove = (changes: any) => {
-        // console.log({changes})
-        setHeaderTable(changes);
+    const handleMove = (col: any[]) => {
+        const fields = col.filter((item) => {
+            if (Object.keys(item).length > 0) return item
+        }).map((element) => {
+            return {
+                order: element?.order,
+                hidden: element?.hidden,
+                width: element?.width,
+                frozen: element?.frozen,
+                id: element?.data
+            }
+        })
+
+        setCustomFields(fields);
+        templateRequests.customView(window.location.pathname.substring(10), {fields})
+            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
     }
 
-    const handleNewColumn = (col: any) => {
-        col = {
-            ...col,
-            className: "htLeft htMiddle",
-            order: headerTable.length.toString(),
-            hidden: false,
-            width: "300px",
-            frozen: false
-        }
+    const handleNewColumn = (col: any, fields: any[]) => {
         const test = [...headerTable, col]
         test.splice(test.length-2 , 1)
         test.push({});
 
-        // setHeaderTable(test);
-        console.log({template: template?.fields?.fields, test})
+        setHeaderTable(test);
 
-        /*const filterWords = filterText.split(' ').filter(word => word !== '');
-        const filtered = filteredData.filter(row => {
-            return filterWords.some(word => {
-              console.log({word})
-            return Object.keys(row).some(cell => {
-              return cell.toString().toLowerCase().includes(word.toLowerCase());
-            });
-          });
-        });
-    
-        setFilteredData(filtered);*/
+        const newTemplate = template;
+        newTemplate.fields.fields = fields;
+        setTemplate(newTemplate);
+
+        setCustomFields(prev => [...prev, {order: col?.order, hidden: col?.hidden, width: col?.width, frozen: col?.frozen, id: col?.data}])
     };
 
     const value: ITypeProductContext = {

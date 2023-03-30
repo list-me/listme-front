@@ -22,6 +22,8 @@ export const HeaderCell: React.FC<ICellProps> = ({
     handleSort = () => {},
     handleHidden = () => {},
     freeze,
+    test,
+    test1
 }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
@@ -71,23 +73,75 @@ export const HeaderCell: React.FC<ICellProps> = ({
     }, [isOpen, column, freeze]);
 
     return (
-        <ProductContextProvider >
-            <Content ref={ref}>
-                <PersonalModal isOpen={isOpenModal} onClickModal={() => setIsOpenModal(!isOpenModal)} data={column} template={template}
-                onUpdate={(e) => {
-                    setTitleHeader(e.title);
-                    window.location.reload()
-                }}/>
-                <Container>
+        <>
+            <DropdownMenu
+                changeOpen={() => {
+                    setIsOpen(!isOpen)
+                }}
+                isOpen={isOpen}
+                icoRef={iconRef}
+                openModal={(e, col) => {
+                    if (e.label.includes("Ordenar")) {
+                        handleSort(e, e?.operation);
+                    } else if (e?.label.includes("Ocultar")) {
+                        setIsOpen(!isOpen);
+                        handleHidden(e, column?.hidden);
+                        return;
+                    } else if (e.operation === "freeze") {
+                        if (!freeze) {
+                            handleFrozen(col, "");
+                        } else {
+                            handleFrozen(col, "unfreeze");
+                        }
+
+                        const test = !freeze;
+                        // setFrozen(test)
+                    } else {
+                        setIsOpenModal(!isOpenModal)
+                    };
+
+                    test();
+                    setIsOpen(!isOpen);
+                }}
+                options={options}
+                left={posicaoPai}
+                setIsOpen={() => {setIsOpen(false)}}
+                template={template}
+                col={column?.order}
+            />
+            <Content
+                ref={ref}
+            >
+                <PersonalModal
+                    isOpen={isOpenModal}
+                    onClickModal={() => setIsOpenModal(!isOpenModal)}
+                    data={column}
+                    template={template}
+                    onUpdate={(e) => {
+                        setTitleHeader(e.title);
+                        window.location.reload()
+                    }}
+                />
+                <Container
+                    onMouseDown={() => test1()}
+                >
                     <label>
                         <AltText />
                         {titleHeader}
                     </label>
-                    <Options>
-                        <ChevronDownIcon ref={iconRef} onClick={() => setIsOpen(!isOpen)} />
-                    </Options>
                 </Container>
-                <DropdownMenu
+                <Options
+                    onMouseDown={() => {
+                        test();
+                        setIsOpen(true);
+                    }}
+                >
+                    <ChevronDownIcon
+                        className="settings"
+                        ref={iconRef}
+                    />
+                </Options>
+                {/* <DropdownMenu
                     changeOpen={() => {
                         setIsOpen(!isOpen)
                     }}
@@ -120,9 +174,9 @@ export const HeaderCell: React.FC<ICellProps> = ({
                     setIsOpen={() => {setIsOpen(false)}}
                     template={template}
                     col={column?.order}
-                />
+                /> */}
             </Content>
-        </ProductContextProvider>
+        </>
     )
 }
 
@@ -133,4 +187,6 @@ const areEqual = (prevProps, nextProps) => {
            prevProps.template === nextProps.template;
   };
   
-export const Cell = React.memo(HeaderCell, areEqual);
+// export const Cell = React.memo(HeaderCell, areEqual);
+export const Cell = HeaderCell;
+

@@ -13,9 +13,10 @@ interface NewColumnProps {
   template: any;
   setNewColumn: Function;
   newColumn: any;
+  test: Function;
 }
 
-export const NewColumn: React.FC<NewColumnProps> = ({template, setNewColumn, newColumn}) => {
+export const NewColumn: React.FC<NewColumnProps> = ({template, setNewColumn, newColumn, test}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [data, setData] = useState({});
@@ -67,16 +68,15 @@ export const NewColumn: React.FC<NewColumnProps> = ({template, setNewColumn, new
         onClickModal={() => setIsOpenModal(!isOpenModal)}
         data={data}
         template={template}
-        onUpdate={(e)=> {
-          window.location.reload();
-          // setNewColumn(e)
-          // console.log({e});
-        }}
+        onUpdate={(e, fields) => setNewColumn(e, fields)}
       />
       <AddColumn
         ref={ref} 
         className="testing"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          test();
+          setIsOpen(!isOpen)
+        }}
       >
         <AddColumnIcon
           ref={iconRef}
@@ -87,6 +87,7 @@ export const NewColumn: React.FC<NewColumnProps> = ({template, setNewColumn, new
           isOpen={isOpen}
           icoRef={iconRef}
           openModal={(e) => {
+              test();
               setIsOpen(!isOpen)
               setIsOpenModal(!isOpenModal)
               setData({type: e?.type})

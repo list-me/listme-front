@@ -11,7 +11,7 @@ import DropdownMenu from "../RepDropdownMenu";
 import { productContext } from "../../context/products";
 
 interface IProps {
-  options: any[];
+  options?: any[];
 }
 
 export const Temp: React.FC<IProps> = ({options}) => {
