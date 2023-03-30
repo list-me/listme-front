@@ -354,9 +354,9 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
 
                     handleUpdateTemplate(filtered)
                       .then((response) => {
-                        onClickModal();
                         const newColumn = {...data, data: response[response.length-1]?.id, options: filtered};
                         onUpdate(newColumn, response);
+                        onClickModal();
                       }
                     );
                   }}

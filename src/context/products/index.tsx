@@ -255,9 +255,26 @@ export const ProductContextProvider = ({children}: any) => {
                     }
                 });
 
-                headersCell = [...headersCell, ' '];
-                headers = [...headers,  {}];
-                setColHeaders(headersCell)
+                const test = headers.sort((a, b) => {
+                    return Number(a.order) - Number(b.order)
+                })
+
+
+                const test1 = headers.map((item) => {
+                    return item?.title;
+                })
+                // const test1 = headersCell.sort((a, b) => {
+                //     const itemA = headers.find(item => item.title === a);
+                //     const itemB = headers.find(item => item.title === b);
+
+                //     return itemA.order - itemB.order;
+                // })
+
+                console.log({test, headersCell, test1})
+
+                headersCell = [...test1, ' '];
+                headers = [...test,  {}];
+                setColHeaders(headersCell);
                 setHeaderTable(headers);
                 setHidden(headers.filter((item) => item.hidden).map((element) => Number(element.order)))
                 setCustomFields(headers.filter((element) => {
@@ -317,9 +334,10 @@ export const ProductContextProvider = ({children}: any) => {
 
                 return item;
             })
-        })
+        });
 
         const custom = buildCustomFields(template?.fields?.fields, {show: able}, col);
+        console.log({custom})
         templateRequests.customView(window.location.pathname.substring(10), {fields: custom})
             .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
 
@@ -387,8 +405,22 @@ export const ProductContextProvider = ({children}: any) => {
         return customFields;
     }
 
-    const handleMove = (changes: any) => {
-        setHeaderTable(changes);
+    const handleMove = (col: any[]) => {
+        const fields = col.filter((item) => {
+            if (Object.keys(item).length > 0) return item
+        }).map((element) => {
+            return {
+                order: element?.order,
+                hidden: element?.hidden,
+                width: element?.width,
+                frozen: element?.frozen,
+                id: element?.data
+            }
+        })
+
+        setCustomFields(fields);
+        templateRequests.customView(window.location.pathname.substring(10), {fields})
+            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
     }
 
     const handleNewColumn = (col: any, fields: any[]) => {

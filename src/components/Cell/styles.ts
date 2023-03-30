@@ -2,13 +2,11 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  /* align-items: center;
+  justify-content: space-between; */
+  width: 100%;
 
   padding: 16px;
-  /* border-top: 1px solid #DEE2E6; */
-  /* border-right: 1px solid #DEE2E6;
-  border-left: 1px solid #DEE2E6; */
   background-color: #F1F3F5;
   position: relative;
 
@@ -26,8 +24,6 @@ export const Container = styled.div`
       margin-right: 8px;
     }
   }
-  /* min-width: 193px; */
-  /* width: 100%; */
 `;
 
 export const Options = styled.div`
@@ -43,7 +39,11 @@ export const Options = styled.div`
 `;
 
 export const Content = styled.div`
-  /* width: 100%; */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 16px;
+
   .ant-btn-default {
     display: flex;
     flex-direction: row;

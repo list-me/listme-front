@@ -137,10 +137,13 @@ export const Container = styled.div`
     background: red !important;
     border-radius: 20px;
   }
+
   
-   .handsontable.htColumnHeaders .ht_clone_top {
-      margin-right: 0 !important;
-    }
+  
+  .handsontable .htColumnHeaders .ht_clone_top {
+    margin-right: 0 !important;
+    
+  }
 
    .wtHolder {
     margin-right: 20px;
@@ -173,16 +176,30 @@ export const Container = styled.div`
     }
 
    .ht_clone_top .handsontable {
+     
      /* position: absolute; */
    }
+
+   .handsontable .ht__selection--columns .after-selection--columns .htRowHeaders .htColumnHeaders .ht__manualColumnMove {
+      /* background: red !important; */
+    }
+
+  .ht__manualColumnMove {
+    z-index: 2;
+
+    .ht__manualColumnMove--backlight{
+      display: none !important;
+    }
+  }
   
+
   thead {
-    /* padding-right: 16px; */
     th {
       .customHeader {
         height: 51px;
-        /* padding-right: 16px; */
         background: #F1F3F5;
+
+        z-index: 999;
       }
 
       .componentCustom {
@@ -190,8 +207,7 @@ export const Container = styled.div`
         align-items: center;
         justify-content: space-between;
 
-        height: 51px;
-        /* min-width: 197px; */
+        height: 20px;
 
         border-top: 1px solid #DEE2E6;
         border-right: 1px solid #DEE2E6;
@@ -230,6 +246,7 @@ export const Container = styled.div`
 
   thead tr th {
     background-color: ${({ theme }) => theme.colors.grayscale.ninth};
+    z-index: 9999;
   }
 
   tbody tr th {
@@ -251,7 +268,6 @@ export const Container = styled.div`
     margin: 0 !important;
 
     td {
-      /* min-width: 193px; */
       width: fit-content;
       max-width: 500px;
       max-height: 51px;

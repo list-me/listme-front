@@ -34,7 +34,8 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         handleResize,
         handleHidden,
         handleFreeze,
-        handleNewColumn
+        handleNewColumn,
+        handleMove
     } = useContext(productContext);
     const [cols, setCols] = useState<any[]>([]);
     const [columns, setColumns] = useState(headerTable);
@@ -83,7 +84,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
 
                         customRenderer(
                             td,
-                            <TableFieldMemo
+                            <TableField
                                 value={initialValue}
                                 type={column.type}
                                 options={column.options}
@@ -113,6 +114,12 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         setCols(columnsCustom);
     }
 
+    const [iconClicked, setIconClicked] = useState<boolean>(true);
+
+    const beforeColumnMove = useCallback((movedColumns, finalIndex) => {
+        return iconClicked
+    }, [iconClicked]);
+
     const renderHeaderComponent = useCallback((column: number, TH: HTMLTableHeaderCellElement) => {
         if (TH.querySelector(".customHeader") && column === -1) {
             TH.replaceChildren('')
@@ -134,6 +141,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
             if (headers[column] === " ") {
                 ReactDOM.render(
                     <NewColumn
+                        test={() => setIconClicked(false)}
                         template={currentTemplate}
                         newColumn={currentTemplate}
                         setNewColumn={(newColumn, templateUpdated) => {
@@ -167,7 +175,9 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                     label={headers[column]}
                     column={col}
                     template={currentTemplate}
-                    handleHidden={() => handleHidden(column, currentTemplate, true)}
+                    handleHidden={() => {
+                        handleHidden(column, currentTemplate, true)}
+                    }
                     handleFrozen={(e, operation) => {
                         if (operation == "unfreeze") {
                             setFrozen(0);
@@ -223,6 +233,12 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                         //     return -1;
                         // }))
                     }}
+                    test={() => {
+                        setIconClicked(false)
+                    }}
+                    test1={() => {
+                        setIconClicked(true)
+                    }}
                 />, myComponent);
             }
             
@@ -237,6 +253,8 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
     }, [headerTable, hidden, headers, currentTemplate]);
 
     useEffect(() => {
+        
+
         const toFreeze = headerTable.filter((item) => item?.frozen === true);
         if (toFreeze.length > 0) {
             setFrozen(toFreeze.length);
@@ -257,15 +275,15 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                 stretchH="all"
                 manualColumnResize={true}
                 manualRowResize
+                beforeColumnMove={beforeColumnMove}
                 manualColumnMove
                 viewportRowRenderingOffset={10}
                 viewportColumnRenderingOffset={999}
                 renderAllRows={false}
-                maxRowHeight={51}
                 rerenderOnColumnResize={false}
                 rowHeaders
                 autoRowSize
-                // allowInsertColumn
+                singleCellSelection
                 columnSorting={{sortEmptyCells: false, headerAction: false}}
                 contextMenu={{
                     items: {
@@ -278,6 +296,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                     },
                     className: "menuContext"
                 }}
+                maxRowHeight={51}
                 rowHeights="52px"
                 licenseKey="non-commercial-and-evaluation"
                 beforeChange={(changes: Array<CellChange | null>, source: ChangeSource) => {
@@ -314,14 +333,26 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                     await handleResize(column, newSize, currentTemplate)
                 }}
                 afterColumnMove={(movedColumns: number[], finalIndex: number, dropIndex: number | undefined, movePossible: boolean, orderChanged: boolean) => {
-                    const newColumns = [...columns];
+                    let newColumns = [...columns];
                     movedColumns.forEach((oldIndex) => {
                     const movedColumn = newColumns.splice(oldIndex, 1)[0];
                     newColumns.splice(finalIndex, 0, movedColumn);
                     finalIndex += 1;
                     });
 
-                    console.log({newColumns})
+                    setHeaders(newColumns.map((item) => item?.title ?? " "));
+                    newColumns = newColumns.map((item, index) => {
+                        if (Object.keys(item).length) {
+                            return {
+                                ...item,
+                                order: index.toString()
+                            }
+                        }
+
+                        return item;
+                    });
+                    
+                    setColumns(newColumns);
                     // handleMove(newColumns);
                 }}
             />
