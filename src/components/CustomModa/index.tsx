@@ -117,7 +117,7 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
     };
 
     try {
-      // await templateRequests.update(template?.id, { fields: templateUpdated });
+      await templateRequests.update(template?.id, { fields: templateUpdated });
       setId(newField?.id)
       toast.success("Template atualizado com sucesso");
       return templateUpdated;

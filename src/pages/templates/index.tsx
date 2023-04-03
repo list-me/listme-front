@@ -15,7 +15,6 @@ import { ReactComponent as CopyIcon} from "../../assets/copy-icon.svg";
 // @ts-ignore
 import { ReactComponent as TrashIcon} from "../../assets/trash-icon.svg";
 import {CustomTable} from "../../components/Table/index";
-import {CustomModal} from "../../components/Modal";
 import {templateRequests} from "../../services/apis/requests/template";
 import {TemplateDefault} from "../../components/TemplateDefault";
 import Select from "../../components/Select";
@@ -154,10 +153,6 @@ export const Template = () => {
 
     return (
         <TemplateDefault>
-            <CustomModal
-                isOpen={modalIsOpen}
-                onClickModal={() => setModalIsOpen(!modalIsOpen)}
-            />
             <Content>
                 <TitlePage> Templates </TitlePage>
                 <CustomTable
@@ -166,8 +161,6 @@ export const Template = () => {
                     size="large"
                     rowSelection={rowSelection}
                 />
-                    {/* <Select /> */}
-                {/* </CustomTable> */}
             </Content>
         </TemplateDefault>
     );

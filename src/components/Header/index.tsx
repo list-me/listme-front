@@ -5,15 +5,14 @@ import {Notification} from "../Notification";
 import {Button} from "../Button";
 // @ts-ignore
 import { ReactComponent as AddIcon} from '../../assets/add.svg'
-import {CustomModal} from "../Modal";
-import {templateRequests} from "../../services/apis/requests/template";
+import {TempModal} from "../TempModal";
 
 export function Header() {
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
 
     return(
         <>
-            <CustomModal
+            <TempModal
                 isOpen={modalIsOpen}
                 onClickModal={() => setModalIsOpen(!modalIsOpen)}
             />

@@ -11,6 +11,7 @@ import {ReactComponent as HelpIcon} from "../../assets/help.svg";
 import {ReactComponent as MenuIcon} from "../../assets/menu.svg";
 import DropdownMenu from "../RepDropdownMenu";
 import {Input} from "../Input";
+import Modal from "../Modal";
 
 interface IProps {
   options?: any[];
@@ -22,7 +23,7 @@ export const Temp: React.FC<IProps> = ({options}) => {
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [onSearch, setOnSearch] = useState<boolean>(false);
-
+ 
   useEffect(() => {
     window.addEventListener("keydown", function (e) {             
       if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) {        
@@ -34,6 +35,7 @@ export const Temp: React.FC<IProps> = ({options}) => {
 
   return (
     <Contents>
+      {/* <Modal /> */}
       <DropdownMenu
         left={150}
         key={Math.random()}
