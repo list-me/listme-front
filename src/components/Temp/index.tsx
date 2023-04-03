@@ -1,5 +1,7 @@
-import { useContext, useRef, useState } from "react";
-import { Input } from "antd";
+/* eslint-disable */
+import { useContext, useEffect, useRef, useState } from "react";
+import {debounce} from "lodash";
+
 import { Contents, Item } from "./styles"
 import {ReactComponent as ChevronDownIcon} from "../../assets/chevron-down.svg";
 import {ReactComponent as EyeOffIcon} from "../../assets/eye-off.svg";
@@ -8,7 +10,7 @@ import {ReactComponent as SearchIcon} from "../../assets/search.svg";
 import {ReactComponent as HelpIcon} from "../../assets/help.svg";
 import {ReactComponent as MenuIcon} from "../../assets/menu.svg";
 import DropdownMenu from "../RepDropdownMenu";
-import { productContext } from "../../context/products";
+import {Input} from "../Input";
 
 interface IProps {
   options?: any[];
@@ -21,41 +23,18 @@ export const Temp: React.FC<IProps> = ({options}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [onSearch, setOnSearch] = useState<boolean>(false);
 
-  // const {filterData} = useContext(productContext);
-
-  const items = [
-    {
-        id: 1,
-        name: "Visualização",
-        icon: <MenuIcon />,
-        rightIcon: true
-    },
-    {
-        id: 2,
-        name: "Ocultar campos",
-        icon: <EyeOffIcon />,
-        rightIcon: true,
-        onClick: () => setIsOpen(!isOpen)
-    },
-    {
-        id: 3,
-        name: "Filtrar",
-        icon: <FilterIcon />,
-        rightIcon: false,
-    },
-    {
-        id: 4,
-        name: "Buscar",
-        icon: <SearchIcon />,
-        rightIcon: false,
-    },
-  ]
+  useEffect(() => {
+    window.addEventListener("keydown", function (e) {             
+      if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) {        
+          e.preventDefault();
+          setOnSearch(true);
+      };
+    })
+  }, []);
 
   return (
     <Contents>
       <DropdownMenu
-        // changeOpen={() => {}}s
-        // openModal={() => {}}
         left={150}
         key={Math.random()}
         iconRef={iconRef}
@@ -81,20 +60,17 @@ export const Temp: React.FC<IProps> = ({options}) => {
         onClick={() => setOnSearch(true)}
       >
         <SearchIcon onClick={() => setOnSearch(!onSearch)} />
-        {!onSearch ? "Buscar" : <Input />}
+        {
+          !onSearch ?
+            "Buscar" :
+            <Input
+              label={false}
+              name="search"
+              type="input"
+              autoFocus
+            />
+          }
       </Item>
-      {/* {items.map((item) => {
-          return (
-              <Item
-                  key={item.id}
-                  // onClick={() => console.log("ok")}
-              >
-                  {item.icon}
-                  {item.name}
-                  {item.rightIcon ? <ChevronDownIcon ref={iconRef} onClick={() => item?.onClick()} /> : <> </>}
-              </Item>
-          )
-      })} */}
     </Contents>
   )
 }

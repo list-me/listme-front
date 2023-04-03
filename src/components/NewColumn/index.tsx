@@ -16,7 +16,7 @@ interface NewColumnProps {
   test: Function;
 }
 
-export const NewColumn: React.FC<NewColumnProps> = ({template, setNewColumn, newColumn, test}) => {
+export const NewColumn: React.FC<NewColumnProps> = ({template, setNewColumn, newColumn, test = () => {}}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [data, setData] = useState({});
@@ -65,7 +65,7 @@ export const NewColumn: React.FC<NewColumnProps> = ({template, setNewColumn, new
     <>
       <PersonalModal
         isOpen={isOpenModal}
-        onClickModal={() => setIsOpenModal(!isOpenModal)}
+        onClickModal={() => setIsOpenModal(false)}
         data={data}
         template={template}
         onUpdate={(e, fields) => setNewColumn(e, fields)}
@@ -75,22 +75,26 @@ export const NewColumn: React.FC<NewColumnProps> = ({template, setNewColumn, new
         className="testing"
         onClick={() => {
           test();
-          setIsOpen(!isOpen)
+          setIsOpen(!isOpen);
         }}
       >
         <AddColumnIcon
           ref={iconRef}
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => {
+            test();
+            setIsOpen(!isOpen)
+          }}
         />
         <DropdownMenu
           changeOpen={() => setIsOpen(!isOpen)}
           isOpen={isOpen}
           icoRef={iconRef}
           openModal={(e) => {
-              test();
-              setIsOpen(!isOpen)
-              setIsOpenModal(!isOpenModal)
-              setData({type: e?.type})
+            test();
+            console.log("testing")
+            setIsOpen(!isOpen)
+            setIsOpenModal(!isOpenModal)
+            setData({type: e?.type})
           }}
           options={options}
           left={position}

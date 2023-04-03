@@ -35,7 +35,8 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         handleHidden,
         handleFreeze,
         handleNewColumn,
-        handleMove
+        handleMove,
+        filter
     } = useContext(productContext);
     const [cols, setCols] = useState<any[]>([]);
     const [columns, setColumns] = useState(headerTable);
@@ -84,7 +85,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
 
                         customRenderer(
                             td,
-                            <TableField
+                            <TableFieldMemo
                                 value={initialValue}
                                 type={column.type}
                                 options={column.options}
@@ -112,7 +113,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         })
 
         setCols(columnsCustom);
-    }
+    };
 
     const [iconClicked, setIconClicked] = useState<boolean>(true);
 
@@ -253,15 +254,13 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
     }, [headerTable, hidden, headers, currentTemplate]);
 
     useEffect(() => {
-        
-
         const toFreeze = headerTable.filter((item) => item?.frozen === true);
         if (toFreeze.length > 0) {
             setFrozen(toFreeze.length);
         }
 
         handleMountColumns();
-    }, [headerTable, frozen, hidden, currentTemplate]);
+    }, [headerTable, frozen, hidden]);
 
     return (
         <>
@@ -322,6 +321,10 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                     }
                 }}
                 afterRenderer={(TD, row, col, prop, value, cellProperties) => {
+                    if (value && value.toString().toLowerCase().includes(filter?.toLowerCase())) {
+                        TD.style.backgroundColor = "#F7F5FF";
+                    }
+
                     if (col+1 === headers.length) {
                       TD.style.display = 'none';
                     }
@@ -353,7 +356,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                     });
                     
                     setColumns(newColumns);
-                    // handleMove(newColumns);
+                    handleMove(newColumns);
                 }}
             />
         </>
