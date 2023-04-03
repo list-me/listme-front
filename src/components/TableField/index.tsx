@@ -44,12 +44,17 @@ export const TableField: React.FC<ITableFieldProps> = ({
     }
   
     document.addEventListener('mousedown', handleOutsideClick);
+    window.addEventListener('wheel', handleOutsideClick);
+    window.addEventListener('keydown', handleOutsideClick);
+
   
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
+      window.removeEventListener('wheel', handleOutsideClick);
+      window.removeEventListener('keydown', handleOutsideClick);
     };
 
-  }, [iconRef, modalRef, isOpen]);
+  }, [iconRef, modalRef]);
 
   return (
     <>
@@ -105,8 +110,8 @@ export const TableField: React.FC<ITableFieldProps> = ({
                         options={options}
                         defaultCheckedList={value}
                         handleGetNewValue={(e: any) => {
-                          setNewValue(e)
-                          handleSetNewValue(e)
+                          setNewValue(e);
+                          handleSetNewValue(e);
                         }}
                     />)
                 }

@@ -95,6 +95,8 @@ export const SuspenseMenu = styled.div`
   
   justify-content: space-between;
   margin-top: 10px;
+  margin-left: -15px;
+  z-index: 10000;
 
   padding: 16px;
 `;

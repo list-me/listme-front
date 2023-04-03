@@ -1,13 +1,9 @@
 /* eslint-disable */
-
-import React, {createContext, ReactElement, useEffect, useMemo, useState} from "react";
+import React, {createContext, useEffect, useState} from "react";
 import {toast} from "react-toastify";
-
-import {TableField} from "../../components/TableField/index";
 
 import {productRequests} from "../../services/apis/requests/product";
 import {templateRequests} from "../../services/apis/requests/template";
-import {ReactComponent as TextAltIcon} from "../../assets/text-alt.svg";
 import { ICustomCellType } from "./product.context";
 
 export interface ICustomField {
@@ -38,6 +34,8 @@ export interface IHeaderTable {
 
 interface ITypeProductContext {
     products: any[];
+    filteredData: any[];
+    filter: string;
     setProducts: Function,
     handleRedirectAndGetProducts: (template: any) => Promise<void>;
     headerTable: IHeaderTable[];
@@ -59,6 +57,7 @@ interface ITypeProductContext {
     handleFreeze: Function;
     handleMove: Function;
     handleNewColumn: Function;
+    handleFilter: Function;
 }
 
 interface IField {
@@ -77,10 +76,10 @@ interface IField {
     frozen?: boolean;
 }
 
-const NOT_EDITABLE_CELLS = ['created_at', 'updated_at'];
-
 export const productContext = createContext<ITypeProductContext>({
     products: [],
+    filteredData: [],
+    filter: '',
     setProducts: () => {},
     handleRedirectAndGetProducts: (): Promise<void> => {return},
     headerTable: [],
@@ -102,6 +101,7 @@ export const productContext = createContext<ITypeProductContext>({
     handleFreeze: () => {},
     handleMove: () => {},
     handleNewColumn: () => {},
+    handleFilter: () => {}
 });
 
 export const ProductContextProvider = ({children}: any) => {
@@ -112,7 +112,8 @@ export const ProductContextProvider = ({children}: any) => {
     const [editing, setEditing] = useState<boolean>(false);
     const [hidden, setHidden] = useState<any[]>([]);
     const [customFields, setCustomFields] = useState([]);
-    const [filteredData, setFilteredData] = useState([]);
+    const [filteredData, setFilteredData] = useState<any[]>([]);
+    const [filter, setFilter] = useState<string|undefined>(undefined);
 
     const COMPONENT_CELL_PER_TYPE: ICustomCellType = {
         RADIO: "radio",
@@ -181,11 +182,6 @@ export const ProductContextProvider = ({children}: any) => {
     }
 
     const handleSave = async (value: any) => {
-        // const fieldsTest = Object.keys(value).filter((item) => {
-        //     const element = template.fields?.fields?.find((item) => item?.id == item?.data);
-        //     if (element) return item;
-        // })
-
         const fields = buildProduct(value);
         try {
             if (value?.id) {
@@ -205,7 +201,6 @@ export const ProductContextProvider = ({children}: any) => {
             console.error(error.response.data.message[0]);
             toast.error(error.response.data.message)
         }
-
     }
 
     const buildProduct = (fields: any) => {
@@ -230,7 +225,7 @@ export const ProductContextProvider = ({children}: any) => {
             return;
         }
 
-        setProducts((old) => [{}, ...old]);
+        setFilteredData((old) => [{}, ...old]);
     }
 
     const handleGetTemplates = async (templateId: string) => {
@@ -263,14 +258,6 @@ export const ProductContextProvider = ({children}: any) => {
                 const test1 = headers.map((item) => {
                     return item?.title;
                 })
-                // const test1 = headersCell.sort((a, b) => {
-                //     const itemA = headers.find(item => item.title === a);
-                //     const itemB = headers.find(item => item.title === b);
-
-                //     return itemA.order - itemB.order;
-                // })
-
-                console.log({test, headersCell, test1})
 
                 headersCell = [...test1, ' '];
                 headers = [...test,  {}];
@@ -285,7 +272,6 @@ export const ProductContextProvider = ({children}: any) => {
                     const {order, hidden, width, frozen, data} = item;
                     return {order, hidden, width, frozen, id: data}
                 }))
-                // headers = [];
         }).catch((error) => {
             console.error(error);
             toast.error("Não foi possível carregar o template, tente novamente!")
@@ -424,11 +410,10 @@ export const ProductContextProvider = ({children}: any) => {
     }
 
     const handleNewColumn = (col: any, fields: any[]) => {
-        const test = [...headerTable, col]
-        test.splice(test.length-2 , 1)
-        test.push({});
-
-        setHeaderTable(test);
+        const newPosition = [...headerTable, col]
+        newPosition.splice(newPosition.length-2 , 1)
+        newPosition.push({});
+        setHeaderTable(newPosition);
 
         const newTemplate = template;
         newTemplate.fields.fields = fields;
@@ -437,8 +422,36 @@ export const ProductContextProvider = ({children}: any) => {
         setCustomFields(prev => [...prev, {order: col?.order, hidden: col?.hidden, width: col?.width, frozen: col?.frozen, id: col?.data}])
     };
 
+    const handleFilter = (word: string): any[] => {
+        const filtered = products.filter((row) => {
+            let multiOptions: string[] = [];
+            let values = Object.values(row)
+                .filter((element) => {
+                    if (typeof element === "object") {
+                        return Object.values(element).forEach(option => multiOptions.push(option));
+                    }
+
+                    return element !== undefined;
+                });
+            values = [...values, ...multiOptions];
+
+            return values.some((cell) => {
+                const option = cell as string;
+                if (option.toLocaleLowerCase().includes(word.toLocaleLowerCase())) {
+                    return cell;
+                }
+            })
+        });
+
+        setFilteredData(filtered);
+        setFilter(word === '' ? undefined : word);
+        return filtered
+    }
+
     const value: ITypeProductContext = {
         products,
+        filteredData,
+        filter,
         setProducts,
         handleRedirectAndGetProducts,
         headerTable,
@@ -459,7 +472,8 @@ export const ProductContextProvider = ({children}: any) => {
         setColHeaders,
         handleFreeze,
         handleMove,
-        handleNewColumn
+        handleNewColumn,
+        handleFilter
     }
 
     return <productContext.Provider value={value}> {children} </productContext.Provider>

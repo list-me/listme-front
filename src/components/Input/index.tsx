@@ -1,16 +1,32 @@
-import {Input} from "antd";
-import { Container, Label } from "./styles";
+import { debounce } from "lodash";
+import { useContext, useEffect, useRef, useState } from "react";
+import { productContext } from "../../context/products";
 
-export const InputCustom = (props: any) => {
+import { IInputProps } from "./Input.d";
+import { Container, Label, InputCustom } from "./styles";
+
+export const Input: React.FC<IInputProps> = ({label, name, type, value, autoFocus}) => {
+    const [inputText, setInputText] = useState<string>('');
+    const {handleFilter} = useContext(productContext);
+    const inputRef = useRef(null);
+
+    const handleInputChange = debounce((newValue: string) => {
+        handleFilter(newValue);
+    }, 600)
+
     return (
-        <Container>
-            <Label>
-                {props?.label}
-            </Label>
-            <Input
-                style={{height: "45px"}}
-                type={props?.type}
-            />
-        </Container>
+        <InputCustom
+            ref={inputRef}
+            style={{height: "45px"}}
+            type={type}
+            name={name}
+            value={value ?? inputText}
+            onChange={(e) => {
+                const newValue = e.target.value;
+                setInputText(newValue);
+                handleInputChange(newValue)
+            }}
+            autoFocus={autoFocus}
+        />
     )
-}
+};
