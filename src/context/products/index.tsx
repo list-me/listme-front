@@ -133,7 +133,7 @@ export const ProductContextProvider = ({children}: any) => {
             });
 
             productRequests.delete(product.id).then((response: any) => {
-                setProducts(currentProducts);
+                setFilteredData(currentProducts);
                 toast.success("Produto exlcuido com sucesso");
             }).catch((error) => {
                 throw error
