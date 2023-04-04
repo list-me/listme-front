@@ -126,18 +126,18 @@ export const ProductContextProvider = ({children}: any) => {
 
     const handleDelete = (product: any) => {
         try {
-            const currentProducts = products.filter((itemProduct: any) => {
+            const currentProducts = filteredData.filter((itemProduct: any) => {
                 if (itemProduct.id !== product.id) {
                     return itemProduct;
                 }
             });
 
             productRequests.delete(product.id).then((response: any) => {
-                setProducts(currentProducts);
-                toast.success("Produto exlcuido com sucesso");
+                setFilteredData(currentProducts);
+                toast.success("Produto excluído com sucesso");
             }).catch((error) => {
                 throw error
-            })
+            });
 
         } catch (error) {
             console.error(error);
