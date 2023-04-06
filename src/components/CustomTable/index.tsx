@@ -262,6 +262,23 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         handleMountColumns();
     }, [headerTable, frozen, hidden]);
 
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+          if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
+            event.preventDefault();
+            if (hotRef.current) {
+                hotRef.current.hotInstance.deselectCell();
+            }
+          }
+        };
+    
+        window.addEventListener('keydown', handleKeyDown);
+    
+        return () => {
+          window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+
     return (
         <>
             <HotTable
@@ -273,7 +290,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                 width="100%"
                 stretchH="all"
                 manualColumnResize={true}
-                manualRowResize
+                // manualRowResize
                 beforeColumnMove={beforeColumnMove}
                 manualColumnMove
                 viewportRowRenderingOffset={10}
@@ -282,7 +299,6 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                 rerenderOnColumnResize={false}
                 rowHeaders
                 autoRowSize
-                singleCellSelection
                 columnSorting={{sortEmptyCells: false, headerAction: false}}
                 contextMenu={{
                     items: {
@@ -322,7 +338,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                 }}
                 afterRenderer={(TD, row, col, prop, value, cellProperties) => {
                     if (value && value.toString().toLowerCase().includes(filter?.toLowerCase())) {
-                        TD.style.backgroundColor = "#F7F5FF";
+                        TD.style.backgroundColor = "#fdff70";
                     }
 
                     if (col+1 === headers.length) {

@@ -123,6 +123,7 @@ export const HeaderCell: React.FC<ICellProps> = ({
                     }}
                 />
                 <Container
+                    // onMouseEnter={() => test1()}
                     onMouseDown={() => test1()}
                 >
                     <label>
@@ -131,6 +132,7 @@ export const HeaderCell: React.FC<ICellProps> = ({
                     </label>
                 </Container>
                 <Options
+                    // onMouseEnter={(e) => console.log({e})}
                     onMouseDown={() => {
                         test();
                         setIsOpen(true);

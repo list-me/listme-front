@@ -11,6 +11,10 @@ export const Container = styled.div`
   position: relative;
 
   label {
+    &:hover {
+      cursor: inherit;
+    }
+
     display: flex;
     align-items: center;
     

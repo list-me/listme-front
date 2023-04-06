@@ -99,6 +99,7 @@ export const HeaderContent = styled.div`
 
 export const Container = styled.div`
   height: 80%;
+  overflow: hidden !important;
 
   @media screen
   and (min-device-width: 1200px)
@@ -107,50 +108,35 @@ export const Container = styled.div`
     height: 72%;
   }
 
-  .ht_master .handsontable {
-    .handsontable ::-webkit-scrollbar {
-      width: 8px !important;
-      height: 8px !important; /* largura da barra de rolagem */
-    }
-
-    .handsontable ::-webkit-scrollbar-track {
-      background-color: unset !important;
-    }
-
-    .handsontable ::-webkit-scrollbar-thumb {
-      background-color: #CCCCCC !important; /* cor do botão da barra de rolagem */
-      border-radius: 4px !important; /* raio da borda do botão da barra de rolagem */
-    }
-
-    .handsontable ::-webkit-scrollbar-thumb:hover {
-      background-color: #3818D9 !important; /* cor do botão da barra de rolagem quando hover */
-    }
+  .handsontable .wtHolder::-webkit-scrollbar {
+    background: transparent !important;
   }
 
-  .htMenu.htContextMenu.handsontable {
-    .current.highlight {            
-        /* background: red; */
-    }
+  .handsontable .wtHolder::-webkit-scrollbar-track {
+    background-color: unset !important;
   }
-  
+
+  .handsontable .wtHolder::-webkit-scrollbar-thumb {
+    background-color: #CCCCCC !important;
+    border-radius: 8px !important;
+  }
+
+  .handsontable .wtHolder::-webkit-scrollbar-thumb:hover {
+    background-color: #3818D9 !important;
+  }
+
   .menuContext{
     background: red !important;
     border-radius: 20px;
   }
-
-  
   
   .handsontable .htColumnHeaders .ht_clone_top {
     margin-right: 0 !important;
-    
   }
 
-   .wtHolder {
-    margin-right: 20px;
-    /* 
-    margin: 0 !important;
-    padding: 0 !important; */
-   }
+  .wtHolder {
+  margin-right: 20px;
+  }
 
    .htCore {
      /* width: 100%; */
@@ -175,23 +161,13 @@ export const Container = styled.div`
       }  */
     }
 
-   .ht_clone_top .handsontable {
-     
-     /* position: absolute; */
-   }
-
-   .handsontable .ht__selection--columns .after-selection--columns .htRowHeaders .htColumnHeaders .ht__manualColumnMove {
-      /* background: red !important; */
-    }
-
   .ht__manualColumnMove {
     z-index: 2;
 
     .ht__manualColumnMove--backlight{
-      display: none !important;
+      /* display: none !important; */
     }
   }
-  
 
   thead {
     th {
@@ -199,7 +175,7 @@ export const Container = styled.div`
         height: 51px;
         background: #F1F3F5;
 
-        z-index: 999;
+        z-index: 9999;
       }
 
       .componentCustom {
@@ -246,7 +222,6 @@ export const Container = styled.div`
 
   thead tr th {
     background-color: ${({ theme }) => theme.colors.grayscale.ninth};
-    z-index: 9999;
   }
 
   tbody tr th {
@@ -266,6 +241,7 @@ export const Container = styled.div`
   
   tbody {
     margin: 0 !important;
+    overflow: scroll;
 
     td {
       width: fit-content;
@@ -288,15 +264,6 @@ export const Container = styled.div`
         margin-top: 8px;
       }
     }
-  }
-
-  /* #handsontable-container {
-    width: 100% !important;
-    background: red;
-  } */
-
-  .ht_master .handsontable {
-    background: brown;
   }
 `;
 

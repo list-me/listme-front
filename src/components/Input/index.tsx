@@ -12,7 +12,22 @@ export const Input: React.FC<IInputProps> = ({label, name, type, value, autoFocu
 
     const handleInputChange = debounce((newValue: string) => {
         handleFilter(newValue);
-    }, 600)
+    }, 200);
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+          if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
+            event.preventDefault();
+            inputRef.current.focus();
+          }
+        };
+    
+        window.addEventListener('keydown', handleKeyDown);
+    
+        return () => {
+          window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
 
     return (
         <InputCustom
