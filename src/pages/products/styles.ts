@@ -165,7 +165,7 @@ export const Container = styled.div`
     z-index: 2;
 
     .ht__manualColumnMove--backlight{
-      display: none !important;
+      /* display: none !important; */
     }
   }
 

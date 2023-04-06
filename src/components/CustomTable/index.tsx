@@ -262,6 +262,23 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         handleMountColumns();
     }, [headerTable, frozen, hidden]);
 
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+          if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
+            event.preventDefault();
+            if (hotRef.current) {
+                hotRef.current.hotInstance.deselectCell();
+            }
+          }
+        };
+    
+        window.addEventListener('keydown', handleKeyDown);
+    
+        return () => {
+          window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+
     return (
         <>
             <HotTable

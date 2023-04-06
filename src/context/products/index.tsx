@@ -272,6 +272,7 @@ export const ProductContextProvider = ({children}: any) => {
                     const {order, hidden, width, frozen, data} = item;
                     return {order, hidden, width, frozen, id: data}
                 }))
+                setFilter(undefined);
         }).catch((error) => {
             console.error(error);
             toast.error("Não foi possível carregar o template, tente novamente!")
@@ -404,6 +405,7 @@ export const ProductContextProvider = ({children}: any) => {
             }
         })
 
+        console.log({fields})
         setCustomFields(fields);
         templateRequests.customView(window.location.pathname.substring(10), {fields})
             .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
