@@ -58,6 +58,7 @@ interface ITypeProductContext {
     handleMove: Function;
     handleNewColumn: Function;
     handleFilter: Function;
+    handleRemoveColumn: (column: number, fields: any[]) => void;
 }
 
 interface IField {
@@ -101,7 +102,8 @@ export const productContext = createContext<ITypeProductContext>({
     handleFreeze: () => {},
     handleMove: () => {},
     handleNewColumn: () => {},
-    handleFilter: () => {}
+    handleFilter: () => {},
+    handleRemoveColumn: () => {}
 });
 
 export const ProductContextProvider = ({children}: any) => {
@@ -183,6 +185,7 @@ export const ProductContextProvider = ({children}: any) => {
 
     const handleSave = async (value: any) => {
         const fields = buildProduct(value);
+        console.log({fields});
         try {
             if (value?.id) {
                 await Promise.resolve(productRequests.update({id: value.id, fields})).catch((error) => {
@@ -206,8 +209,9 @@ export const ProductContextProvider = ({children}: any) => {
     const buildProduct = (fields: any) => {
         const obj: any[] = [];
         if (Object.keys(fields).length) {
+            const columnKeys = headerTable.map((column) => column?.data);
             Object.keys(fields).forEach((field: any) => {
-                if (fields[field] && !["id", "created_at"].includes(field)) {
+                if (fields[field] && !["id", "created_at"].includes(field) && columnKeys.includes(field)) {
                     obj.push({
                         id: field,
                         value: fields[field]
@@ -348,7 +352,7 @@ export const ProductContextProvider = ({children}: any) => {
         });
     }
 
-    const handleFreeze = (col: number, state: boolean, operation?: string) => {
+    const handleFreeze = (col: any, state: boolean, operation?: string) => {
         let changeState;
         if (operation && operation == 'unfreeze') {
             changeState = customFields.map((customs) => {
@@ -361,7 +365,7 @@ export const ProductContextProvider = ({children}: any) => {
             setCustomFields(changeState);
         } else {
             changeState = customFields.map((customs) => {
-                if (Number(customs?.order) <= col) {
+                if (Number(customs?.order) <= col?.order) {
                     return {
                         ...customs,
                         frozen: true,
@@ -405,7 +409,6 @@ export const ProductContextProvider = ({children}: any) => {
             }
         })
 
-        console.log({fields})
         setCustomFields(fields);
         templateRequests.customView(window.location.pathname.substring(10), {fields})
             .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
@@ -450,6 +453,36 @@ export const ProductContextProvider = ({children}: any) => {
         return filtered
     }
 
+    const handleRemoveColumn = (column: number, fields: any[]) => {
+        const newHeader = [...headerTable]
+        newHeader.splice(column , 1)
+        setHeaderTable(newHeader);
+
+        const newTemplate = template;
+        newTemplate.fields.fields = fields;
+        setTemplate(newTemplate);
+
+        templateRequests.update(window.location.pathname.substring(10), {fields})
+            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
+        
+        const newCustom = customFields.filter((item, index) => {
+            if(item?.order != column.toString()) {
+                return {
+                    ...item,
+                    order: index.toString()
+                }
+            }
+        });
+
+        setCustomFields(newCustom);
+        
+        
+        // setFilteredData(prev => {
+        //     return 
+        //     })
+        // })
+    }
+
     const value: ITypeProductContext = {
         products,
         filteredData,
@@ -475,7 +508,8 @@ export const ProductContextProvider = ({children}: any) => {
         handleFreeze,
         handleMove,
         handleNewColumn,
-        handleFilter
+        handleFilter,
+        handleRemoveColumn
     }
 
     return <productContext.Provider value={value}> {children} </productContext.Provider>

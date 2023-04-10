@@ -36,7 +36,8 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
         handleFreeze,
         handleNewColumn,
         handleMove,
-        filter
+        filter,
+        handleRemoveColumn
     } = useContext(productContext);
     const [cols, setCols] = useState<any[]>([]);
     const [columns, setColumns] = useState(headerTable);
@@ -195,34 +196,39 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
 
                             return true;
                         } else {
-                            if (col?.order == e) {
-                                const colWidth = headerTable.filter((item) => {
-                                    if (Number(item?.order) <= Number(e)) return item
-                                }).map((element) =>
-                                    Number(element?.width.replace('px', ''))
-                                ).reduce((before, after) => before + after);
-        
-                                const tableWidth = hotRef.current!?.__hotInstance.rootElement.clientWidth
-                                if (colWidth && tableWidth && colWidth > tableWidth * 0.65) {
-                                    toast.warn("A coluna selecionada excede o limite de visualização da tela")
-                                    return false;
-                                }
-        
-                                handleFreeze(column, true);
-                                setColumns(prev => {
-                                    return prev.map((item, index) => { 
-                                        if (index == column) {
-                                            return {
-                                                ...item,
-                                                frozen: true,
-                                            }
-                                        }
-                                        return item;
-                                    })
-                                })
+                            // if (col?.order == e) {
+                            const colWidth = headerTable.filter((item) => {
+                                console.log({item, col})
+                                if (Number(item?.order) <= Number(col?.order)) return item
+                            }).map((element) => {
+                                return Number(element?.width.replace('px', ''))
+                            });
 
-                                setFrozen(column+1)
-                            }
+                            
+                            // if (colWidth).reduce((before, after) => before + after);
+
+                            // const tableWidth = hotRef.current!?.__hotInstance.rootElement.clientWidth
+                            // if (colWidth && tableWidth && colWidth > tableWidth * 0.65) {
+                            //     toast.warn("A coluna selecionada excede o limite de visualização da tela")
+                            //     return false;
+                            // }
+
+                            col.frozen = true;
+                            handleFreeze(col, true);
+                            setColumns(prev => {
+                                return prev.map((item, index) => { 
+                                    if (index == column) {
+                                        return {
+                                            ...item,
+                                            frozen: true,
+                                        }
+                                    }
+                                    return item;
+                                })
+                            })
+
+                            setFrozen(column+1)
+                            // }
                             return true;
                         }
                     }}
@@ -239,6 +245,29 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                     }}
                     test1={() => {
                         setIconClicked(true)
+                    }}
+                    handleDeleteColumn={() => {
+                        const newTemplate = currentTemplate;
+                        const fields = currentTemplate.fields.fields?.filter((item) => {
+                            if (item?.id != col?.id) {
+                                return item;
+                            }
+                        });
+                        newTemplate.fields.fields = fields;
+                        setCurrentTemplate(newTemplate);
+                        handleRemoveColumn(column, fields);
+
+                        const contentHeaders = headerTable.filter((element) => {
+                            const ids = fields.map((item) => item?.id) as any[];
+                            if (ids.includes(element?.data)) {
+                                return element;
+                            }
+                        }).map((item) => item.title);
+
+                        // const contentHeaders = headerTable.map((item) => item?.title).filter((element) => element != undefined);
+                        contentHeaders.push(" ");
+                        console.log({contentHeaders, fields})
+                        setHeaders(contentHeaders);
                     }}
                 />, myComponent);
             }
@@ -352,7 +381,7 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                     await handleResize(column, newSize, currentTemplate)
                 }}
                 afterColumnMove={(movedColumns: number[], finalIndex: number, dropIndex: number | undefined, movePossible: boolean, orderChanged: boolean) => {
-                    let newColumns = [...columns];
+                    let newColumns = [...headerTable];
                     movedColumns.forEach((oldIndex) => {
                     const movedColumn = newColumns.splice(oldIndex, 1)[0];
                     newColumns.splice(finalIndex, 0, movedColumn);

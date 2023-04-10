@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {Container, Content, Options} from "./styles";
-import {ICellProps} from "./Cell.d";
+import {ICellProps, IOption} from "./Cell.d";
 import {ReactComponent as ChevronDownIcon} from "../../assets/chevron-down-small.svg";
 import {ReactComponent as AltText} from "../../assets/text-alt.svg";
 import {ReactComponent as PencilIcon} from "../../assets/pencei-icon.svg";
@@ -10,6 +10,7 @@ import {ReactComponent as EyeOffIcon} from "../../assets/eye-off.svg";
 import {ReactComponent as FrozenIcon} from "../../assets/frozen.svg";
 import {ReactComponent as AscIcon} from "../../assets/sort-asc.svg";
 import {ReactComponent as DescIcon} from "../../assets/sort-desc.svg";
+import {ReactComponent as TrashIcon} from "../../assets/trash-red.svg";
 import { DropdownMenu } from "../DropdownMenu";
 import { PersonalModal } from "../CustomModa";
 import { productContext, ProductContextProvider } from "../../context/products";
@@ -23,7 +24,8 @@ export const HeaderCell: React.FC<ICellProps> = ({
     handleHidden = () => {},
     freeze,
     test,
-    test1
+    test1,
+    handleDeleteColumn
 }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
@@ -34,34 +36,42 @@ export const HeaderCell: React.FC<ICellProps> = ({
     const [options, setOptions] = useState<any[]>();
 
     useEffect(() => {
-        const customOptions = [
+        const customOptions: IOption[] = [
             {
                 label: "Editar Campo",
-                icon: <PencilIcon />
+                icon: <PencilIcon />,
+                action: "update"
             },
             {
                 label: "Duplicar Campo",
-                icon: <CopyIcon />
+                icon: <CopyIcon />,
+                action: "duplicate"
             },
             {
                 label: "Ocultar Coluna",
-                icon: <EyeOffIcon />
+                icon: <EyeOffIcon />,
+                action: "hidden"
             },
             {
                 label: freeze ? "Descongelar Campo" : "Congelar Campo",
                 icon: <FrozenIcon />,
-                operation: "freeze"
+                action: "freeze"
             },
-            {
+            { 
                 label: "Ordenar de A a Z",
                 icon: <AscIcon />,
-                operation: "asc"
+                action: "asc"
             },
             {
                 label: "Ordenar de Z a A",
                 icon: <DescIcon />,
-                operation: "desc"
-            }
+                action: "desc"
+            },
+            {
+                label: "Excluir coluna",
+                icon: <TrashIcon />,
+                action: "delete"
+            },
         ];
         setOptions([...customOptions]);
 
@@ -80,18 +90,24 @@ export const HeaderCell: React.FC<ICellProps> = ({
                 }}
                 isOpen={isOpen}
                 icoRef={iconRef}
-                openModal={(e, col) => {
-                    if (e.label.includes("Ordenar")) {
-                        handleSort(e, e?.operation);
-                    } else if (e?.label.includes("Ocultar")) {
+                openModal={(option, col) => {
+                    if (option.action === "delete") {
+                        handleDeleteColumn();
+                        return setIsOpen(!isOpen);
+                    }
+
+                    if (option.label.includes("Ordenar")) {
+                        handleSort(option, option.action);
+                    } else if (option?.label.includes("Ocultar")) {
                         setIsOpen(!isOpen);
-                        handleHidden(e, column?.hidden);
+                        handleHidden(option, column?.hidden);
                         return;
-                    } else if (e.operation === "freeze") {
+                    } else if (option.action === "freeze") {
+                        console.log({column})
                         if (!freeze) {
-                            handleFrozen(col, "");
+                            handleFrozen(column, "");
                         } else {
-                            handleFrozen(col, "unfreeze");
+                            handleFrozen(column, "unfreeze");
                         }
 
                         const test = !freeze;

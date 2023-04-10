@@ -100,7 +100,7 @@ export const Products = () => {
                         height="52px"
                         width="226px"
                         className="secondButton"
-                        // onClick={handleAdd}
+                        onClick={handleAdd}
                     >
                         Adicionar produto
                         <PlusIcon />

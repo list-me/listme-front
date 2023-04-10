@@ -91,7 +91,6 @@ export const NewColumn: React.FC<NewColumnProps> = ({template, setNewColumn, new
           icoRef={iconRef}
           openModal={(e) => {
             test();
-            console.log("testing")
             setIsOpen(!isOpen)
             setIsOpenModal(!isOpenModal)
             setData({type: e?.type})
