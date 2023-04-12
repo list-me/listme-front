@@ -58,7 +58,7 @@ interface ITypeProductContext {
     handleMove: Function;
     handleNewColumn: Function;
     handleFilter: Function;
-    handleRemoveColumn: (column: number, fields: any[]) => void;
+    handleRemoveColumn: (column: number, fields: any[], newColumns: any[]) => void;
 }
 
 interface IField {
@@ -247,7 +247,7 @@ export const ProductContextProvider = ({children}: any) => {
                         className: "htLeft htMiddle",
                         type: item.type,
                         options: item.options,
-                        order: item.order ? item.order : index.toString(),
+                        order: item.order !== undefined ? item.order : index.toString(),
                         hidden: item.hidden ? item.hidden : false,
                         width: item.width ? item.width : "300px",
                         frozen: item.frozen ? item.frozen : false
@@ -257,7 +257,6 @@ export const ProductContextProvider = ({children}: any) => {
                 const test = headers.sort((a, b) => {
                     return Number(a.order) - Number(b.order)
                 })
-
 
                 const test1 = headers.map((item) => {
                     return item?.title;
@@ -284,34 +283,51 @@ export const ProductContextProvider = ({children}: any) => {
     }
 
     const handleResize = (col: number, newSize: number, template: any) => {
-        setCustomFields(prev => {
-            return prev.map((item) => {
-                if (item?.order == col.toString()) {
-                    return {
-                        ...item,
-                        width: newSize.toString(),
-                    }
+        const columnKeys = headerTable.map((column) => column?.data);
+        console.log({headerTable})
+
+        // setCustomFields(prev => {
+        //     return prev.map((item) => {
+        //         if (item?.order == col.toString()) {
+        //             return {
+        //                 ...item,
+        //                 width: newSize.toString(),
+        //             }
+        //         }
+
+        //         return item;
+        //     })
+        // });
+
+        const customs = customFields.map((item, index) => {
+            if (item?.order == col.toString()) {
+                return {
+                    ...item,
+                    width: newSize.toString(),
+                    order: index.toString()
                 }
+            }
 
-                return item;
-            })
+            return item;
         });
+        setCustomFields(customs);
+        // const custom = buildCustomFields(template.fields.fields, {width: `${newSize.toString()}`}, col);
 
-        const custom = buildCustomFields(template.fields.fields, {width: `${newSize.toString()}`}, col);
-        templateRequests.customView(template.id, {fields: custom})
+        console.log({customs})
+        templateRequests.customView(template.id, {fields: customs})
             .catch((error) => toast.error("Ocorreu um erro ao alterar o tamanho do campo"));
-
-        return custom;
+        // return custom;
     }
 
     const handleHidden = (col: number, template: any, able: boolean): number[] => {
-        const content = [...hidden]
+        const content = hidden
         let newValue;
         if (content.includes(col)) {
             newValue = content.filter((element) => element != col)
         } else {
             newValue = [...content, col]
         };
+        console.log({newValue, content, hidden, col})
 
         setHidden(newValue);
         setCustomFields(prev => {
@@ -328,7 +344,6 @@ export const ProductContextProvider = ({children}: any) => {
         });
 
         const custom = buildCustomFields(template?.fields?.fields, {show: able}, col);
-        console.log({custom})
         templateRequests.customView(window.location.pathname.substring(10), {fields: custom})
             .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
 
@@ -337,7 +352,6 @@ export const ProductContextProvider = ({children}: any) => {
 
     const buildCustomFields = (fields: any, {order, show, width, frozen}: ICustom, col: number) => {
         const testing = [...customFields]
-
         return testing?.map(custom => {
             if (custom?.order == col) {
                 return {
@@ -409,12 +423,16 @@ export const ProductContextProvider = ({children}: any) => {
             }
         })
 
+        console.log({fields, col})
+        // setHeaderTable(col);
         setCustomFields(fields);
         templateRequests.customView(window.location.pathname.substring(10), {fields})
-            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
+            .catch((error) => toast.error("Ocorreu um erro ao alterar a posição da coluna"));
     }
 
     const handleNewColumn = (col: any, fields: any[]) => {
+        console.log("WTF", {headerTable})
+
         const newPosition = [...headerTable, col]
         newPosition.splice(newPosition.length-2 , 1)
         newPosition.push({});
@@ -453,20 +471,14 @@ export const ProductContextProvider = ({children}: any) => {
         return filtered
     }
 
-    const handleRemoveColumn = (column: number, fields: any[]) => {
-        const newHeader = [...headerTable]
-        newHeader.splice(column , 1)
-        setHeaderTable(newHeader);
-
+    const handleRemoveColumn = (column: number, fields: any[], newColumns: any[]) => {
         const newTemplate = template;
         newTemplate.fields.fields = fields;
         setTemplate(newTemplate);
 
-        templateRequests.update(window.location.pathname.substring(10), {fields})
-            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
-        
-        const newCustom = customFields.filter((item, index) => {
-            if(item?.order != column.toString()) {
+        const keys = newColumns.filter((item) => Object.keys(item).length).map((item) => item.data)
+        const customs = customFields.filter((item, index) => {
+            if (keys.includes(item?.id)) {
                 return {
                     ...item,
                     order: index.toString()
@@ -474,13 +486,16 @@ export const ProductContextProvider = ({children}: any) => {
             }
         });
 
-        setCustomFields(newCustom);
-        
-        
-        // setFilteredData(prev => {
-        //     return 
-        //     })
-        // })
+        console.log({customs, newTemplate})
+        setCustomFields(customs);
+
+        setHeaderTable(newColumns);
+        templateRequests.update(window.location.pathname.substring(10), {fields})
+            .then((resolve) => {
+                templateRequests.customView(template.id, {fields: customs})
+                    .catch((error) => toast.error("Ocorreu um ao alterar os campos customizados"));
+            })
+            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
     }
 
     const value: ITypeProductContext = {

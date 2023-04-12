@@ -1,6 +1,8 @@
 interface IModalProps {
   isOpen: boolean;
-  changeVisible: Function;
+  changeVisible: () => void;
+  children?: any;
+  width?: string|number;
 }
 
 export type {IModalProps};

@@ -12,6 +12,7 @@ import {ReactComponent as MenuIcon} from "../../assets/menu.svg";
 import DropdownMenu from "../RepDropdownMenu";
 import {Input} from "../Input";
 import Modal from "../Modal";
+import { productContext } from "../../context/products";
 
 interface IProps {
   options?: any[];
@@ -21,9 +22,15 @@ export const Temp: React.FC<IProps> = ({options}) => {
   const iconRef = useRef(null);
   const searchRef = useRef(null);
 
+  const {handleFilter} = useContext(productContext);
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [onSearch, setOnSearch] = useState<boolean>(false);
- 
+
+  const handleCustomChange = debounce((newValue: string) => {
+        handleFilter(newValue);
+  }, 200);
+
   useEffect(() => {
     window.addEventListener("keydown", function (e) {             
       if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) {        
@@ -66,10 +73,11 @@ export const Temp: React.FC<IProps> = ({options}) => {
           !onSearch ?
             "Buscar" :
             <Input
-              label={false}
               name="search"
               type="input"
               autoFocus
+              handleCustomChange={handleCustomChange}
+              background
             />
           }
       </Item>

@@ -1,20 +1,27 @@
-import { Modal } from "antd";
 import {IModalProps} from "./Modal.d";
+import { CustomModal } from "./styles";
 
-const CustomModal: React.FC<IModalProps> = ({
-  changeVisible = () => {},
-  isOpen
+const Modal: React.FC<IModalProps> = ({
+  changeVisible,
+  isOpen,
+  children,
+  width
 }) => {
   return (
     <>
-      <Modal
-        visible
+      <CustomModal
         open={isOpen}
-        // onCancel={changeVisible}
-        // onOk={changeVisible}
-      />
+        onCancel={changeVisible}
+        footer={false}
+        width={width}
+        wrapClassName="custom-modal"
+        closable={false}
+        style={{padding: 0}}
+      >
+        {children}
+      </CustomModal>
     </>
   );
 }
 
-export default CustomModal;
+export default Modal;
