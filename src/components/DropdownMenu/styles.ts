@@ -49,13 +49,13 @@ export const SuspenseMenu = styled.div<{left?: number|null}>`
   }
 `;
 
-export const Item =  styled.span`
+export const Item =  styled.span<{isLast?: boolean}>`
   font-family: "Satoshi Regular", sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
   line-height: 19px;
-  color: #495057;
+  color: ${({isLast}) => isLast ? "red" : "#495057" };
 
   width: 100%;
   height: 19px;
@@ -66,7 +66,6 @@ export const Item =  styled.span`
   font-weight: 400;
   font-size: 14px;
   line-height: 19px;
-  color: #495057;
 
   svg {
     margin-right: 15px;

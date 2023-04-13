@@ -216,7 +216,6 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                        
                         setTitle(e.target.value)
                       }}
-                      defaultValue={title}
                       placeholder="Informe o nome do campo"
                     />
                   </Form.Item>
@@ -239,7 +238,6 @@ export const PersonalModal = ({isOpen,  onClickModal = ()=> {}, data, template, 
                           }}
                           placeholder="Informe o nome do campo"
                           options={options}
-                          defaultValue="text"
                         />
                       </Form.Item> : 
                       <></>

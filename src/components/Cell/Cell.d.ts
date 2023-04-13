@@ -1,4 +1,4 @@
-import {ReactElement} from "react";
+import { ReactElement } from "react";
 
 interface ICellProps {
     label: string;
@@ -8,9 +8,16 @@ interface ICellProps {
     handleFrozen: Function;
     handleSort: Function;
     handleHidden: Function;
+    handleDeleteColumn: () => void;
     freeze: boolean;
     test: Function;
     test1: Function;
 }
 
-export type {ICellProps};
+interface IOption {
+    label: string;
+    icon: ReactElement;
+    action: string;
+}
+
+export type {ICellProps, IOption};

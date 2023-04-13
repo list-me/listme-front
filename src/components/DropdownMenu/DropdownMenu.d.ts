@@ -1,9 +1,18 @@
+import { ReactElement } from "react";
+
+interface IOption {
+  label: string;
+  icon: ReactElement;
+  action?: string;
+  type?: string;
+}
+
 interface DropdownMenuProps {
   changeOpen: Function;
   isOpen: boolean;
   icoRef: any;
-  openModal: Function;
-  options: any[];
+  openModal: (options: IOption, column: any) => void;
+  options: IOption[];
   left: any;
   setIsOpen?: Function;
   col?: any;

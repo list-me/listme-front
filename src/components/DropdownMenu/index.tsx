@@ -61,6 +61,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                         onClick={(e) => {
                           openModal(item, col)
                         }}
+                        isLast={item?.label.toLowerCase().includes("excluir")}
                       >
                         {item?.icon}
                         {item?.label}
@@ -78,6 +79,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                       onClick={() => {
                         openModal(item, col)
                       }}
+                      isLast={item?.label.toLowerCase().includes("excluir")}
                     >
                       {item?.icon}
                       {item?.label}
