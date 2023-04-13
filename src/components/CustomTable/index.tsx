@@ -190,20 +190,19 @@ const CustomTable: React.FC<CustomTableProps> = ({dataProvider, colHeaders}) => 
                             // const fields = template;
                             // fields.fields.fields = templateUpdated;
                             // setCurrentTemplate(fields);
-
                             newColumn = {
                                 ...newColumn,
                                 className: "htLeft htMiddle",
                                 frozen: false,
                                 hidden: false,
-                                order: columns.length.toString(),
+                                order: String(columns.length + 1),
                                 width: "300"
                             };
-                            
-                            console.log("New", {columns, headerTable})
+
                             const newPosition = [...columns, newColumn]
                             newPosition.splice(newPosition.length-2 , 1)
                             newPosition.push({});
+                            console.log("New", {newPosition})
                             setColumns(newPosition);
 
                             const contentHeaders = columns.map((item) => item?.title);
