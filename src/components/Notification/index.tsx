@@ -1,11 +1,11 @@
-import { Icon } from './styles';
+import { Icon } from "./styles";
 // @ts-ignore
-import { ReactComponent as NotificationIcon} from '../../assets/notification.svg'
+import { ReactComponent as NotificationIcon } from "../../assets/notification.svg";
 
 export function Notification() {
-    return(
-        <Icon>
-            <NotificationIcon />
-        </Icon>
-    );
+  return (
+    <Icon>
+      <NotificationIcon />
+    </Icon>
+  );
 }

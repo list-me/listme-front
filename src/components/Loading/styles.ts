@@ -1,9 +1,9 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const Container = styled.div`
   width: 100%;
   height: 80%;
-  
+
   display: flex;
   justify-content: center;
 `;
@@ -20,12 +20,20 @@ export const Loader = styled.div`
   animation: spin 2s linear infinite;
 
   @-webkit-keyframes spin {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
+    0% {
+      -webkit-transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+    }
   }
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
-`
+`;

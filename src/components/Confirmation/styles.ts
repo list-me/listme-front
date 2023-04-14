@@ -66,7 +66,10 @@ export const ButtonCotainer = styled.div`
   }
 `;
 
-export const Button = styled.button<{backgroundColor?: string, color?: string}>`
+export const Button = styled.button<{
+  backgroundColor?: string;
+  color?: string;
+}>`
   cursor: pointer;
   outline: none;
   border: none;
@@ -85,8 +88,8 @@ export const Button = styled.button<{backgroundColor?: string, color?: string}>`
   line-height: 20px;
   text-align: center;
 
-  color: ${({color}) => color};
-  background-color: ${({backgroundColor, disabled}) => backgroundColor };
+  color: ${({ color }) => color};
+  background-color: ${({ backgroundColor, disabled }) => backgroundColor};
 
   &:hover {
     transition: opacity linear 0.4s;
@@ -102,7 +105,7 @@ export const Button = styled.button<{backgroundColor?: string, color?: string}>`
     min-height: ${({ theme }) => theme.spacing.xxxsmall};
 
     animation: rotate 2s linear infinite;
-    
+
     margin-right: 10px;
   }
 

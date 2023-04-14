@@ -2,4 +2,4 @@ interface ICustomCellType {
   [key: string]: string;
 }
 
-export type {ICustomCellType};
+export type { ICustomCellType };

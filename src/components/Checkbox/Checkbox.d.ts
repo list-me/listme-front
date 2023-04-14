@@ -1,6 +1,6 @@
 interface CheckboxCustomProps {
-    onChange: () => void;
-    label: string;
+  onChange: () => void;
+  label: string;
 }
 
-export type {CheckboxCustomProps};
+export type { CheckboxCustomProps };

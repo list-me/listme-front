@@ -1,5 +1,5 @@
 interface OPERATIONS {
-  DELETE: 'excluir';
+  DELETE: "excluir";
 }
 
 interface IPropsConfirmation {
@@ -12,4 +12,4 @@ interface IPropsConfirmation {
   handleConfirmation: () => void;
 }
 
-export type {IPropsConfirmation};
+export type { IPropsConfirmation };

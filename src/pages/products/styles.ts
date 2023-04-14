@@ -11,7 +11,7 @@ export const LeftContent = styled.div`
   gap: 16px;
 
   height: 64px;
-  
+
   &:hover {
     cursor: pointer;
   }
@@ -27,7 +27,7 @@ export const IconTemplate = styled.span`
 
   border-radius: 16px;
   padding: 16px;
-  
+
   background: black;
 `;
 
@@ -36,7 +36,7 @@ export const Title = styled.h3`
   font-size: ${({ theme }) => theme.fonts.sizes.xlarge};
   font-weight: 700;
   line-height: 150%;
-  
+
   margin: 0;
 `;
 
@@ -44,9 +44,9 @@ export const RightContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  
+
   height: 64px;
-  
+
   button {
     font-family: ${({ theme }) => theme.fonts.family.bold};
     font-size: ${({ theme }) => theme.fonts.sizes.normal};
@@ -54,13 +54,13 @@ export const RightContent = styled.div`
     font-weight: 700;
     line-height: 20px;
     text-align: center;
-    
+
     margin: 0;
   }
-  
+
   .secondButton {
     margin-left: 9px;
-    
+
     svg {
       margin: 0 0 0 10px;
     }
@@ -69,8 +69,8 @@ export const RightContent = styled.div`
 
 export const Header = styled.header`
   height: 128px;
-  background: ${({theme}) => theme.colors.grayscale.tenth};
-  
+  background: ${({ theme }) => theme.colors.grayscale.tenth};
+
   display: flex;
   justify-content: space-between;
 
@@ -87,8 +87,8 @@ export const MoreOptions = styled.div`
   justify-content: center;
 
   border-radius: 8px;
-  background: ${({theme}) => theme.colors.grayscale.eighth};
-  
+  background: ${({ theme }) => theme.colors.grayscale.eighth};
+
   margin-right: 9px;
 `;
 
@@ -101,10 +101,7 @@ export const Container = styled.div`
   height: 80%;
   overflow: hidden !important;
 
-  @media screen
-  and (min-device-width: 1200px)
-  and (max-device-width: 1600px)
-  and (-webkit-min-device-pixel-ratio: 1) {
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
     height: 72%;
   }
 
@@ -117,32 +114,32 @@ export const Container = styled.div`
   }
 
   .handsontable .wtHolder::-webkit-scrollbar-thumb {
-    background-color: #CCCCCC !important;
+    background-color: #cccccc !important;
     border-radius: 8px !important;
   }
 
   .handsontable .wtHolder::-webkit-scrollbar-thumb:hover {
-    background-color: #3818D9 !important;
+    background-color: #3818d9 !important;
   }
 
-  .menuContext{
+  .menuContext {
     background: red !important;
     border-radius: 20px;
   }
-  
+
   .handsontable .htColumnHeaders .ht_clone_top {
     margin-right: 0 !important;
   }
 
   .wtHolder {
-  margin-right: 20px;
+    margin-right: 20px;
   }
 
-   .htCore {
-     /* width: 100%; */
-     /* padding: 0; */
+  .htCore {
+    /* width: 100%; */
+    /* padding: 0; */
 
-     /* ::-webkit-scrollbar {
+    /* ::-webkit-scrollbar {
         width: 8px !important;
         height: 8px !important;
 
@@ -159,12 +156,12 @@ export const Container = styled.div`
           background-color: #3818D9 !important;
         }
       }  */
-    }
+  }
 
   .ht__manualColumnMove {
     z-index: 2;
 
-    .ht__manualColumnMove--backlight{
+    .ht__manualColumnMove--backlight {
       /* display: none !important; */
     }
   }
@@ -173,7 +170,7 @@ export const Container = styled.div`
     th {
       .customHeader {
         height: 51px;
-        background: #F1F3F5;
+        background: #f1f3f5;
 
         z-index: 9999;
       }
@@ -185,15 +182,15 @@ export const Container = styled.div`
 
         height: 20px;
 
-        border-top: 1px solid #DEE2E6;
-        border-right: 1px solid #DEE2E6;
-        border-left: 1px solid #DEE2E6;
-        
+        border-top: 1px solid #dee2e6;
+        border-right: 1px solid #dee2e6;
+        border-left: 1px solid #dee2e6;
+
         background-color: ${({ theme }) => theme.colors.grayscale.ninth};
 
         font-family: ${({ theme }) => theme.fonts.family.default};
         font-size: ${({ theme }) => theme.fonts.sizes.small};
-        color: #868E96;
+        color: #868e96;
         font-weight: 400;
         line-height: 150%;
 
@@ -231,14 +228,14 @@ export const Container = styled.div`
     color: #495057 !important;
     font-weight: 400;
     line-height: 150%;
-    
+
     display: flex;
     align-items: center;
     justify-content: center;
     padding-left: 16px;
     padding-right: 16px;
   }
-  
+
   tbody {
     margin: 0 !important;
     overflow: scroll;
@@ -255,7 +252,7 @@ export const Container = styled.div`
       color: #495057;
       font-weight: 400;
       line-height: 150%;
-      
+
       align-self: center;
       padding-left: 16px;
       padding-right: 16px;
@@ -272,10 +269,10 @@ export const Filters = styled.div`
   align-items: center;
   justify-content: space-between;
   height: 68px;
-  
+
   padding: 16px;
   background: white;
-  border: 1px solid #E9ECEF;
+  border: 1px solid #e9ecef;
 `;
 
 export const Line = styled.div`
@@ -301,7 +298,7 @@ export const Item = styled.span`
   font-weight: 700;
   line-height: 20px;
   text-align: center;
-  
+
   svg:first-child {
     margin-right: 8px;
   }
@@ -312,7 +309,7 @@ export const Item = styled.span`
       cursor: pointer;
     }
   }
-  
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -320,9 +317,8 @@ export const Item = styled.span`
 
 export const Contents = styled.div`
   display: flex;
-  
+
   span:not(:last-child) {
     margin-right: 24px;
   }
 `;
-

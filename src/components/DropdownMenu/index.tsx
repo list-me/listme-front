@@ -1,7 +1,7 @@
 import { Divider } from "antd";
 import { useContext, useEffect, useRef } from "react";
 import { productContext } from "../../context/products";
-import {DropdownMenuProps} from "./DropdownMenu.d";
+import { DropdownMenuProps } from "./DropdownMenu.d";
 import { SuspenseMenu, Item } from "./styles";
 
 export const DropdownMenu: React.FC<DropdownMenuProps> = ({
@@ -13,15 +13,15 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   left,
   setIsOpen = () => {},
   col,
-  template
+  template,
 }) => {
   const modalRef = useRef(null);
   const variable = [];
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsOpen()
-    }
+      setIsOpen();
+    };
 
     function handleOutsideClick(event) {
       if (icoRef.current && icoRef.current!.contains(event.target)) {
@@ -32,65 +32,65 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
         setIsOpen();
       }
     }
-  
-    document.addEventListener('mousedown', handleOutsideClick);
-    window.addEventListener('wheel', handleScroll);
-  
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-      window.removeEventListener('wheel', handleScroll);
-    };
 
+    document.addEventListener("mousedown", handleOutsideClick);
+    window.addEventListener("wheel", handleScroll);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      window.removeEventListener("wheel", handleScroll);
+    };
   }, [modalRef]);
 
   return (
     <>
-      {
-        isOpen ? 
-          <SuspenseMenu left={left} ref={modalRef}>
-            {
-              options.map((item) => {
-                if (variable.length === 2) {
-                  variable.pop()
-                  return (
-                    <>
-                      <Divider style={{marginTop: "20px", marginBottom:"4px"}} key={Math.random()} />
-                      <Item
-                        className="item"
-                        key={Math.random()}
-                        onClick={(e) => {
-                          openModal(item, col)
-                        }}
-                        isLast={item?.label.toLowerCase().includes("excluir")}
-                      >
-                        {item?.icon}
-                        {item?.label}
-                      </Item>
-                  </>
-                  )
-                }
-
-                variable.push("ok")
-                return (
-                  <>
-                    <Item
-                      className="item"
-                      key={item?.label}
-                      onClick={() => {
-                        openModal(item, col)
-                      }}
-                      isLast={item?.label.toLowerCase().includes("excluir")}
-                    >
-                      {item?.icon}
-                      {item?.label}
-                    </Item>
-                  </>
-                )
-              })
+      {isOpen ? (
+        <SuspenseMenu left={left} ref={modalRef}>
+          {options.map((item) => {
+            if (variable.length === 2) {
+              variable.pop();
+              return (
+                <>
+                  <Divider
+                    style={{ marginTop: "20px", marginBottom: "4px" }}
+                    key={Math.random()}
+                  />
+                  <Item
+                    className="item"
+                    key={Math.random()}
+                    onClick={(e) => {
+                      openModal(item, col);
+                    }}
+                    isLast={item?.label.toLowerCase().includes("excluir")}
+                  >
+                    {item?.icon}
+                    {item?.label}
+                  </Item>
+                </>
+              );
             }
-          </SuspenseMenu> :
-          <> </>
-      }
+
+            variable.push("ok");
+            return (
+              <>
+                <Item
+                  className="item"
+                  key={item?.label}
+                  onClick={() => {
+                    openModal(item, col);
+                  }}
+                  isLast={item?.label.toLowerCase().includes("excluir")}
+                >
+                  {item?.icon}
+                  {item?.label}
+                </Item>
+              </>
+            );
+          })}
+        </SuspenseMenu>
+      ) : (
+        <> </>
+      )}
     </>
   );
-}
+};

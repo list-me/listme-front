@@ -2,20 +2,20 @@
 import { useEffect, useState } from "react";
 import { Form } from "antd";
 
-import {ReactComponent as CloseIcon} from "../../assets/close-gray.svg";
-import {ReactComponent as TrashIcon} from "../../assets/trash-white.svg";
+import { ReactComponent as CloseIcon } from "../../assets/close-gray.svg";
+import { ReactComponent as TrashIcon } from "../../assets/trash-white.svg";
 
 import { IPropsConfirmation } from "./Confirmation.d";
 import Modal from "../Modal";
-import {Input} from "../Input"
+import { Input } from "../Input";
 
-import { 
+import {
   Button,
   ButtonCotainer,
   Container,
   Content,
   Description,
-  Title
+  Title,
 } from "./styles";
 import { CustomForm } from "../Form";
 
@@ -26,44 +26,40 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
   action,
   isOpen,
   handleChangeVisible,
-  handleConfirmation
+  handleConfirmation,
 }) => {
   const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(true);
 
-  const handleSubmit = (value) => {
+  const handleSubmit = (value: any) => {
     if (value && value[pass].trim() !== pass) return false;
     handleChangeVisible();
 
     form.resetFields();
     handleConfirmation();
-  }
+  };
 
-  const handleChangeValue = (value: string) => 
-    (value && value.trim() === pass) ?? setDisabled(false)
+  const handleChangeValue = (value: string) =>
+    (value && value.trim() === pass) ?? setDisabled(false);
 
   const handleClose = (): void => {
     handleChangeVisible();
     form.resetFields();
-  }
+  };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      changeVisible={handleClose}
-      width="592px"
-    >
+    <Modal isOpen={isOpen} changeVisible={handleClose} width="592px">
       <Content>
-        <Title> 
+        <Title>
           {title}
           <CloseIcon onClick={handleClose} />
         </Title>
         <Container>
-          <Description> <b>Atenção!</b> {description} </Description>
-          <Form
-            form={form}
-            onFinish={handleSubmit}
-          >
+          <Description>
+            {" "}
+            <b>Atenção!</b> {description}{" "}
+          </Description>
+          <Form form={form} onFinish={handleSubmit}>
             <Input
               bordered
               label={`Para confirmar digite a palavra  `}
@@ -73,7 +69,7 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
               height="64px"
               placeholder={pass}
               background={false}
-              validation={{matchWord: pass}}
+              validation={{ matchWord: pass }}
               padding="20px"
               // handleCustomChange={handleChangeValue}
             />
@@ -83,7 +79,9 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
                 color="#868E96"
                 type="button"
                 onClick={handleClose}
-              > Cancel
+              >
+                {" "}
+                Cancel
               </Button>
               <Button
                 backgroundColor="#FA5252"
@@ -99,4 +97,4 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
       </Content>
     </Modal>
   );
-}
+};

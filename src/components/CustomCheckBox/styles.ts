@@ -14,7 +14,7 @@ export const Container = styled.div`
 
     label {
       min-width: 100px;
-      
+
       font-family: "Satoshi Regular", sans-serif !important;
       font-style: normal;
       font-size: 14px !important;
@@ -30,16 +30,16 @@ export const Container = styled.div`
     }
 
     .ant-checkbox-checked .ant-checkbox-inner {
-      background: #3818D9 !important;
-      border-color: #3818D9;
+      background: #3818d9 !important;
+      border-color: #3818d9;
     }
   }
 `;
 
 export const StyledCheckbox = styled(Checkbox)`
-display: flex;
-flex-direction: column;
-/* margin: 0; */
+  display: flex;
+  flex-direction: column;
+  /* margin: 0; */
   /* estilos padrão */
   & + span {
     font-size: 16px;
@@ -53,7 +53,7 @@ flex-direction: column;
   }
 
   &:checked + span::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 2px;
     left: 0;
@@ -65,7 +65,7 @@ flex-direction: column;
   }
 
   &:checked + span::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 6px;
     left: 4px;

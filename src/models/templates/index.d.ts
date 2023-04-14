@@ -1,10 +1,8 @@
-import {MetaData} from "../default";
+import { MetaData } from "../default";
 
 interface Template {
-    id: string;
-    name: string;
+  id: string;
+  name: string;
 }
 
-interface ResponseGetListTemplates extends MetaData {
-
-}
+interface ResponseGetListTemplates extends MetaData {}

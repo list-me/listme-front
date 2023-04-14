@@ -1,6 +1,8 @@
-import {createContext} from "react";
-import {GlobalContextValues} from "./Global.d";
+import { createContext } from "react";
+import { GlobalContextValues } from "./Global.d";
 
-const GlobalContext = createContext<GlobalContextValues>({} as GlobalContextValues);
+const GlobalContext = createContext<GlobalContextValues>(
+  {} as GlobalContextValues,
+);
 
-export {GlobalContext};
+export { GlobalContext };

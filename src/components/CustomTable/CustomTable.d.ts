@@ -1,29 +1,29 @@
-import {Table} from "antd";
+import { Table } from "antd";
 import { BaseRenderer } from "handsontable/renderers";
 
 type EditableTableProps = Parameters<typeof Table>[0];
-type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
+type ColumnTypes = Exclude<EditableTableProps["columns"], undefined>;
 
 interface Values {
-    id: string;
-    value: string;
+  id: string;
+  value: string;
 }
 
 interface DataType {
-    productId: string;
-    data: Values[];
+  productId: string;
+  data: Values[];
 }
 
 interface CustomTableProps {
-    dataProvider?: any[],
-    bordered?: boolean,
-    rowClassName?: () => string;
-    components?: {};
-    colHeaders?: string[];
+  dataProvider?: any[];
+  bordered?: boolean;
+  rowClassName?: () => string;
+  components?: {};
+  colHeaders?: string[];
 }
 
 interface ICustomColumns {
-    [key: string]: string[];
+  [key: string]: string[];
 }
 
-export type {CustomTableProps, ICustomColumns, ColumnTypes};
+export type { CustomTableProps, ICustomColumns, ColumnTypes };

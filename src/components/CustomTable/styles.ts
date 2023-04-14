@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const AddColumn = styled.div`
-  background-color: #F1F3F5;
+  background-color: #f1f3f5;
   width: 100%;
   height: 100%;
 
@@ -10,7 +10,7 @@ export const AddColumn = styled.div`
   justify-content: center;
 
   box-sizing: border-box !important;
-  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 1px solid #cccccc;
 
   &:hover {
     cursor: pointer;

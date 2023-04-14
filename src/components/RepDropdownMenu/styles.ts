@@ -15,27 +15,24 @@ export const Container = styled.div<IStyleProps>`
 
   background: white;
   position: fixed;
-  left: ${({left}) => `${left}px`};
+  left: ${({ left }) => `${left}px`};
   top: 19%;
 
   z-index: 999;
 
   display: flex;
   flex-direction: column;
-  
+
   padding: 16px;
 
   span:not(:first-child) {
     margin-top: 16px;
   }
 
-  @media screen
-  and (min-device-width: 1200px)
-  and (max-device-width: 1600px)
-  and (-webkit-min-device-pixel-ratio: 1) {
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
     top: 25%;
     max-height: 450px;
-    
+
     .ant-input-group-wrapper {
       margin-right: 0;
     }
@@ -49,7 +46,7 @@ export const Container = styled.div<IStyleProps>`
     font-weight: 400;
     font-size: 14px;
     line-height: 150%;
-    color: #868E96;
+    color: #868e96;
   }
 
   .ant-input-group-addon {
@@ -57,12 +54,10 @@ export const Container = styled.div<IStyleProps>`
     border: none;
   }
 
-  
+  .content {
+    overflow-y: auto;
 
-    .content {
-      overflow-y: auto;
-
-      ::-webkit-scrollbar {
+    ::-webkit-scrollbar {
       width: 8px !important;
       height: 8px !important; /* largura da barra de rolagem */
     }
@@ -72,14 +67,14 @@ export const Container = styled.div<IStyleProps>`
     }
 
     ::-webkit-scrollbar-thumb {
-      background-color: #CCCCCC !important; /* cor do botão da barra de rolagem */
+      background-color: #cccccc !important; /* cor do botão da barra de rolagem */
       border-radius: 4px !important; /* raio da borda do botão da barra de rolagem */
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background-color: #3818D9 !important; /* cor do botão da barra de rolagem quando hover */
+      background-color: #3818d9 !important; /* cor do botão da barra de rolagem quando hover */
     }
-    }
+  }
 `;
 
 export const Line = styled.div`
@@ -103,7 +98,7 @@ export const Line = styled.div`
 `;
 
 export const SwitchCustom = styled(Switch)`
- &.ant-switch-checked {
-    background-color: #3818D9 !important; // Altere a cor de fundo do switch quando está ativado
+  &.ant-switch-checked {
+    background-color: #3818d9 !important; // Altere a cor de fundo do switch quando está ativado
   }
 `;

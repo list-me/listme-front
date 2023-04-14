@@ -1,9 +1,9 @@
 interface GlobalState {
-    user: any | undefined;
+  user: any | undefined;
 }
 
 interface GlobalContextValues {
-    global: GlobalState;
+  global: GlobalState;
 }
 
-export type {GlobalState, GlobalContextValues};
+export type { GlobalState, GlobalContextValues };

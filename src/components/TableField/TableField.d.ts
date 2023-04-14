@@ -5,4 +5,4 @@ interface ITableFieldProps {
   handleSetNewValue?: Function;
 }
 
-export type {ITableFieldProps};
+export type { ITableFieldProps };

@@ -11,4 +11,4 @@ interface ICardStyleProps {
   width: string;
 }
 
-export type {ICardProps, ICardStyleProps};
+export type { ICardProps, ICardStyleProps };

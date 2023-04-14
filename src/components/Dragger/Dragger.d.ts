@@ -3,4 +3,4 @@ interface IDraggerProps {
   handleOnDrop?: Function;
 }
 
-export type {IDraggerProps}
+export type { IDraggerProps };

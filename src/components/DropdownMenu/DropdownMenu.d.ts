@@ -25,4 +25,4 @@ interface DropdownMenuStyleProps {
   width: string;
 }
 
-export type {DropdownMenuProps, DropdownMenuStyleProps};
+export type { DropdownMenuProps, DropdownMenuStyleProps };
