@@ -55,7 +55,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   const [currentCell, setCurrentCell] = useState<any>({});
   const [columns, setColumns] = useState<any[]>(headerTable);
   const [frozen, setFrozen] = useState<number>(0);
-  const [headers, setHeaders] = useState<string[]>(colHeaders);
+  const [headers, setHeaders] = useState<string[]>(colHeaders ?? [""]);
   const [currentTemplate, setCurrentTemplate] = useState<any>(template);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [position, setPosition] = useState(false);
@@ -99,27 +99,29 @@ const CustomTable: React.FC<CustomTableProps> = ({
             row: number,
             col: number,
           ): void => {
-            let initialValue: any[] =
-              typeof dataProvider[row]?.[column.data] !== "object"
-                ? [dataProvider[row]?.[column.data]]
-                : dataProvider[row]?.[column.data];
-            if (initialValue.includes(undefined)) {
-              initialValue = [""];
-            }
+            if (dataProvider?.length) {
+              let initialValue: any[] =
+                typeof dataProvider[row]?.[column.data] !== "object"
+                  ? [dataProvider[row]?.[column.data]]
+                  : dataProvider[row]?.[column.data];
+              if (initialValue.includes(undefined)) {
+                initialValue = [""];
+              }
 
-            customRenderer(
-              td,
-              <TableField
-                value={initialValue}
-                type={column.type}
-                options={column.options}
-                handleSetNewValue={(e: string | number) => {
-                  const value = typeof e === "object" ? e : [e];
-                  instance.setDataAtCell(row, col, value);
-                  return false;
-                }}
-              />,
-            );
+              customRenderer(
+                td,
+                <TableField
+                  value={initialValue}
+                  type={column.type}
+                  options={column.options}
+                  handleSetNewValue={(e: string | number) => {
+                    const value = typeof e === "object" ? e : [e];
+                    instance.setDataAtCell(row, col, value);
+                    return false;
+                  }}
+                />,
+              );
+            }
           },
         });
 
@@ -142,7 +144,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   const handleDeleteColumn = (): void => {
     setIsOpen(!isOpen);
     try {
-      const fields = template.fields.fields?.filter((item) => {
+      const fields = template.fields.fields?.filter((item: any) => {
         if (item?.id != currentCell?.id) {
           return item;
         }
@@ -154,7 +156,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
 
       const contentHeaders = newColumns
         .filter((element) => {
-          const ids = fields.map((item) => item?.id) as any[];
+          const ids = fields.map((item: any) => item?.id) as any[];
           console.log({ element, ids });
           if (ids.includes(element?.data)) {
             return element;
@@ -177,7 +179,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   };
 
   const beforeColumnMove = useCallback(
-    (movedColumns, finalIndex) => {
+    (movedColumns: any, finalIndex: any) => {
       return iconClicked;
     },
     [iconClicked],
@@ -196,7 +198,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
         const myComponent = document.createElement("div");
         myComponent.className = "customHeader";
 
-        const col = template?.fields?.fields.find((item) => {
+        const col = template?.fields?.fields.find((item: any) => {
           if (item.id === columns[column]?.data) {
             return item;
           }
@@ -208,7 +210,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
               test={() => setIconClicked(false)}
               template={template}
               newColumn={template}
-              setNewColumn={(newColumn, templateUpdated) => {
+              setNewColumn={(newColumn: any, templateUpdated: any) => {
                 // const fields = template;
                 // fields.fields.fields = templateUpdated;
                 // setCurrentTemplate(fields);
@@ -246,7 +248,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
               handleHidden={() => {
                 return handleHidden(column, template, true);
               }}
-              handleFrozen={(e, operation) => {
+              handleFrozen={(e: any, operation: any) => {
                 if (operation == "unfreeze") {
                   setFrozen(0);
                   handleFreeze(column, false, "unfreeze");
@@ -269,7 +271,8 @@ const CustomTable: React.FC<CustomTableProps> = ({
                         return item;
                     })
                     .map((element) => {
-                      return Number(element?.width.replace("px", ""));
+                      if (element.width)
+                        return Number(element.width.replace("px", ""));
                     });
 
                   // if (colWidth).reduce((before, after) => before + after);
@@ -311,13 +314,13 @@ const CustomTable: React.FC<CustomTableProps> = ({
                   return true;
                 }
               }}
-              freeze={headerTable[column]?.frozen}
-              handleSort={(e, operation) => {
-                // setData(data.sort((a, b) => {
-                //     if (a[col?.data] == b[col?.data]) return 0;
-                //     if (a[col?.data] < b[col?.data]) return 1
-                //     return -1;
-                // }))
+              freeze={headerTable[column]?.frozen ? true : false}
+              handleSort={(e: any, operation: any) => {
+                //   // setData(data.sort((a, b) => {
+                //   //     if (a[col?.data] == b[col?.data]) return 0;
+                //   //     if (a[col?.data] < b[col?.data]) return 1
+                //   //     return -1;
+                //   // }))
               }}
               test={() => {
                 setIconClicked(false);
@@ -363,7 +366,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
       if ((event.ctrlKey || event.metaKey) && event.key === "f") {
         event.preventDefault();
         if (hotRef.current) {
-          hotRef.current.hotInstance.deselectCell();
+          hotRef?.current?.hotInstance?.deselectCell();
         }
       }
     };
@@ -401,7 +404,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
         viewportRowRenderingOffset={10}
         viewportColumnRenderingOffset={999}
         renderAllRows={false}
-        rerenderOnColumnResize={false}
+        // rerenderOnColumnResize={false}
         rowHeaders
         autoRowSize
         columnSorting={{ sortEmptyCells: false, headerAction: false }}
@@ -409,51 +412,48 @@ const CustomTable: React.FC<CustomTableProps> = ({
           items: {
             remove_row: {
               name: "Excluir produto",
-              callback(
-                key: string,
-                selection: Selection[],
-                clickEvent: MouseEvent,
-              ) {
-                handleDelete(dataProvider[selection[0].start.row]);
+              callback(key: string, selection: any[], clickEvent: MouseEvent) {
+                if (dataProvider?.length)
+                  handleDelete(dataProvider[selection[0].start.row]);
               },
             },
           },
-          className: "menuContext",
         }}
-        maxRowHeight={51}
         rowHeights="52px"
         licenseKey="non-commercial-and-evaluation"
-        beforeChange={(
-          changes: Array<CellChange | null>,
-          source: ChangeSource,
-        ) => {
-          const currentCellValue = changes[0][2];
-          const newValue = changes[0][3];
-          const row = changes[0][0];
-          const col = cols.findIndex((col) => col?.data === changes[0][1]);
-          const columnType = headerTable[col]?.type;
+        // beforeChange={(
+        //   changes: Array<CellChange | null>,
+        //   source: ChangeSource,
+        // ) => {
+        //   const currentCellValue = changes[0][2];
+        //   const newValue = changes[0][3];
+        //   const row = changes[0][0];
+        //   const col = cols.findIndex((col) => col?.data === changes[0][1]);
+        //   const columnType = headerTable[col]?.type;
 
-          if (columnType === "text" && newValue.length > 100) {
-            toast.warn("The text field cannot be longer than 100 characters");
-            return false;
-          }
-          if (columnType === "paragraph" && newValue.length > 255) {
-            toast.warn("O campo parágrafo deve conter até 200 caractéres");
-            return false;
-          }
-          return true;
-        }}
+        //   if (columnType === "text" && newValue.length > 100) {
+        //     toast.warn("The text field cannot be longer than 100 characters");
+        //     return false;
+        //   }
+        //   if (columnType === "paragraph" && newValue.length > 255) {
+        //     toast.warn("O campo parágrafo deve conter até 200 caractéres");
+        //     return false;
+        //   }
+        //   return true;
+        // }}
         afterChange={async (
           changes: Handsontable.CellChange[] | null,
           source,
         ) => {
           if (changes?.length && changes[0][2] !== changes[0][3]) {
-            await handleSave(dataProvider[changes[0][0]]);
+            if (dataProvider?.length)
+              await handleSave(dataProvider[changes[0][0]]);
           }
         }}
         afterRenderer={(TD, row, col, prop, value, cellProperties) => {
           if (
             value &&
+            filter &&
             value.toString().toLowerCase().includes(filter?.toLowerCase())
           ) {
             TD.style.backgroundColor = "#fdff70";

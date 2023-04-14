@@ -1,6 +1,6 @@
+/* eslint-disable import/prefer-default-export */
 import { ProductContextProvider } from "./products";
 import { combineContexts } from "./combineContexts";
-import { EditableContextProvider } from "./editable";
 
 const providers = [ProductContextProvider];
 

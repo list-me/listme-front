@@ -5,7 +5,7 @@ import { TableRowSelection } from "antd/es/table/interface";
 import { Sidebar } from "../../components/Sidebar";
 import { Header } from "../../components/Header";
 import { TitlePage, Container, Content, Capsule } from "./styles";
-import { Button } from "../../components/Button";
+import Button from "../../components/Button";
 // @ts-ignore
 import { ReactComponent as AddIcon } from "../../assets/add-secondary.svg";
 // @ts-ignore

@@ -1,4 +1,11 @@
-export const theme = {
+interface ITheme {
+  colors: any;
+  fonts: any;
+  border: any;
+  spacing: any;
+}
+
+const theme: ITheme = {
   colors: {
     primary: "#3818D9",
     secondary: "#FFFFFF",
@@ -91,3 +98,5 @@ export const theme = {
     giant: "200px",
   },
 };
+
+export default theme;

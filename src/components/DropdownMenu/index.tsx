@@ -1,3 +1,7 @@
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable import/prefer-default-export */
 import { Divider } from "antd";
 import { useContext, useEffect, useRef } from "react";
 import { productContext } from "../../context/products";
@@ -15,20 +19,20 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   col,
   template,
 }) => {
-  const modalRef = useRef(null);
-  const variable = [];
+  const modalRef = useRef<HTMLDivElement>(null);
+  const variable: string[] = [];
 
   useEffect(() => {
     const handleScroll = () => {
       setIsOpen();
     };
 
-    function handleOutsideClick(event) {
+    function handleOutsideClick(event: any) {
       if (icoRef.current && icoRef.current!.contains(event.target)) {
         return;
       }
 
-      if (modalRef.current && !modalRef.current!.contains(event.target)) {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
         setIsOpen();
       }
     }

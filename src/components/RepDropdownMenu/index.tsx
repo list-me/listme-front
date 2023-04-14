@@ -1,3 +1,7 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/react-in-jsx-scope */
 import { Divider, Input, Switch } from "antd";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { IDropdownMenuProps } from "./RepDropdownMenu.d";
@@ -12,7 +16,7 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({
   isOpen,
   colHeaders,
 }) => {
-  const modalRef = useRef(null);
+  const modalRef = useRef<HTMLDivElement | null>(null);
   const [inputValue, setInputValue] = useState("");
   const [filteredItems, setFilteredItems] = useState<any[]>([]);
   const [currentHidden, setCurrentHidden] = useState<any[]>([]);
@@ -48,7 +52,7 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({
       handleOpen();
     };
 
-    function handleOutsideClick(event) {
+    function handleOutsideClick(event: any) {
       if (iconRef.current && iconRef.current!.contains(event.target)) {
         return;
       }

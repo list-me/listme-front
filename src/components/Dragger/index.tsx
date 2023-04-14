@@ -1,9 +1,13 @@
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { Tree } from "antd";
 import { IDraggerProps } from "./Dragger.d";
 import { Container } from "./styles";
 import { ReactComponent as MenuIcon } from "../../assets/menu-small-gray.svg";
 
+// eslint-disable-next-line import/prefer-default-export
 export const Dragger: React.FC<IDraggerProps> = ({
   options,
   handleOnDrop = () => {},
@@ -38,7 +42,7 @@ export const Dragger: React.FC<IDraggerProps> = ({
         treeData={options}
         showLine
         // draggable
-        icon={(props) => {
+        icon={() => {
           return <MenuIcon className="custom-drag-icon" />;
         }}
         onDrop={(e) => {

@@ -1,4 +1,10 @@
-import styled, { css } from "styled-components";
+import styled, { css, FlattenSimpleInterpolation } from "styled-components";
+
+type TypeKeys = "RADIO" | "LIST" | "CHECKED";
+
+type ITypes = {
+  [key in TypeKeys]: FlattenSimpleInterpolation;
+};
 
 const RADIO_TYPE = css`
   background: #ffffff;
@@ -25,11 +31,15 @@ const LIST_TYPE = css`
   min-width: 100px;
 `;
 
-const CUSTOM_STYLE = {
+const CUSTOM_STYLE: ITypes = {
   RADIO: RADIO_TYPE,
   LIST: LIST_TYPE,
   CHECKED: CHECKED_TYPE,
 };
+
+function getCustomStyle(type: string): FlattenSimpleInterpolation {
+  return CUSTOM_STYLE[type as TypeKeys];
+}
 
 export const Container = styled.div<{ type: string }>`
   display: flex;
@@ -42,7 +52,7 @@ export const Container = styled.div<{ type: string }>`
   max-height: 32px;
   flex-wrap: nowrap;
 
-  ${({ type }) => CUSTOM_STYLE[type?.toUpperCase()]}
+  ${({ type }) => getCustomStyle(type.toUpperCase())}
 
   label {
     width: auto;
