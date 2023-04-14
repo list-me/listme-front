@@ -102,7 +102,6 @@ export const HeaderCell: React.FC<ICellProps> = ({
             handleHidden(option, column?.hidden);
             return;
           } else if (option.action === "freeze") {
-            console.log({ column });
             if (!freeze) {
               handleFrozen(column, "");
             } else {
