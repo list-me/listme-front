@@ -1,5 +1,5 @@
 interface AuthContextValues {
-    isAuthenticated: boolean;
+  isAuthenticated: boolean;
 }
 
-export type {AuthContextValues};
+export type { AuthContextValues };

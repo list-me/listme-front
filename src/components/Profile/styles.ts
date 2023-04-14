@@ -6,13 +6,13 @@ export const Container = styled.div`
 
   display: flex;
   align-items: center;
-  
+
   margin-right: 32px;
-  
+
   svg {
     margin-top: 4px;
   }
-  
+
   :hover {
     cursor: pointer;
   }
@@ -20,7 +20,7 @@ export const Container = styled.div`
 
 export const Icon = styled.div`
   margin-right: 8px;
-  
+
   img {
     object-fit: cover;
     height: 36px;
@@ -31,12 +31,12 @@ export const Icon = styled.div`
 
 export const Label = styled.span`
   margin-right: 8px;
-  
+
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
 
   font-weight: 400;
   line-height: 150%;
-  
+
   text-align: center;
 `;

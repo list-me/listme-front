@@ -1,81 +1,72 @@
 {
-  "env": {
-    "browser": true,
-    "es2021": true
-  },
-  "extends": [
-    "plugin:react/recommended",
-    "airbnb",
-    "plugin:prettier/recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings",
-    "plugin:import/typescript"
-  ],
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "jest": true
     },
-    "ecmaVersion": 12,
-    "sourceType": "module"
-  },
-  "plugins": [
-    "react",
-    "prettier",
-    "react-hooks",
-    "eslint-plugin-import-helpers"
-  ],
-  "rules": {
-    "no-undef": "off",
-    "no-param-reassign": 0,
-    "react/destructuring-assignment": ["off"],
-    "react/react-in-jsx-scope": "off",
-    "react/no-danger": "off",
-    "no-unused-vars": "warn",
-    "react/jsx-props-no-spreading": "off",
-    "no-use-before-define": "off",
-    "react/prop-types": "off",
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
-    "import/prefer-default-export": "off",
-    "react/jsx-one-expression-per-line": "off",
-    "react/jsx-filename-extension": [
-      1,
-      {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
-      }
+    "extends": [
+        "react-app",
+        "react-app/jest",
+        "airbnb",
+        "airbnb-typescript",
+        "plugin:import/typescript",
+        "plugin:prettier/recommended"
     ],
-    "prettier/prettier": "warn",
-    "react/button-has-type": "off",
-//    "import-helpers/order-imports": [
-//      "warn",
-//      {
-//        "newlinesBetween": "always",
-//        "groups": ["module", "parent", ["sibling", "index"]],
-//        "alphabetize": {
-//          "order": "asc",
-//          "ignoreCase": true
-//        }
-//      }
-//    ],
-    "import/extensions": [
-      "error",
-      "ignorePackages",
-      {
-        "js": "never",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never"
-      }
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": "latest",
+        "sourceType": "module",
+        "project": "./tsconfig.json"
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint",
+        "prettier"
+
     ],
-    "jsx-a11y/label-has-associated-control": "off",
-    "camelcase": "off",
-    "class-methods-use-this": "off",
-    "no-underscore-dangle": "off",
-    "spaced-comment": [ "error", "always", {
-      "line": {
-        "markers": ["#region", "#endregion", "region", "endregion"]
-      }
-    }],
-    "allowKeywords": 0
-  }
+    "rules": {
+        "react/react-in-jsx-scope": ["off"],
+        "react/jsx-uses-react": ["off"],
+        "react/jsx-props-no-spreading": ["warn"],
+        "react/no-unescaped-entities": ["off"],
+        "import/prefer-default-export": "off"
+    },
+    "overrides": [
+        {
+            "files": ["./src/**/*.ts", "./src/**/*.tsx"],
+            "rules": {
+                "@typescript-eslint/no-explicit-any": "warn",
+                "@typescript-eslint/explicit-function-return-type": [
+                    "warn",
+                    {
+                        "allowExpressions": true,
+                        "allowTypedFunctionExpressions": true,
+                        "allowHigherOrderFunctions": true
+                    }
+                ],
+                "@typescript-eslint/no-unused-vars": [
+                    "error",
+                    {
+                        "vars": "all",
+                        "args": "after-used",
+                        "ignoreRestSiblings": true,
+                        "varsIgnorePattern": "^_",
+                        "argsIgnorePattern": "^_"
+                    }
+                ],
+                "@typescript-eslint/no-use-before-define": [
+                    "error",
+                    {
+                        "functions": false,
+                        "classes": true,
+                        "variables": true,
+                        "typedefs": true
+                    }
+                ]
+            }
+        }
+    ]
 }

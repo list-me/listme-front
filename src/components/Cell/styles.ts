@@ -7,7 +7,7 @@ export const Container = styled.div`
   width: 100%;
 
   padding: 16px;
-  background-color: #F1F3F5;
+  background-color: #f1f3f5;
   position: relative;
 
   label {
@@ -17,10 +17,10 @@ export const Container = styled.div`
 
     display: flex;
     align-items: center;
-    
+
     font-family: "Satoshi Regular", sans-serif;
     font-size: 14px;
-    color: #868E96;
+    color: #868e96;
     font-weight: 400;
     line-height: 150%;
 
@@ -32,11 +32,11 @@ export const Container = styled.div`
 
 export const Options = styled.div`
   display: flex;
-    
+
   svg:first-child {
     margin-left: 8px;
   }
-  
+
   &:hover {
     cursor: pointer;
   }
@@ -59,7 +59,7 @@ export const Content = styled.div`
     /* width: 183px; */
     height: 52px;
 
-    background: #F7F5FF !important;
+    background: #f7f5ff !important;
     border-radius: 6px;
   }
 `;

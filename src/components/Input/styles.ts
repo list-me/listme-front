@@ -1,12 +1,12 @@
 import styled, { css } from "styled-components";
-import {Input} from 'antd';
+import { Input } from "antd";
 
 interface IPropStyle {
   custom: {
     background?: boolean;
     bordered?: boolean;
     padding?: string;
-  }
+  };
 }
 
 export const StyledP = styled.p`
@@ -45,8 +45,8 @@ export const Label = styled.label`
 `;
 
 export const InputCustom = styled(Input)<IPropStyle>`
-  background: ${(props) => props.custom.background ? '#F3F4F6' : "#FFFF"} ;
-  border: ${(props) => props.custom.bordered ? '1px solid #E9ECEF' : 'none'} ;
+  background: ${(props) => (props.custom.background ? "#F3F4F6" : "#FFFF")};
+  border: ${(props) => (props.custom.bordered ? "1px solid #E9ECEF" : "none")};
   width: 280px;
 
   margin: none !important;

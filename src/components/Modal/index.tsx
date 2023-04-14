@@ -1,11 +1,11 @@
-import {IModalProps} from "./Modal.d";
+import { IModalProps } from "./Modal.d";
 import { CustomModal } from "./styles";
 
 const Modal: React.FC<IModalProps> = ({
   changeVisible,
   isOpen,
   children,
-  width
+  width,
 }) => {
   return (
     <>
@@ -16,12 +16,12 @@ const Modal: React.FC<IModalProps> = ({
         width={width}
         wrapClassName="custom-modal"
         closable={false}
-        style={{padding: 0}}
+        style={{ padding: 0 }}
       >
         {children}
       </CustomModal>
     </>
   );
-}
+};
 
 export default Modal;

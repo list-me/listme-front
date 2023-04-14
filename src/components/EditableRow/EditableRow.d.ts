@@ -1,5 +1,5 @@
 interface EditableRowProps {
-    index: number;
+  index: number;
 }
 
-export type {EditableRowProps}
+export type { EditableRowProps };

@@ -2,8 +2,8 @@ import styled from "styled-components";
 import { DropdownMenuStyleProps } from "./DropdownMenu.d";
 
 export const Container = styled.div<DropdownMenuStyleProps>`
-  width: ${({width}) => width};
-  height: ${({heigth}) => heigth};
+  width: ${({ width }) => width};
+  height: ${({ heigth }) => heigth};
 
   position: relative;
   background: white;
@@ -16,7 +16,7 @@ export const Container = styled.div<DropdownMenuStyleProps>`
   z-index: 9999;
 `;
 
-export const SuspenseMenu = styled.div<{left?: number|null}>`
+export const SuspenseMenu = styled.div<{ left?: number | null }>`
   position: relative;
   z-index: 10000;
 
@@ -28,7 +28,7 @@ export const SuspenseMenu = styled.div<{left?: number|null}>`
 
   background: white;
   position: fixed;
-  left: ${({left}) => `${left}px`};
+  left: ${({ left }) => `${left}px`};
   top: 26%;
 
   display: flex;
@@ -41,21 +41,18 @@ export const SuspenseMenu = styled.div<{left?: number|null}>`
     margin-top: 16px;
   }
 
-  @media screen
-  and (min-device-width: 1200px)
-  and (max-device-width: 1600px)
-  and (-webkit-min-device-pixel-ratio: 1) {
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
     top: 25rem;
   }
 `;
 
-export const Item =  styled.span<{isLast?: boolean}>`
+export const Item = styled.span<{ isLast?: boolean }>`
   font-family: "Satoshi Regular", sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
   line-height: 19px;
-  color: ${({isLast}) => isLast ? "red" : "#495057" };
+  color: ${({ isLast }) => (isLast ? "red" : "#495057")};
 
   width: 100%;
   height: 19px;
@@ -73,6 +70,6 @@ export const Item =  styled.span<{isLast?: boolean}>`
 
   &:hover {
     cursor: pointer;
-    filter: brightness(.2);
+    filter: brightness(0.2);
   }
 `;

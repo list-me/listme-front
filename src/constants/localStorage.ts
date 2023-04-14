@@ -1,3 +1,3 @@
 export const STORAGE = {
-    TOKEN: 'x-access-token'
-}
+  TOKEN: "x-access-token",
+};

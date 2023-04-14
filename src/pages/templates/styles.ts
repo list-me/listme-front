@@ -5,9 +5,9 @@ export const Container = styled.div`
 
   display: flex;
   justify-content: space-between;
-  
+
   margin-top: 32px;
-  
+
   div {
     margin-right: 40px !important;
   }
@@ -23,7 +23,7 @@ export const TitlePage = styled.h2`
 `;
 
 export const Capsule = styled.div`
-    background: red;
+  background: red;
 `;
 
 export const Content = styled.div`
@@ -39,46 +39,43 @@ export const Content = styled.div`
     font-size: ${({ theme }) => theme.fonts.sizes.normal};
     font-weight: 400;
     line-height: 150%;
-    
+
     :before {
       display: none !important;
     }
-    
+
     height: 56px;
     padding: 16px;
   }
 
   .ant-table {
-    border: 1px solid #E9ECEF;
+    border: 1px solid #e9ecef;
     border-radius: 8px;
   }
-  
+
   .ant-table-cell {
     font-family: ${({ theme }) => theme.fonts.family.default};
     font-size: ${({ theme }) => theme.fonts.sizes.normal};
     font-weight: 400;
 
     height: 56px;
-    
+
     &:hover {
       cursor: pointer;
     }
   }
-  
+
   .ant-checkbox {
     width: 16px !important;
     height: 16px !important;
     border-radius: 4px !important;
   }
-  
+
   .ant-checkbox-inner {
-    border: 2px solid #E9ECEF !important;
+    border: 2px solid #e9ecef !important;
   }
 
-  @media screen
-  and (min-device-width: 1200px)
-  and (max-device-width: 1600px)
-  and (-webkit-min-device-pixel-ratio: 1) {
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
     .ant-table-thead .ant-table-cell {
       font-size: ${({ theme }) => theme.fonts.sizes.normal};
       font-weight: 400;

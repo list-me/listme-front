@@ -2,7 +2,7 @@ interface IModalProps {
   isOpen: boolean;
   changeVisible: () => void;
   children?: any;
-  width?: string|number;
+  width?: string | number;
 }
 
-export type {IModalProps};
+export type { IModalProps };

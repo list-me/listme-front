@@ -14,7 +14,6 @@ export const Container = styled.div`
   .ant-tree-treenode {
     display: flex;
     align-items: center;
-
   }
 
   .ant-input {
@@ -23,7 +22,7 @@ export const Container = styled.div`
     width: 300px;
     height: 56px;
 
-    font-family: 'Satoshi Regular', sans-serif;
+    font-family: "Satoshi Regular", sans-serif;
     font-style: normal;
     font-size: 16px;
     line-height: 150%;

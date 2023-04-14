@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const Contents = styled.div`
   display: flex;
-  
+
   span:not(:last-child) {
     margin-right: 24px;
   }
@@ -15,7 +15,7 @@ export const Item = styled.span`
   font-weight: 700;
   line-height: 20px;
   text-align: center;
-  
+
   svg:first-child {
     margin-right: 8px;
   }
@@ -26,7 +26,7 @@ export const Item = styled.span`
       cursor: pointer;
     }
   }
-  
+
   display: flex;
   align-items: center;
   justify-content: center;

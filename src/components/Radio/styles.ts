@@ -18,29 +18,25 @@ export const Container = styled.div`
     flex-direction: column !important;
   }
 
-  
-
   .ant-radio-wrapper.ant-radio-wrapper-checked {
     font-family: "Satoshi Bold", sans-serif !important;
-    color: #3818D9 !important;
+    color: #3818d9 !important;
 
     .ant-radio-inner {
       background: white !important;
-      border: 2.4px solid #3818D9 !important;
+      border: 2.4px solid #3818d9 !important;
     }
 
     .ant-radio-inner::after {
-      background: #3818D9;
+      background: #3818d9;
     }
   }
 `;
 
 export const StyledRadio = styled(Radio)`
   color: red;
-  
 
   &.ant-radio-wrapper {
-
     /* Cor do marcador */
     .ant-radio-input:focus + .ant-radio-inner {
       border-color: red;

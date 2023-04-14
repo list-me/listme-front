@@ -1,6 +1,6 @@
-import 'handsontable/dist/handsontable.full.min.css';
-import '../fonts/fontStyle.css';
-import { createGlobalStyle } from 'styled-components';
+import "handsontable/dist/handsontable.full.min.css";
+import "../fonts/fontStyle.css";
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -22,7 +22,7 @@ const GlobalStyle = createGlobalStyle`
   }
   
   body {
-    background-color: ${({theme}) => theme.colors.background.default};
+    background-color: ${({ theme }) => theme.colors.background.default};
     font-family: Satoshi Regular;
     font-weight: 500;
     min-height: 100vh;
