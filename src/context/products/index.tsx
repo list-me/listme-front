@@ -1,531 +1,630 @@
 /* eslint-disable */
-import React, {createContext, useEffect, useState} from "react";
-import {toast} from "react-toastify";
+import React, { createContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
-import {productRequests} from "../../services/apis/requests/product";
-import {templateRequests} from "../../services/apis/requests/template";
+import { productRequests } from "../../services/apis/requests/product";
+import { templateRequests } from "../../services/apis/requests/template";
 import { ICustomCellType } from "./product.context";
 
 export interface ICustomField {
-    hidden?: boolean;
-    width?: string;
-    frozen?: boolean;
-    order?: string;
+  hidden?: boolean;
+  width?: string;
+  frozen?: boolean;
+  order?: string;
 }
 
 export interface ICustom {
-    show?: boolean;
-    width?: string;
-    frozen?: boolean;
-    order?: string;
+  show?: boolean;
+  width?: string;
+  frozen?: boolean;
+  order?: string;
 }
 
 export interface IHeaderTable {
-    title?: string;
-    type: string;
-    data: string;
-    className: string;
-    options: string[];
-    hidden?: boolean;
-    width?: string;
-    frozen?: boolean;
-    order?: string;
+  title?: string;
+  type: string;
+  data: string;
+  className: string;
+  options: string[];
+  hidden?: boolean;
+  width?: string;
+  frozen?: boolean;
+  order?: string;
 }
 
 interface ITypeProductContext {
-    products: any[];
-    filteredData: any[];
-    filter: string;
-    setProducts: Function,
-    handleRedirectAndGetProducts: (template: any) => Promise<void>;
-    headerTable: IHeaderTable[];
-    setHeaderTable: Function;
-    handleAdd: Function;
-    handleSave: Function;
-    editing: boolean;
-    setEditing: Function;
-    colHeaders: string[];
-    handleDelete: Function;
-    COMPONENT_CELL_PER_TYPE: ICustomCellType;
-    handleUpdateTemplate: Function;
-    template: any;
-    hidden: number[];
-    handleHidden: Function;
-    setHidden: Function;
-    handleResize: Function;
-    setColHeaders: Function;
-    handleFreeze: Function;
-    handleMove: Function;
-    handleNewColumn: Function;
-    handleFilter: Function;
-    handleRemoveColumn: (column: number, fields: any[], newColumns: any[]) => void;
+  products: any[];
+  filteredData: any[];
+  filter: string;
+  setProducts: Function;
+  handleRedirectAndGetProducts: (template: any) => Promise<void>;
+  headerTable: IHeaderTable[];
+  setHeaderTable: Function;
+  handleAdd: Function;
+  handleSave: Function;
+  editing: boolean;
+  setEditing: Function;
+  colHeaders: string[];
+  handleDelete: Function;
+  COMPONENT_CELL_PER_TYPE: ICustomCellType;
+  handleUpdateTemplate: Function;
+  template: any;
+  hidden: number[];
+  handleHidden: Function;
+  setHidden: Function;
+  handleResize: Function;
+  setColHeaders: Function;
+  handleFreeze: Function;
+  handleMove: Function;
+  handleNewColumn: Function;
+  handleFilter: Function;
+  handleRemoveColumn: (
+    column: number,
+    fields: any[],
+    newColumns: any[],
+  ) => void;
 }
 
 interface IField {
-    id: string;
-    type: string;
-    group: string;
-    title: string;
-    options: string[];
-    required: boolean;
-    help_text: string;
-    is_public: string;
-    description: string;
-    order?: string;
-    hidden?: boolean;
-    width?: string;
-    frozen?: boolean;
+  id: string;
+  type: string;
+  group: string;
+  title: string;
+  options: string[];
+  required: boolean;
+  help_text: string;
+  is_public: string;
+  description: string;
+  order?: string;
+  hidden?: boolean;
+  width?: string;
+  frozen?: boolean;
 }
 
 export const productContext = createContext<ITypeProductContext>({
-    products: [],
-    filteredData: [],
-    filter: '',
-    setProducts: () => {},
-    handleRedirectAndGetProducts: (): Promise<void> => {return},
-    headerTable: [],
-    setHeaderTable: () => {},
-    handleAdd: () => {},
-    handleSave: () => {},
-    editing: false,
-    setEditing: () => {},
-    colHeaders: [],
-    handleDelete: () => {},
-    COMPONENT_CELL_PER_TYPE: {},
-    handleUpdateTemplate: () => {},
-    template: {},
-    hidden: [],
-    handleHidden: () => {},
-    setHidden: () => {},
-    handleResize: () => {},
-    setColHeaders: () => {},
-    handleFreeze: () => {},
-    handleMove: () => {},
-    handleNewColumn: () => {},
-    handleFilter: () => {},
-    handleRemoveColumn: () => {}
+  products: [],
+  filteredData: [],
+  filter: "",
+  setProducts: () => {},
+  handleRedirectAndGetProducts: (): Promise<void> => {
+    return;
+  },
+  headerTable: [],
+  setHeaderTable: () => {},
+  handleAdd: () => {},
+  handleSave: () => {},
+  editing: false,
+  setEditing: () => {},
+  colHeaders: [],
+  handleDelete: () => {},
+  COMPONENT_CELL_PER_TYPE: {},
+  handleUpdateTemplate: () => {},
+  template: {},
+  hidden: [],
+  handleHidden: () => {},
+  setHidden: () => {},
+  handleResize: () => {},
+  setColHeaders: () => {},
+  handleFreeze: () => {},
+  handleMove: () => {},
+  handleNewColumn: () => {},
+  handleFilter: () => {},
+  handleRemoveColumn: () => {},
 });
 
-export const ProductContextProvider = ({children}: any) => {
-    const [products, setProducts] = useState<any[]>([]);
-    const [template, setTemplate] = useState<any>();
-    const [headerTable, setHeaderTable] = useState<IHeaderTable[]>([]);
-    const [colHeaders, setColHeaders] = useState<any[]>([]);
-    const [editing, setEditing] = useState<boolean>(false);
-    const [hidden, setHidden] = useState<any[]>([]);
-    const [customFields, setCustomFields] = useState([]);
-    const [filteredData, setFilteredData] = useState<any[]>([]);
-    const [filter, setFilter] = useState<string|undefined>(undefined);
+export const ProductContextProvider = ({ children }: any) => {
+  const [products, setProducts] = useState<any[]>([]);
+  const [template, setTemplate] = useState<any>();
+  const [headerTable, setHeaderTable] = useState<IHeaderTable[]>([]);
+  const [colHeaders, setColHeaders] = useState<any[]>([]);
+  const [editing, setEditing] = useState<boolean>(false);
+  const [hidden, setHidden] = useState<any[]>([]);
+  const [customFields, setCustomFields] = useState([]);
+  const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [filter, setFilter] = useState<string | undefined>(undefined);
 
-    const COMPONENT_CELL_PER_TYPE: ICustomCellType = {
-        RADIO: "radio",
-        LIST: "select",
-        CHECKED: "checkbox"
-    }
+  const COMPONENT_CELL_PER_TYPE: ICustomCellType = {
+    RADIO: "radio",
+    LIST: "select",
+    CHECKED: "checkbox",
+  };
 
-    const handleUpdateTemplate = (field: any) => {
-    }
+  const handleUpdateTemplate = (field: any) => {};
 
-    const handleDelete = (product: any) => {
-        try {
-            const currentProducts = filteredData.filter((itemProduct: any) => {
-                if (itemProduct.id !== product.id) {
-                    return itemProduct;
-                }
-            });
-
-            productRequests.delete(product.id).then((response: any) => {
-                setFilteredData(currentProducts);
-                toast.success("Produto excluído com sucesso");
-            }).catch((error) => {
-                throw error
-            });
-
-        } catch (error) {
-            console.error(error);
-            toast.error("Ocorreu um erro na tentativa de deletar este produto");
+  const handleDelete = (product: any) => {
+    try {
+      const currentProducts = filteredData.filter((itemProduct: any) => {
+        if (itemProduct.id !== product.id) {
+          return itemProduct;
         }
-    }
+      });
 
-    const handleGetProducts = async (templateId: string) => {
-        return productRequests.list({}, templateId).then((response) => {
-            const productFields: any = [];
-            response?.products?.forEach((item: any) => {
-                let object: any = {};
-                item.fields.forEach((field: any) =>  (object[field.id] = field.value));
-                productFields.push({...object, id: item.id, created_at: item.created_at})
-            });
-
-            if (!productFields.length) {
-                productFields.push({[template[0]]: ""})
-            }
-            setProducts(productFields);
-            setFilteredData(productFields);
-        }).catch((error) => {
-            console.error(error);
-            toast.error("Não foi possível carregar os produtos, por favor tente novamente!")
+      productRequests
+        .delete(product.id)
+        .then((response: any) => {
+          setFilteredData(currentProducts);
+          toast.success("Produto excluído com sucesso");
+        })
+        .catch((error) => {
+          throw error;
         });
+    } catch (error) {
+      console.error(error);
+      toast.error("Ocorreu um erro na tentativa de deletar este produto");
     }
+  };
 
-    const handleRedirectAndGetProducts = async (id: string) => {
-        try {
-            await handleGetTemplates(id)
-            await handleGetProducts(id)
-        } catch (error) {
-            console.error(error);
-            toast.error("Ocorreu um erro com sua solicitação de produtos, tente novamente");
-        }
-    }
-
-    const handlePost = async (product: any) => {
-        await Promise.resolve(productRequests.save(product)).catch((error) => {
-            throw error
-        });;
-    }
-
-    const handleSave = async (value: any) => {
-        const fields = buildProduct(value);
-        console.log({fields});
-        try {
-            if (value?.id) {
-                await Promise.resolve(productRequests.update({id: value.id, fields})).catch((error) => {
-                    throw error
-                });
-                return;
-            } else {
-                const product = {
-                    product_template_id: window.location.pathname.substring(10),
-                    is_public: true,
-                    fields: fields,
-                };
-                await handlePost(product);
-            }
-        } catch (error: any) {
-            console.error(error.response.data.message[0]);
-            toast.error(error.response.data.message)
-        }
-    }
-
-    const buildProduct = (fields: any) => {
-        const obj: any[] = [];
-        if (Object.keys(fields).length) {
-            const columnKeys = headerTable.map((column) => column?.data);
-            Object.keys(fields).forEach((field: any) => {
-                if (fields[field] && !["id", "created_at"].includes(field) && columnKeys.includes(field)) {
-                    obj.push({
-                        id: field,
-                        value: fields[field]
-                    });
-                }
-            });
-        }
-
-        return obj;
-    }
-
-    const handleAdd = () => {
-        if (products.find((product: any) => !Object.keys(product).length)) {
-            toast.error("Preencha o novo produto em branco!");
-            return;
-        }
-
-        setFilteredData((old) => [{}, ...old]);
-    }
-
-    const handleGetTemplates = async (templateId: string) => {
-        return templateRequests
-            .get(templateId)
-            .then((response) => {
-                setTemplate(response)
-                const fields = response?.fields;
-                let headersCell: any[] = [];
-                var headers = fields?.fields?.map((item: IField, index) => {
-                    headersCell.push(item.title);
-                    return {
-                        title: item.title,
-                        data: item.id,
-                        className: "htLeft htMiddle",
-                        type: item.type,
-                        options: item.options,
-                        order: item.order !== undefined ? item.order : index.toString(),
-                        hidden: item.hidden ? item.hidden : false,
-                        width: item.width ? item.width : "300px",
-                        frozen: item.frozen ? item.frozen : false
-                    }
-                });
-
-                const test = headers.sort((a, b) => {
-                    return Number(a.order) - Number(b.order)
-                })
-
-                const test1 = headers.map((item) => {
-                    return item?.title;
-                })
-
-                headersCell = [...test1, ' '];
-                headers = [...test,  {}];
-                setColHeaders(headersCell);
-                setHeaderTable(headers);
-                setHidden(headers.filter((item) => item.hidden).map((element) => Number(element.order)))
-                setCustomFields(headers.filter((element) => {
-                    if (Object.keys(element).length) {
-                        return element
-                    }
-                }).map((item) => {
-                    const {order, hidden, width, frozen, data} = item;
-                    return {order, hidden, width, frozen, id: data}
-                }))
-                setFilter(undefined);
-        }).catch((error) => {
-            console.error(error);
-            toast.error("Não foi possível carregar o template, tente novamente!")
+  const handleGetProducts = async (templateId: string) => {
+    return productRequests
+      .list({}, templateId)
+      .then((response) => {
+        const productFields: any = [];
+        response?.products?.forEach((item: any) => {
+          let object: any = {};
+          item.fields.forEach((field: any) => (object[field.id] = field.value));
+          productFields.push({
+            ...object,
+            id: item.id,
+            created_at: item.created_at,
+          });
         });
+
+        if (!productFields.length) {
+          productFields.push({ [template[0]]: "" });
+        }
+        setProducts(productFields);
+        setFilteredData(productFields);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(
+          "Não foi possível carregar os produtos, por favor tente novamente!",
+        );
+      });
+  };
+
+  const handleRedirectAndGetProducts = async (id: string) => {
+    try {
+      await handleGetTemplates(id);
+      await handleGetProducts(id);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        "Ocorreu um erro com sua solicitação de produtos, tente novamente",
+      );
     }
+  };
 
-    const handleResize = (col: number, newSize: number, template: any) => {
-        const columnKeys = headerTable.map((column) => column?.data);
-        console.log({headerTable})
+  const handlePost = async (product: any) => {
+    return productRequests
+      .save(product)
+      .then((response) => response)
+      .catch((error) => {
+        throw error;
+      });
+  };
 
-        // setCustomFields(prev => {
-        //     return prev.map((item) => {
-        //         if (item?.order == col.toString()) {
-        //             return {
-        //                 ...item,
-        //                 width: newSize.toString(),
-        //             }
-        //         }
-
-        //         return item;
-        //     })
-        // });
-
-        const customs = customFields.map((item, index) => {
-            if (item?.order == col.toString()) {
-                return {
-                    ...item,
-                    width: newSize.toString(),
-                    order: index.toString()
-                }
-            }
-
-            return item;
+  const handleSave = async (value: any) => {
+    const fields = buildProduct(value);
+    try {
+      if (value?.id) {
+        await Promise.resolve(
+          productRequests.update({ id: value.id, fields }),
+        ).catch((error) => {
+          throw error;
         });
-        setCustomFields(customs);
-        // const custom = buildCustomFields(template.fields.fields, {width: `${newSize.toString()}`}, col);
-
-        console.log({customs})
-        templateRequests.customView(template.id, {fields: customs})
-            .catch((error) => toast.error("Ocorreu um erro ao alterar o tamanho do campo"));
-        // return custom;
-    }
-
-    const handleHidden = (col: number, template: any, able: boolean): number[] => {
-        const content = hidden
-        let newValue;
-        if (content.includes(col)) {
-            newValue = content.filter((element) => element != col)
-        } else {
-            newValue = [...content, col]
+        return;
+      } else {
+        const newProduct = {
+          product_template_id: window.location.pathname.substring(10),
+          is_public: true,
+          fields: fields,
         };
-        console.log({newValue, content, hidden, col})
 
-        setHidden(newValue);
-        setCustomFields(prev => {
-            return prev.map((item) => {
-                if (item?.order == col.toString()) {
-                    return {
-                        ...item,
-                        hidden: able,
-                    }
-                }
-
-                return item;
-            })
-        });
-
-        const custom = buildCustomFields(template?.fields?.fields, {show: able}, col);
-        templateRequests.customView(window.location.pathname.substring(10), {fields: custom})
-            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
-
-        return newValue;
-    }
-
-    const buildCustomFields = (fields: any, {order, show, width, frozen}: ICustom, col: number) => {
-        const testing = [...customFields]
-        return testing?.map(custom => {
-            if (custom?.order == col) {
-                return {
-                    id: custom?.id,
-                    order: order ? order.toString() : custom?.order,
-                    hidden: show !== undefined ? show : custom?.hidden,
-                    width: width ? width : custom?.width,
-                    frozen: frozen ? frozen : custom?.frozen,
-                };
+        let product = await handlePost(newProduct);
+        setFilteredData((prev) => {
+          return prev.map((element) => {
+            if (!element?.id) {
+              return {
+                ...element,
+                id: product?.id,
+              };
             }
-            return custom;
+            return element;
+          });
         });
+      }
+    } catch (error: any) {
+      console.error(error.response.data.message[0]);
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const buildProduct = (fields: any) => {
+    const obj: any[] = [];
+    if (Object.keys(fields).length) {
+      const columnKeys = headerTable.map((column) => column?.data);
+      Object.keys(fields).forEach((field: any) => {
+        if (
+          fields[field] &&
+          !["id", "created_at"].includes(field) &&
+          columnKeys.includes(field)
+        ) {
+          obj.push({
+            id: field,
+            value: fields[field],
+          });
+        }
+      });
     }
 
-    const handleFreeze = (col: any, state: boolean, operation?: string) => {
-        let changeState;
-        if (operation && operation == 'unfreeze') {
-            changeState = customFields.map((customs) => {
-                return {
-                    ...customs,
-                    frozen: false,
-                }
-            });
+    return obj;
+  };
 
-            setCustomFields(changeState);
-        } else {
-            changeState = customFields.map((customs) => {
-                if (Number(customs?.order) <= col?.order) {
-                    return {
-                        ...customs,
-                        frozen: true,
-                    }
-                }
+  const handleAdd = () => {
+    if (filteredData.find((product: any) => !Object.keys(product).length)) {
+      toast.error("Preencha o novo produto em branco!");
+      return;
+    }
 
-                return customs;
+    setFilteredData((old) => [{}, ...old]);
+  };
+
+  const handleGetTemplates = async (templateId: string) => {
+    return templateRequests
+      .get(templateId)
+      .then((response) => {
+        setTemplate(response);
+        const fields = response?.fields;
+        let headersCell: any[] = [];
+        var headers = fields?.fields?.map((item: IField, index) => {
+          headersCell.push(item.title);
+          return {
+            title: item.title,
+            data: item.id,
+            className: "htLeft htMiddle",
+            type: item.type,
+            options: item.options,
+            order: item.order !== undefined ? item.order : index.toString(),
+            hidden: item.hidden ? item.hidden : false,
+            width: item.width ? item.width : "300px",
+            frozen: item.frozen ? item.frozen : false,
+          };
+        });
+
+        const test = headers.sort((a, b) => {
+          return Number(a.order) - Number(b.order);
+        });
+
+        const test1 = headers.map((item) => {
+          return item?.title;
+        });
+
+        headersCell = [...test1, " "];
+        headers = [...test, {}];
+        setColHeaders(headersCell);
+        setHeaderTable(headers);
+        setHidden(
+          headers
+            .filter((item) => item.hidden)
+            .map((element) => Number(element.order)),
+        );
+        setCustomFields(
+          headers
+            .filter((element) => {
+              if (Object.keys(element).length) {
+                return element;
+              }
             })
+            .map((item) => {
+              const { order, hidden, width, frozen, data } = item;
+              return { order, hidden, width, frozen, id: data };
+            }),
+        );
+        setFilter(undefined);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("Não foi possível carregar o template, tente novamente!");
+      });
+  };
 
-            setCustomFields(customFields)
+  const handleResize = (col: number, newSize: number, template: any) => {
+    const columnKeys = headerTable.map((column) => column?.data);
+
+    // setCustomFields(prev => {
+    //     return prev.map((item) => {
+    //         if (item?.order == col.toString()) {
+    //             return {
+    //                 ...item,
+    //                 width: newSize.toString(),
+    //             }
+    //         }
+
+    //         return item;
+    //     })
+    // });
+
+    const customs = customFields.map((item, index) => {
+      if (item?.order == col.toString()) {
+        return {
+          ...item,
+          width: newSize.toString(),
+          order: index.toString(),
+        };
+      }
+
+      return item;
+    });
+    setCustomFields(customs);
+    // const custom = buildCustomFields(template.fields.fields, {width: `${newSize.toString()}`}, col);
+
+    console.log({ customs });
+    templateRequests
+      .customView(template.id, { fields: customs })
+      .catch((error) =>
+        toast.error("Ocorreu um erro ao alterar o tamanho do campo"),
+      );
+    // return custom;
+  };
+
+  const handleHidden = (
+    col: number,
+    template: any,
+    able: boolean,
+  ): number[] => {
+    const content = hidden;
+    let newValue;
+    if (content.includes(col)) {
+      newValue = content.filter((element) => element != col);
+    } else {
+      newValue = [...content, col];
+    }
+    console.log({ newValue, content, hidden, col });
+
+    setHidden(newValue);
+    setCustomFields((prev) => {
+      return prev.map((item) => {
+        if (item?.order == col.toString()) {
+          return {
+            ...item,
+            hidden: able,
+          };
         }
 
-        setHeaderTable(prev => {    
-            return prev.map((item, index) => {
-                return {
-                    ...item,
-                    width: changeState[index]?.width,
-                    order: changeState[index]?.order,
-                    frozen: changeState[index]?.frozen,
-                    hidden: changeState[index]?.hidden,
-                }
-            })
-        })
+        return item;
+      });
+    });
 
-        templateRequests.customView(template.id, {fields: changeState})
-            .catch((error) => toast.error("Ocorreu um erro ao definir o freeze da coluna"));
-        
-        return customFields;
+    const custom = buildCustomFields(
+      template?.fields?.fields,
+      { show: able },
+      col,
+    );
+    templateRequests
+      .customView(window.location.pathname.substring(10), { fields: custom })
+      .catch((error) =>
+        toast.error("Ocorreu um erro ao alterar a visibilidade do campo"),
+      );
+
+    return newValue;
+  };
+
+  const buildCustomFields = (
+    fields: any,
+    { order, show, width, frozen }: ICustom,
+    col: number,
+  ) => {
+    const testing = [...customFields];
+    return testing?.map((custom) => {
+      if (custom?.order == col) {
+        return {
+          id: custom?.id,
+          order: order ? order.toString() : custom?.order,
+          hidden: show !== undefined ? show : custom?.hidden,
+          width: width ? width : custom?.width,
+          frozen: frozen ? frozen : custom?.frozen,
+        };
+      }
+      return custom;
+    });
+  };
+
+  const handleFreeze = (col: any, state: boolean, operation?: string) => {
+    let changeState;
+    if (operation && operation == "unfreeze") {
+      changeState = customFields.map((customs) => {
+        return {
+          ...customs,
+          frozen: false,
+        };
+      });
+
+      setCustomFields(changeState);
+    } else {
+      changeState = customFields.map((customs) => {
+        if (Number(customs?.order) <= col?.order) {
+          return {
+            ...customs,
+            frozen: true,
+          };
+        }
+
+        return customs;
+      });
+
+      setCustomFields(customFields);
     }
 
-    const handleMove = (col: any[]) => {
-        const fields = col.filter((item) => {
-            if (Object.keys(item).length > 0) return item
-        }).map((element) => {
-            return {
-                order: element?.order,
-                hidden: element?.hidden,
-                width: element?.width,
-                frozen: element?.frozen,
-                id: element?.data
-            }
-        })
+    setHeaderTable((prev) => {
+      return prev.map((item, index) => {
+        return {
+          ...item,
+          width: changeState[index]?.width,
+          order: changeState[index]?.order,
+          frozen: changeState[index]?.frozen,
+          hidden: changeState[index]?.hidden,
+        };
+      });
+    });
 
-        console.log({fields, col})
-        // setHeaderTable(col);
-        setCustomFields(fields);
-        templateRequests.customView(window.location.pathname.substring(10), {fields})
-            .catch((error) => toast.error("Ocorreu um erro ao alterar a posição da coluna"));
-    }
+    templateRequests
+      .customView(template.id, { fields: changeState })
+      .catch((error) =>
+        toast.error("Ocorreu um erro ao definir o freeze da coluna"),
+      );
 
-    const handleNewColumn = (col: any, fields: any[]) => {
-        console.log("WTF", {headerTable})
+    return customFields;
+  };
 
-        const newPosition = [...headerTable, col]
-        newPosition.splice(newPosition.length-2 , 1)
-        newPosition.push({});
-        setHeaderTable(newPosition);
+  const handleMove = (col: any[]) => {
+    const fields = col
+      .filter((item) => {
+        if (Object.keys(item).length > 0) return item;
+      })
+      .map((element) => {
+        return {
+          order: element?.order,
+          hidden: element?.hidden,
+          width: element?.width,
+          frozen: element?.frozen,
+          id: element?.data,
+        };
+      });
 
-        const newTemplate = template;
-        newTemplate.fields.fields = fields;
-        setTemplate(newTemplate);
+    console.log({ fields, col });
+    // setHeaderTable(col);
+    setCustomFields(fields);
+    templateRequests
+      .customView(window.location.pathname.substring(10), { fields })
+      .catch((error) =>
+        toast.error("Ocorreu um erro ao alterar a posição da coluna"),
+      );
+  };
 
-        setCustomFields(prev => [...prev, {order: col?.order, hidden: col?.hidden, width: col?.width, frozen: col?.frozen, id: col?.data}])
-    };
+  const handleNewColumn = (col: any, fields: any[]) => {
+    console.log("WTF", { headerTable });
 
-    const handleFilter = (word: string): any[] => {
-        const filtered = products.filter((row) => {
-            let multiOptions: string[] = [];
-            let values = Object.values(row)
-                .filter((element) => {
-                    if (typeof element === "object") {
-                        return Object.values(element).forEach(option => multiOptions.push(option));
-                    }
+    const newPosition = [...headerTable, col];
+    newPosition.splice(newPosition.length - 2, 1);
+    newPosition.push({});
+    setHeaderTable(newPosition);
 
-                    return element !== undefined;
-                });
-            values = [...values, ...multiOptions];
+    const newTemplate = template;
+    newTemplate.fields.fields = fields;
+    setTemplate(newTemplate);
 
-            return values.some((cell) => {
-                const option = cell as string;
-                if (option.toLocaleLowerCase().includes(word.toLocaleLowerCase())) {
-                    return cell;
-                }
-            })
-        });
+    setCustomFields((prev) => [
+      ...prev,
+      {
+        order: col?.order,
+        hidden: col?.hidden,
+        width: col?.width,
+        frozen: col?.frozen,
+        id: col?.data,
+      },
+    ]);
+  };
 
-        setFilteredData(filtered);
-        setFilter(word === '' ? undefined : word);
-        return filtered
-    }
+  const handleFilter = (word: string): any[] => {
+    const filtered = products.filter((row) => {
+      let multiOptions: string[] = [];
+      let values = Object.values(row).filter((element) => {
+        if (typeof element === "object") {
+          return Object.values(element).forEach((option) =>
+            multiOptions.push(option),
+          );
+        }
 
-    const handleRemoveColumn = (column: number, fields: any[], newColumns: any[]) => {
-        const newTemplate = template;
-        newTemplate.fields.fields = fields;
-        setTemplate(newTemplate);
+        return element !== undefined;
+      });
+      values = [...values, ...multiOptions];
 
-        const keys = newColumns.filter((item) => Object.keys(item).length).map((item) => item.data)
-        const customs = customFields.filter((item, index) => {
-            if (keys.includes(item?.id)) {
-                return {
-                    ...item,
-                    order: index.toString()
-                }
-            }
-        });
+      return values.some((cell) => {
+        const option = cell as string;
+        if (option.toLocaleLowerCase().includes(word.toLocaleLowerCase())) {
+          return cell;
+        }
+      });
+    });
 
-        console.log({customs, newTemplate})
-        setCustomFields(customs);
+    setFilteredData(filtered);
+    setFilter(word === "" ? undefined : word);
+    return filtered;
+  };
 
-        setHeaderTable(newColumns);
-        templateRequests.update(window.location.pathname.substring(10), {fields})
-            .then((resolve) => {
-                templateRequests.customView(template.id, {fields: customs})
-                    .catch((error) => toast.error("Ocorreu um ao alterar os campos customizados"));
-            })
-            .catch((error) => toast.error("Ocorreu um erro ao alterar a visibilidade do campo"));
-    }
+  const handleRemoveColumn = (
+    column: number,
+    fields: any[],
+    newColumns: any[],
+  ) => {
+    const newTemplate = template;
+    newTemplate.fields.fields = fields;
+    setTemplate(newTemplate);
 
-    const value: ITypeProductContext = {
-        products,
-        filteredData,
-        filter,
-        setProducts,
-        handleRedirectAndGetProducts,
-        headerTable,
-        setHeaderTable,
-        handleAdd,
-        handleSave,
-        editing,
-        setEditing,
-        colHeaders,
-        handleDelete,
-        COMPONENT_CELL_PER_TYPE,
-        handleUpdateTemplate,
-        template,
-        hidden,
-        handleHidden,
-        setHidden,
-        handleResize,
-        setColHeaders,
-        handleFreeze,
-        handleMove,
-        handleNewColumn,
-        handleFilter,
-        handleRemoveColumn
-    }
+    const keys = newColumns
+      .filter((item) => Object.keys(item).length)
+      .map((item) => item.data);
+    const customs = customFields.filter((item, index) => {
+      if (keys.includes(item?.id)) {
+        return {
+          ...item,
+          order: index.toString(),
+        };
+      }
+    });
 
-    return <productContext.Provider value={value}> {children} </productContext.Provider>
-}
+    console.log({ customs, newTemplate });
+    setCustomFields(customs);
+
+    setHeaderTable(newColumns);
+    templateRequests
+      .update(window.location.pathname.substring(10), { fields })
+      .then((resolve) => {
+        templateRequests
+          .customView(template.id, { fields: customs })
+          .catch((error) =>
+            toast.error("Ocorreu um ao alterar os campos customizados"),
+          );
+      })
+      .catch((error) =>
+        toast.error("Ocorreu um erro ao alterar a visibilidade do campo"),
+      );
+  };
+
+  const value: ITypeProductContext = {
+    products,
+    filteredData,
+    filter,
+    setProducts,
+    handleRedirectAndGetProducts,
+    headerTable,
+    setHeaderTable,
+    handleAdd,
+    handleSave,
+    editing,
+    setEditing,
+    colHeaders,
+    handleDelete,
+    COMPONENT_CELL_PER_TYPE,
+    handleUpdateTemplate,
+    template,
+    hidden,
+    handleHidden,
+    setHidden,
+    handleResize,
+    setColHeaders,
+    handleFreeze,
+    handleMove,
+    handleNewColumn,
+    handleFilter,
+    handleRemoveColumn,
+  };
+
+  return (
+    <productContext.Provider value={value}>
+      {" "}
+      {children}{" "}
+    </productContext.Provider>
+  );
+};

@@ -74,7 +74,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
     myComponent.className = "customComponent htMiddle";
 
     ReactDOM.render(customComponent, myComponent);
-    tdNode.appendChild(myComponent);
+    tdNode?.appendChild(myComponent);
   };
 
   const handleMountColumns = () => {
@@ -109,7 +109,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
 
             customRenderer(
               td,
-              <TableFieldMemo
+              <TableField
                 value={initialValue}
                 type={column.type}
                 options={column.options}
@@ -163,12 +163,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
         .map((item) => item.title);
 
       contentHeaders.push(" ");
-      console.log("Dl", {
-        newColumns,
-        order: Number(currentCell?.order),
-        contentHeaders,
-        fields,
-      });
       setHeaders(contentHeaders);
 
       handleRemoveColumn(Number(currentCell?.order), fields, newColumns);
@@ -354,14 +348,15 @@ const CustomTable: React.FC<CustomTableProps> = ({
   );
 
   useEffect(() => {
-    console.log("Através do effect", { columns, headerTable });
+    console.log("From useEffect", { dataProvider });
+
     const toFreeze = headerTable.filter((item) => item?.frozen === true);
     if (toFreeze.length > 0) {
       setFrozen(toFreeze.length);
     }
 
     handleMountColumns();
-  }, [headerTable]);
+  }, [headerTable, dataProvider]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -448,7 +443,10 @@ const CustomTable: React.FC<CustomTableProps> = ({
           }
           return true;
         }}
-        afterChange={async (changes, source) => {
+        afterChange={async (
+          changes: Handsontable.CellChange[] | null,
+          source,
+        ) => {
           if (changes?.length && changes[0][2] !== changes[0][3]) {
             await handleSave(dataProvider[changes[0][0]]);
           }

@@ -1,17 +1,12 @@
 /* eslint-disable */
 import { useNavigate } from "react-router-dom";
 import React, { useContext, useEffect, useState } from "react";
-import { Switch } from "antd";
 import { ReactComponent as EllipsisIcon } from "../../assets/ellipsis.svg";
 import { ReactComponent as DownloadIcon } from "../../assets/download.svg";
 import { ReactComponent as PlusIcon } from "../../assets/add.svg";
 import { ReactComponent as ArrowIcon } from "../../assets/arrow-left.svg";
 import { ReactComponent as FlagIcon } from "../../assets/icons/flag.svg";
 import { ReactComponent as EditIcon } from "../../assets/x-edit.svg";
-import { ReactComponent as MenuIcon } from "../../assets/menu.svg";
-import { ReactComponent as EyeOffIcon } from "../../assets/eye-off.svg";
-import { ReactComponent as FilterIcon } from "../../assets/filter.svg";
-import { ReactComponent as SearchIcon } from "../../assets/search.svg";
 import { ReactComponent as HelpIcon } from "../../assets/help.svg";
 import {
   Header,

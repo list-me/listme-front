@@ -16,4 +16,4 @@ const Button: React.FC<any> = ({
   );
 };
 
-export default { Button };
+export default Button;
