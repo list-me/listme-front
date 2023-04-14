@@ -5,4 +5,4 @@ const GlobalContext = createContext<GlobalContextValues>(
   {} as GlobalContextValues,
 );
 
-export { GlobalContext };
+export default GlobalContext;

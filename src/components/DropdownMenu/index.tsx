@@ -1,5 +1,9 @@
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable import/prefer-default-export */
 import { Divider } from "antd";
-import { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { productContext } from "../../context/products";
 import { DropdownMenuProps } from "./DropdownMenu.d";
 import { SuspenseMenu, Item } from "./styles";
@@ -15,20 +19,20 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   col,
   template,
 }) => {
-  const modalRef = useRef(null);
-  const variable = [];
+  const modalRef = useRef<HTMLDivElement>(null);
+  const variable: string[] = [];
 
   useEffect(() => {
     const handleScroll = () => {
       setIsOpen();
     };
 
-    function handleOutsideClick(event) {
+    function handleOutsideClick(event: any) {
       if (icoRef.current && icoRef.current!.contains(event.target)) {
         return;
       }
 
-      if (modalRef.current && !modalRef.current!.contains(event.target)) {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
         setIsOpen();
       }
     }
@@ -50,7 +54,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
             if (variable.length === 2) {
               variable.pop();
               return (
-                <>
+                <React.Fragment key={Math.random()}>
                   <Divider
                     style={{ marginTop: "20px", marginBottom: "4px" }}
                     key={Math.random()}
@@ -66,13 +70,13 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                     {item?.icon}
                     {item?.label}
                   </Item>
-                </>
+                </React.Fragment>
               );
             }
 
             variable.push("ok");
             return (
-              <>
+              <React.Fragment key={Math.random()}>
                 <Item
                   className="item"
                   key={item?.label}
@@ -84,7 +88,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   {item?.icon}
                   {item?.label}
                 </Item>
-              </>
+              </React.Fragment>
             );
           })}
         </SuspenseMenu>

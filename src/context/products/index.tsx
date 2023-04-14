@@ -35,9 +35,9 @@ export interface IHeaderTable {
 interface ITypeProductContext {
   products: any[];
   filteredData: any[];
-  filter: string;
+  filter: string | undefined;
   setProducts: Function;
-  handleRedirectAndGetProducts: (template: any) => Promise<void>;
+  handleRedirectAndGetProducts: (template: any) => Promise<any>;
   headerTable: IHeaderTable[];
   setHeaderTable: Function;
   handleAdd: Function;
@@ -86,9 +86,7 @@ export const productContext = createContext<ITypeProductContext>({
   filteredData: [],
   filter: "",
   setProducts: () => {},
-  handleRedirectAndGetProducts: (): Promise<void> => {
-    return;
-  },
+  handleRedirectAndGetProducts: async (): Promise<any> => {},
   headerTable: [],
   setHeaderTable: () => {},
   handleAdd: () => {},
@@ -119,7 +117,7 @@ export const ProductContextProvider = ({ children }: any) => {
   const [colHeaders, setColHeaders] = useState<any[]>([]);
   const [editing, setEditing] = useState<boolean>(false);
   const [hidden, setHidden] = useState<any[]>([]);
-  const [customFields, setCustomFields] = useState([]);
+  const [customFields, setCustomFields] = useState<any[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [filter, setFilter] = useState<string | undefined>(undefined);
 
@@ -277,7 +275,7 @@ export const ProductContextProvider = ({ children }: any) => {
         setTemplate(response);
         const fields = response?.fields;
         let headersCell: any[] = [];
-        var headers = fields?.fields?.map((item: IField, index) => {
+        var headers = fields?.fields?.map((item: IField, index: any) => {
           headersCell.push(item.title);
           return {
             title: item.title,
@@ -292,11 +290,11 @@ export const ProductContextProvider = ({ children }: any) => {
           };
         });
 
-        const test = headers.sort((a, b) => {
+        const test = headers.sort((a: any, b: any) => {
           return Number(a.order) - Number(b.order);
         });
 
-        const test1 = headers.map((item) => {
+        const test1 = headers.map((item: any) => {
           return item?.title;
         });
 
@@ -306,17 +304,17 @@ export const ProductContextProvider = ({ children }: any) => {
         setHeaderTable(headers);
         setHidden(
           headers
-            .filter((item) => item.hidden)
-            .map((element) => Number(element.order)),
+            .filter((item: any) => item.hidden)
+            .map((element: any) => Number(element.order)),
         );
         setCustomFields(
           headers
-            .filter((element) => {
+            .filter((element: any) => {
               if (Object.keys(element).length) {
                 return element;
               }
             })
-            .map((item) => {
+            .map((item: any) => {
               const { order, hidden, width, frozen, data } = item;
               return { order, hidden, width, frozen, id: data };
             }),
@@ -345,8 +343,8 @@ export const ProductContextProvider = ({ children }: any) => {
     //     })
     // });
 
-    const customs = customFields.map((item, index) => {
-      if (item?.order == col.toString()) {
+    const customs = customFields.map((item: any, index: any) => {
+      if (item && item?.order == col.toString()) {
         return {
           ...item,
           width: newSize.toString(),
@@ -431,7 +429,7 @@ export const ProductContextProvider = ({ children }: any) => {
   };
 
   const handleFreeze = (col: any, state: boolean, operation?: string) => {
-    let changeState;
+    let changeState: any[];
     if (operation && operation == "unfreeze") {
       changeState = customFields.map((customs) => {
         return {
@@ -529,9 +527,9 @@ export const ProductContextProvider = ({ children }: any) => {
   const handleFilter = (word: string): any[] => {
     const filtered = products.filter((row) => {
       let multiOptions: string[] = [];
-      let values = Object.values(row).filter((element) => {
+      let values = Object.values(row).filter((element: any) => {
         if (typeof element === "object") {
-          return Object.values(element).forEach((option) =>
+          return Object.values(element).forEach((option: any) =>
             multiOptions.push(option),
           );
         }
@@ -622,9 +620,6 @@ export const ProductContextProvider = ({ children }: any) => {
   };
 
   return (
-    <productContext.Provider value={value}>
-      {" "}
-      {children}{" "}
-    </productContext.Provider>
+    <productContext.Provider value={value}>{children}</productContext.Provider>
   );
 };

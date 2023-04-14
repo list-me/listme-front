@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+/* eslint-disable react/prop-types */
+/* eslint-disable import/prefer-default-export */
+import React, { useEffect, useRef, useState } from "react";
 import { AddColumn } from "./styles";
 import { ReactComponent as AddColumnIcon } from "../../assets/add-column.svg";
 import { ReactComponent as TextIcon } from "../../assets/text-icon.svg";
@@ -73,7 +75,7 @@ export const NewColumn: React.FC<NewColumnProps> = ({
         onClickModal={() => setIsOpenModal(false)}
         data={data}
         template={template}
-        onUpdate={(e, fields) => setNewColumn(e, fields)}
+        onUpdate={(e: any, fields: any) => setNewColumn(e, fields)}
       />
       <AddColumn
         ref={ref}
