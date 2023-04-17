@@ -50,7 +50,7 @@ export const PersonalModal = ({
   );
   const formRef = useRef<HTMLFormElement>(null);
 
-  const options = [
+  const textOptions = [
     {
       label: "Texto curto",
       value: "text",
@@ -59,21 +59,16 @@ export const PersonalModal = ({
       label: "Texto longo",
       value: "paragraph",
     },
+  ];
+
+  const fileOptions = [
+    {
+      label: "Galeria",
+      value: "file",
+    },
     // {
-    //   label: "Lista suspensa",
-    //   value: "checked"
-    // },
-    // {
-    //   label: "Caixa de seleção",
-    //   value: "list"
-    // },
-    // {
-    //   label: "Escolha única",
-    //   value: "radio"
-    // },
-    // {
-    //   label: "Imagem",
-    //   value: "files"
+    //   label: "Thumb",
+    //   value: "file",
     // },
   ];
 
@@ -97,6 +92,10 @@ export const PersonalModal = ({
     list: {
       label: "Lista suspensa",
       description: "Adicione uma lista de opções a serem escolhidas",
+    },
+    file: {
+      label: "Campo de arquivo",
+      description: "Adicione um campo para envio de imagem",
     },
   };
 
@@ -254,7 +253,11 @@ export const PersonalModal = ({
                           setType(e);
                         }}
                         placeholder="Informe o nome do campo"
-                        options={options}
+                        options={
+                          ["text", "paragraph"].includes(type)
+                            ? textOptions
+                            : fileOptions
+                        }
                       />
                     </Form.Item>
                   ) : (
