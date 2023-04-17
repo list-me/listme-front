@@ -207,7 +207,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
         if (headers[column] === " ") {
           ReactDOM.render(
             <NewColumn
-              test={() => setIconClicked(false)}
               template={template}
               newColumn={template}
               setNewColumn={(newColumn: any, templateUpdated: any) => {
@@ -292,8 +291,8 @@ const CustomTable: React.FC<CustomTableProps> = ({
                     }
                     return item;
                   });
-                  console.log({ test });
 
+                  console.log({ test });
                   col.frozen = true;
                   setColumns((prev) => {
                     return prev.map((item, index) => {
@@ -322,12 +321,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
                 //   //     return -1;
                 //   // }))
               }}
-              test={() => {
-                setIconClicked(false);
-              }}
-              test1={() => {
-                setIconClicked(true);
-              }}
               handleDeleteColumn={() => {
                 col.order = column.toString();
                 setCurrentCell(col);
@@ -351,7 +344,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   );
 
   useEffect(() => {
-    console.log("From useEffect", { dataProvider });
+    console.log({ dataProvider });
 
     const toFreeze = headerTable.filter((item) => item?.frozen === true);
     if (toFreeze.length > 0) {

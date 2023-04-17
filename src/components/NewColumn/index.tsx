@@ -15,14 +15,12 @@ interface NewColumnProps {
   template: any;
   setNewColumn: Function;
   newColumn: any;
-  test: Function;
 }
 
 export const NewColumn: React.FC<NewColumnProps> = ({
   template,
   setNewColumn,
   newColumn,
-  test = () => {},
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
@@ -81,14 +79,12 @@ export const NewColumn: React.FC<NewColumnProps> = ({
         ref={ref}
         className="testing"
         onClick={() => {
-          test();
           setIsOpen(!isOpen);
         }}
       >
         <AddColumnIcon
           ref={iconRef}
           onClick={() => {
-            test();
             setIsOpen(!isOpen);
           }}
         />
@@ -97,7 +93,6 @@ export const NewColumn: React.FC<NewColumnProps> = ({
           isOpen={isOpen}
           icoRef={iconRef}
           openModal={(e) => {
-            test();
             setIsOpen(!isOpen);
             setIsOpenModal(!isOpenModal);
             setData({ type: e?.type });
