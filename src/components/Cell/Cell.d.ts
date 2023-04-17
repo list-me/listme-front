@@ -10,8 +10,8 @@ interface ICellProps {
   handleHidden: Function;
   handleDeleteColumn: () => void;
   freeze: boolean;
-  test: Function;
-  test1: Function;
+  // test: Function;
+  // test1: Function;
 }
 
 interface IOption {

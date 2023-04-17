@@ -21,8 +21,8 @@ export const HeaderCell: React.FC<ICellProps> = ({
   handleSort = () => {},
   handleHidden = () => {},
   freeze,
-  test,
-  test1,
+  // test,
+  // test1,
   handleDeleteColumn,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -111,7 +111,6 @@ export const HeaderCell: React.FC<ICellProps> = ({
             setIsOpenModal(!isOpenModal);
           }
 
-          test();
           setIsOpen(!isOpen);
         }}
         options={options as any}
@@ -133,58 +132,15 @@ export const HeaderCell: React.FC<ICellProps> = ({
             window.location.reload();
           }}
         />
-        <Container
-          // onMouseEnter={() => test1()}
-          onMouseDown={() => test1()}
-        >
+        <Container>
           <label htmlFor=" ">
             <AltText />
             {titleHeader}
           </label>
         </Container>
-        <Options
-          // onMouseEnter={(e) => console.log({e})}
-          onMouseDown={() => {
-            test();
-            setIsOpen(true);
-          }}
-        >
+        <Options onClick={() => setIsOpen(true)}>
           <ChevronDownIcon className="settings" ref={iconRef} />
         </Options>
-        {/* <DropdownMenu
-                    changeOpen={() => {
-                        setIsOpen(!isOpen)
-                    }}
-                    isOpen={isOpen}
-                    icoRef={iconRef}
-                    openModal={(e, col) => {
-                        if (e.label.includes("Ordenar")) {
-                            handleSort(e, e?.operation);
-                        } else if (e?.label.includes("Ocultar")) {
-                            setIsOpen(!isOpen);
-                            handleHidden(e, column?.hidden);
-                            return;
-                        } else if (e.operation === "freeze") {
-                            if (!freeze) {
-                                handleFrozen(col, "");
-                            } else {
-                                handleFrozen(col, "unfreeze");
-                            }
-
-                            const test = !freeze;
-                            // setFrozen(test)
-                        } else {
-                            setIsOpenModal(!isOpenModal)
-                        };
-
-                        setIsOpen(!isOpen);
-                    }}
-                    options={options}
-                    left={posicaoPai}
-                    setIsOpen={() => {setIsOpen(false)}}
-                    template={template}
-                    col={column?.order}
-                /> */}
       </Content>
     </>
   );
