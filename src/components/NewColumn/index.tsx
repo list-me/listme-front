@@ -7,6 +7,7 @@ import { ReactComponent as TextIcon } from "../../assets/text-icon.svg";
 import { ReactComponent as RadioIcon } from "../../assets/radio-icon.svg";
 import { ReactComponent as CheckBoxIcon } from "../../assets/checkbox-icon.svg";
 import { ReactComponent as ListIcon } from "../../assets/list-icon.svg";
+import { ReactComponent as FileIcon } from "../../assets/file-icon.svg";
 
 import { DropdownMenu } from "../DropdownMenu";
 import { PersonalModal } from "../CustomModa";
@@ -55,6 +56,11 @@ export const NewColumn: React.FC<NewColumnProps> = ({
       label: "Lista suspensa",
       icon: <ListIcon />,
       type: "list",
+    },
+    {
+      label: "Imagem",
+      icon: <FileIcon />,
+      type: "file",
     },
   ];
 
