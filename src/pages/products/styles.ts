@@ -135,35 +135,27 @@ export const Container = styled.div`
     margin-right: 20px;
   }
 
-  .htCore {
-    /* width: 100%; */
-    /* padding: 0; */
-
-    /* ::-webkit-scrollbar {
-        width: 8px !important;
-        height: 8px !important;
-
-        ::-webkit-scrollbar-track {
-          background-color: unset !important;
-        }
-
-        ::-webkit-scrollbar-thumb {
-          background-color: #CCCCCC !important;
-          border-radius: 4px !important;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-          background-color: #3818D9 !important;
-        }
-      }  */
-  }
-
   .ht__manualColumnMove {
     z-index: 2;
 
     .ht__manualColumnMove--backlight {
       /* display: none !important; */
     }
+  }
+
+  .ht_master .htCore tbody tr td[data-readonly="true"] {
+    background-color: #f2f2f2;
+    color: #999;
+  }
+
+  /* Estilos para células ativas (hover) */
+  .ht_master .htCore tbody tr td:not([data-readonly="true"]) {
+    transition: background-color 0.6s ease;
+    align-items: center;
+  }
+
+  .ht_master .htCore tbody tr:hover td:not([data-readonly="true"]) {
+    background-color: rgba(135, 206, 250, 0.3);
   }
 
   thead {
@@ -254,11 +246,18 @@ export const Container = styled.div`
       line-height: 150%;
 
       align-self: center;
-      padding-left: 16px;
-      padding-right: 16px;
+      /* padding-left: 16px;
+      padding-right: 16px; */
 
       div {
-        margin-top: 8px;
+        /* margin-top: 8px; */
+
+        /* background: red; */
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        align-items: center;
       }
     }
   }

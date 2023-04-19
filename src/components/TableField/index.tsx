@@ -9,12 +9,17 @@ import { ReactComponent as ChevronDownIcon } from "../../assets/chevron-down.svg
 import { ReactComponent as PencilIcon } from "../../assets/pencei-icon.svg";
 import { CustomRadio } from "../Radio";
 import { CustomCheckBox } from "../CustomCheckBox";
+import Dropzone from "../Dropzone";
 
 export const TableField: React.FC<ITableFieldProps> = ({
   value,
   type,
   options,
   handleSetNewValue = () => {},
+  col,
+  instance,
+  row,
+  prop,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -56,23 +61,33 @@ export const TableField: React.FC<ITableFieldProps> = ({
 
   return (
     <>
-      <Container type={type}>
-        <label>
-          {newValue?.map((valueItem: string, index) => {
-            if (newValue.length > 1 && index < newValue.length - 1) {
-              return `${valueItem}, `;
-            }
+      {type == "file" ? (
+        <Dropzone
+          col={col}
+          instance={instance}
+          row={row}
+          value={value}
+          prop={prop}
+        />
+      ) : (
+        <Container type={type}>
+          <label>
+            {newValue?.map((valueItem: string, index) => {
+              if (newValue.length > 1 && index < newValue.length - 1) {
+                return `${valueItem}, `;
+              }
 
-            return valueItem;
-          })}
-        </label>
-        <span
-        // ref={iconRef}
-        // onClick={() => setIsOpen(true)}
-        >
-          <ChevronDownIcon ref={iconRef} onClick={() => setIsOpen(!isOpen)} />
-        </span>
-      </Container>
+              return valueItem;
+            })}
+          </label>
+          <span
+          // ref={iconRef}
+          // onClick={() => setIsOpen(true)}
+          >
+            <ChevronDownIcon ref={iconRef} onClick={() => setIsOpen(!isOpen)} />
+          </span>
+        </Container>
+      )}
       {isOpen ? (
         <SuspenseMenu ref={modalRef}>
           <span className="firstContent">
@@ -112,16 +127,7 @@ export const TableField: React.FC<ITableFieldProps> = ({
                 }}
               />
             )}
-            {/* <Divider
-                  style={{marginTop: "16px", marginBottom:"16px"}}
-                /> */}
           </span>
-          {/* <Footer
-                onClick={() => handleOpenModal()}
-              >
-                <PencilIcon />
-                Editar campo
-              </Footer> */}
         </SuspenseMenu>
       ) : (
         <></>

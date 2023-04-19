@@ -125,6 +125,7 @@ export const ProductContextProvider = ({ children }: any) => {
     RADIO: "radio",
     LIST: "select",
     CHECKED: "checkbox",
+    FILE: "file",
   };
 
   const handleUpdateTemplate = (field: any) => {};

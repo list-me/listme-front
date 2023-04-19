@@ -1,4 +1,3 @@
-/* eslint-disable */
 import ReactDOM from "react-dom";
 import React, {
   useCallback,
@@ -22,7 +21,6 @@ import { TableField } from "../TableField";
 import { Cell } from "../Cell/index";
 import { NewColumn } from "../NewColumn";
 import { Confirmation } from "../Confirmation";
-import { debounce } from "lodash";
 
 registerAllModules();
 
@@ -56,7 +54,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
   const [columns, setColumns] = useState<any[]>(headerTable);
   const [frozen, setFrozen] = useState<number>(0);
   const [headers, setHeaders] = useState<string[]>(colHeaders ?? [""]);
-  const [currentTemplate, setCurrentTemplate] = useState<any>(template);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [position, setPosition] = useState(false);
   const [iconClicked, setIconClicked] = useState<boolean>(true);
@@ -119,6 +116,10 @@ const CustomTable: React.FC<CustomTableProps> = ({
                     instance.setDataAtCell(row, col, value);
                     return false;
                   }}
+                  col={column}
+                  instance={hotRef.current!.hotInstance}
+                  row={row}
+                  prop={column.data}
                 />,
               );
             }
@@ -344,8 +345,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
   );
 
   useEffect(() => {
-    console.log({ dataProvider });
-
     const toFreeze = headerTable.filter((item) => item?.frozen === true);
     if (toFreeze.length > 0) {
       setFrozen(toFreeze.length);
