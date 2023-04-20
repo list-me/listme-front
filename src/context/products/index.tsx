@@ -125,6 +125,7 @@ export const ProductContextProvider = ({ children }: any) => {
     RADIO: "radio",
     LIST: "select",
     CHECKED: "checkbox",
+    FILE: "file",
   };
 
   const handleUpdateTemplate = (field: any) => {};
@@ -501,8 +502,6 @@ export const ProductContextProvider = ({ children }: any) => {
   };
 
   const handleNewColumn = (col: any, fields: any[]) => {
-    console.log("WTF", { headerTable });
-
     const newPosition = [...headerTable, col];
     newPosition.splice(newPosition.length - 2, 1);
     newPosition.push({});

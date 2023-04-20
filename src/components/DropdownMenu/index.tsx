@@ -1,5 +1,4 @@
 /* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable import/prefer-default-export */
 import { Divider } from "antd";

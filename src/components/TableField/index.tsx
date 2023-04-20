@@ -9,12 +9,18 @@ import { ReactComponent as ChevronDownIcon } from "../../assets/chevron-down.svg
 import { ReactComponent as PencilIcon } from "../../assets/pencei-icon.svg";
 import { CustomRadio } from "../Radio";
 import { CustomCheckBox } from "../CustomCheckBox";
+import Dropzone from "../Dropzone";
+import { ImageContextProvider } from "../../context/images";
 
 export const TableField: React.FC<ITableFieldProps> = ({
   value,
   type,
   options,
   handleSetNewValue = () => {},
+  col,
+  instance,
+  row,
+  prop,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -56,76 +62,82 @@ export const TableField: React.FC<ITableFieldProps> = ({
 
   return (
     <>
-      <Container type={type}>
-        <label>
-          {newValue?.map((valueItem: string, index) => {
-            if (newValue.length > 1 && index < newValue.length - 1) {
-              return `${valueItem}, `;
-            }
+      <ImageContextProvider>
+        {type == "file" ? (
+          <Dropzone
+            col={col}
+            instance={instance}
+            row={row}
+            value={value}
+            prop={prop}
+          />
+        ) : (
+          <Container type={type}>
+            <label>
+              {newValue?.map((valueItem: string, index) => {
+                if (newValue.length > 1 && index < newValue.length - 1) {
+                  return `${valueItem}, `;
+                }
 
-            return valueItem;
-          })}
-        </label>
-        <span
-        // ref={iconRef}
-        // onClick={() => setIsOpen(true)}
-        >
-          <ChevronDownIcon ref={iconRef} onClick={() => setIsOpen(!isOpen)} />
-        </span>
-      </Container>
-      {isOpen ? (
-        <SuspenseMenu ref={modalRef}>
-          <span className="firstContent">
-            {type === "radio" ? (
-              <CustomRadio
-                options={options ?? [""]}
-                value={newValue[0]}
-                handleGetNewValue={(item: any) => {
-                  setNewValue([item]);
-                  handleSetNewValue(item);
-                }}
+                return valueItem;
+              })}
+            </label>
+            <span
+            // ref={iconRef}
+            // onClick={() => setIsOpen(true)}
+            >
+              <ChevronDownIcon
+                ref={iconRef}
+                onClick={() => setIsOpen(!isOpen)}
               />
-            ) : type === "list" ? (
-              <Select>
-                {options?.length ??
-                  options?.map((option) => {
-                    return (
-                      <Item
-                        onClick={() => {
-                          handleSetNewValue(option);
-                          setNewValue([option]);
-                          // setIsOpen(false);
-                        }}
-                      >
-                        {option}
-                      </Item>
-                    );
-                  })}
-              </Select>
-            ) : (
-              <CustomCheckBox
-                options={options ?? [""]}
-                defaultCheckedList={value}
-                handleGetNewValue={(e: any) => {
-                  setNewValue(e);
-                  handleSetNewValue(e);
-                }}
-              />
-            )}
-            {/* <Divider
-                  style={{marginTop: "16px", marginBottom:"16px"}}
-                /> */}
-          </span>
-          {/* <Footer
-                onClick={() => handleOpenModal()}
-              >
-                <PencilIcon />
-                Editar campo
-              </Footer> */}
-        </SuspenseMenu>
-      ) : (
-        <></>
-      )}
+            </span>
+          </Container>
+        )}
+        {isOpen ? (
+          <SuspenseMenu ref={modalRef}>
+            <span className="firstContent">
+              {type === "radio" ? (
+                <CustomRadio
+                  options={options ?? [""]}
+                  value={newValue[0]}
+                  handleGetNewValue={(item: any) => {
+                    setNewValue([item]);
+                    handleSetNewValue(item);
+                  }}
+                />
+              ) : type === "list" ? (
+                <Select>
+                  {options?.length ??
+                    options?.map((option) => {
+                      return (
+                        <Item
+                          onClick={() => {
+                            handleSetNewValue(option);
+                            setNewValue([option]);
+                            // setIsOpen(false);
+                          }}
+                        >
+                          {option}
+                        </Item>
+                      );
+                    })}
+                </Select>
+              ) : (
+                <CustomCheckBox
+                  options={options ?? [""]}
+                  defaultCheckedList={value}
+                  handleGetNewValue={(e: any) => {
+                    setNewValue(e);
+                    handleSetNewValue(e);
+                  }}
+                />
+              )}
+            </span>
+          </SuspenseMenu>
+        ) : (
+          <></>
+        )}
+      </ImageContextProvider>
     </>
   );
 };
