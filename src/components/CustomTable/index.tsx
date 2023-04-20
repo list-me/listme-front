@@ -391,6 +391,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
         stretchH="all"
         manualColumnResize={true}
         // manualRowResize
+        autoRowSize
         beforeColumnMove={beforeColumnMove}
         // manualColumnMove
         viewportRowRenderingOffset={10}
@@ -398,7 +399,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
         renderAllRows={false}
         // rerenderOnColumnResize={false}
         rowHeaders
-        autoRowSize
         columnSorting={{ sortEmptyCells: false, headerAction: false }}
         contextMenu={{
           items: {

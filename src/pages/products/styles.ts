@@ -246,8 +246,6 @@ export const Container = styled.div`
       line-height: 150%;
 
       align-self: center;
-      /* padding-left: 16px;
-      padding-right: 16px; */
 
       div {
         /* margin-top: 8px; */
