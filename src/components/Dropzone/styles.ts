@@ -3,17 +3,31 @@ import styled from "styled-components";
 export const Container = styled.div`
   display: flex;
   align-items: center;
+  /* justify-content: space-between; */
 
   width: 100%;
   height: 100%;
 
-  div {
-    /* white-space: normal;
-    word-break: break-word;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  padding: 8px;
 
-    height: 51px; */
+  svg {
+    min-width: 20px;
+    margin-right: 16px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  span {
+    width: auto;
+    overflow: hidden;
+
+    align-self: center;
+    margin-right: 8px;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 `;
 

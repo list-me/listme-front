@@ -28,6 +28,7 @@ import Table from "../../components/CustomTable";
 import { productContext } from "../../context/products";
 import { Loading } from "../../components/Loading";
 import { Temp } from "../../components/Temp";
+import { imageContext } from "../../context/images";
 
 export const Products = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -49,6 +50,7 @@ export const Products = () => {
     headerTable,
     filteredData,
   } = useContext(productContext);
+  const {} = useContext(imageContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -66,7 +68,7 @@ export const Products = () => {
   }, []);
 
   return (
-    <Content>
+    <Content onDragEnter={() => console.log("Enter")}>
       <Header>
         <LeftContent>
           <ArrowIcon

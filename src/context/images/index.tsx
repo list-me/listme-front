@@ -1,4 +1,4 @@
-import { createContext, useCallback } from "react";
+import { createContext, useCallback, useState } from "react";
 import {
   ImageContext,
   ImageContextProps,
@@ -12,6 +12,8 @@ const imageContext = createContext<ImageContext>({
 });
 
 const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
+  const [isDragActive, setIsDragActive] = useState<boolean>(false);
+
   const uploadImages = useCallback(
     async (files: File[]): Promise<string[] | undefined> => {
       try {
@@ -34,6 +36,8 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
   const getSignedUrl = async (): Promise<SignedUrlResponse> => {
     return fileRequests.getSignedUrl();
   };
+
+  const handleActiveDrag = (): void => setIsDragActive(true);
 
   const value: ImageContext = {
     uploadImages,

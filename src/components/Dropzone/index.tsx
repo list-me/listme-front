@@ -1,8 +1,9 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { DropzoneRendererProps } from "./Dropzone";
 import { Container, Label, Loader, Zone } from "./styles";
 import { imageContext } from "../../context/images";
+import { ReactComponent as AddIcon } from "../../assets/add-gray-large.svg";
 
 const Dropzone: React.FC<DropzoneRendererProps> = ({
   value,
@@ -12,6 +13,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   prop,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
+
   const { uploadImages } = useContext(imageContext);
 
   const onDrop = useCallback(
@@ -32,13 +34,14 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     [instance, row, col],
   );
 
-  const { getRootProps, isDragActive } = useDropzone({
+  const { getRootProps, open, isDragActive } = useDropzone({
     onDrop,
     multiple: true,
     onDragEnter: () => {},
     onDragOver: () => {},
     onDragLeave: () => {},
-    noClick: !value.includes(""),
+    noClick: true,
+    noKeyboard: true,
   });
 
   if (loading)
@@ -48,25 +51,26 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
       </Loader>
     );
 
+  useEffect(() => {
+    console.log({ isDragActive });
+  }, [isDragActive]);
+
   return (
     <Container {...getRootProps()}>
       {isDragActive ? (
         <Zone>Arraste e solte aqui...</Zone>
       ) : (
-        <div>
-          {!value.includes("") ? (
-            value.map((item, index) => {
-              if (item.length > 1 && index < value.length - 1) {
-                return `${item}, `;
-              }
+        <span>
+          {value.map((item, index) => {
+            if (item.length > 1 && index < value.length - 1) {
+              return `${item}, `;
+            }
 
-              return item;
-            })
-          ) : (
-            <Label>Arraste ou clique para selecionar</Label>
-          )}
-        </div>
+            return item;
+          })}
+        </span>
       )}
+      <AddIcon onClick={open} />
     </Container>
   );
 };

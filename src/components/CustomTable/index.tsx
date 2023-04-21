@@ -372,6 +372,10 @@ const CustomTable: React.FC<CustomTableProps> = ({
 
   return (
     <>
+      {/* <div
+        style={{ width: "100%", height: "100%" }}
+        onDragEnter={() => console.log("Enter")}
+      > */}
       <Confirmation
         description="Ao excluir este produto, você perderá todas as informações, inclusive no catálogo em que está cadastrado."
         action="DELETE"
@@ -496,6 +500,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
           handleMove(newColumns);
         }}
       />
+      {/* </div> */}
     </>
   );
 };
