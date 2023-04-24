@@ -14,16 +14,18 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { uploadImages } = useContext(imageContext);
+  const { uploadImages, isDragActive } = useContext(imageContext);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
         setLoading(true);
         try {
-          const fileNames = await uploadImages(acceptedFiles);
-          console.log({ fileNames });
-          instance.setDataAtRowProp(row, prop, fileNames);
+          const newFiles = await uploadImages(acceptedFiles);
+          if (newFiles) {
+            value = [...newFiles, ...value];
+            instance.setDataAtRowProp(row, prop, value);
+          }
           setLoading(false);
         } catch (error) {
           setLoading(false);
@@ -34,7 +36,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     [instance, row, col],
   );
 
-  const { getRootProps, open, isDragActive } = useDropzone({
+  const { getRootProps, open, isDragAccept, isFileDialogActive } = useDropzone({
     onDrop,
     multiple: true,
     onDragEnter: () => {},
@@ -50,10 +52,6 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         <div className="loading-spinner"></div>
       </Loader>
     );
-
-  useEffect(() => {
-    console.log({ isDragActive });
-  }, [isDragActive]);
 
   return (
     <Container {...getRootProps()}>

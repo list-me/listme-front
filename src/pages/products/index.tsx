@@ -50,7 +50,7 @@ export const Products = () => {
     headerTable,
     filteredData,
   } = useContext(productContext);
-  const {} = useContext(imageContext);
+  const { handleActiveDrag } = useContext(imageContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export const Products = () => {
   }, []);
 
   return (
-    <Content onDragEnter={() => console.log("Enter")}>
+    <Content onDragEnter={handleActiveDrag}>
       <Header>
         <LeftContent>
           <ArrowIcon

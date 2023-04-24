@@ -9,13 +9,15 @@ import { toast } from "react-toastify";
 
 const imageContext = createContext<ImageContext>({
   uploadImages: async (): Promise<string[]> => [""],
+  isDragActive: false,
+  handleActiveDrag: () => {},
 });
 
 const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
   const [isDragActive, setIsDragActive] = useState<boolean>(false);
 
   const uploadImages = useCallback(
-    async (files: File[]): Promise<string[] | undefined> => {
+    async (files: File[]): Promise<string[] | void> => {
       try {
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {
@@ -37,10 +39,15 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
     return fileRequests.getSignedUrl();
   };
 
-  const handleActiveDrag = (): void => setIsDragActive(true);
+  const handleActiveDrag = (): void => {
+    console.log("OK");
+    setIsDragActive(true);
+  };
 
   const value: ImageContext = {
     uploadImages,
+    isDragActive,
+    handleActiveDrag,
   };
 
   return (
