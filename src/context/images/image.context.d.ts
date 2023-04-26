@@ -3,7 +3,9 @@ interface ImageContextProps {
 }
 
 interface ImageContext {
-  uploadImages: (files: File[]) => Promise<string[] | undefined>;
+  uploadImages: (files: File[]) => Promise<string[] | void>;
+  isDragActive: boolean;
+  handleActiveDrag: () => void;
 }
 
 interface SignedUrlResponse {

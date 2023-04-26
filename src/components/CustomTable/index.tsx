@@ -13,9 +13,8 @@ import "handsontable/dist/handsontable.full.min.css";
 import { registerAllModules } from "handsontable/registry";
 import { HotTable } from "@handsontable/react";
 import { toast } from "react-toastify";
-import { CellChange, ChangeSource } from "handsontable/common";
 
-import { ColumnTypes, CustomTableProps } from "./CustomTable.d";
+import { CustomTableProps } from "./CustomTable.d";
 import { productContext } from "../../context/products";
 import { TableField } from "../TableField";
 import { Cell } from "../Cell/index";
@@ -116,7 +115,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
                     instance.setDataAtCell(row, col, value);
                     return false;
                   }}
-                  col={column}
+                  col={col}
                   instance={hotRef.current!.hotInstance}
                   row={row}
                   prop={column.data}
@@ -293,7 +292,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
                     return item;
                   });
 
-                  console.log({ test });
                   col.frozen = true;
                   setColumns((prev) => {
                     return prev.map((item, index) => {
@@ -372,6 +370,10 @@ const CustomTable: React.FC<CustomTableProps> = ({
 
   return (
     <>
+      {/* <div
+        style={{ width: "100%", height: "100%" }}
+        onDragEnter={() => console.log("Enter")}
+      > */}
       <Confirmation
         description="Ao excluir este produto, você perderá todas as informações, inclusive no catálogo em que está cadastrado."
         action="DELETE"
@@ -496,6 +498,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
           handleMove(newColumns);
         }}
       />
+      {/* </div> */}
     </>
   );
 };

@@ -94,8 +94,8 @@ export const TableField: React.FC<ITableFieldProps> = ({
           </Container>
         )}
         {isOpen ? (
-          <SuspenseMenu ref={modalRef}>
-            <span className="firstContent">
+          <div>
+            <SuspenseMenu ref={modalRef}>
               {type === "radio" ? (
                 <CustomRadio
                   options={options ?? [""]}
@@ -132,8 +132,8 @@ export const TableField: React.FC<ITableFieldProps> = ({
                   }}
                 />
               )}
-            </span>
-          </SuspenseMenu>
+            </SuspenseMenu>
+          </div>
         ) : (
           <></>
         )}

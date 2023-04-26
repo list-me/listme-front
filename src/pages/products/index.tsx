@@ -28,11 +28,12 @@ import Table from "../../components/CustomTable";
 import { productContext } from "../../context/products";
 import { Loading } from "../../components/Loading";
 import { Temp } from "../../components/Temp";
+import { imageContext } from "../../context/images";
+import { useDropzone } from "react-dropzone";
 
 export const Products = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [valor, setValor] = useState<any>([]);
 
   const handleSome = () => {
     setIsOpen(!isOpen);
@@ -49,7 +50,20 @@ export const Products = () => {
     headerTable,
     filteredData,
   } = useContext(productContext);
+  const { handleActiveDrag } = useContext(imageContext);
   const navigate = useNavigate();
+
+  const { getRootProps, open, isDragActive, isFileDialogActive, rootRef } =
+    useDropzone({
+      multiple: true,
+      onDragEnter: () => {
+        console.log("Entrou");
+      },
+      onDragOver: () => {},
+      onDragLeave: () => {},
+      noClick: true,
+      noKeyboard: true,
+    });
 
   useEffect(() => {
     setIsLoading(true);

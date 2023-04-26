@@ -8,9 +8,9 @@ interface SignedUrlResponse {
 }
 
 export const fileRequests = {
-  getSignedUrl: async (): Promise<SignedUrlResponse> => {
+  getSignedUrl: async (type: string): Promise<SignedUrlResponse> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
-    const response = await api.get(`/signed-url`, {
+    const response = await api.get(`/signed-url?fileType=${type}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
