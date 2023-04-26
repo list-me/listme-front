@@ -76,12 +76,13 @@ export const Loader = styled.div`
 
 export const SuspenseMenu = styled.div<{ width: string; top: string }>`
   width: ${({ width }) => `${width}px`} !important;
+  min-height: 50px;
   height: auto !important;
   max-height: 200px !important;
 
   box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.07) !important;
   border-radius: 8px;
-  padding: 8px 11px 8px 8px;
+  padding: 8px 11px 0 8px;
 
   background: #dae0ed;
 
@@ -91,6 +92,7 @@ export const SuspenseMenu = styled.div<{ width: string; top: string }>`
   display: block;
   flex-direction: row;
   align-items: left;
+  /* justify-content: start; */
 
   top: ${({ top }) => `${top}px`} !important;
   flex-wrap: wrap;
@@ -98,6 +100,10 @@ export const SuspenseMenu = styled.div<{ width: string; top: string }>`
 
   padding-top: 8px;
   overflow-y: scroll;
+
+  div :not(:first-child) {
+    margin-left: 8px;
+  }
 
   ::-webkit-scrollbar {
     background: transparent !important;
@@ -120,7 +126,7 @@ export const SuspenseMenu = styled.div<{ width: string; top: string }>`
 
 export const Image = styled.div`
   flex: 0 0 25%;
-  justify-content: center;
+  justify-content: start;
 
   margin-bottom: 8px;
 
@@ -129,8 +135,9 @@ export const Image = styled.div`
     height: 20px;
 
     position: absolute;
-    margin-bottom: 35px;
-    margin-left: 55px;
+    z-index: 9999;
+    margin-bottom: 40px;
+    margin-left: 35px;
 
     display: flex;
     justify-content: flex-end;
@@ -140,10 +147,24 @@ export const Image = styled.div`
     }
   }
 
+  .fileIcon {
+    width: 40px;
+    height: 40px;
+
+    margin: 0;
+
+    top: 8px;
+    z-index: 998;
+  }
+
   img {
     width: 40px;
     height: 40px;
 
     border-radius: 5px;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 `;

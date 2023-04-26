@@ -5,6 +5,7 @@ import { Container, Image, Label, Loader, Zone } from "./styles";
 import { imageContext } from "../../context/images";
 import { ReactComponent as AddIcon } from "../../assets/add-gray-large.svg";
 import { ReactComponent as CloseIcon } from "../../assets/close-small-blue.svg";
+import { ReactComponent as FileIcon } from "../../assets/file.svg";
 
 import { SuspenseMenu } from "./styles";
 
@@ -34,9 +35,9 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
       try {
         const newFiles = await uploadImages(acceptedFiles);
         if (newFiles) {
-          const temp = [...newFiles, ...items];
+          const temp = [...newFiles, ...items].filter((item) => item != "");
 
-          setItems(temp);
+          setItems(temp.filter((item) => item != ""));
           instance.setDataAtRowProp(row, prop, temp);
         }
         setLoading(false);
@@ -55,7 +56,11 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
       }
     });
 
-    setItems(newValue);
+    if (newValue.length) {
+      setItems(newValue);
+    } else {
+      setItems([]);
+    }
   };
 
   const handleImageLoadEnd = (src: string) => {
@@ -145,27 +150,38 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         )}
         {isOpen && items.length ? (
           <SuspenseMenu
-            width={String(instance.getColWidth(col) - 40)}
+            width={String(instance.getColWidth(col) - 30)}
             top={String(top?.offsetTop + 55)}
             ref={dropDownRef}
           >
             {items.map((item, index) => {
-              if (item.length > 1)
+              if (item.length > 1) {
                 return (
-                  <Image key={index} onClick={(e) => handleRemove(item, e)}>
-                    <CloseIcon />
-                    <img
-                      src={item}
-                      onLoad={() => handleImageLoadEnd(item)}
-                      onError={() => handleImageLoadEnd(item)}
-                      style={{
-                        opacity: imageLoading[item] ? 0.5 : 1,
-                        transition: "opacity 0.3s",
-                        backgroundColor: "#f7f7f7",
-                      }}
-                    />
+                  <Image key={index}>
+                    <CloseIcon onClick={(e) => handleRemove(item, e)} />
+                    <a href={item} target="_blank">
+                      {item.includes("jpeg") ||
+                      item.includes("jpg") ||
+                      item.includes("png") ? (
+                        <img
+                          src={item}
+                          onLoad={() => handleImageLoadEnd(item)}
+                          onError={() => handleImageLoadEnd(item)}
+                          style={{
+                            opacity: imageLoading[item] ? 0.5 : 1,
+                            transition: "opacity 0.3s",
+                            backgroundColor: "#f7f7f7",
+                          }}
+                        />
+                      ) : (
+                        // <span className="fileIcon">
+                        <FileIcon className="fileIcon" />
+                        // </span>
+                      )}
+                    </a>
                   </Image>
                 );
+              }
             })}
           </SuspenseMenu>
         ) : (
