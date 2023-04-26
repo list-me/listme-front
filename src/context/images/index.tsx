@@ -21,8 +21,10 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
       try {
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {
-          const signedUrl = await getSignedUrl();
-          filesNames.push(signedUrl.access_url);
+          const signedUrl = await getSignedUrl(file.type);
+          filesNames.push(
+            `https://dev-listme.s3.amazonaws.com${signedUrl.access_url}`,
+          );
           return fileRequests.uploadFile(file, signedUrl.url);
         });
 
@@ -35,8 +37,8 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
     [],
   );
 
-  const getSignedUrl = async (): Promise<SignedUrlResponse> => {
-    return fileRequests.getSignedUrl();
+  const getSignedUrl = async (type: string): Promise<SignedUrlResponse> => {
+    return fileRequests.getSignedUrl(type);
   };
 
   const handleActiveDrag = (): void => {

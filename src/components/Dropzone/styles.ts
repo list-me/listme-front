@@ -8,7 +8,7 @@ export const Container = styled.div`
   width: 100%;
   height: 100%;
 
-  padding: 8px;
+  /* padding: 8px; */
 
   svg {
     min-width: 20px;
@@ -24,7 +24,7 @@ export const Container = styled.div`
     overflow: hidden;
 
     align-self: center;
-    margin-right: 8px;
+    margin: 0 8px;
 
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -32,7 +32,7 @@ export const Container = styled.div`
 `;
 
 export const Label = styled.span`
-  width: 100%;
+  width: auto;
   height: 80%;
   border: 2px dashed #868e96;
   padding: 0 16px;
@@ -41,7 +41,7 @@ export const Label = styled.span`
   align-items: center;
 `;
 
-export const Zone = styled.span`
+export const Zone = styled.label`
   width: 100%;
   height: 100%;
   border: 2px dashed #3818d9;
@@ -49,7 +49,7 @@ export const Zone = styled.span`
   display: flex;
   align-items: center;
 
-  padding: 0 16px;
+  padding: 0 8px;
 `;
 
 export const Loader = styled.div`
@@ -71,5 +71,79 @@ export const Loader = styled.div`
     border-top: 2px solid #3818d9;
     border-radius: 50%;
     animation: spinner 1.5s linear infinite;
+  }
+`;
+
+export const SuspenseMenu = styled.div<{ width: string; top: string }>`
+  width: ${({ width }) => `${width}px`} !important;
+  height: auto !important;
+  max-height: 200px !important;
+
+  box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.07) !important;
+  border-radius: 8px;
+  padding: 8px 11px 8px 8px;
+
+  background: #dae0ed;
+
+  position: absolute;
+  z-index: 999;
+
+  display: block;
+  flex-direction: row;
+  align-items: left;
+
+  top: ${({ top }) => `${top}px`} !important;
+  flex-wrap: wrap;
+  /* margin-top: 200px !important; */
+
+  padding-top: 8px;
+  overflow-y: scroll;
+
+  ::-webkit-scrollbar {
+    background: transparent !important;
+    width: 7px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: unset !important;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #cccccc !important;
+    border-radius: 2px !important;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #3818d9 !important;
+  }
+`;
+
+export const Image = styled.div`
+  flex: 0 0 25%;
+  justify-content: center;
+
+  margin-bottom: 8px;
+
+  svg {
+    width: 20px;
+    height: 20px;
+
+    position: absolute;
+    margin-bottom: 35px;
+    margin-left: 55px;
+
+    display: flex;
+    justify-content: flex-end;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  img {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 5px;
   }
 `;

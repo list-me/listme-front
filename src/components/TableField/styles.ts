@@ -87,9 +87,9 @@ export const Container = styled.div<{ type: string }>`
 `;
 
 export const SuspenseMenu = styled.div`
-  height: auto;
-  width: 236px;
-  max-height: 500px;
+  height: auto !important;
+  width: 236px !important;
+  max-height: 500px !important;
 
   border-radius: 8px;
   box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.07);
@@ -101,7 +101,8 @@ export const SuspenseMenu = styled.div`
   display: flex;
   flex-direction: column;
 
-  justify-content: space-between;
+  /* justify-content: space-between !important; */
+  justify-content: left !important;
   margin-top: 10px;
   margin-left: -15px;
   z-index: 10000;
