@@ -26,6 +26,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   const modalRef = useRef<HTMLDivElement | null>(null);
   const iconRef = useRef<SVGSVGElement | null>(null);
   const dropDownRef = useRef<HTMLDivElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { uploadImages } = useContext(imageContext);
 
@@ -73,13 +74,17 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     onDragEnter: () => {},
     onDragOver: () => {},
     onDragLeave: () => {},
-    noClick: true,
-    noKeyboard: true,
   });
 
   const onClose = () => {
     instance.setDataAtRowProp(row, prop, items);
     setIsOpen(false);
+  };
+
+  const handleAddIconClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   useEffect(() => {
@@ -120,6 +125,17 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
 
   return (
     <>
+      <input
+        type="file"
+        ref={fileInputRef}
+        multiple
+        style={{ display: "none" }}
+        onChange={(e) => {
+          if (e.target.files) {
+            onDrop(Array.from(e.target.files));
+          }
+        }}
+      />
       <Container
         {...getRootProps()}
         ref={modalRef}
@@ -145,7 +161,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                 return item;
               })}
             </span>
-            <AddIcon onClick={open} ref={iconRef} />
+            <AddIcon onClick={handleAddIconClick} ref={iconRef} />
           </>
         )}
         {isOpen && items.length ? (
