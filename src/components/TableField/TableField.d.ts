@@ -8,6 +8,7 @@ interface ITableFieldProps {
   row: number;
   col: number;
   prop: string;
+  td: any;
 }
 
 export type { ITableFieldProps };

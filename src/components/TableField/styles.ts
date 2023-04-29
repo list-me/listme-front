@@ -70,6 +70,10 @@ export const Container = styled.div<{ type: string }>`
     justify-content: left;
     flex-wrap: nowrap;
     margin: 4px 6px 4px 8px;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   span {
@@ -84,12 +88,20 @@ export const Container = styled.div<{ type: string }>`
       cursor: pointer;
     }
   }
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
-export const SuspenseMenu = styled.div`
+export const SuspenseMenu = styled.div<{
+  width: number;
+  top: number;
+  showMenu: boolean;
+}>`
   height: auto !important;
-  width: 236px !important;
   max-height: 500px !important;
+  width: ${({ width }) => `${width}px`} !important;
 
   border-radius: 8px;
   box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.07);
@@ -97,24 +109,19 @@ export const SuspenseMenu = styled.div`
   background: white;
 
   position: absolute;
+  top: ${({ top }) => `${top + 55}px`} !important;
+  z-index: 9999;
 
   display: flex;
   flex-direction: column;
-
-  /* justify-content: space-between !important; */
-  justify-content: left !important;
-  margin-top: 10px;
-  margin-left: -15px;
-  z-index: 10000;
-
-  padding: 16px;
+  padding: 8px;
 `;
 
 export const Select = styled.div`
   display: flex;
   flex-direction: column;
 
-  width: 100%;
+  margin: 0 8px !important;
 `;
 
 export const Item = styled.div`

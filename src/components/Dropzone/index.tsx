@@ -106,13 +106,9 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     }
 
     window.addEventListener("mousedown", handleOutsideClick);
-    // window.addEventListener("wheel", handleOutsideClick);
-    // window.addEventListener("keydown", handleOutsideClick);
 
     return () => {
       window.removeEventListener("mousedown", handleOutsideClick);
-      // window.removeEventListener("wheel", handleOutsideClick);
-      // window.removeEventListener("keydown", handleOutsideClick);
     };
   }, [isOpen, items]);
 

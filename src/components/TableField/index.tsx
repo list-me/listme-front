@@ -21,11 +21,14 @@ export const TableField: React.FC<ITableFieldProps> = ({
   instance,
   row,
   prop,
+  td,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const modalRef = useRef<HTMLDivElement | null>(null);
-  const iconRef = useRef<SVGSVGElement | null>(null);
   const [newValue, setNewValue] = useState<string[]>(value);
+  const [showMenu, setShowMenu] = useState<boolean>(false);
+
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const elementRef = useRef<HTMLDivElement | null>(null);
 
   const handleAccertOptions = (options: string[]) => {
     return options.map((option) => {
@@ -36,11 +39,20 @@ export const TableField: React.FC<ITableFieldProps> = ({
     });
   };
 
-  const onClose = (): void => setIsOpen(!open);
+  const onClose = (): void => {
+    setIsOpen(false);
+
+    if (!(newValue !== value)) {
+      return;
+    }
+
+    const updatedValue = typeof newValue === "object" ? newValue : [newValue];
+    instance.setDataAtRowProp(row, prop, updatedValue);
+  };
 
   useEffect(() => {
     function handleOutsideClick(event: any) {
-      if (iconRef.current && iconRef.current!.contains(event.target)) {
+      if (elementRef.current && elementRef.current!.contains(event.target)) {
         return;
       }
 
@@ -49,102 +61,103 @@ export const TableField: React.FC<ITableFieldProps> = ({
       }
     }
 
-    document.addEventListener("mousedown", handleOutsideClick);
+    window.addEventListener("mousedown", handleOutsideClick);
     window.addEventListener("wheel", handleOutsideClick);
     window.addEventListener("keydown", handleOutsideClick);
 
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
+      window.removeEventListener("mousedown", handleOutsideClick);
       window.removeEventListener("wheel", handleOutsideClick);
       window.removeEventListener("keydown", handleOutsideClick);
     };
-  }, [iconRef, modalRef]);
+  }, [isOpen, newValue]);
 
   return (
-    <>
-      <ImageContextProvider>
-        {type == "file" ? (
-          <Dropzone
-            col={col}
-            instance={instance}
-            row={row}
-            value={value}
-            prop={prop}
-          />
-        ) : (
-          <Container type={type}>
-            <label>
-              {newValue?.map((valueItem: string, index) => {
-                if (newValue.length > 1 && index < newValue.length - 1) {
-                  return `${valueItem}, `;
-                }
+    <ImageContextProvider>
+      {type == "file" ? (
+        <Dropzone
+          col={col}
+          instance={instance}
+          row={row}
+          value={value}
+          prop={prop}
+        />
+      ) : (
+        <Container
+          type={type}
+          ref={elementRef}
+          onClick={() => {
+            if (isOpen) {
+              setIsOpen(false);
+              // const value =
+              //   typeof newValue === "object" ? newValue : [newValue];
+              // instance.setDataAtRowProp(row, prop, value);
+            } else {
+              setIsOpen(true);
+            }
+          }}
+        >
+          <label>
+            {newValue?.map((valueItem: string, index) => {
+              if (newValue.length > 1 && index < newValue.length - 1) {
+                return `${valueItem}, `;
+              }
 
-                return valueItem;
+              return valueItem;
+            })}
+          </label>
+          <span>
+            <ChevronDownIcon />
+          </span>
+        </Container>
+      )}
+      {isOpen ? (
+        <SuspenseMenu
+          ref={modalRef}
+          width={instance.getColWidth(col) - 20}
+          top={td?.offsetTop}
+          showMenu={showMenu}
+        >
+          {type === "radio" ? (
+            <CustomRadio
+              options={options ?? [""]}
+              value={newValue[0]}
+              handleGetNewValue={(item: any) => {
+                setNewValue([item]);
+                // handleSetNewValue(item);
+              }}
+            />
+          ) : type === "list" ? (
+            <Select>
+              {options?.map((option) => {
+                return (
+                  <Item
+                    onClick={() => {
+                      // handleSetNewValue(option);
+                      setNewValue([option]);
+                      setIsOpen(false);
+                      instance.setDataAtRowProp(row, prop, [option]);
+                    }}
+                  >
+                    {option}
+                  </Item>
+                );
               })}
-            </label>
-            <span
-            // ref={iconRef}
-            // onClick={() => setIsOpen(true)}
-            >
-              <ChevronDownIcon
-                ref={iconRef}
-                onClick={() => setIsOpen(!isOpen)}
-              />
-            </span>
-          </Container>
-        )}
-        {isOpen ? (
-          <div>
-            <SuspenseMenu ref={modalRef}>
-              {type === "radio" ? (
-                <CustomRadio
-                  options={options ?? [""]}
-                  value={newValue[0]}
-                  handleGetNewValue={(item: any) => {
-                    setNewValue([item]);
-                    handleSetNewValue(item);
-                  }}
-                />
-              ) : type === "list" ? (
-                <Select>
-                  {options?.length ??
-                    options?.map((option) => {
-                      return (
-                        <Item
-                          onClick={() => {
-                            handleSetNewValue(option);
-                            setNewValue([option]);
-                            // setIsOpen(false);
-                          }}
-                        >
-                          {option}
-                        </Item>
-                      );
-                    })}
-                </Select>
-              ) : (
-                <CustomCheckBox
-                  options={options ?? [""]}
-                  defaultCheckedList={value}
-                  handleGetNewValue={(e: any) => {
-                    setNewValue(e);
-                    handleSetNewValue(e);
-                  }}
-                />
-              )}
-            </SuspenseMenu>
-          </div>
-        ) : (
-          <></>
-        )}
-      </ImageContextProvider>
-    </>
+            </Select>
+          ) : (
+            <CustomCheckBox
+              options={options ?? [""]}
+              defaultCheckedList={value}
+              handleGetNewValue={(e: any) => {
+                setNewValue(e);
+                // handleSetNewValue(e);
+              }}
+            />
+          )}
+        </SuspenseMenu>
+      ) : (
+        <></>
+      )}
+    </ImageContextProvider>
   );
 };
-
-// const areEqual = (prevProps, nextProps) => {
-//   return JSON.stringify(prevProps.value) === JSON.stringify(nextProps.value);
-// };
-
-// export const TableField = React.memo(Cell, areEqual);
-// // export {TableField};

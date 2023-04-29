@@ -119,6 +119,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
                   instance={hotRef.current!.hotInstance}
                   row={row}
                   prop={column.data}
+                  td={td}
                 />,
               );
             }
@@ -370,10 +371,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
 
   return (
     <>
-      {/* <div
-        style={{ width: "100%", height: "100%" }}
-        onDragEnter={() => console.log("Enter")}
-      > */}
       <Confirmation
         description="Ao excluir este produto, você perderá todas as informações, inclusive no catálogo em que está cadastrado."
         action="DELETE"
@@ -385,10 +382,10 @@ const CustomTable: React.FC<CustomTableProps> = ({
       />
       <HotTable
         ref={hotRef}
-        height="100%"
         colHeaders={headers}
         columns={cols}
         data={dataProvider}
+        height="100%"
         width="100%"
         stretchH="all"
         manualColumnResize={true}
@@ -498,7 +495,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
           handleMove(newColumns);
         }}
       />
-      {/* </div> */}
     </>
   );
 };

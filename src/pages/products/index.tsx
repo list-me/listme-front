@@ -80,50 +80,52 @@ export const Products = () => {
   }, []);
 
   return (
-    <Content>
-      <Header>
-        <LeftContent>
-          <ArrowIcon
-            onClick={() => {
-              setProducts([]);
-              setHeaderTable([]);
-              navigate(ROUTES.TEMPLATES);
-            }}
-          />
-          <IconTemplate>
-            <FlagIcon />
-          </IconTemplate>
-          <Title> {template?.name} </Title>
-          <EditIcon />
-        </LeftContent>
-        <RightContent>
-          <MoreOptions>
-            <EllipsisIcon />
-          </MoreOptions>
-          <Button height="52px" width="227px" isSecondary>
-            <DownloadIcon />
-            Importar produtos
-          </Button>
-          <Button
-            height="52px"
-            width="226px"
-            className="secondButton"
-            onClick={handleAdd}
-          >
-            Adicionar produto
-            <PlusIcon />
-          </Button>
-        </RightContent>
-      </Header>
-      <Filters>
-        <Temp options={headerTable} />
-        <Contents>
-          <Item>
-            <HelpIcon />
-            Ajuda
-          </Item>
-        </Contents>
-      </Filters>
+    <div style={{ height: "100vh", overflow: "hidden" }}>
+      <Content>
+        <Header>
+          <LeftContent>
+            <ArrowIcon
+              onClick={() => {
+                setProducts([]);
+                setHeaderTable([]);
+                navigate(ROUTES.TEMPLATES);
+              }}
+            />
+            <IconTemplate>
+              <FlagIcon />
+            </IconTemplate>
+            <Title> {template?.name} </Title>
+            <EditIcon />
+          </LeftContent>
+          <RightContent>
+            <MoreOptions>
+              <EllipsisIcon />
+            </MoreOptions>
+            <Button height="52px" width="227px" isSecondary>
+              <DownloadIcon />
+              Importar produtos
+            </Button>
+            <Button
+              height="52px"
+              width="226px"
+              className="secondButton"
+              onClick={handleAdd}
+            >
+              Adicionar produto
+              <PlusIcon />
+            </Button>
+          </RightContent>
+        </Header>
+        <Filters>
+          <Temp options={headerTable} />
+          <Contents>
+            <Item>
+              <HelpIcon />
+              Ajuda
+            </Item>
+          </Contents>
+        </Filters>
+      </Content>
       <Container>
         {isLoading ? (
           <Loading />
@@ -131,6 +133,6 @@ export const Products = () => {
           <Table dataProvider={filteredData} colHeaders={colHeaders} />
         )}
       </Container>
-    </Content>
+    </div>
   );
 };

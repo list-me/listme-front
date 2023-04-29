@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const Content = styled.div`
-  height: 100vh;
+  /* height: 100vh; */
 `;
 
 export const LeftContent = styled.div`
@@ -27,8 +27,6 @@ export const IconTemplate = styled.span`
 
   border-radius: 16px;
   padding: 16px;
-
-  background: black;
 `;
 
 export const Title = styled.h3`
@@ -98,8 +96,8 @@ export const HeaderContent = styled.div`
 `;
 
 export const Container = styled.div`
-  height: 80%;
-  overflow: hidden !important;
+  /* height: 80%; */
+  height: 100%;
 
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
     height: 72%;
@@ -230,7 +228,7 @@ export const Container = styled.div`
 
   tbody {
     margin: 0 !important;
-    overflow: scroll;
+    /* overflow: scroll; */
 
     td {
       width: fit-content;
