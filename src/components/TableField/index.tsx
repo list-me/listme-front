@@ -89,9 +89,11 @@ export const TableField: React.FC<ITableFieldProps> = ({
           onClick={() => {
             if (isOpen) {
               setIsOpen(false);
-              // const value =
-              //   typeof newValue === "object" ? newValue : [newValue];
-              // instance.setDataAtRowProp(row, prop, value);
+              const updatedValue =
+                typeof newValue === "object" ? newValue : [newValue];
+              instance.setDataAtRowProp(row, prop, updatedValue);
+
+              return;
             } else {
               setIsOpen(true);
             }

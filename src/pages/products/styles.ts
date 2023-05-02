@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const Content = styled.div`
   /* height: 100vh; */
+  height: fit-content;
 `;
 
 export const LeftContent = styled.div`
@@ -96,12 +97,11 @@ export const HeaderContent = styled.div`
 `;
 
 export const Container = styled.div`
-  /* height: 80%; */
-  height: 100%;
-
-  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+  /* @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
     height: 72%;
-  }
+  } */
+
+  height: 100%;
 
   .handsontable .wtHolder::-webkit-scrollbar {
     background: transparent !important;

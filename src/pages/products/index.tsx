@@ -80,7 +80,14 @@ export const Products = () => {
   }, []);
 
   return (
-    <div style={{ height: "100vh", overflow: "hidden" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        height: "100vh",
+      }}
+    >
       <Content>
         <Header>
           <LeftContent>
@@ -126,13 +133,21 @@ export const Products = () => {
           </Contents>
         </Filters>
       </Content>
-      <Container>
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <Table dataProvider={filteredData} colHeaders={colHeaders} />
-        )}
-      </Container>
+      <div
+        style={{
+          height: "100%",
+          overflow: "inherit",
+          flex: 1,
+        }}
+      >
+        <Container>
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <Table dataProvider={filteredData} colHeaders={colHeaders} />
+          )}
+        </Container>
+      </div>
     </div>
   );
 };
