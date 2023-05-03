@@ -8,6 +8,7 @@ import { ReactComponent as RadioIcon } from "../../assets/radio-icon.svg";
 import { ReactComponent as CheckBoxIcon } from "../../assets/checkbox-icon.svg";
 import { ReactComponent as ListIcon } from "../../assets/list-icon.svg";
 import { ReactComponent as FileIcon } from "../../assets/file-icon.svg";
+import { ReactComponent as LinkIcon } from "../../assets/link-gray-sm.svg";
 
 import { DropdownMenu } from "../DropdownMenu";
 import { PersonalModal } from "../CustomModa";
@@ -61,6 +62,11 @@ export const NewColumn: React.FC<NewColumnProps> = ({
       label: "File",
       icon: <FileIcon />,
       type: "file",
+    },
+    {
+      label: "Campo de Relacionamento",
+      icon: <LinkIcon />,
+      type: "relation",
     },
   ];
 

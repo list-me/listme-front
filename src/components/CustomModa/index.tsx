@@ -24,6 +24,7 @@ import { ReactComponent as PlusIcon } from "../../assets/plus-small.svg";
 
 import { templateRequests } from "../../services/apis/requests/template";
 import { productContext } from "../../context/products";
+import { RelationForm } from "../NewColumn/RelationForm";
 
 interface PropsModal {
   isOpen: boolean;
@@ -40,8 +41,8 @@ export const PersonalModal = ({
   template,
   onUpdate,
 }: PropsModal) => {
+  console.log({ data });
   const [title, setTitle] = useState<string>(data?.title ?? "");
-  // const [id, setId] = useState<string>("");
   const [type, setType] = useState<string>(data?.type);
   const [required, setRequired] = useState<boolean>(data?.required ?? false);
   const [isUpdate] = useState<boolean>(data?.id);
@@ -96,6 +97,10 @@ export const PersonalModal = ({
     file: {
       label: "Campo de arquivo",
       description: "Adicione um campo para envio de imagem",
+    },
+    relation: {
+      label: "Conexão entre produtos",
+      description: "Adicione um campo de relacionamento entre produtos",
     },
   };
 
@@ -201,11 +206,11 @@ export const PersonalModal = ({
         onCancel={onClickModal}
         onOk={onClickModal}
         width="470px"
-        style={{ marginBottom: "2vh", top: 50 }}
+        style={{ marginBottom: "2vh", top: 30 }}
         footer={null}
       >
         <Container>
-          <div>
+          <div className="titleContainer">
             <Title> {TYPES[type]?.label} </Title>
             <Description>{TYPES[type]?.description}</Description>
           </div>
@@ -225,6 +230,7 @@ export const PersonalModal = ({
                         height: "64px",
                         border: "1px solid #DEE2E6",
                       }}
+                      defaultValue={title}
                       value={title}
                       onChange={(e) => {
                         e.preventDefault();
@@ -234,7 +240,8 @@ export const PersonalModal = ({
                       placeholder="Informe o nome do campo"
                     />
                   </Form.Item>
-                  {!MULTI_SELECT.includes(data?.type) ? (
+                  {!MULTI_SELECT.includes(data?.type) &&
+                  data.type != "relation" ? (
                     <Form.Item
                       label="Escolha o tipo de valor"
                       name="type"
@@ -260,6 +267,8 @@ export const PersonalModal = ({
                         }
                       />
                     </Form.Item>
+                  ) : data.type == "relation" ? (
+                    <RelationForm value={data} templateName={template.name} />
                   ) : (
                     <></>
                   )}
@@ -332,8 +341,8 @@ export const PersonalModal = ({
                     defaultChecked={required}
                   />
                 </Item>
-                <Divider style={{ marginTop: "38px", marginBottom: "0" }} />
               </div>
+              <Divider style={{ marginTop: "8px", marginBottom: "0" }} />
               <ButtonContainer>
                 <PrimaryButton type="button" onClick={() => onClickModal()}>
                   {" "}
