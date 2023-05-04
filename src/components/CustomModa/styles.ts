@@ -8,8 +8,8 @@ export const Container = styled.div`
 
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  padding: 20px;
+  align-items: center;
+  /* padding: 20px; */
 
   .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
     background-color: unset !important;
@@ -34,6 +34,18 @@ export const Container = styled.div`
       margin-top: 8px;
     }
   }
+
+  .titleContainer {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    height: 60% !important;
+  }
 `;
 
 export const Title = styled.h1`
@@ -50,6 +62,11 @@ export const Title = styled.h1`
   flex-grow: 0;
 
   margin-bottom: 8px;
+
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    font-size: 20px;
+    margin-bottom: 0px;
+  }
 `;
 
 export const Description = styled.h2`
@@ -64,14 +81,23 @@ export const Description = styled.h2`
   order: 1;
   align-self: stretch;
   flex-grow: 0;
+
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    font-size: 14px;
+  }
 `;
 
 export const BodyContent = styled.div`
-  height: 100%;
+  height: fit-content;
+  width: 100%;
 
   .encapsulator {
     overflow: auto;
-    max-height: 630px;
+
+    height: fit-content;
+    width: 100%;
+
+    padding-right: 16px;
 
     ::-webkit-scrollbar {
       width: 8px; /* largura da barra de rolagem */
@@ -91,7 +117,7 @@ export const BodyContent = styled.div`
     }
 
     @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-      max-height: 440px;
+      max-height: 500px;
     }
   }
 `;
@@ -172,7 +198,6 @@ export const InputContainer = styled.div`
   }
 
   .ant-row .ant-form-item-row {
-    background-color: red;
   }
 
   .ant-select-open {
@@ -227,7 +252,9 @@ export const ButtonContainer = styled.div`
   display: flex;
   align-items: flex-end;
   width: 100%;
-  height: 92px;
+  height: fit-content;
+
+  margin-top: 8px;
 `;
 
 export const ButtonContainer2 = styled.div`

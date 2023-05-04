@@ -80,57 +80,74 @@ export const Products = () => {
   }, []);
 
   return (
-    <Content>
-      <Header>
-        <LeftContent>
-          <ArrowIcon
-            onClick={() => {
-              setProducts([]);
-              setHeaderTable([]);
-              navigate(ROUTES.TEMPLATES);
-            }}
-          />
-          <IconTemplate>
-            <FlagIcon />
-          </IconTemplate>
-          <Title> {template?.name} </Title>
-          <EditIcon />
-        </LeftContent>
-        <RightContent>
-          <MoreOptions>
-            <EllipsisIcon />
-          </MoreOptions>
-          <Button height="52px" width="227px" isSecondary>
-            <DownloadIcon />
-            Importar produtos
-          </Button>
-          <Button
-            height="52px"
-            width="226px"
-            className="secondButton"
-            onClick={handleAdd}
-          >
-            Adicionar produto
-            <PlusIcon />
-          </Button>
-        </RightContent>
-      </Header>
-      <Filters>
-        <Temp options={headerTable} />
-        <Contents>
-          <Item>
-            <HelpIcon />
-            Ajuda
-          </Item>
-        </Contents>
-      </Filters>
-      <Container>
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <Table dataProvider={filteredData} colHeaders={colHeaders} />
-        )}
-      </Container>
-    </Content>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        height: "100vh",
+      }}
+    >
+      <Content>
+        <Header>
+          <LeftContent>
+            <ArrowIcon
+              onClick={() => {
+                setProducts([]);
+                setHeaderTable([]);
+                navigate(ROUTES.TEMPLATES);
+              }}
+            />
+            <IconTemplate>
+              <FlagIcon />
+            </IconTemplate>
+            <Title> {template?.name} </Title>
+            <EditIcon />
+          </LeftContent>
+          <RightContent>
+            <MoreOptions>
+              <EllipsisIcon />
+            </MoreOptions>
+            <Button height="52px" width="227px" isSecondary>
+              <DownloadIcon />
+              Importar produtos
+            </Button>
+            <Button
+              height="52px"
+              width="226px"
+              className="secondButton"
+              onClick={handleAdd}
+            >
+              Adicionar produto
+              <PlusIcon />
+            </Button>
+          </RightContent>
+        </Header>
+        <Filters>
+          <Temp options={headerTable} />
+          <Contents>
+            <Item>
+              <HelpIcon />
+              Ajuda
+            </Item>
+          </Contents>
+        </Filters>
+      </Content>
+      <div
+        style={{
+          height: "100%",
+          overflow: "inherit",
+          flex: 1,
+        }}
+      >
+        <Container>
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <Table dataProvider={filteredData} colHeaders={colHeaders} />
+          )}
+        </Container>
+      </div>
+    </div>
   );
 };

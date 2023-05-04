@@ -12,10 +12,13 @@ export const Container = styled.div`
 
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
 
   .radio-group {
     display: flex !important;
     flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: start;
   }
 
   .ant-radio-wrapper.ant-radio-wrapper-checked {
@@ -39,7 +42,7 @@ export const StyledRadio = styled(Radio)`
   &.ant-radio-wrapper {
     /* Cor do marcador */
     .ant-radio-input:focus + .ant-radio-inner {
-      border-color: red;
+      /* border-color: red; */
     }
     .ant-radio-checked .ant-radio-inner {
       border-color: green;

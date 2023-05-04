@@ -18,7 +18,7 @@ export const Container = styled.div<DropdownMenuStyleProps>`
 
 export const SuspenseMenu = styled.div<{ left?: number | null }>`
   position: relative;
-  z-index: 10000;
+  z-index: 9999;
 
   height: auto;
   width: 220px;

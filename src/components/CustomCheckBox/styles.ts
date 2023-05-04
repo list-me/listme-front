@@ -3,16 +3,18 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   .firstContent {
-    display: flex;
-    flex-direction: column;
+    /* display: flex;
+    flex-direction: column; */
   }
   .ant-checkbox-group {
     display: flex;
     justify-content: left;
-    align-items: center;
     flex-direction: column;
+    align-items: flex-start;
 
-    label {
+    padding: 8px;
+
+    label:not(:last-child) {
       min-width: 100px;
 
       font-family: "Satoshi Regular", sans-serif !important;
@@ -21,7 +23,10 @@ export const Container = styled.div`
       line-height: 150% !important;
 
       margin-bottom: 15px;
-      margin-left: 0;
+    }
+
+    label {
+      margin-left: 0 !important;
     }
 
     .ant-checkbox-inner::after {
