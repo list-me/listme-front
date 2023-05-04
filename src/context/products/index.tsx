@@ -502,11 +502,6 @@ export const ProductContextProvider = ({ children }: any) => {
   };
 
   const handleNewColumn = (col: any, fields: any[]) => {
-    const newPosition = [...headerTable, col];
-    newPosition.splice(newPosition.length - 2, 1);
-    newPosition.push({});
-    setHeaderTable(newPosition);
-
     const newTemplate = template;
     newTemplate.fields.fields = fields;
     setTemplate(newTemplate);
@@ -521,6 +516,12 @@ export const ProductContextProvider = ({ children }: any) => {
         id: col?.data,
       },
     ]);
+
+    const newPosition = [...headerTable, col];
+    newPosition.splice(newPosition.length - 2, 1);
+    newPosition.push({});
+    setHeaderTable(newPosition);
+    console.log("Added");
   };
 
   const handleFilter = (word: string): any[] => {

@@ -135,7 +135,6 @@ export const PersonalModal = ({
     }
 
     try {
-      console.log({ templateUpdated });
       await templateRequests.update(template?.id, { fields: templateUpdated });
       toast.success("Template atualizado com sucesso");
       return templateUpdated;
@@ -241,7 +240,7 @@ export const PersonalModal = ({
                     />
                   </Form.Item>
                   {!MULTI_SELECT.includes(data?.type) &&
-                  data.type != "relation" ? (
+                  data?.type != "relation" ? (
                     <Form.Item
                       label="Escolha o tipo de valor"
                       name="type"
@@ -267,7 +266,7 @@ export const PersonalModal = ({
                         }
                       />
                     </Form.Item>
-                  ) : data.type == "relation" ? (
+                  ) : data?.type == "relation" ? (
                     <RelationForm
                       value={data}
                       currentFields={template.fields.fields}
@@ -411,8 +410,8 @@ export const PersonalModal = ({
                         data: response[response.length - 1]?.id,
                         options: filtered,
                       };
-                      onUpdate(newColumn, response);
                       onClickModal();
+                      onUpdate(newColumn, response);
                     });
                   }}
                 >
