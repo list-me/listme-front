@@ -22,14 +22,14 @@ interface DataField {
   width?: string;
 }
 
-type Template = {
+type Mapping = {
   label: string;
   value: string;
 };
 
 interface IPropsRelationForm {
   value: DataField;
-  templateName?: string;
+  currentFields?: Array<any>;
 }
 
-export type { DataField, IPropsRelationForm, Template, RelationOptions };
+export type { DataField, IPropsRelationForm, Mapping, RelationOptions };

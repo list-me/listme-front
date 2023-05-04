@@ -41,7 +41,6 @@ export const PersonalModal = ({
   template,
   onUpdate,
 }: PropsModal) => {
-  console.log({ data });
   const [title, setTitle] = useState<string>(data?.title ?? "");
   const [type, setType] = useState<string>(data?.type);
   const [required, setRequired] = useState<boolean>(data?.required ?? false);
@@ -136,6 +135,7 @@ export const PersonalModal = ({
     }
 
     try {
+      console.log({ templateUpdated });
       await templateRequests.update(template?.id, { fields: templateUpdated });
       toast.success("Template atualizado com sucesso");
       return templateUpdated;
@@ -268,7 +268,10 @@ export const PersonalModal = ({
                       />
                     </Form.Item>
                   ) : data.type == "relation" ? (
-                    <RelationForm value={data} templateName={template.name} />
+                    <RelationForm
+                      value={data}
+                      currentFields={template.fields.fields}
+                    />
                   ) : (
                     <></>
                   )}

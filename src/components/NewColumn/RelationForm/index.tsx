@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { CustomRadio } from "../../Radio";
-import { Checkbox, Form, Radio, RadioChangeEvent, Select, Space } from "antd";
-import { Content } from "./styles";
-import { CheckboxValueType } from "antd/es/checkbox/Group";
-import {
-  IPropsRelationForm,
-  RelationOptions,
-  Template,
-} from "./RelationForm.d";
+import { Radio, RadioChangeEvent, Select, Space } from "antd";
+import { Content, Loader } from "./styles";
+import { IPropsRelationForm, RelationOptions, Mapping } from "./RelationForm.d";
 import { templateRequests } from "../../../services/apis/requests/template";
+import { toast } from "react-toastify";
 
 export const RelationForm: React.FC<IPropsRelationForm> = ({
   value,
-  templateName,
+  currentFields,
 }) => {
   const OPTIONS_TEMPLATE = {
     OTHER: "Outro Catálogo",
@@ -30,26 +25,49 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
     },
   };
 
-  const getMapping = (options?: any): string => {
+  const getMappingType = (options?: any): string => {
     return options ? options[0]["mappingType"] : "oneToOne";
   };
-  const [template, setTemplate] = useState<Template[]>([]);
+
+  const getCurrentField = (options?: any): string => {
+    return options ? options[0]["field"] : "";
+  };
+
+  const getTemplateRelation = (options?: any): string => {
+    return options &&
+      options[0]["templateId"] == window.location.pathname.substring(10)
+      ? OPTIONS_TEMPLATE.SAME
+      : OPTIONS_TEMPLATE.OTHER;
+  };
+
+  const getTemplateId = (options?: any): string => {
+    return options && options[0]["templateId"] ? options[0]["templateId"] : "";
+  };
+
+  const [template, setTemplate] = useState<Mapping[]>([]);
+  const [fields, setFields] = useState<Mapping[]>([]);
   const [templateRelation, setTemplateRelation] = useState<string>(
-    OPTIONS_TEMPLATE.SAME,
+    getTemplateRelation(value.options),
   );
   const [agreementType, setAgreementType] = useState<any>(
-    getMapping(value?.options),
+    getMappingType(value?.options),
   );
   const [mappingType, setMappingType] = useState<string>("");
+  const [fieldId, setFieldId] = useState<string>(
+    getCurrentField(value?.options),
+  );
+  const [templateId, setTemplateId] = useState<string>(
+    getTemplateId(value.options),
+  );
+
   const [isEdit, setIsEdit] = useState<boolean>(Object.keys(value).length > 1);
-  const [field, setField] = useState<any>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleState = (e: RadioChangeEvent) => {
     const { value } = e.target;
 
     if (OPTIONS_TEMPLATE.OTHER && !template.length) {
       templateRequests.list({ limit: 100 }).then((resolve) => {
-        console.log({ resolve });
         const data = resolve as Array<any>;
         const templates = data.map((e) => {
           return { value: e.id, label: e.name };
@@ -62,77 +80,65 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
     setTemplateRelation(value);
   };
 
-  const options = ["Mesmo Catálogo", "Outro Catálogo"];
+  const handleChangeTemplate = async (templateId: string): Promise<void> => {
+    setIsLoading(true);
+    try {
+      templateRequests.get(templateId).then((template) => {
+        const customFields = template.fields.fields
+          .filter((e: any) => e.type !== "relation")
+          .map((field: any) => {
+            return {
+              value: field.id,
+              label: field.title,
+            };
+          });
 
-  const fields = [
-    {
-      label: "Option",
-      value: "1",
-    },
-    {
-      label: "Option",
-      value: "2",
-    },
-    {
-      label: "Option1",
-      value: "3",
-    },
-    {
-      label: "Option2",
-      value: "4",
-    },
-    {
-      label: "Option3",
-      value: "5",
-    },
-    {
-      label: "Option4",
-      value: "6",
-    },
-    {
-      label: "Option5",
-      value: "7",
-    },
-    {
-      label: "Option6",
-      value: "8",
-    },
-    {
-      label: "Option7",
-      value: "9",
-    },
-    {
-      label: "Option8",
-      value: "20",
-    },
-    {
-      label: "Option9",
-      value: "21",
-    },
-    {
-      label: "Option",
-      value: "11",
-    },
-    {
-      label: "Option4",
-      value: "22",
-    },
-    {
-      label: "Option5",
-      value: "23",
-    },
-    {
-      label: "Option6",
-      value: "24",
-    },
-  ];
+        setFields(customFields);
+      });
+
+      setIsLoading(false);
+      setTemplateId(templateId);
+    } catch (error) {
+      setIsLoading(false);
+      toast.error("Ocorreu um erro ao carregar os campos deste catálogo");
+    }
+  };
+
+  const options = ["Mesmo Catálogo", "Outro Catálogo"];
 
   useEffect(() => {
     if (value && Object.keys(value).length > 1) {
-      console.log({ value });
-      const mapping = value.options[0] as unknown as RelationOptions;
-      console.log({ mapping });
-      setMappingType(mapping.mappingType);
+      const options = value.options[0] as unknown as RelationOptions;
+      setMappingType(options.mappingType);
+
+      if (getTemplateRelation(value?.options) === OPTIONS_TEMPLATE.OTHER) {
+        handleChangeTemplate(getTemplateId(value.options)).then();
+        if (!template.length) {
+          templateRequests.list({ limit: 100 }).then((resolve) => {
+            const data = resolve as Array<any>;
+            const templates = data.map((e) => {
+              return { value: e.id, label: e.name };
+            });
+
+            setTemplate(templates);
+          });
+        }
+      }
+    } else {
+      templateRequests
+        .get(window.location.pathname.substring(10))
+        .then((template) => {
+          const customFields = template.fields.fields
+            .filter((e: any) => e.type !== "relation")
+            .map((field: any) => {
+              return {
+                value: field.id,
+                label: field.title,
+              };
+            });
+
+          setFields(customFields);
+        });
     }
   }, []);
 
@@ -163,30 +169,26 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
         {templateRelation == "Outro Catálogo" ? (
           <div className="selectContainer">
             <label className="label">Selecione o catálogo</label>
-            <Form.Item
-              name="type"
-              rules={[{ required: true, message: "Escolha o tipo de valor" }]}
+            <Select
+              style={{
+                height: "30px",
+                border: "1px solid #DEE2E6",
+              }}
+              onChange={handleChangeTemplate}
+              placeholder="Seleciones o template"
+              defaultValue={template.find((e) => e.value == templateId)?.value}
+              value={templateId}
+              disabled={isEdit}
             >
-              <Select
-                style={{
-                  height: "30px",
-                  border: "1px solid #DEE2E6",
-                }}
-                onChange={(e: string) => {
-                  console.log({ e });
-                }}
-                placeholder="Seleciones o template"
-              >
-                {template.map((item, index) => {
-                  return (
-                    <Select.Option key={index} value={item.label}>
-                      {" "}
-                      {item.label}{" "}
-                    </Select.Option>
-                  );
-                })}
-              </Select>
-            </Form.Item>
+              {template.map((item, index) => {
+                return (
+                  <Select.Option key={index} value={item.value}>
+                    {" "}
+                    {item.label}{" "}
+                  </Select.Option>
+                );
+              })}
+            </Select>
           </div>
         ) : (
           <></>
@@ -213,22 +215,30 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
             </Space>
           </Radio.Group>
         </div>
-        <div className="selectContainer">
-          <label className="label">Relacionar com</label>
-          <Form.Item
-            name="type"
-            rules={[{ required: true, message: "Escolha o tipo de valor" }]}
-          >
+        {isLoading ? (
+          <Loader className="lds-roller">
+            <div className="loading-spinner"></div>
+          </Loader>
+        ) : (
+          <div className="selectContainer">
+            <label className="label">Relacionar com</label>
+            {/* <Form.Item
+              name="type"
+              rules={[{ required: true, message: "Escolha o tipo de valor" }]}
+            > */}
             <Select
               style={{
                 height: "30px",
                 border: "1px solid #DEE2E6",
               }}
-              //   onChange={(e: string) => {
-              //     setField(e);
-              //   }}
-              placeholder="Informe o nome do campo"
+              onChange={(e: string) => {
+                // setField(e);
+                console.log({ e });
+              }}
+              defaultValue={fields.find((e) => e.value == fieldId)?.value}
+              placeholder="Escolha uma coluna"
               disabled={isEdit}
+              value={fieldId}
             >
               {fields.map((item, index) => {
                 return (
@@ -239,8 +249,9 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
                 );
               })}
             </Select>
-          </Form.Item>
-        </div>
+            {/* </Form.Item> */}
+          </div>
+        )}
       </div>
       <div className="section">
         <label className="label">Tipo de vinculo</label>
