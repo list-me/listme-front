@@ -8,13 +8,14 @@ import { toast } from "react-toastify";
 export const RelationForm: React.FC<IPropsRelationForm> = ({
   value,
   currentFields,
+  handleChangeOptions,
 }) => {
   const OPTIONS_TEMPLATE = {
     OTHER: "Outro Catálogo",
     SAME: "Mesmo Catálogo",
   };
 
-  const OPTIONS_AGREEMENT = {
+  const OPTIONS_MAPPING = {
     FOR_ONE: {
       label: "Entre um produto",
       value: "oneToOne",
@@ -25,8 +26,17 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
     },
   };
 
+  const OPTIONS_AGREEMENT = {
+    BILATERAL: "bilateral",
+    UNILATERAL: "unilateral",
+  };
+
   const getMappingType = (options?: any): string => {
     return options ? options[0]["mappingType"] : "oneToOne";
+  };
+
+  const getAgreementType = (options?: any): string => {
+    return options ? options[0]["agreementType"] : "unilateral";
   };
 
   const getCurrentField = (options?: any): string => {
@@ -34,10 +44,13 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   };
 
   const getTemplateRelation = (options?: any): string => {
-    return options &&
-      options[0]["templateId"] == window.location.pathname.substring(10)
-      ? OPTIONS_TEMPLATE.SAME
-      : OPTIONS_TEMPLATE.OTHER;
+    if (options) {
+      return options[0]["templateId"] == window.location.pathname.substring(10)
+        ? OPTIONS_TEMPLATE.SAME
+        : OPTIONS_TEMPLATE.OTHER;
+    }
+
+    return OPTIONS_TEMPLATE.SAME;
   };
 
   const getTemplateId = (options?: any): string => {
@@ -49,10 +62,12 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   const [templateRelation, setTemplateRelation] = useState<string>(
     getTemplateRelation(value.options),
   );
-  const [agreementType, setAgreementType] = useState<any>(
+  const [agreementType, setAgreementType] = useState<string>(
+    getAgreementType(value.options),
+  );
+  const [mappingType, setMappingType] = useState<string>(
     getMappingType(value?.options),
   );
-  const [mappingType, setMappingType] = useState<string>("");
   const [fieldId, setFieldId] = useState<string>(
     getCurrentField(value?.options),
   );
@@ -94,6 +109,7 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
           });
 
         setFields(customFields);
+        setFieldId("");
       });
 
       setIsLoading(false);
@@ -174,7 +190,10 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
                 height: "30px",
                 border: "1px solid #DEE2E6",
               }}
-              onChange={handleChangeTemplate}
+              onChange={(e: string) => {
+                handleChangeTemplate(e);
+                handleChangeOptions({ templateId: e });
+              }}
               placeholder="Seleciones o template"
               defaultValue={template.find((e) => e.value == templateId)?.value}
               value={templateId}
@@ -197,15 +216,18 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
           <label className="label">Tipo de Relacionamento</label>
           <Radio.Group
             buttonStyle="solid"
-            defaultValue="oneToOne"
-            value={agreementType}
-            onChange={(e) => setAgreementType(e.target.value)}
-            options={Object.values(OPTIONS_AGREEMENT)}
+            // defaultValue="oneToOne"
+            value={mappingType}
+            onChange={(e) => {
+              setMappingType(e.target.value);
+              handleChangeOptions({ mappingType: e.target.value });
+            }}
+            options={Object.values(OPTIONS_MAPPING)}
             className="radio-group"
             disabled={isEdit}
           >
             <Space>
-              {Object.values(OPTIONS_AGREEMENT).map((option) => {
+              {Object.values(OPTIONS_MAPPING).map((option) => {
                 return (
                   <Radio.Button key={Math.random()} value={option}>
                     {option.label}
@@ -232,13 +254,13 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
                 border: "1px solid #DEE2E6",
               }}
               onChange={(e: string) => {
-                // setField(e);
-                console.log({ e });
+                setFieldId(e);
+                handleChangeOptions({ field: e });
               }}
-              defaultValue={fields.find((e) => e.value == fieldId)?.value}
+              // defaultValue={fields.find((e) => e.value == fieldId)?.value}
               placeholder="Escolha uma coluna"
               disabled={isEdit}
-              value={fieldId}
+              value={fields.find((e) => e.value == fieldId)?.value ?? fieldId}
             >
               {fields.map((item, index) => {
                 return (
@@ -257,14 +279,18 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
         <label className="label">Tipo de vinculo</label>
         <Radio.Group
           buttonStyle="solid"
-          value={mappingType}
-          onChange={(e) => setMappingType(e.target.value)}
-          options={["Bilateral", "Unilateral"]}
+          // defaultValue={agreementType}
+          value={agreementType}
+          onChange={(e) => {
+            setAgreementType(e.target.value);
+            handleChangeOptions({ agreementType: e.target.value });
+          }}
+          options={Object.values(OPTIONS_AGREEMENT)}
           className="radio-group"
           disabled={isEdit}
         >
           <Space>
-            {options.map((option: string) => {
+            {Object.values(OPTIONS_AGREEMENT).map((option: string) => {
               return (
                 <Radio.Button key={Math.random()} value={option}>
                   {option}
