@@ -1,6 +1,8 @@
 import styled from "styled-components";
 
 export const Content = styled.div`
+  margin-top: 16px;
+
   .section {
     display: flex;
     flex-direction: column;
@@ -12,7 +14,7 @@ export const Content = styled.div`
     display: block;
     flex-direction: column;
 
-    margin-bottom: 4rem;
+    margin-bottom: 2.5rem;
 
     .ant-form-item-label {
       display: flex;

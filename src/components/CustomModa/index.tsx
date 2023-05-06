@@ -34,6 +34,25 @@ interface PropsModal {
   onUpdate: Function;
 }
 
+type Options = {
+  agreementType: string;
+  field: string;
+  mappingType: string;
+  owner?: string;
+  templateId: string;
+};
+
+type Option = {
+  [key: string]: string;
+};
+
+const KEYS = {
+  agreementType: "agreementType",
+  field: "field",
+  mappingType: "mappingType",
+  templateId: "templateId",
+};
+
 export const PersonalModal = ({
   isOpen,
   onClickModal = () => {},
@@ -48,6 +67,15 @@ export const PersonalModal = ({
   const [draggerOptions, setDraggerOptions] = useState<any[]>(
     data?.options ?? [""],
   );
+
+  const [options, setOptions] = useState<Options[]>([
+    {
+      templateId: window.location.pathname.substring(10),
+      agreementType: "unilateral",
+      field: "",
+      mappingType: "oneToOne",
+    },
+  ]);
   const formRef = useRef<HTMLFormElement>(null);
 
   const textOptions = [
@@ -125,7 +153,7 @@ export const PersonalModal = ({
         id: Math.floor(100000 + Math.random() * 900000).toString(),
         type,
         title,
-        options: filtered,
+        options: data?.type == "relation" ? options : filtered,
         required,
         is_public: true,
         help_text: "This fiedl will help you to make a new product register",
@@ -135,6 +163,7 @@ export const PersonalModal = ({
     }
 
     try {
+      console.log({ templateUpdated });
       await templateRequests.update(template?.id, { fields: templateUpdated });
       toast.success("Template atualizado com sucesso");
       return templateUpdated;
@@ -194,6 +223,31 @@ export const PersonalModal = ({
     });
   };
 
+  const handleChangeOptions = (option: Option): void => {
+    const key = Object.keys(option)[0] as unknown as string;
+    const value = Object.values(option)[0] as unknown as string;
+
+    const changed =
+      options[0] != undefined
+        ? (options[0] as unknown as Options)
+        : ({} as unknown as Options);
+
+    if (key == "templateId") {
+      changed.templateId = value;
+    }
+    if (key == "field") {
+      changed["field"] = value;
+    }
+    if (key == "mappingType") {
+      changed["mappingType"] = value;
+    }
+    if (key == "agreementType") {
+      changed["agreementType"] = value;
+    }
+
+    setOptions([changed]);
+  };
+
   useEffect(() => {
     setType(data?.type);
   }, [isOpen, data, draggerOptions]);
@@ -217,28 +271,28 @@ export const PersonalModal = ({
             <form ref={formRef} className="form">
               <div className="encapsulator">
                 <InputContainer>
-                  <Form.Item
+                  {/* <Form.Item
                     label="Titulo do campo"
                     name="title"
                     rules={[
                       { required: true, message: "Insira o título do campo" },
                     ]}
-                  >
-                    <Input
-                      style={{
-                        height: "64px",
-                        border: "1px solid #DEE2E6",
-                      }}
-                      defaultValue={title}
-                      value={title}
-                      onChange={(e) => {
-                        e.preventDefault();
+                  > */}
+                  <Input
+                    style={{
+                      height: "64px",
+                      border: "1px solid #DEE2E6",
+                    }}
+                    defaultValue={title}
+                    value={title}
+                    onChange={(e) => {
+                      e.preventDefault();
 
-                        setTitle(e.target.value);
-                      }}
-                      placeholder="Informe o nome do campo"
-                    />
-                  </Form.Item>
+                      setTitle(e.target.value);
+                    }}
+                    placeholder="Informe o nome do campo"
+                  />
+                  {/* </Form.Item> */}
                   {!MULTI_SELECT.includes(data?.type) &&
                   data?.type != "relation" ? (
                     <Form.Item
@@ -270,6 +324,7 @@ export const PersonalModal = ({
                     <RelationForm
                       value={data}
                       currentFields={template.fields.fields}
+                      handleChangeOptions={handleChangeOptions}
                     />
                   ) : (
                     <></>

@@ -27,9 +27,14 @@ type Mapping = {
   value: string;
 };
 
+type Option = {
+  [key: string]: string;
+};
+
 interface IPropsRelationForm {
   value: DataField;
   currentFields?: Array<any>;
+  handleChangeOptions: (option: Option) => void;
 }
 
 export type { DataField, IPropsRelationForm, Mapping, RelationOptions };
