@@ -17,11 +17,9 @@ export const Container = styled.div`
     width: 100% !important;
     overflow: hidden;
 
-    div:not(:first-child) {
-      margin-left: 0.5rem;
+    div:not(:last-child) {
+      margin-right: 8px;
     }
-
-    /* background-color: green; */
   }
 
   .imageContent {
@@ -37,21 +35,33 @@ export const Container = styled.div`
       cursor: pointer;
     }
   }
+
+  /* .contentProducts {
+    background-color: green;
+
+    width: 100% !important;
+    height: 500px !important;
+  } */
 `;
 
-export const Tag = styled.div`
-  min-width: 50px !important;
+export const Tag = styled.div<{ maxWidth?: string }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: fit-content !important;
+  max-width: ${(props) =>
+    props.maxWidth ? `${props.maxWidth}px` : "none"}!important;
   height: 25px !important;
 
   border-radius: 6px;
-  padding: 0px 6px;
+  padding: 0px 9px 0px 6px;
 
   background: #dee2e6;
 
   label {
     overflow: hidden;
 
-    align-self: center;
     white-space: nowrap;
     text-overflow: ellipsis;
 
@@ -62,5 +72,93 @@ export const Tag = styled.div`
 
   &:hover {
     cursor: pointer;
+  }
+`;
+
+export const Title = styled.h1`
+  font-family: "Satoshi Bold", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 150%;
+  color: #000000;
+
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+
+  margin-bottom: 8px;
+
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    font-size: 20px;
+    margin-bottom: 0px;
+  }
+`;
+
+export const Content = styled.div`
+  width: 100%;
+  height: fit-content;
+
+  .contentProducts {
+    display: flex;
+    flex-wrap: wrap;
+    /* gap: 1rem; */
+    padding: 16px 16px 8px 16px;
+
+    width: 100%;
+    height: fit-content;
+    max-height: 200px;
+
+    font-family: "Satoshi Regular", sans-serif;
+    font-style: normal;
+    font-weight: 200;
+    font-size: 14px !important;
+
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+
+    overflow: auto;
+
+    .tagItem {
+      display: flex;
+      flex-direction: row;
+
+      width: fit-content !important;
+      height: 25px !important;
+      margin-bottom: 10px;
+
+      span {
+        width: 10px !important;
+
+        svg {
+          position: relative;
+          bottom: 30%;
+          right: 80% !important;
+        }
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: unset;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #cccccc;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #3818d9;
+    }
+    /* background-color: yellowgreen; */
   }
 `;

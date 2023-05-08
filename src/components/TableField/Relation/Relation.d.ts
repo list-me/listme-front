@@ -1,3 +1,5 @@
-interface PropsRelation {}
+interface PropsRelation {
+  value: any;
+}
 
 export type { PropsRelation };

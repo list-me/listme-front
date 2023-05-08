@@ -50,7 +50,7 @@ export const TableField: React.FC<ITableFieldProps> = ({
         prop={prop}
       />
     ),
-    relation: <Relation />,
+    relation: <Relation value={value} />,
   };
 
   const onClose = (): void => {
