@@ -126,6 +126,7 @@ export const ProductContextProvider = ({ children }: any) => {
     LIST: "select",
     CHECKED: "checkbox",
     FILE: "file",
+    RELATION: "relation",
   };
 
   const handleUpdateTemplate = (field: any) => {};

@@ -11,6 +11,7 @@ import { CustomRadio } from "../Radio";
 import { CustomCheckBox } from "../CustomCheckBox";
 import Dropzone from "../Dropzone";
 import { ImageContextProvider } from "../../context/images";
+import { Relation } from "./Relation";
 
 export const TableField: React.FC<ITableFieldProps> = ({
   value,
@@ -37,6 +38,19 @@ export const TableField: React.FC<ITableFieldProps> = ({
         value: option,
       };
     });
+  };
+
+  const FIELD_TYPES = {
+    file: (
+      <Dropzone
+        col={col}
+        instance={instance}
+        row={row}
+        value={value}
+        prop={prop}
+      />
+    ),
+    relation: <Relation />,
   };
 
   const onClose = (): void => {
@@ -74,14 +88,8 @@ export const TableField: React.FC<ITableFieldProps> = ({
 
   return (
     <ImageContextProvider>
-      {type == "file" ? (
-        <Dropzone
-          col={col}
-          instance={instance}
-          row={row}
-          value={value}
-          prop={prop}
-        />
+      {type == "file" || type == "relation" ? (
+        FIELD_TYPES[type]
       ) : (
         <Container
           type={type}
