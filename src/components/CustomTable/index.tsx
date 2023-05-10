@@ -96,11 +96,15 @@ const CustomTable: React.FC<CustomTableProps> = ({
             col: number,
           ): void => {
             if (dataProvider?.length) {
-              let initialValue: any[] =
-                typeof dataProvider[row]?.[column.data] !== "object"
-                  ? [dataProvider[row]?.[column.data]]
-                  : dataProvider[row]?.[column.data];
-              if (initialValue.includes(undefined)) {
+              // let initialValue: any[] =
+              //   typeof dataProvider[row]?.[column.data] !== "object"
+              //     ? [dataProvider[row]?.[column.data]]
+              //     : dataProvider[row]?.[column.data];
+
+              // console.log({ initialValue, dataProvider });
+
+              let initialValue = dataProvider[row]?.[column.data];
+              if (!initialValue) {
                 initialValue = [""];
               }
 
@@ -120,6 +124,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
                   row={row}
                   prop={column.data}
                   td={td}
+                  column={column}
                 />,
               );
             }
@@ -437,8 +442,9 @@ const CustomTable: React.FC<CustomTableProps> = ({
           source,
         ) => {
           if (changes?.length && changes[0][2] !== changes[0][3]) {
-            if (dataProvider?.length)
+            if (dataProvider?.length) {
               await handleSave(dataProvider[changes[0][0]]);
+            }
           }
         }}
         afterRenderer={(TD, row, col, prop, value, cellProperties) => {

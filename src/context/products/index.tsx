@@ -20,12 +20,19 @@ export interface ICustom {
   order?: string;
 }
 
+interface IRelation {
+  agreementType: string;
+  field: string;
+  mappingType: string;
+  owner: string;
+  templateId: string;
+}
 export interface IHeaderTable {
   title?: string;
   type: string;
   data: string;
   className: string;
-  options: string[];
+  options: string[] | IRelation[];
   hidden?: boolean;
   width?: string;
   frozen?: boolean;
@@ -154,14 +161,31 @@ export const ProductContextProvider = ({ children }: any) => {
     }
   };
 
-  const handleGetProducts = async (templateId: string) => {
+  const handleGetProducts = async (
+    templateId: string,
+    templateFields: IHeaderTable[],
+  ) => {
     return productRequests
       .list({}, templateId)
       .then((response) => {
         const productFields: any = [];
         response?.products?.forEach((item: any) => {
           let object: any = {};
-          item.fields.forEach((field: any) => (object[field.id] = field.value));
+          item.fields.forEach((field: any) => {
+            const currentField = templateFields.find(
+              (e: any) => e.data == field.id,
+            );
+
+            if (currentField && field.value) {
+              const test = !COMPONENT_CELL_PER_TYPE[
+                currentField?.type?.toUpperCase()
+              ]
+                ? field?.value[0]
+                : field?.value;
+
+              object[field?.id] = test;
+            }
+          });
           productFields.push({
             ...object,
             id: item.id,
@@ -169,7 +193,7 @@ export const ProductContextProvider = ({ children }: any) => {
           });
         });
 
-        if (!productFields.length) {
+        if (!productFields.length && template) {
           productFields.push({ [template[0]]: "" });
         }
         setProducts(productFields);
@@ -185,8 +209,8 @@ export const ProductContextProvider = ({ children }: any) => {
 
   const handleRedirectAndGetProducts = async (id: string) => {
     try {
-      await handleGetTemplates(id);
-      await handleGetProducts(id);
+      const template = await handleGetTemplates(id);
+      await handleGetProducts(id, template);
     } catch (error) {
       console.error(error);
       toast.error(
@@ -252,7 +276,10 @@ export const ProductContextProvider = ({ children }: any) => {
         ) {
           obj.push({
             id: field,
-            value: fields[field],
+            value:
+              typeof fields[field] == "object"
+                ? fields[field]
+                : [fields[field]],
           });
         }
       });
@@ -322,6 +349,7 @@ export const ProductContextProvider = ({ children }: any) => {
             }),
         );
         setFilter(undefined);
+        return headers;
       })
       .catch((error) => {
         console.error(error);
@@ -380,7 +408,6 @@ export const ProductContextProvider = ({ children }: any) => {
     } else {
       newValue = [...content, col];
     }
-    console.log({ newValue, content, hidden, col });
 
     setHidden(newValue);
     setCustomFields((prev) => {

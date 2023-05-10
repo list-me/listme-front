@@ -101,6 +101,8 @@ export const Content = styled.div`
   height: fit-content;
 
   .contentProducts {
+    background-color: rebeccapurple;
+
     display: flex;
     flex-wrap: wrap;
     /* gap: 1rem; */
@@ -160,5 +162,62 @@ export const Content = styled.div`
       background-color: #3818d9;
     }
     /* background-color: yellowgreen; */
+  }
+
+  .contentTable {
+    display: flex;
+
+    /* overflow-y: auto; */
+
+    display: block;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 2rem;
+
+    .ant-table-thead .ant-table-cell {
+      background-color: #f8f9fa;
+      font-family: "Satoshi Regular", sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 150%;
+
+      :before {
+        display: none !important;
+      }
+
+      /* height: 56px; */
+      /* padding: 16px; */
+    }
+
+    .ant-table {
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+    }
+
+    .ant-table-cell {
+      font-family: "Satoshi Regular", sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+
+      overflow: hidden;
+
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .ant-checkbox {
+      width: 16px !important;
+      height: 16px !important;
+      border-radius: 4px !important;
+    }
+
+    .ant-checkbox-inner {
+      border: 2px solid #e9ecef !important;
+    }
   }
 `;

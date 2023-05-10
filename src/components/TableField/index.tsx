@@ -23,6 +23,7 @@ export const TableField: React.FC<ITableFieldProps> = ({
   row,
   prop,
   td,
+  column,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [newValue, setNewValue] = useState<string[]>(value);
@@ -40,6 +41,10 @@ export const TableField: React.FC<ITableFieldProps> = ({
     });
   };
 
+  const handleGetTemplateId = (column: any): string => {
+    return column?.options[0]?.templateId;
+  };
+
   const FIELD_TYPES = {
     file: (
       <Dropzone
@@ -50,7 +55,9 @@ export const TableField: React.FC<ITableFieldProps> = ({
         prop={prop}
       />
     ),
-    relation: <Relation value={value} />,
+    relation: (
+      <Relation value={newValue} templateId={handleGetTemplateId(column)} />
+    ),
   };
 
   const onClose = (): void => {
@@ -88,7 +95,7 @@ export const TableField: React.FC<ITableFieldProps> = ({
 
   return (
     <ImageContextProvider>
-      {type == "file" || type == "relation" ? (
+      {type == "relation" || type == "file" ? (
         FIELD_TYPES[type]
       ) : (
         <Container
