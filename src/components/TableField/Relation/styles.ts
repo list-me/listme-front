@@ -23,7 +23,7 @@ export const Container = styled.div`
   }
 
   .imageContent {
-    width: 18px;
+    width: 50px;
 
     display: flex;
     justify-content: center;
@@ -32,8 +32,13 @@ export const Container = styled.div`
     padding: 0 8px 0 6px;
 
     svg {
+      width: 20px !important;
+    }
+
+    &:hover {
       cursor: pointer;
     }
+    /* background-color: red; */
   }
 
   /* .contentProducts {
@@ -51,7 +56,7 @@ export const Tag = styled.div<{ maxWidth?: string }>`
 
   width: fit-content !important;
   max-width: ${(props) =>
-    props.maxWidth ? `${props.maxWidth}px` : "none"}!important;
+    props.maxWidth ? `${props.maxWidth}` : "none"}!important;
   height: 25px !important;
 
   border-radius: 6px;
@@ -90,6 +95,19 @@ export const Title = styled.h1`
 
   margin-bottom: 8px;
 
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  svg {
+    width: 25px;
+    height: 25px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
     font-size: 20px;
     margin-bottom: 0px;
@@ -101,8 +119,6 @@ export const Content = styled.div`
   height: fit-content;
 
   .contentProducts {
-    background-color: rebeccapurple;
-
     display: flex;
     flex-wrap: wrap;
     /* gap: 1rem; */
@@ -111,6 +127,7 @@ export const Content = styled.div`
     width: 100%;
     height: fit-content;
     max-height: 200px;
+    min-height: 60px;
 
     font-family: "Satoshi Regular", sans-serif;
     font-style: normal;

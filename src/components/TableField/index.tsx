@@ -45,6 +45,10 @@ export const TableField: React.FC<ITableFieldProps> = ({
     return column?.options[0]?.templateId;
   };
 
+  const handleGetField = (column: any): string => {
+    return column?.options[0]?.field;
+  };
+
   const FIELD_TYPES = {
     file: (
       <Dropzone
@@ -56,7 +60,11 @@ export const TableField: React.FC<ITableFieldProps> = ({
       />
     ),
     relation: (
-      <Relation value={newValue} templateId={handleGetTemplateId(column)} />
+      <Relation
+        value={newValue}
+        templateId={handleGetTemplateId(column)}
+        field={handleGetField(column)}
+      />
     ),
   };
 
