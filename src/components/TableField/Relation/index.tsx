@@ -1,7 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
-import { PropsRelation } from "./Relation";
+import { PropsRelation } from "./Relation.d";
 import Modal from "../../Modal";
-import { Container, Content, Tag, Title } from "./styles";
+import {
+  Button,
+  ButtonContainer,
+  Container,
+  Content,
+  PrimaryButton,
+  Tag,
+  Title,
+} from "./styles";
 
 import { ReactComponent as AddIcon } from "../../../assets/add-column.svg";
 import { ReactComponent as CloseIcon } from "../../../assets/close-xsmall-blue.svg";
@@ -11,22 +19,47 @@ import { Table } from "antd";
 import { templateRequests } from "../../../services/apis/requests/template";
 import { productRequests } from "../../../services/apis/requests/product";
 import { productContext } from "../../../context/products";
+import { toast } from "react-toastify";
 
 export const Relation: React.FC<PropsRelation> = ({
   value,
   templateId,
   field,
+  currentItem,
+  column,
 }) => {
+  const buildProduct = (fields: any) => {
+    const obj: any[] = [];
+    if (fields && Object.keys(fields).length) {
+      Object.keys(fields).forEach((field: any) => {
+        if (fields[field] && !["id", "created_at"].includes(field)) {
+          obj.push({
+            id: field,
+            value:
+              typeof fields[field] == "object"
+                ? fields[field]
+                : [fields[field]],
+          });
+        }
+      });
+    }
+
+    return obj;
+  };
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [contentProducts, setContentProducts] = useState<any[]>(value ?? []);
+  const [currentProducts, setCurrentProducts] = useState<any[]>(value ?? []);
+
   const [columns, setColumns] = useState<any[]>([]);
   const [data, setData] = useState<any[]>([]);
   const [oldData, setOldData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [relations, setRelations] = useState<any[]>(buildProduct(currentItem));
 
   const [fieldTitle, setFieldTitle] = useState<any[]>([]);
 
-  const { template } = useContext(productContext);
+  const [opt, setOpt] = useState<string>();
 
   const handleChangeVisible = () => {
     setData([]);
@@ -53,18 +86,27 @@ export const Relation: React.FC<PropsRelation> = ({
       templateRequests.get(templateId).then((response) => {
         const columnsTable = response.fields.fields
           .map((attribute: any) => {
-            // if (attribute.id == field) {
-            //   title = attribute.title;
-            // }
+            console.log({ attribute, column });
+            if (column.options[0].agrrementType == "bilateral") {
+              if (attribute.id == column.data) {
+                setOpt(attribute.options[0].field);
+              }
+            } else {
+              setOpt(attribute.options[0].field);
+            }
+
             return {
               key: attribute.id,
               dataIndex: attribute.id,
+              title: attribute.title,
+              width: "10%",
             };
           })
           .slice(0, 4);
 
         productRequests.list({ limit: 200 }, templateId).then((response) => {
           const fields: any[] = [];
+          const allFields: any[] = [];
           response.products?.forEach((product: any) => {
             const currentIds = contentProducts.map((e) => e.id);
             if (!currentIds.includes(product.id)) {
@@ -74,18 +116,26 @@ export const Relation: React.FC<PropsRelation> = ({
                   props[field?.id] = handleGetValueString(field.value);
                   props["id"] = product.id;
                 }
-                //  return {
-                //     [field.id]: "field.value",
-                //   };
               });
 
               fields.push(props);
+            } else {
+              let props: any = {};
+              product.fields.forEach((field: any) => {
+                if (field && Object.keys(field).length) {
+                  props[field?.id] = handleGetValueString(field.value);
+                  props["id"] = product.id;
+                }
+              });
+
+              allFields.push(props);
             }
           });
 
           setData(fields);
-          setOldData(fields);
+          setOldData(allFields);
         });
+
         setColumns(columnsTable);
       });
     }
@@ -100,7 +150,10 @@ export const Relation: React.FC<PropsRelation> = ({
           });
 
           setFieldTitle((prev) => [
-            { id: title.id, value: title.value[0] },
+            {
+              id: product?.id,
+              value: title ? title.value[0] : "*Campo sem valor*",
+            },
             ...prev,
           ]);
         });
@@ -113,7 +166,12 @@ export const Relation: React.FC<PropsRelation> = ({
   };
 
   const handleClick = (product: any) => {
-    const newTitle = { value: product[field][0], id: product.id };
+    const values =
+      typeof product[field] == "object"
+        ? product[field][0]
+        : "*Campo sem valor*";
+    const newTitle = { value: values, id: product.id };
+
     setFieldTitle((prev) => [newTitle, ...prev]);
 
     setData((prev) => {
@@ -121,6 +179,63 @@ export const Relation: React.FC<PropsRelation> = ({
         if (e.id !== product.id) return e;
       });
     });
+
+    const fieldId = column?.data;
+    let updatedProduct = relations;
+    const currentField = updatedProduct.find((item) => {
+      if (item.id == fieldId) {
+        return item;
+      }
+    });
+
+    if (!currentField) {
+      updatedProduct = [
+        {
+          id: fieldId,
+          value: [
+            {
+              id: product.id,
+              field: opt,
+              templateId: column.options[0].templateId,
+            },
+          ],
+        },
+        ...updatedProduct,
+      ];
+    } else {
+      updatedProduct = updatedProduct.map((e) => {
+        if (e.id == currentField.id) {
+          e.value = [
+            {
+              id: product.id,
+              field: opt,
+              templateId: column.options[0].templateId,
+            },
+            ...e.value,
+          ];
+        }
+        return e;
+      });
+
+      const fields = [
+        ...updatedProduct
+          .map((e) => {
+            if (e.id == currentField.id) {
+              return e.value;
+            }
+          })
+          .filter(Boolean),
+        // ...contentProducts,
+      ];
+      setContentProducts(fields);
+    }
+
+    const testing = updatedProduct.filter((e) => {
+      if (e.id == field) return e.value;
+    });
+
+    setCurrentProducts(testing);
+    setRelations(updatedProduct);
   };
 
   const handleClickRemove = (title: any) => {
@@ -134,14 +249,36 @@ export const Relation: React.FC<PropsRelation> = ({
         if (e.id !== title.id) return e;
       });
     });
+
+    const fieldId = column.data;
+    const test = relations.map((element) => {
+      if (element.id == fieldId) {
+        element.value = element.value.filter(
+          (item: any) => item.id !== title.id,
+        );
+      }
+
+      return element;
+    });
+    setRelations(test);
+  };
+
+  const handleUpdateProduct = async () => {
+    productRequests
+      .update({ id: currentItem.id, fields: relations })
+      .then((resoveld) => toast.success("Produto atualizado com sucesso"))
+      .catch((error) => toast.error(error.response.data.message));
   };
 
   useEffect(() => {
+    console.log({ currentProducts, value });
     if (isOpen) {
       buildColumns();
-      handleGetProducts().then((resolved) => console.log("done"));
+      handleGetProducts().then();
     }
-  }, [isOpen, contentProducts]);
+  }, [isOpen]);
+
+  useEffect(() => {}, [currentProducts]);
 
   return (
     <Container>
@@ -157,7 +294,7 @@ export const Relation: React.FC<PropsRelation> = ({
               fieldTitle.map((content, index) => {
                 return (
                   <div className="tagItem" key={index}>
-                    <Tag>
+                    <Tag key={index}>
                       {" "}
                       <label>{content?.value}</label>
                     </Tag>
@@ -172,7 +309,7 @@ export const Relation: React.FC<PropsRelation> = ({
             )}
           </div>
           <div className="contentTable">
-            <Title> Relacionar produtos </Title>
+            <Title> Relacionar items </Title>
             <Table
               columns={columns}
               dataSource={data}
@@ -187,25 +324,29 @@ export const Relation: React.FC<PropsRelation> = ({
             />
           </div>
         </Content>
+
+        <ButtonContainer>
+          <PrimaryButton onClick={handleChangeVisible}>Cancelar</PrimaryButton>
+          <Button
+            onClick={() => {
+              setIsOpen(!isOpen);
+              handleUpdateProduct();
+            }}
+          >
+            Salvar
+          </Button>
+        </ButtonContainer>
       </Modal>
 
       <div className="tagContent">
         <Tag onClick={handleChangeVisible} maxWidth="fit-content">
-          <label>
-            {" "}
-            {
-              contentProducts.filter((e) => {
-                if (e != "") return e;
-              }).length
-            }{" "}
-            Produto(s) relacionados{" "}
-          </label>
+          <label> {currentProducts.length} Item(s) relacionados </label>
         </Tag>
       </div>
 
-      <div className="imageContent" onClick={handleChangeVisible}>
+      {/* <div className="imageContent" onClick={handleChangeVisible}>
         <AddIcon />
-      </div>
+      </div> */}
     </Container>
   );
 };

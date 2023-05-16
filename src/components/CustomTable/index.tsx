@@ -101,8 +101,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
               //     ? [dataProvider[row]?.[column.data]]
               //     : dataProvider[row]?.[column.data];
 
-              // console.log({ initialValue, dataProvider });
-
               let initialValue = dataProvider[row]?.[column.data];
               if (!initialValue) {
                 initialValue = [""];
@@ -125,6 +123,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
                   prop={column.data}
                   td={td}
                   column={column}
+                  currentItem={dataProvider[row]}
                 />,
               );
             }
@@ -163,7 +162,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
       const contentHeaders = newColumns
         .filter((element) => {
           const ids = fields.map((item: any) => item?.id) as any[];
-          console.log({ element, ids });
           if (ids.includes(element?.data)) {
             return element;
           }
@@ -173,7 +171,13 @@ const CustomTable: React.FC<CustomTableProps> = ({
       contentHeaders.push(" ");
       setHeaders(contentHeaders);
 
-      handleRemoveColumn(Number(currentCell?.order), fields, newColumns);
+      console.log(currentCell?.id);
+      handleRemoveColumn(
+        Number(currentCell?.order),
+        fields,
+        newColumns,
+        currentCell?.id,
+      );
       setPosition(!position);
       toast.success("Coluna deletada com sucesso");
     } catch (error) {
@@ -311,7 +315,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
                     });
                   });
 
-                  console.log({ column });
                   setFrozen(column + 1);
                   handleFreeze(col, true);
                   // }

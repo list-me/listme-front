@@ -24,6 +24,7 @@ export const TableField: React.FC<ITableFieldProps> = ({
   prop,
   td,
   column,
+  currentItem,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [newValue, setNewValue] = useState<string[]>(value);
@@ -64,6 +65,8 @@ export const TableField: React.FC<ITableFieldProps> = ({
         value={newValue}
         templateId={handleGetTemplateId(column)}
         field={handleGetField(column)}
+        currentItem={currentItem}
+        column={column}
       />
     ),
   };

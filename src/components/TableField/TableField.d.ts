@@ -3,6 +3,7 @@ interface ITableFieldProps {
   value: string[];
   type: string;
   handleSetNewValue?: Function;
+  currentItem?: any;
 
   instance: any;
   row: number;

@@ -10,6 +10,10 @@ export const Content = styled.div`
     margin-bottom: 2.5rem;
   }
 
+  .containerFields {
+    display: block;
+  }
+
   .selectContainer {
     display: block;
     flex-direction: column;
@@ -70,11 +74,83 @@ export const Content = styled.div`
     }
   }
 
+  .selectField {
+    display: flex;
+    flex-direction: column;
+
+    margin-bottom: 2.5rem;
+
+    .ant-form-item-label {
+      display: flex;
+      height: 24px !important;
+      width: 100%;
+      margin-bottom: 8px !important;
+      color: red;
+    }
+
+    .ant-select {
+      border: none !important;
+
+      width: 40% !important;
+    }
+
+    .ant-select-selector {
+      font-family: "Satoshi Regular", sans-serif;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px !important;
+      line-height: 150%;
+      color: #212529;
+
+      box-sizing: border-box;
+
+      display: flex;
+      align-items: center;
+
+      padding: 16px !important;
+
+      width: 100%;
+      height: 40px !important;
+
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+
+      .ant-select-arrow {
+        height: 50px !important;
+        background-color: green;
+      }
+    }
+
+    .ant-select-open {
+      font-family: "Satoshi Regular", sans-serif !important;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 150%;
+      color: #212529 !important;
+
+      max-height: 100px !important;
+    }
+  }
+
+  .selectField .ant-select-selector {
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
+  }
+
+  .selectField .ant-select-selector .ant-select-arrow {
+    background-color: red;
+
+    top: 80% !important;
+    transform: translateY(-80%);
+  }
+
   .label {
     font-size: 14px;
     /* font-weight: 700; */
 
-    margin-bottom: 5px;
+    margin-bottom: 1px;
   }
 
   .radio-group {
@@ -120,4 +196,63 @@ export const Loader = styled.div`
     border-radius: 50%;
     animation: spinner 1.5s linear infinite;
   }
+`;
+
+export const Button = styled.button`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 32px;
+  gap: 10px;
+
+  width: 183px;
+  height: 52px;
+
+  background: #3818d9;
+  border-radius: 6px;
+
+  border: none;
+  outline: none;
+
+  font-family: "Satoshi Bold", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+
+  text-align: center;
+
+  color: #ffffff;
+
+  margin-left: 24px;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+export const PrimaryButton = styled.button`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 32px;
+  gap: 10px;
+
+  /* primary / second */
+  width: 183px;
+  height: 52px;
+
+  /* primary / second */
+
+  background: #f7f5ff;
+  border-radius: 6px;
+
+  font-family: "Satoshi Bold", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+  border: 0;
+  color: #a899f1;
 `;

@@ -59,4 +59,15 @@ export const templateRequests = {
 
     return response.data[0];
   },
+  removeColumn: async (id: string, column: any): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.delete(`/template/remove/column/${id}`, {
+      data: column,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data[0];
+  },
 };

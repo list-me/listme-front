@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Radio, RadioChangeEvent, Select, Space } from "antd";
+import React, { useContext, useEffect, useState } from "react";
+import { InputNumber, Radio, RadioChangeEvent, Select, Space } from "antd";
 import { Content, Loader } from "./styles";
 import { IPropsRelationForm, RelationOptions, Mapping } from "./RelationForm.d";
 import { templateRequests } from "../../../services/apis/requests/template";
 import { toast } from "react-toastify";
+import { productContext } from "../../../context/products";
 
 export const RelationForm: React.FC<IPropsRelationForm> = ({
   value,
@@ -31,8 +32,8 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
     UNILATERAL: "unilateral",
   };
 
-  const getMappingType = (options?: any): string => {
-    return options ? options[0]["mappingType"] : "oneToOne";
+  const getLimit = (options?: any): string => {
+    return options ? options[0]["limit"] : "1";
   };
 
   const getAgreementType = (options?: any): string => {
@@ -40,7 +41,24 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   };
 
   const getCurrentField = (options?: any): string => {
-    return options ? options[0]["field"] : "";
+    if (options) {
+      const type =
+        options[0]["templateId"] == window.location.pathname.substring(10)
+          ? OPTIONS_TEMPLATE.SAME
+          : OPTIONS_TEMPLATE.OTHER;
+
+      if (type == OPTIONS_TEMPLATE.SAME) {
+        return options[0]["originField"];
+      }
+
+      return options[0]["field"];
+    }
+
+    return "";
+  };
+
+  const getCurrentOriginField = (options?: any): string => {
+    return options ? options[0]["originField"] : "";
   };
 
   const getTemplateRelation = (options?: any): string => {
@@ -59,18 +77,23 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
 
   const [template, setTemplate] = useState<Mapping[]>([]);
   const [fields, setFields] = useState<Mapping[]>([]);
+  const [originFields, setOriginFields] = useState<Mapping[]>([]);
+
   const [templateRelation, setTemplateRelation] = useState<string>(
     getTemplateRelation(value.options),
   );
   const [agreementType, setAgreementType] = useState<string>(
     getAgreementType(value.options),
   );
-  const [mappingType, setMappingType] = useState<string>(
-    getMappingType(value?.options),
-  );
+  const [limit, setLimit] = useState<string | number>(getLimit(value?.options));
   const [fieldId, setFieldId] = useState<string>(
     getCurrentField(value?.options),
   );
+
+  const [originFieldId, setOriginFieldId] = useState<string>(
+    getCurrentOriginField(value?.options),
+  );
+
   const [templateId, setTemplateId] = useState<string>(
     getTemplateId(value.options),
   );
@@ -125,7 +148,7 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   useEffect(() => {
     if (value && Object.keys(value).length > 1) {
       const options = value.options[0] as unknown as RelationOptions;
-      setMappingType(options.mappingType);
+      setLimit(options.limit);
 
       if (getTemplateRelation(value?.options) === OPTIONS_TEMPLATE.OTHER) {
         handleChangeTemplate(getTemplateId(value.options)).then();
@@ -153,7 +176,7 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
               };
             });
 
-          setFields(customFields);
+          setOriginFields(customFields);
         });
     }
   }, []);
@@ -162,7 +185,7 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
     <Content>
       <div>
         <div className="section">
-          <label className="label">Relacionar com</label>
+          <label className="label">Selecione o Catálogo</label>
           <Radio.Group
             buttonStyle="solid"
             value={templateRelation}
@@ -183,44 +206,91 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
           </Radio.Group>
         </div>
         {templateRelation == "Outro Catálogo" ? (
-          <div className="selectContainer">
-            <label className="label">Selecione o catálogo</label>
-            <Select
-              style={{
-                height: "30px",
-                border: "1px solid #DEE2E6",
-              }}
-              onChange={(e: string) => {
-                handleChangeTemplate(e);
-                handleChangeOptions({ templateId: e });
-              }}
-              placeholder="Seleciones o template"
-              defaultValue={template.find((e) => e.value == templateId)?.value}
-              value={templateId}
-              disabled={isEdit}
-            >
-              {template.map((item, index) => {
-                return (
-                  <Select.Option key={index} value={item.value}>
-                    {" "}
-                    {item.label}{" "}
-                  </Select.Option>
-                );
-              })}
-            </Select>
+          <div className="containerFields">
+            <div className="selectContainer">
+              <label className="label">Selecione o catálogo</label>
+              <Select
+                style={{
+                  height: "30px",
+                  border: "1px solid #DEE2E6",
+                }}
+                onChange={(e: string) => {
+                  handleChangeTemplate(e);
+                  handleChangeOptions({ templateId: e });
+                }}
+                placeholder="Seleciones o template"
+                defaultValue={
+                  template.find((e) => e.value == templateId)?.value
+                }
+                value={templateId}
+                disabled={isEdit}
+              >
+                {template.map((item, index) => {
+                  return (
+                    <Select.Option key={index} value={item.value}>
+                      {" "}
+                      {item.label}{" "}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </div>
+            <div className="selectField">
+              <span className="label">Atributo para exibição</span>
+              <Select
+                style={{
+                  height: "30px",
+                  border: "1px solid #DEE2E6",
+                }}
+                onChange={(e: string) => {
+                  setFieldId(e);
+                  handleChangeOptions({ field: e });
+                }}
+                defaultValue={
+                  fields.find((e) => e.value == fieldId)?.value
+                    ? fields.find((e) => e.value == fieldId)?.value
+                    : ""
+                }
+                placeholder="Escolha uma coluna"
+                disabled={isEdit}
+                value={fieldId}
+              >
+                {fields.map((item, index) => {
+                  return (
+                    <Select.Option key={index} value={item.value}>
+                      {" "}
+                      {item.label}{" "}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </div>
           </div>
         ) : (
           <></>
         )}
         <div className="section">
-          <label className="label">Tipo de Relacionamento</label>
-          <Radio.Group
+          <label className="label">Número máximo de vínculos</label>
+          <InputNumber
+            min={1}
+            max={999}
+            defaultValue={limit}
+            onChange={(e) => {
+              if (e) {
+                setLimit(e);
+                handleChangeOptions({ limit: e });
+              }
+            }}
+            controls
+            bordered
+          />
+          {/* <Radio.Group
             buttonStyle="solid"
             // defaultValue="oneToOne"
-            value={mappingType}
+            value={limit}
             onChange={(e) => {
-              setMappingType(e.target.value);
-              handleChangeOptions({ mappingType: e.target.value });
+              setLimit(e.target.value);
+              handleChangeOptions({ limit: e.target.value });
             }}
             options={Object.values(OPTIONS_MAPPING)}
             className="radio-group"
@@ -235,34 +305,40 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
                 );
               })}
             </Space>
-          </Radio.Group>
+          </Radio.Group> */}
         </div>
         {isLoading ? (
           <Loader className="lds-roller">
             <div className="loading-spinner"></div>
           </Loader>
         ) : (
-          <div className="selectContainer">
-            <label className="label">Relacionar com</label>
-            {/* <Form.Item
-              name="type"
-              rules={[{ required: true, message: "Escolha o tipo de valor" }]}
-            > */}
+          <div className="selectField">
+            <label className="label">Atributo do catálogo atual</label>
             <Select
               style={{
                 height: "30px",
                 border: "1px solid #DEE2E6",
               }}
               onChange={(e: string) => {
-                setFieldId(e);
-                handleChangeOptions({ field: e });
+                setOriginFieldId(e);
+
+                console.log({ templateRelation, t: OPTIONS_TEMPLATE.SAME });
+                if (templateRelation == OPTIONS_TEMPLATE.SAME) {
+                  setFieldId(e);
+                  handleChangeOptions({ field: e });
+                }
+                handleChangeOptions({ originField: e });
               }}
-              // defaultValue={fields.find((e) => e.value == fieldId)?.value}
+              defaultValue={
+                originFields.find((e) => e.value == originFieldId)?.value
+                  ? originFields.find((e) => e.value == originFieldId)?.value
+                  : ""
+              }
               placeholder="Escolha uma coluna"
               disabled={isEdit}
-              value={fields.find((e) => e.value == fieldId)?.value ?? fieldId}
+              value={originFieldId}
             >
-              {fields.map((item, index) => {
+              {originFields.map((item, index) => {
                 return (
                   <Select.Option key={index} value={item.value}>
                     {" "}
@@ -271,7 +347,6 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
                 );
               })}
             </Select>
-            {/* </Form.Item> */}
           </div>
         )}
       </div>

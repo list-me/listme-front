@@ -21,7 +21,7 @@ export const Container = styled.div`
 
   .dragger {
     width: fit-content;
-    /* max-height: 250px; */
+    margin-top: 10px;
 
     font-family: "Satoshi Regular";
     font-style: normal;
@@ -31,7 +31,7 @@ export const Container = styled.div`
     color: #212529;
 
     input:first-child {
-      margin-top: 8px;
+      /* margin-top: 8px; */
     }
   }
 

@@ -69,6 +69,7 @@ interface ITypeProductContext {
     column: number,
     fields: any[],
     newColumns: any[],
+    fieldId: string,
   ) => void;
 }
 
@@ -387,7 +388,6 @@ export const ProductContextProvider = ({ children }: any) => {
     setCustomFields(customs);
     // const custom = buildCustomFields(template.fields.fields, {width: `${newSize.toString()}`}, col);
 
-    console.log({ customs });
     templateRequests
       .customView(template.id, { fields: customs })
       .catch((error) =>
@@ -519,7 +519,6 @@ export const ProductContextProvider = ({ children }: any) => {
         };
       });
 
-    console.log({ fields, col });
     // setHeaderTable(col);
     setCustomFields(fields);
     templateRequests
@@ -583,6 +582,7 @@ export const ProductContextProvider = ({ children }: any) => {
     column: number,
     fields: any[],
     newColumns: any[],
+    fieldId: string,
   ) => {
     const newTemplate = template;
     newTemplate.fields.fields = fields;
@@ -600,21 +600,18 @@ export const ProductContextProvider = ({ children }: any) => {
       }
     });
 
-    console.log({ customs, newTemplate });
     setCustomFields(customs);
 
     setHeaderTable(newColumns);
     templateRequests
-      .update(window.location.pathname.substring(10), { fields })
-      .then((resolve) => {
-        templateRequests
-          .customView(template.id, { fields: customs })
-          .catch((error) =>
-            toast.error("Ocorreu um ao alterar os campos customizados"),
-          );
-      })
+      .removeColumn(window.location.pathname.substring(10), { column: fieldId })
+      // templateRequests
+      //   .customView(template.id, { fields: customs })
+      //   .catch((error) =>
+      //     toast.error("Ocorreu um ao alterar os campos customizados"),
+      //   );
       .catch((error) =>
-        toast.error("Ocorreu um erro ao alterar a visibilidade do campo"),
+        toast.error("Ocorreu um erro ao excluir a coluna do template"),
       );
   };
 

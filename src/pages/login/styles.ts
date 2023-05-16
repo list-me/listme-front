@@ -2,20 +2,25 @@ import styled from "styled-components";
 
 export const LoginContainer = styled.div`
   width: 416px;
-  height: 672px;
+  height: fit-content;
 
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  padding: 40px;
+  padding: 30px;
   border: 1px solid #e9ecef;
   border-radius: 8px;
 
-  margin-bottom: 162px;
+  /* margin-bottom: 162px; */
   margin-top: 80px;
 
   background: ${({ theme }) => theme.colors.background.primary};
+
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    margin-top: 0;
+    height: fit-content;
+  }
 `;
 
 export const Title = styled.h1`
@@ -29,22 +34,30 @@ export const Title = styled.h1`
 `;
 
 export const Background = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 
-  padding: 10rem 0;
+  padding-top: 6rem;
 
   background: ${({ theme }) => theme.colors.background.default};
+
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    padding-top: 2rem;
+  }
 `;
 
-export const LogoContainer = styled.span`
+export const LogoContainer = styled.div`
   display: flex;
-  margin-top: -20px;
+  margin-bottom: 0;
+
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    margin-bottom: 2rem;
+  }
 `;
 
 export const InputContainer = styled.span`
@@ -103,7 +116,7 @@ export const BottomContainer = styled.span`
   color: ${({ theme }) => theme.colors.tertiary};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
 
-  margin-top: 24px;
+  margin-top: 10px;
 
   width: 100%;
 `;

@@ -6,7 +6,7 @@ export const Container = styled.div`
 
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 
   /* padding: 8px; */
 
@@ -47,6 +47,14 @@ export const Container = styled.div`
     width: 100% !important;
     height: 500px !important;
   } */
+`;
+
+export const ButtonContainer = styled.div`
+  width: 100%;
+  padding: 2rem 0;
+
+  display: flex;
+  justify-content: right;
 `;
 
 export const Tag = styled.div<{ maxWidth?: string }>`
@@ -117,6 +125,15 @@ export const Title = styled.h1`
 export const Content = styled.div`
   width: 100%;
   height: fit-content;
+
+  max-height: 700px;
+  overflow: auto;
+
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    max-height: 500px;
+  }
+
+  padding-right: 1rem;
 
   .contentProducts {
     display: flex;
@@ -199,12 +216,8 @@ export const Content = styled.div`
       font-weight: 400;
       line-height: 150%;
 
-      :before {
-        display: none !important;
-      }
-
-      /* height: 56px; */
-      /* padding: 16px; */
+      height: 56px;
+      padding: 16px;
     }
 
     .ant-table {
@@ -237,4 +250,102 @@ export const Content = styled.div`
       border: 2px solid #e9ecef !important;
     }
   }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: unset;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #cccccc;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #3818d9;
+  }
+`;
+
+export const Loader = styled.div`
+  display: flex;
+  justify-content: center;
+
+  @keyframes spinner {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  .loading-spinner {
+    width: 10px;
+    height: 10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3818d9;
+    border-radius: 50%;
+    animation: spinner 1.5s linear infinite;
+  }
+`;
+
+export const Button = styled.button`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 32px;
+  gap: 10px;
+
+  width: 183px;
+  height: 52px;
+
+  background: #3818d9;
+  border-radius: 6px;
+
+  border: none;
+  outline: none;
+
+  font-family: "Satoshi Bold", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+
+  text-align: center;
+
+  color: #ffffff;
+
+  margin-left: 24px;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+export const PrimaryButton = styled.button`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 32px;
+  gap: 10px;
+
+  /* primary / second */
+  width: 183px;
+  height: 52px;
+
+  /* primary / second */
+
+  background: #f7f5ff;
+  border-radius: 6px;
+
+  font-family: "Satoshi Bold", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+  border: 0;
+  color: #a899f1;
 `;

@@ -1,7 +1,7 @@
 type RelationOptions = {
   agreementType: string;
   field: string;
-  mappingType: string;
+  limit: string | number;
   owner: string;
   templateId: string;
 };
@@ -28,7 +28,7 @@ type Mapping = {
 };
 
 type Option = {
-  [key: string]: string;
+  [key: string]: string | number;
 };
 
 interface IPropsRelationForm {

@@ -37,13 +37,14 @@ interface PropsModal {
 type Options = {
   agreementType: string;
   field: string;
-  mappingType: string;
+  originField: string;
+  limit: string | number;
   owner?: string;
   templateId: string;
 };
 
 type Option = {
-  [key: string]: string;
+  [key: string]: string | number;
 };
 
 const KEYS = {
@@ -73,7 +74,8 @@ export const PersonalModal = ({
       templateId: window.location.pathname.substring(10),
       agreementType: "unilateral",
       field: "",
-      mappingType: "oneToOne",
+      limit: 1,
+      originField: "",
     },
   ]);
   const formRef = useRef<HTMLFormElement>(null);
@@ -155,7 +157,7 @@ export const PersonalModal = ({
         title,
         options: data?.type == "relation" ? options : filtered,
         required,
-        is_public: true,
+        is_public: false,
         help_text: "This fiedl will help you to make a new product register",
         description: "Completly random description",
       };
@@ -164,7 +166,7 @@ export const PersonalModal = ({
 
     try {
       console.log({ templateUpdated });
-      await templateRequests.update(template?.id, { fields: templateUpdated });
+      // await templateRequests.update(template?.id, { fields: templateUpdated });
       toast.success("Template atualizado com sucesso");
       return templateUpdated;
     } catch (error) {
@@ -238,13 +240,19 @@ export const PersonalModal = ({
     if (key == "field") {
       changed["field"] = value;
     }
-    if (key == "mappingType") {
-      changed["mappingType"] = value;
+
+    if (key == "originField") {
+      changed["originField"] = value;
+    }
+
+    if (key == "limit") {
+      changed["limit"] = value as unknown as number;
     }
     if (key == "agreementType") {
       changed["agreementType"] = value;
     }
 
+    console.log({ changed });
     setOptions([changed]);
   };
 
@@ -271,13 +279,6 @@ export const PersonalModal = ({
             <form ref={formRef} className="form">
               <div className="encapsulator">
                 <InputContainer>
-                  {/* <Form.Item
-                    label="Titulo do campo"
-                    name="title"
-                    rules={[
-                      { required: true, message: "Insira o título do campo" },
-                    ]}
-                  > */}
                   <Input
                     style={{
                       height: "64px",
@@ -292,7 +293,6 @@ export const PersonalModal = ({
                     }}
                     placeholder="Informe o nome do campo"
                   />
-                  {/* </Form.Item> */}
                   {!MULTI_SELECT.includes(data?.type) &&
                   data?.type != "relation" ? (
                     <Form.Item
@@ -301,6 +301,7 @@ export const PersonalModal = ({
                       rules={[
                         { required: true, message: "Escolha o tipo de valor" },
                       ]}
+                      style={{ marginTop: "10px" }}
                     >
                       <Select
                         style={{
@@ -442,6 +443,8 @@ export const PersonalModal = ({
                       }
 
                       filtered = [...draggerOptions];
+                    } else if (type == "relation") {
+                      filtered = [...options];
                     } else {
                       filtered = [...draggerOptions];
                     }
@@ -466,7 +469,7 @@ export const PersonalModal = ({
                         options: filtered,
                       };
                       onClickModal();
-                      onUpdate(newColumn, response);
+                      // onUpdate(newColumn, response);
                     });
                   }}
                 >
