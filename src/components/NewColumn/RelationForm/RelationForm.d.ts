@@ -14,7 +14,7 @@ interface DataField {
   hidden?: boolean;
   id: string;
   is_public: string;
-  options: RelationOptions[] | Array<string>;
+  options: RelationOptions[];
   order?: string;
   required: boolean;
   title: string;
@@ -28,7 +28,12 @@ type Mapping = {
 };
 
 type Option = {
-  [key: string]: string | number;
+  agreementType: string;
+  field: string;
+  originField: string;
+  limit: string | number;
+  owner?: string;
+  templateId: string;
 };
 
 interface IPropsRelationForm {

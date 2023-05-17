@@ -380,6 +380,11 @@ export const Principal = styled.button`
   &:hover {
     cursor: pointer;
   }
+
+  &:disabled {
+    background-color: #DEE2E6;
+    cursor: auto;
+  }
 `;
 
 export const IconContent = styled.span`

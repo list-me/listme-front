@@ -3,7 +3,6 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -23,9 +22,9 @@ import { Confirmation } from "../Confirmation";
 
 registerAllModules();
 
-const CellMemo = React.memo(Cell);
-const NewColumnMemo = React.memo(NewColumn);
-const TableFieldMemo = React.memo(TableField);
+// const CellMemo = React.memo(Cell);
+// const NewColumnMemo = React.memo(NewColumn);
+// const TableFieldMemo = React.memo(TableField);
 
 const CustomTable: React.FC<CustomTableProps> = ({
   dataProvider,
@@ -55,7 +54,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   const [headers, setHeaders] = useState<string[]>(colHeaders ?? [""]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [position, setPosition] = useState(false);
-  const [iconClicked, setIconClicked] = useState<boolean>(true);
+  const [iconClicked] = useState<boolean>(true);
 
   const customRenderer = (
     td: HTMLTableCellElement,
@@ -171,7 +170,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
       contentHeaders.push(" ");
       setHeaders(contentHeaders);
 
-      console.log(currentCell?.id);
       handleRemoveColumn(
         Number(currentCell?.order),
         fields,
@@ -235,7 +233,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
                 const newPosition = [...columns, newColumn];
                 newPosition.splice(newPosition.length - 2, 1);
                 newPosition.push({});
-                console.log("New", { newPosition });
                 setColumns(newPosition);
 
                 const contentHeaders = columns.map((item) => item?.title);
@@ -272,27 +269,38 @@ const CustomTable: React.FC<CustomTableProps> = ({
                   });
 
                   return true;
-                } else {
-                  // if (col?.order == e) {
-                  const colWidth = headerTable
-                    .filter((item) => {
-                      if (Number(item?.order) <= Number(col?.order))
-                        return item;
-                    })
-                    .map((element) => {
-                      if (element.width)
-                        return Number(element.width.replace("px", ""));
-                    });
+                }
+                // if (col?.order == e) {
+                const colWidth = headerTable
+                  .filter((item) => {
+                    if (Number(item?.order) <= Number(col?.order)) return item;
+                  })
+                  .map((element) => {
+                    if (element.width)
+                      return Number(element.width.replace("px", ""));
+                  });
 
-                  // if (colWidth).reduce((before, after) => before + after);
+                // if (colWidth).reduce((before, after) => before + after);
 
-                  // const tableWidth = hotRef.current!?.__hotInstance.rootElement.clientWidth
-                  // if (colWidth && tableWidth && colWidth > tableWidth * 0.65) {
-                  //     toast.warn("A coluna selecionada excede o limite de visualização da tela")
-                  //     return false;
-                  // }
+                // const tableWidth = hotRef.current!?.__hotInstance.rootElement.clientWidth
+                // if (colWidth && tableWidth && colWidth > tableWidth * 0.65) {
+                //     toast.warn("A coluna selecionada excede o limite de visualização da tela")
+                //     return false;
+                // }
 
-                  const test = columns.map((item, index) => {
+                const test = columns.map((item, index) => {
+                  if (index == column) {
+                    return {
+                      ...item,
+                      frozen: true,
+                    };
+                  }
+                  return item;
+                });
+
+                col.frozen = true;
+                setColumns((prev) => {
+                  return prev.map((item, index) => {
                     if (index == column) {
                       return {
                         ...item,
@@ -301,27 +309,14 @@ const CustomTable: React.FC<CustomTableProps> = ({
                     }
                     return item;
                   });
+                });
 
-                  col.frozen = true;
-                  setColumns((prev) => {
-                    return prev.map((item, index) => {
-                      if (index == column) {
-                        return {
-                          ...item,
-                          frozen: true,
-                        };
-                      }
-                      return item;
-                    });
-                  });
-
-                  setFrozen(column + 1);
-                  handleFreeze(col, true);
-                  // }
-                  return true;
-                }
+                setFrozen(column + 1);
+                handleFreeze(col, true);
+                // }
+                return true;
               }}
-              freeze={headerTable[column]?.frozen ? true : false}
+              freeze={!!headerTable[column]?.frozen}
               handleSort={(e: any, operation: any) => {
                 //   // setData(data.sort((a, b) => {
                 //   //     if (a[col?.data] == b[col?.data]) return 0;
@@ -396,7 +391,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
         // height="100%"
         width="100%"
         stretchH="all"
-        manualColumnResize={true}
+        manualColumnResize
         // manualRowResize
         autoRowSize
         beforeColumnMove={beforeColumnMove}

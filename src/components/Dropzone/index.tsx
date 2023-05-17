@@ -35,6 +35,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
       setLoading(true);
       try {
         const newFiles = await uploadImages(acceptedFiles);
+        console.log({ newFiles });
         if (newFiles) {
           const temp = [...newFiles, ...items].filter((item) => item != "");
 
@@ -167,6 +168,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
             ref={dropDownRef}
           >
             {items.map((item, index) => {
+              console.log({ item });
               if (item.length > 1) {
                 return (
                   <Image key={index}>
@@ -174,6 +176,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                     <a href={item} target="_blank">
                       {item.includes("jpeg") ||
                       item.includes("jpg") ||
+                      item.includes("svg") ||
                       item.includes("png") ? (
                         <img
                           src={item}

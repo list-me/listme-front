@@ -4,6 +4,7 @@ interface PropsRelation {
   field: string;
   currentItem: any;
   column: any;
+  handleSave: Function;
 }
 
 export type { PropsRelation };

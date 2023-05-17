@@ -11,6 +11,8 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   currentFields,
   handleChangeOptions,
 }) => {
+  console.log({ value });
+
   const OPTIONS_TEMPLATE = {
     OTHER: "Outro Catálogo",
     SAME: "Mesmo Catálogo",
@@ -41,16 +43,19 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   };
 
   const getCurrentField = (options?: any): string => {
+    console.log({ options });
     if (options) {
-      const type =
-        options[0]["templateId"] == window.location.pathname.substring(10)
-          ? OPTIONS_TEMPLATE.SAME
-          : OPTIONS_TEMPLATE.OTHER;
+      console.log("entrou");
+      // const type =
+      //   options[0]["templateId"] == window.location.pathname.substring(10)
+      //     ? OPTIONS_TEMPLATE.SAME
+      //     : OPTIONS_TEMPLATE.OTHER;
 
-      if (type == OPTIONS_TEMPLATE.SAME) {
-        return options[0]["originField"];
-      }
+      // if (type == OPTIONS_TEMPLATE.SAME) {
+      //   return options[0]["originField"];
+      // }
 
+      console.log("valor", options[0]["field"]);
       return options[0]["field"];
     }
 
@@ -86,9 +91,9 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
     getAgreementType(value.options),
   );
   const [limit, setLimit] = useState<string | number>(getLimit(value?.options));
-  const [fieldId, setFieldId] = useState<string>(
-    getCurrentField(value?.options),
-  );
+  const [fieldId, setFieldId] = useState<string>(value.options[0].field);
+
+  console.log({ fieldId });
 
   const [originFieldId, setOriginFieldId] = useState<string>(
     getCurrentOriginField(value?.options),
@@ -105,11 +110,14 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
     const { value } = e.target;
 
     if (OPTIONS_TEMPLATE.OTHER && !template.length) {
+      const current = window.location.pathname.substring(10);
       templateRequests.list({ limit: 100 }).then((resolve) => {
         const data = resolve as Array<any>;
-        const templates = data.map((e) => {
-          return { value: e.id, label: e.name };
-        });
+        const templates = data
+          .map((e) => {
+            return { value: e.id, label: e.name };
+          })
+          .filter((e) => e.value !== current);
 
         setTemplate(templates);
       });
@@ -132,7 +140,7 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
           });
 
         setFields(customFields);
-        setFieldId("");
+        // setFieldId("");
       });
 
       setIsLoading(false);
@@ -146,6 +154,7 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   const options = ["Mesmo Catálogo", "Outro Catálogo"];
 
   useEffect(() => {
+    setFieldId(value.options[0].field);
     if (value && Object.keys(value).length > 1) {
       const options = value.options[0] as unknown as RelationOptions;
       setLimit(options.limit);
@@ -180,6 +189,12 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
         });
     }
   }, []);
+
+  useEffect(() => {
+    if (templateRelation == OPTIONS_TEMPLATE.SAME) {
+      setAgreementType(OPTIONS_AGREEMENT.UNILATERAL);
+    }
+  }, [templateRelation]);
 
   return (
     <Content>
@@ -216,7 +231,14 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
                 }}
                 onChange={(e: string) => {
                   handleChangeTemplate(e);
-                  handleChangeOptions({ templateId: e });
+                  const current = {
+                    limit: limit,
+                    field: fieldId,
+                    originField: originFieldId,
+                    agreementType: agreementType,
+                    templateId: e,
+                  };
+                  handleChangeOptions(current);
                 }}
                 placeholder="Seleciones o template"
                 defaultValue={
@@ -244,7 +266,14 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
                 }}
                 onChange={(e: string) => {
                   setFieldId(e);
-                  handleChangeOptions({ field: e });
+                  const current = {
+                    limit: limit,
+                    field: e,
+                    originField: originFieldId,
+                    agreementType: agreementType,
+                    templateId: templateId,
+                  };
+                  handleChangeOptions(current);
                 }}
                 defaultValue={
                   fields.find((e) => e.value == fieldId)?.value
@@ -278,7 +307,17 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
             onChange={(e) => {
               if (e) {
                 setLimit(e);
-                handleChangeOptions({ limit: e });
+
+                console.log({ fieldId });
+
+                const current = {
+                  limit: e,
+                  field: fieldId,
+                  originField: originFieldId,
+                  agreementType: agreementType,
+                  templateId: templateId,
+                };
+                handleChangeOptions(current);
               }
             }}
             controls
@@ -322,12 +361,26 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
               onChange={(e: string) => {
                 setOriginFieldId(e);
 
-                console.log({ templateRelation, t: OPTIONS_TEMPLATE.SAME });
                 if (templateRelation == OPTIONS_TEMPLATE.SAME) {
                   setFieldId(e);
-                  handleChangeOptions({ field: e });
+                  const current = {
+                    limit: limit,
+                    field: e,
+                    originField: originFieldId,
+                    agreementType: agreementType,
+                    templateId: templateId,
+                  };
+                  handleChangeOptions(current);
                 }
-                handleChangeOptions({ originField: e });
+
+                const current = {
+                  limit: limit,
+                  field: fieldId,
+                  originField: e,
+                  agreementType: agreementType,
+                  templateId: templateId,
+                };
+                handleChangeOptions(current);
               }}
               defaultValue={
                 originFields.find((e) => e.value == originFieldId)?.value
@@ -358,7 +411,14 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
           value={agreementType}
           onChange={(e) => {
             setAgreementType(e.target.value);
-            handleChangeOptions({ agreementType: e.target.value });
+            const current = {
+              limit: limit,
+              field: fieldId,
+              originField: originFieldId,
+              agreementType: e.target.value,
+              templateId: templateId,
+            };
+            handleChangeOptions(current);
           }}
           options={Object.values(OPTIONS_AGREEMENT)}
           className="radio-group"

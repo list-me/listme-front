@@ -50,6 +50,10 @@ export const TableField: React.FC<ITableFieldProps> = ({
     return column?.options[0]?.field;
   };
 
+  const handleChangeValue = (newValue: any) => {
+    instance.setDataAtRowProp(row, prop, newValue);
+  };
+
   const FIELD_TYPES = {
     file: (
       <Dropzone
@@ -67,6 +71,7 @@ export const TableField: React.FC<ITableFieldProps> = ({
         field={handleGetField(column)}
         currentItem={currentItem}
         column={column}
+        handleSave={(e: any) => handleChangeValue(e)}
       />
     ),
   };

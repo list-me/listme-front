@@ -69,15 +69,29 @@ export const PersonalModal = ({
     data?.options ?? [""],
   );
 
-  const [options, setOptions] = useState<Options[]>([
-    {
-      templateId: window.location.pathname.substring(10),
-      agreementType: "unilateral",
-      field: "",
-      limit: 1,
-      originField: "",
-    },
-  ]);
+  const getOptions = (): Options[] | any[] => {
+    if (data?.type == "relation") {
+      const currentOptions = data?.options[0];
+      return [
+        {
+          agreementType: currentOptions?.agreementType,
+          field: currentOptions?.field,
+          limit: currentOptions?.limit,
+          originField: currentOptions?.originField,
+          templateId: currentOptions?.templateId,
+        },
+      ];
+    }
+
+    return [];
+  };
+
+  const [options, setOptions] = useState<any[]>(getOptions());
+  const [enable, setEnable] = useState<boolean>(true);
+
+  const initial = useRef(options);
+  const titleRef = useRef(title);
+
   const formRef = useRef<HTMLFormElement>(null);
 
   const textOptions = [
@@ -165,8 +179,7 @@ export const PersonalModal = ({
     }
 
     try {
-      console.log({ templateUpdated });
-      // await templateRequests.update(template?.id, { fields: templateUpdated });
+      await templateRequests.update(template?.id, { fields: templateUpdated });
       toast.success("Template atualizado com sucesso");
       return templateUpdated;
     } catch (error) {
@@ -225,40 +238,23 @@ export const PersonalModal = ({
     });
   };
 
-  const handleChangeOptions = (option: Option): void => {
-    const key = Object.keys(option)[0] as unknown as string;
-    const value = Object.values(option)[0] as unknown as string;
-
-    const changed =
-      options[0] != undefined
-        ? (options[0] as unknown as Options)
-        : ({} as unknown as Options);
-
-    if (key == "templateId") {
-      changed.templateId = value;
-    }
-    if (key == "field") {
-      changed["field"] = value;
-    }
-
-    if (key == "originField") {
-      changed["originField"] = value;
-    }
-
-    if (key == "limit") {
-      changed["limit"] = value as unknown as number;
-    }
-    if (key == "agreementType") {
-      changed["agreementType"] = value;
-    }
-
-    console.log({ changed });
-    setOptions([changed]);
+  const handleChangeOptions = (option: Options): void => {
+    setOptions([option]);
   };
 
   useEffect(() => {
     setType(data?.type);
+
+    if (data?.type == "relation") {
+      setEnable(false);
+    }
   }, [isOpen, data, draggerOptions]);
+
+  useEffect(() => {
+    if (options !== initial.current || title !== titleRef.current) {
+      setEnable(true);
+    }
+  }, [options, title]);
 
   return (
     <>
@@ -469,9 +465,10 @@ export const PersonalModal = ({
                         options: filtered,
                       };
                       onClickModal();
-                      // onUpdate(newColumn, response);
+                      onUpdate(newColumn, response);
                     });
                   }}
+                  disabled={!enable}
                 >
                   Salvar
                 </Principal>

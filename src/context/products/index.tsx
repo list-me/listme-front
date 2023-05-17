@@ -548,7 +548,6 @@ export const ProductContextProvider = ({ children }: any) => {
     newPosition.splice(newPosition.length - 2, 1);
     newPosition.push({});
     setHeaderTable(newPosition);
-    console.log("Added");
   };
 
   const handleFilter = (word: string): any[] => {

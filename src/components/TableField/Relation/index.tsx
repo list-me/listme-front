@@ -27,6 +27,7 @@ export const Relation: React.FC<PropsRelation> = ({
   field,
   currentItem,
   column,
+  handleSave = () => {},
 }) => {
   const buildProduct = (fields: any) => {
     const obj: any[] = [];
@@ -46,7 +47,6 @@ export const Relation: React.FC<PropsRelation> = ({
 
     return obj;
   };
-
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [contentProducts, setContentProducts] = useState<any[]>(value ?? []);
   const [currentProducts, setCurrentProducts] = useState<any[]>(value ?? []);
@@ -86,7 +86,6 @@ export const Relation: React.FC<PropsRelation> = ({
       templateRequests.get(templateId).then((response) => {
         const columnsTable = response.fields.fields
           .map((attribute: any) => {
-            console.log({ attribute, column });
             if (column.options[0].agrrementType == "bilateral") {
               if (attribute.id == column.data) {
                 setOpt(attribute.options[0].field);
@@ -145,7 +144,7 @@ export const Relation: React.FC<PropsRelation> = ({
     const productPromises = await contentProducts.map(async (product) => {
       if (product) {
         productRequests.get(product?.id).then((response) => {
-          const title = response?.fields.find((e: any) => {
+          const title = response?.fields?.find((e: any) => {
             return e.id == product.field;
           });
 
@@ -182,7 +181,7 @@ export const Relation: React.FC<PropsRelation> = ({
 
     const fieldId = column?.data;
     let updatedProduct = relations;
-    const currentField = updatedProduct.find((item) => {
+    const currentField = updatedProduct?.find((item) => {
       if (item.id == fieldId) {
         return item;
       }
@@ -239,7 +238,7 @@ export const Relation: React.FC<PropsRelation> = ({
   };
 
   const handleClickRemove = (title: any) => {
-    const value = oldData.find((e) => {
+    const value = oldData?.find((e) => {
       if (title.id == e.id) return e;
     });
 
@@ -264,14 +263,17 @@ export const Relation: React.FC<PropsRelation> = ({
   };
 
   const handleUpdateProduct = async () => {
-    productRequests
-      .update({ id: currentItem.id, fields: relations })
-      .then((resoveld) => toast.success("Produto atualizado com sucesso"))
-      .catch((error) => toast.error(error.response.data.message));
+    const values = relations.find((item) => {
+      if (item.id == column.data) {
+        return item;
+      }
+    }).value;
+
+    console.log({ values });
+    handleSave(values);
   };
 
   useEffect(() => {
-    console.log({ currentProducts, value });
     if (isOpen) {
       buildColumns();
       handleGetProducts().then();
