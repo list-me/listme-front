@@ -8,8 +8,6 @@ export const Container = styled.div`
   align-items: center;
   justify-content: center;
 
-  /* padding: 8px; */
-
   .tagContent {
     display: flex;
     flex-direction: row;
@@ -38,15 +36,7 @@ export const Container = styled.div`
     &:hover {
       cursor: pointer;
     }
-    /* background-color: red; */
   }
-
-  /* .contentProducts {
-    background-color: green;
-
-    width: 100% !important;
-    height: 500px !important;
-  } */
 `;
 
 export const ButtonContainer = styled.div`
@@ -138,7 +128,6 @@ export const Content = styled.div`
   .contentProducts {
     display: flex;
     flex-wrap: wrap;
-    /* gap: 1rem; */
     padding: 16px 16px 8px 16px;
 
     width: 100%;
@@ -195,19 +184,20 @@ export const Content = styled.div`
     ::-webkit-scrollbar-thumb:hover {
       background-color: #3818d9;
     }
-    /* background-color: yellowgreen; */
   }
 
   .contentTable {
-    display: flex;
-
-    /* overflow-y: auto; */
-
     display: block;
     justify-content: center;
     align-items: center;
-
     margin-top: 2rem;
+
+    label {
+      font-family: "Satoshi Regular", sans-serif;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+    }
 
     .ant-table-thead .ant-table-cell {
       background-color: #f8f9fa;

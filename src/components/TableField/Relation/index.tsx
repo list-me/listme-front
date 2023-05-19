@@ -60,11 +60,13 @@ export const Relation: React.FC<PropsRelation> = ({
   const [fieldTitle, setFieldTitle] = useState<any[]>([]);
 
   const [opt, setOpt] = useState<string>();
+  const [limit, setLimit] = useState(column.options[0].limit);
 
   const handleChangeVisible = () => {
     setData([]);
     setOldData([]);
     setFieldTitle([]);
+    // setCurrentProducts([]);
     setIsOpen(!isOpen);
   };
 
@@ -82,8 +84,8 @@ export const Relation: React.FC<PropsRelation> = ({
     try {
     } catch (error) {}
     if (templateId) {
-      let title = "";
       templateRequests.get(templateId).then((response) => {
+        let templateRel: any;
         const columnsTable = response.fields.fields
           .map((attribute: any) => {
             if (column.options[0].agrrementType == "bilateral") {
@@ -94,11 +96,12 @@ export const Relation: React.FC<PropsRelation> = ({
               setOpt(attribute.options[0].field);
             }
 
+            templateRel = attribute;
             return {
               key: attribute.id,
               dataIndex: attribute.id,
               title: attribute.title,
-              width: "10%",
+              render: (text: string) => text || "*Campo sem valor*",
             };
           })
           .slice(0, 4);
@@ -107,27 +110,53 @@ export const Relation: React.FC<PropsRelation> = ({
           const fields: any[] = [];
           const allFields: any[] = [];
           response.products?.forEach((product: any) => {
-            const currentIds = contentProducts.map((e) => e.id);
+            const currentIds = currentProducts.map((e) => e.id);
             if (!currentIds.includes(product.id)) {
               let props: any = {};
-              product.fields.forEach((field: any) => {
-                if (field && Object.keys(field).length) {
-                  props[field?.id] = handleGetValueString(field.value);
-                  props["id"] = product.id;
+
+              const exceedLimit = product.fields.find((productField: any) => {
+                if (
+                  productField.id == column.data &&
+                  templateRel.options[0].limit <= productField.value.length
+                ) {
+                  return productField;
                 }
               });
 
-              fields.push(props);
+              if (!exceedLimit) {
+                product.fields.forEach((element: any) => {
+                  if (element && Object.keys(element).length) {
+                    props[element?.id] = handleGetValueString(element.value);
+                    props["id"] = product.id;
+                  }
+                });
+                allFields.push(props);
+                return fields.push(props);
+              }
+
+              return;
             } else {
               let props: any = {};
-              product.fields.forEach((field: any) => {
-                if (field && Object.keys(field).length) {
-                  props[field?.id] = handleGetValueString(field.value);
-                  props["id"] = product.id;
+              const exceedLimit = product.fields.find((productField: any) => {
+                if (
+                  productField.id == column.data &&
+                  templateRel.options[0].limit <= productField.value.length
+                ) {
+                  return productField;
                 }
               });
 
-              allFields.push(props);
+              if (!exceedLimit) {
+                product.fields.forEach((element: any) => {
+                  if (element && Object.keys(element).length) {
+                    props[element?.id] = handleGetValueString(element.value);
+                    props["id"] = product.id;
+                  }
+                });
+                return allFields.push(props);
+              }
+
+              return;
             }
           });
 
@@ -141,7 +170,7 @@ export const Relation: React.FC<PropsRelation> = ({
   };
 
   const handleGetProducts = async () => {
-    const productPromises = await contentProducts.map(async (product) => {
+    const productPromises = await currentProducts.map(async (product) => {
       if (product) {
         productRequests.get(product?.id).then((response) => {
           const title = response?.fields?.find((e: any) => {
@@ -165,6 +194,8 @@ export const Relation: React.FC<PropsRelation> = ({
   };
 
   const handleClick = (product: any) => {
+    const fieldTemplate = column.options[0]["field"];
+
     const values =
       typeof product[field] == "object"
         ? product[field][0]
@@ -194,7 +225,7 @@ export const Relation: React.FC<PropsRelation> = ({
           value: [
             {
               id: product.id,
-              field: opt,
+              field: fieldTemplate,
               templateId: column.options[0].templateId,
             },
           ],
@@ -207,7 +238,7 @@ export const Relation: React.FC<PropsRelation> = ({
           e.value = [
             {
               id: product.id,
-              field: opt,
+              field: fieldTemplate,
               templateId: column.options[0].templateId,
             },
             ...e.value,
@@ -215,30 +246,22 @@ export const Relation: React.FC<PropsRelation> = ({
         }
         return e;
       });
-
-      const fields = [
-        ...updatedProduct
-          .map((e) => {
-            if (e.id == currentField.id) {
-              return e.value;
-            }
-          })
-          .filter(Boolean),
-        // ...contentProducts,
-      ];
-      setContentProducts(fields);
     }
 
-    const testing = updatedProduct.filter((e) => {
-      if (e.id == field) return e.value;
-    });
+    const testing = updatedProduct
+      .filter((e) => {
+        if (e.id == column.data) return e;
+      })
+      .map((element) => element.value)[0];
 
     setCurrentProducts(testing);
     setRelations(updatedProduct);
   };
 
   const handleClickRemove = (title: any) => {
+    console.log({ oldData });
     const value = oldData?.find((e) => {
+      console.log({ e, title });
       if (title.id == e.id) return e;
     });
 
@@ -250,7 +273,7 @@ export const Relation: React.FC<PropsRelation> = ({
     });
 
     const fieldId = column.data;
-    const test = relations.map((element) => {
+    const actualy = relations.map((element) => {
       if (element.id == fieldId) {
         element.value = element.value.filter(
           (item: any) => item.id !== title.id,
@@ -259,7 +282,17 @@ export const Relation: React.FC<PropsRelation> = ({
 
       return element;
     });
-    setRelations(test);
+    setRelations(actualy);
+
+    const testing = actualy
+      .filter((e) => {
+        if (e.id == column.data) return e;
+      })
+      .map((element) => element.value)[0];
+
+    console.log({ testing, title, actualy });
+
+    setCurrentProducts(testing);
   };
 
   const handleUpdateProduct = async () => {
@@ -269,7 +302,6 @@ export const Relation: React.FC<PropsRelation> = ({
       }
     }).value;
 
-    console.log({ values });
     handleSave(values);
   };
 
@@ -280,7 +312,9 @@ export const Relation: React.FC<PropsRelation> = ({
     }
   }, [isOpen]);
 
-  useEffect(() => {}, [currentProducts]);
+  useEffect(() => {
+    console.log({ currentProducts });
+  }, [currentProducts]);
 
   return (
     <Container>
@@ -311,19 +345,25 @@ export const Relation: React.FC<PropsRelation> = ({
             )}
           </div>
           <div className="contentTable">
-            <Title> Relacionar items </Title>
-            <Table
-              columns={columns}
-              dataSource={data}
-              onRow={(record, rowIndex) => {
-                return {
-                  onClick: (event) => {
-                    handleClick(record);
-                  },
-                };
-              }}
-              pagination={false}
-            />
+            {currentProducts.filter((e) => e !== "").length >= limit ? (
+              <label> Máximo de items relacionados </label>
+            ) : (
+              <>
+                <Title> Relacionar items </Title>
+                <Table
+                  columns={columns}
+                  dataSource={data}
+                  onRow={(record, rowIndex) => {
+                    return {
+                      onClick: (event) => {
+                        handleClick(record);
+                      },
+                    };
+                  }}
+                  pagination={false}
+                />
+              </>
+            )}
           </div>
         </Content>
 
@@ -342,13 +382,14 @@ export const Relation: React.FC<PropsRelation> = ({
 
       <div className="tagContent">
         <Tag onClick={handleChangeVisible} maxWidth="fit-content">
-          <label> {currentProducts.length} Item(s) relacionados </label>
+          <label>
+            {" "}
+            {currentProducts.filter((e) => e !== "").length ||
+              contentProducts.filter((e) => e !== "").length}{" "}
+            Item(s) relacionados{" "}
+          </label>
         </Tag>
       </div>
-
-      {/* <div className="imageContent" onClick={handleChangeVisible}>
-        <AddIcon />
-      </div> */}
     </Container>
   );
 };

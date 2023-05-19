@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { InputNumber, Radio, RadioChangeEvent, Select, Space } from "antd";
-import { Content, Loader } from "./styles";
+import { Content, CustomNumber, Loader } from "./styles";
 import { IPropsRelationForm, RelationOptions, Mapping } from "./RelationForm.d";
 import { templateRequests } from "../../../services/apis/requests/template";
 import { toast } from "react-toastify";
@@ -8,11 +8,8 @@ import { productContext } from "../../../context/products";
 
 export const RelationForm: React.FC<IPropsRelationForm> = ({
   value,
-  currentFields,
   handleChangeOptions,
 }) => {
-  console.log({ value });
-
   const OPTIONS_TEMPLATE = {
     OTHER: "Outro Catálogo",
     SAME: "Mesmo Catálogo",
@@ -43,23 +40,7 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   };
 
   const getCurrentField = (options?: any): string => {
-    console.log({ options });
-    if (options) {
-      console.log("entrou");
-      // const type =
-      //   options[0]["templateId"] == window.location.pathname.substring(10)
-      //     ? OPTIONS_TEMPLATE.SAME
-      //     : OPTIONS_TEMPLATE.OTHER;
-
-      // if (type == OPTIONS_TEMPLATE.SAME) {
-      //   return options[0]["originField"];
-      // }
-
-      console.log("valor", options[0]["field"]);
-      return options[0]["field"];
-    }
-
-    return "";
+    return options ? options[0]["field"] : "";
   };
 
   const getCurrentOriginField = (options?: any): string => {
@@ -91,9 +72,9 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
     getAgreementType(value.options),
   );
   const [limit, setLimit] = useState<string | number>(getLimit(value?.options));
-  const [fieldId, setFieldId] = useState<string>(value.options[0].field);
-
-  console.log({ fieldId });
+  const [fieldId, setFieldId] = useState<string>(
+    getCurrentField(value.options),
+  );
 
   const [originFieldId, setOriginFieldId] = useState<string>(
     getCurrentOriginField(value?.options),
@@ -109,7 +90,9 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   const handleState = (e: RadioChangeEvent) => {
     const { value } = e.target;
 
-    if (OPTIONS_TEMPLATE.OTHER && !template.length) {
+    if (!template.length) {
+      setTemplateId("");
+
       const current = window.location.pathname.substring(10);
       templateRequests.list({ limit: 100 }).then((resolve) => {
         const data = resolve as Array<any>;
@@ -154,7 +137,10 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   const options = ["Mesmo Catálogo", "Outro Catálogo"];
 
   useEffect(() => {
-    setFieldId(value.options[0].field);
+    if (value.options) {
+      setFieldId(value.options[0].field);
+    }
+
     if (value && Object.keys(value).length > 1) {
       const options = value.options[0] as unknown as RelationOptions;
       setLimit(options.limit);
@@ -186,13 +172,19 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
             });
 
           setOriginFields(customFields);
+          setTemplateId(window.location.pathname.substring(10));
         });
     }
   }, []);
 
   useEffect(() => {
-    if (templateRelation == OPTIONS_TEMPLATE.SAME) {
-      setAgreementType(OPTIONS_AGREEMENT.UNILATERAL);
+    if (!isEdit) {
+      if (templateRelation == OPTIONS_TEMPLATE.SAME) {
+        setAgreementType(OPTIONS_AGREEMENT.UNILATERAL);
+        setTemplateId(window.location.pathname.substring(10));
+      } else {
+        setTemplateId("");
+      }
     }
   }, [templateRelation]);
 
@@ -200,7 +192,7 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
     <Content>
       <div>
         <div className="section">
-          <label className="label">Selecione o Catálogo</label>
+          <label className="label">Relacionar com:</label>
           <Radio.Group
             buttonStyle="solid"
             value={templateRelation}
@@ -222,7 +214,7 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
         </div>
         {templateRelation == "Outro Catálogo" ? (
           <div className="containerFields">
-            <div className="selectContainer">
+            <div className="selectCatalog">
               <label className="label">Selecione o catálogo</label>
               <Select
                 style={{
@@ -300,16 +292,13 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
         )}
         <div className="section">
           <label className="label">Número máximo de vínculos</label>
-          <InputNumber
+          <CustomNumber
             min={1}
-            max={999}
+            max={9999}
             defaultValue={limit}
             onChange={(e) => {
               if (e) {
                 setLimit(e);
-
-                console.log({ fieldId });
-
                 const current = {
                   limit: e,
                   field: fieldId,
@@ -323,28 +312,6 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
             controls
             bordered
           />
-          {/* <Radio.Group
-            buttonStyle="solid"
-            // defaultValue="oneToOne"
-            value={limit}
-            onChange={(e) => {
-              setLimit(e.target.value);
-              handleChangeOptions({ limit: e.target.value });
-            }}
-            options={Object.values(OPTIONS_MAPPING)}
-            className="radio-group"
-            disabled={isEdit}
-          >
-            <Space>
-              {Object.values(OPTIONS_MAPPING).map((option) => {
-                return (
-                  <Radio.Button key={Math.random()} value={option}>
-                    {option.label}
-                  </Radio.Button>
-                );
-              })}
-            </Space>
-          </Radio.Group> */}
         </div>
         {isLoading ? (
           <Loader className="lds-roller">
@@ -366,21 +333,12 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
                   const current = {
                     limit: limit,
                     field: e,
-                    originField: originFieldId,
+                    originField: e,
                     agreementType: agreementType,
                     templateId: templateId,
                   };
                   handleChangeOptions(current);
                 }
-
-                const current = {
-                  limit: limit,
-                  field: fieldId,
-                  originField: e,
-                  agreementType: agreementType,
-                  templateId: templateId,
-                };
-                handleChangeOptions(current);
               }}
               defaultValue={
                 originFields.find((e) => e.value == originFieldId)?.value
@@ -422,7 +380,7 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
           }}
           options={Object.values(OPTIONS_AGREEMENT)}
           className="radio-group"
-          disabled={isEdit}
+          disabled={templateRelation == OPTIONS_TEMPLATE.SAME || isEdit}
         >
           <Space>
             {Object.values(OPTIONS_AGREEMENT).map((option: string) => {

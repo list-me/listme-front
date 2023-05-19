@@ -388,6 +388,7 @@ export const ProductContextProvider = ({ children }: any) => {
     setCustomFields(customs);
     // const custom = buildCustomFields(template.fields.fields, {width: `${newSize.toString()}`}, col);
 
+    console.log({ customs });
     templateRequests
       .customView(template.id, { fields: customs })
       .catch((error) =>
@@ -495,11 +496,11 @@ export const ProductContextProvider = ({ children }: any) => {
       });
     });
 
-    templateRequests
-      .customView(template.id, { fields: changeState })
-      .catch((error) =>
-        toast.error("Ocorreu um erro ao definir o freeze da coluna"),
-      );
+    // templateRequests
+    //   .customView(template.id, { fields: changeState })
+    //   .catch((error) =>
+    //     toast.error("Ocorreu um erro ao definir o freeze da coluna"),
+    //   );
 
     return customFields;
   };
@@ -590,25 +591,29 @@ export const ProductContextProvider = ({ children }: any) => {
     const keys = newColumns
       .filter((item) => Object.keys(item).length)
       .map((item) => item.data);
-    const customs = customFields.filter((item, index) => {
-      if (keys.includes(item?.id)) {
+    const customs = customFields
+      .filter((item) => {
+        if (keys.includes(item?.id)) return item;
+      })
+      .map((element, index) => {
         return {
-          ...item,
+          ...element,
           order: index.toString(),
         };
-      }
-    });
+      });
 
     setCustomFields(customs);
 
     setHeaderTable(newColumns);
     templateRequests
       .removeColumn(window.location.pathname.substring(10), { column: fieldId })
-      // templateRequests
-      //   .customView(template.id, { fields: customs })
-      //   .catch((error) =>
-      //     toast.error("Ocorreu um ao alterar os campos customizados"),
-      //   );
+      .then((resolved) => {
+        templateRequests
+          .customView(template.id, { fields: customs })
+          .catch((error) =>
+            toast.error("Ocorreu um ao alterar os campos customizados"),
+          );
+      })
       .catch((error) =>
         toast.error("Ocorreu um erro ao excluir a coluna do template"),
       );

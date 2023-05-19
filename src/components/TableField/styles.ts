@@ -101,6 +101,8 @@ export const SuspenseMenu = styled.div<{
 }>`
   height: auto !important;
   max-height: 500px !important;
+
+  min-width:  150px;
   width: ${({ width }) => `${width}px`} !important;
 
   border-radius: 8px;
@@ -118,6 +120,9 @@ export const SuspenseMenu = styled.div<{
   justify-content: flex-start;
 
   padding: 8px;
+
+  overflow-x: hidden;
+  overflow-y: auto;
 `;
 
 export const Select = styled.div`

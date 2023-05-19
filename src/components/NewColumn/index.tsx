@@ -64,7 +64,7 @@ export const NewColumn: React.FC<NewColumnProps> = ({
       type: "file",
     },
     {
-      label: "Campo de Relacionamento",
+      label: "Relacionamento",
       icon: <LinkIcon />,
       type: "relation",
     },

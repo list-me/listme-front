@@ -23,16 +23,9 @@ export const Container = styled.div`
     width: fit-content;
     margin-top: 10px;
 
-    font-family: "Satoshi Regular";
-    font-style: normal;
-    font-weight: 700;
+    font-family: "Satoshi Bold";
     font-size: 16px;
-    line-height: 150%;
     color: #212529;
-
-    input:first-child {
-      /* margin-top: 8px; */
-    }
   }
 
   .titleContainer {
@@ -80,7 +73,7 @@ export const Description = styled.h2`
   flex: none;
   order: 1;
   align-self: stretch;
-  flex-grow: 0;
+  /* flex-grow: 0; */
 
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
     font-size: 14px;
@@ -129,7 +122,12 @@ export const InputContainer = styled.div`
     display: flex;
     height: 24px !important;
     width: 100%;
-    margin-bottom: 8px !important;
+    margin-bottom: 6px !important;
+
+    font-family: "Satoshi Regular", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
   }
 
   .ant-form-item-required {
@@ -143,10 +141,6 @@ export const InputContainer = styled.div`
     :before {
       display: none !important;
     }
-  }
-
-  .ant-form-item-row {
-    margin-bottom: 24px !important;
   }
 
   .ant-input {

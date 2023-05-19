@@ -1,36 +1,50 @@
+import { InputNumber } from "antd";
 import styled from "styled-components";
 
 export const Content = styled.div`
   margin-top: 16px;
 
+  label {
+    font-family: "Satoshi Regular", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+  }
+
   .section {
     display: flex;
     flex-direction: column;
 
-    margin-bottom: 2.5rem;
+    margin-bottom: 16px;
+
+    .ant-radio-wrapper {
+      font-family: "Satoshi Regular", sans-serif !important;
+      font-size: 13px;
+    }
   }
 
   .containerFields {
     display: block;
   }
 
-  .selectContainer {
-    display: block;
+  .selectCatalog {
+    display: flex;
     flex-direction: column;
+    height: 65px;
 
-    margin-bottom: 2.5rem;
+    margin-bottom: 16px;
 
+    overflow: hidden;
     .ant-form-item-label {
       display: flex;
       height: 24px !important;
       width: 100%;
-      margin-bottom: 8px !important;
+      margin-bottom: 10px !important;
       color: red;
     }
 
     .ant-select {
       border: none !important;
-
       width: 80% !important;
     }
 
@@ -78,19 +92,26 @@ export const Content = styled.div`
     display: flex;
     flex-direction: column;
 
-    margin-bottom: 2.5rem;
+    height: 65px;
+    margin-bottom: 16px;
+
+    overflow: hidden;
+
+    font-family: "Satoshi Regular", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
 
     .ant-form-item-label {
       display: flex;
       height: 24px !important;
       width: 100%;
-      margin-bottom: 8px !important;
+
       color: red;
     }
 
     .ant-select {
       border: none !important;
-
       width: 40% !important;
     }
 
@@ -117,7 +138,6 @@ export const Content = styled.div`
 
       .ant-select-arrow {
         height: 50px !important;
-        background-color: green;
       }
     }
 
@@ -125,8 +145,7 @@ export const Content = styled.div`
       font-family: "Satoshi Regular", sans-serif !important;
       font-style: normal;
       font-weight: 400;
-      font-size: 16px;
-      line-height: 150%;
+      font-size: 10px !important;
       color: #212529 !important;
 
       max-height: 100px !important;
@@ -140,16 +159,12 @@ export const Content = styled.div`
   }
 
   .selectField .ant-select-selector .ant-select-arrow {
-    background-color: red;
-
     top: 80% !important;
     transform: translateY(-80%);
   }
 
   .label {
     font-size: 14px;
-    /* font-weight: 700; */
-
     margin-bottom: 1px;
   }
 
@@ -157,8 +172,6 @@ export const Content = styled.div`
     display: flex !important;
     justify-content: flex-start !important;
     align-items: start;
-    font-family: "Satoshi Regular", sans-serif !important;
-    font-weight: 400;
   }
 
   .ant-radio-wrapper.ant-radio-wrapper-checked {
@@ -255,4 +268,11 @@ export const PrimaryButton = styled.button`
   line-height: 20px;
   border: 0;
   color: #a899f1;
+`;
+
+export const CustomNumber = styled(InputNumber)`
+  font-family: "Satoshi Regular", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
 `;
