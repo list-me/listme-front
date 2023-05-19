@@ -25,6 +25,7 @@ import { ReactComponent as PlusIcon } from "../../assets/plus-small.svg";
 import { templateRequests } from "../../services/apis/requests/template";
 import { productContext } from "../../context/products";
 import { RelationForm } from "../NewColumn/RelationForm";
+import { hasOwnProperty } from "handsontable/helpers";
 
 interface PropsModal {
   isOpen: boolean;
@@ -37,18 +38,19 @@ interface PropsModal {
 type Options = {
   agreementType: string;
   field: string;
-  mappingType: string;
+  originField: string;
+  limit: string | number;
   owner?: string;
   templateId: string;
 };
 
 type Option = {
-  [key: string]: string;
+  [key: string]: string | number;
 };
 
-const KEYS = {
-  agreementType: "agreementType",
-  field: "field",
+const EXTENSIOS = {
+  IMAGE: ["jpg", "svg", "jpeg"],
+  VIDEO: ["avi", "mov", "mp4"],
   mappingType: "mappingType",
   templateId: "templateId",
 };
@@ -68,14 +70,38 @@ export const PersonalModal = ({
     data?.options ?? [""],
   );
 
-  const [options, setOptions] = useState<Options[]>([
-    {
-      templateId: window.location.pathname.substring(10),
-      agreementType: "unilateral",
-      field: "",
-      mappingType: "oneToOne",
-    },
-  ]);
+  const getOptions = (): Options[] | any[] => {
+    if (data)
+      if (data?.type == "relation" && Object.keys(data).includes("options")) {
+        const currentOptions = data?.options[0];
+        return [
+          {
+            agreementType: currentOptions?.agreementType,
+            field: currentOptions?.field,
+            limit: currentOptions?.limit,
+            originField: currentOptions?.originField,
+            templateId: currentOptions?.templateId,
+          },
+        ];
+      }
+
+    return [
+      {
+        agreementType: "unilateral",
+        field: "",
+        limit: 1,
+        originField: "",
+        templateId: window.location.pathname.substring(10),
+      },
+    ];
+  };
+
+  const [options, setOptions] = useState<any[]>(getOptions());
+  const [enable, setEnable] = useState<boolean>(true);
+
+  const initial = useRef(options);
+  const titleRef = useRef(title);
+
   const formRef = useRef<HTMLFormElement>(null);
 
   const textOptions = [
@@ -91,13 +117,20 @@ export const PersonalModal = ({
 
   const fileOptions = [
     {
-      label: "Galeria",
-      value: "file",
+      label: "Imagem",
+      value: "image",
+      key: 1,
     },
-    // {
-    //   label: "Thumb",
-    //   value: "file",
-    // },
+    {
+      label: "Video",
+      value: "video",
+      key: 2,
+    },
+    {
+      label: "Documento",
+      value: "doc",
+      key: 3,
+    },
   ];
 
   const TYPES: any = {
@@ -155,7 +188,7 @@ export const PersonalModal = ({
         title,
         options: data?.type == "relation" ? options : filtered,
         required,
-        is_public: true,
+        is_public: false,
         help_text: "This fiedl will help you to make a new product register",
         description: "Completly random description",
       };
@@ -163,7 +196,6 @@ export const PersonalModal = ({
     }
 
     try {
-      console.log({ templateUpdated });
       await templateRequests.update(template?.id, { fields: templateUpdated });
       toast.success("Template atualizado com sucesso");
       return templateUpdated;
@@ -223,34 +255,23 @@ export const PersonalModal = ({
     });
   };
 
-  const handleChangeOptions = (option: Option): void => {
-    const key = Object.keys(option)[0] as unknown as string;
-    const value = Object.values(option)[0] as unknown as string;
-
-    const changed =
-      options[0] != undefined
-        ? (options[0] as unknown as Options)
-        : ({} as unknown as Options);
-
-    if (key == "templateId") {
-      changed.templateId = value;
-    }
-    if (key == "field") {
-      changed["field"] = value;
-    }
-    if (key == "mappingType") {
-      changed["mappingType"] = value;
-    }
-    if (key == "agreementType") {
-      changed["agreementType"] = value;
-    }
-
-    setOptions([changed]);
+  const handleChangeOptions = (option: Options): void => {
+    setOptions([option]);
   };
 
   useEffect(() => {
     setType(data?.type);
+
+    if (data?.type == "relation") {
+      setEnable(false);
+    }
   }, [isOpen, data, draggerOptions]);
+
+  useEffect(() => {
+    if (options !== initial.current || title !== titleRef.current) {
+      setEnable(true);
+    }
+  }, [options, title]);
 
   return (
     <>
@@ -271,17 +292,11 @@ export const PersonalModal = ({
             <form ref={formRef} className="form">
               <div className="encapsulator">
                 <InputContainer>
-                  {/* <Form.Item
-                    label="Titulo do campo"
-                    name="title"
-                    rules={[
-                      { required: true, message: "Insira o título do campo" },
-                    ]}
-                  > */}
                   <Input
                     style={{
                       height: "64px",
                       border: "1px solid #DEE2E6",
+                      marginBottom: "10px",
                     }}
                     defaultValue={title}
                     value={title}
@@ -292,15 +307,16 @@ export const PersonalModal = ({
                     }}
                     placeholder="Informe o nome do campo"
                   />
-                  {/* </Form.Item> */}
                   {!MULTI_SELECT.includes(data?.type) &&
-                  data?.type != "relation" ? (
+                  !["relation", "file"].includes(data?.type) ? (
                     <Form.Item
                       label="Escolha o tipo de valor"
                       name="type"
-                      rules={[
-                        { required: true, message: "Escolha o tipo de valor" },
-                      ]}
+                      // rules={[
+                      //   { required: true, message: "Escolha o tipo de valor" },
+                      // ]}
+                      style={{ marginTop: "10px" }}
+                      className="formContent"
                     >
                       <Select
                         style={{
@@ -312,7 +328,7 @@ export const PersonalModal = ({
                         onChange={(e: string) => {
                           setType(e);
                         }}
-                        placeholder="Informe o nome do campo"
+                        placeholder="Informe o tipo do campo"
                         options={
                           ["text", "paragraph"].includes(type)
                             ? textOptions
@@ -420,6 +436,14 @@ export const PersonalModal = ({
                       return;
                     }
 
+                    if (
+                      (type == "relation" && options[0].field == "") ||
+                      options[0].originField
+                    ) {
+                      toast.warn("O campo para exibição não pode ser vazio");
+                      return;
+                    }
+
                     let filtered: any;
                     if (draggerOptions.length > 2) {
                       filtered = draggerOptions.filter((item) => {
@@ -442,6 +466,8 @@ export const PersonalModal = ({
                       }
 
                       filtered = [...draggerOptions];
+                    } else if (type == "relation") {
+                      filtered = [...options];
                     } else {
                       filtered = [...draggerOptions];
                     }
@@ -462,13 +488,14 @@ export const PersonalModal = ({
                     handleUpdateTemplate(filtered).then((response) => {
                       const newColumn = {
                         ...data,
-                        data: response[response.length - 1]?.id,
+                        data: response[response?.length - 1]?.id,
                         options: filtered,
                       };
                       onClickModal();
                       onUpdate(newColumn, response);
                     });
                   }}
+                  disabled={!enable}
                 >
                   Salvar
                 </Principal>

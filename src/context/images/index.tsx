@@ -22,9 +22,7 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {
           const signedUrl = await getSignedUrl(file.type);
-          filesNames.push(
-            `https://dev-listme.s3.amazonaws.com${signedUrl.access_url}`,
-          );
+          filesNames.push(signedUrl.access_url);
           return fileRequests.uploadFile(file, signedUrl.url);
         });
 
@@ -42,7 +40,6 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
   };
 
   const handleActiveDrag = (): void => {
-    console.log("OK");
     setIsDragActive(true);
   };
 

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Radio, RadioChangeEvent, Select, Space } from "antd";
-import { Content, Loader } from "./styles";
+import React, { useContext, useEffect, useState } from "react";
+import { InputNumber, Radio, RadioChangeEvent, Select, Space } from "antd";
+import { Content, CustomNumber, Loader } from "./styles";
 import { IPropsRelationForm, RelationOptions, Mapping } from "./RelationForm.d";
 import { templateRequests } from "../../../services/apis/requests/template";
 import { toast } from "react-toastify";
+import { productContext } from "../../../context/products";
 
 export const RelationForm: React.FC<IPropsRelationForm> = ({
   value,
-  currentFields,
   handleChangeOptions,
 }) => {
   const OPTIONS_TEMPLATE = {
@@ -31,8 +31,8 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
     UNILATERAL: "unilateral",
   };
 
-  const getMappingType = (options?: any): string => {
-    return options ? options[0]["mappingType"] : "oneToOne";
+  const getLimit = (options?: any): string => {
+    return options ? options[0]["limit"] : "1";
   };
 
   const getAgreementType = (options?: any): string => {
@@ -41,6 +41,10 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
 
   const getCurrentField = (options?: any): string => {
     return options ? options[0]["field"] : "";
+  };
+
+  const getCurrentOriginField = (options?: any): string => {
+    return options ? options[0]["originField"] : "";
   };
 
   const getTemplateRelation = (options?: any): string => {
@@ -59,18 +63,23 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
 
   const [template, setTemplate] = useState<Mapping[]>([]);
   const [fields, setFields] = useState<Mapping[]>([]);
+  const [originFields, setOriginFields] = useState<Mapping[]>([]);
+
   const [templateRelation, setTemplateRelation] = useState<string>(
     getTemplateRelation(value.options),
   );
   const [agreementType, setAgreementType] = useState<string>(
     getAgreementType(value.options),
   );
-  const [mappingType, setMappingType] = useState<string>(
-    getMappingType(value?.options),
-  );
+  const [limit, setLimit] = useState<string | number>(getLimit(value?.options));
   const [fieldId, setFieldId] = useState<string>(
-    getCurrentField(value?.options),
+    getCurrentField(value.options),
   );
+
+  const [originFieldId, setOriginFieldId] = useState<string>(
+    getCurrentOriginField(value?.options),
+  );
+
   const [templateId, setTemplateId] = useState<string>(
     getTemplateId(value.options),
   );
@@ -81,12 +90,17 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   const handleState = (e: RadioChangeEvent) => {
     const { value } = e.target;
 
-    if (OPTIONS_TEMPLATE.OTHER && !template.length) {
+    if (!template.length) {
+      setTemplateId("");
+
+      const current = window.location.pathname.substring(10);
       templateRequests.list({ limit: 100 }).then((resolve) => {
         const data = resolve as Array<any>;
-        const templates = data.map((e) => {
-          return { value: e.id, label: e.name };
-        });
+        const templates = data
+          .map((e) => {
+            return { value: e.id, label: e.name };
+          })
+          .filter((e) => e.value !== current);
 
         setTemplate(templates);
       });
@@ -109,7 +123,7 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
           });
 
         setFields(customFields);
-        setFieldId("");
+        // setFieldId("");
       });
 
       setIsLoading(false);
@@ -123,9 +137,13 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   const options = ["Mesmo Catálogo", "Outro Catálogo"];
 
   useEffect(() => {
+    if (value.options) {
+      setFieldId(value.options[0].field);
+    }
+
     if (value && Object.keys(value).length > 1) {
       const options = value.options[0] as unknown as RelationOptions;
-      setMappingType(options.mappingType);
+      setLimit(options.limit);
 
       if (getTemplateRelation(value?.options) === OPTIONS_TEMPLATE.OTHER) {
         handleChangeTemplate(getTemplateId(value.options)).then();
@@ -153,16 +171,28 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
               };
             });
 
-          setFields(customFields);
+          setOriginFields(customFields);
+          setTemplateId(window.location.pathname.substring(10));
         });
     }
   }, []);
+
+  useEffect(() => {
+    if (!isEdit) {
+      if (templateRelation == OPTIONS_TEMPLATE.SAME) {
+        setAgreementType(OPTIONS_AGREEMENT.UNILATERAL);
+        setTemplateId(window.location.pathname.substring(10));
+      } else {
+        setTemplateId("");
+      }
+    }
+  }, [templateRelation]);
 
   return (
     <Content>
       <div>
         <div className="section">
-          <label className="label">Relacionar com</label>
+          <label className="label">Relacionar com:</label>
           <Radio.Group
             buttonStyle="solid"
             value={templateRelation}
@@ -183,86 +213,143 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
           </Radio.Group>
         </div>
         {templateRelation == "Outro Catálogo" ? (
-          <div className="selectContainer">
-            <label className="label">Selecione o catálogo</label>
-            <Select
-              style={{
-                height: "30px",
-                border: "1px solid #DEE2E6",
-              }}
-              onChange={(e: string) => {
-                handleChangeTemplate(e);
-                handleChangeOptions({ templateId: e });
-              }}
-              placeholder="Seleciones o template"
-              defaultValue={template.find((e) => e.value == templateId)?.value}
-              value={templateId}
-              disabled={isEdit}
-            >
-              {template.map((item, index) => {
-                return (
-                  <Select.Option key={index} value={item.value}>
-                    {" "}
-                    {item.label}{" "}
-                  </Select.Option>
-                );
-              })}
-            </Select>
+          <div className="containerFields">
+            <div className="selectCatalog">
+              <label className="label">Selecione o catálogo</label>
+              <Select
+                style={{
+                  height: "30px",
+                  border: "1px solid #DEE2E6",
+                }}
+                onChange={(e: string) => {
+                  handleChangeTemplate(e);
+                  const current = {
+                    limit: limit,
+                    field: fieldId,
+                    originField: originFieldId,
+                    agreementType: agreementType,
+                    templateId: e,
+                  };
+                  handleChangeOptions(current);
+                }}
+                placeholder="Seleciones o template"
+                defaultValue={
+                  template.find((e) => e.value == templateId)?.value
+                }
+                value={templateId}
+                disabled={isEdit}
+              >
+                {template.map((item, index) => {
+                  return (
+                    <Select.Option key={index} value={item.value}>
+                      {" "}
+                      {item.label}{" "}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </div>
+            <div className="selectField">
+              <span className="label">Atributo para exibição</span>
+              <Select
+                style={{
+                  height: "30px",
+                  border: "1px solid #DEE2E6",
+                }}
+                onChange={(e: string) => {
+                  setFieldId(e);
+                  const current = {
+                    limit: limit,
+                    field: e,
+                    originField: originFieldId,
+                    agreementType: agreementType,
+                    templateId: templateId,
+                  };
+                  handleChangeOptions(current);
+                }}
+                defaultValue={
+                  fields.find((e) => e.value == fieldId)?.value
+                    ? fields.find((e) => e.value == fieldId)?.value
+                    : ""
+                }
+                placeholder="Escolha uma coluna"
+                disabled={isEdit}
+                value={fieldId}
+              >
+                {fields.map((item, index) => {
+                  return (
+                    <Select.Option key={index} value={item.value}>
+                      {" "}
+                      {item.label}{" "}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </div>
           </div>
         ) : (
           <></>
         )}
         <div className="section">
-          <label className="label">Tipo de Relacionamento</label>
-          <Radio.Group
-            buttonStyle="solid"
-            // defaultValue="oneToOne"
-            value={mappingType}
+          <label className="label">Número máximo de vínculos</label>
+          <CustomNumber
+            min={1}
+            max={9999}
+            defaultValue={limit}
             onChange={(e) => {
-              setMappingType(e.target.value);
-              handleChangeOptions({ mappingType: e.target.value });
+              if (e) {
+                setLimit(e);
+                const current = {
+                  limit: e,
+                  field: fieldId,
+                  originField: originFieldId,
+                  agreementType: agreementType,
+                  templateId: templateId,
+                };
+                handleChangeOptions(current);
+              }
             }}
-            options={Object.values(OPTIONS_MAPPING)}
-            className="radio-group"
-            disabled={isEdit}
-          >
-            <Space>
-              {Object.values(OPTIONS_MAPPING).map((option) => {
-                return (
-                  <Radio.Button key={Math.random()} value={option}>
-                    {option.label}
-                  </Radio.Button>
-                );
-              })}
-            </Space>
-          </Radio.Group>
+            controls
+            bordered
+          />
         </div>
         {isLoading ? (
           <Loader className="lds-roller">
             <div className="loading-spinner"></div>
           </Loader>
         ) : (
-          <div className="selectContainer">
-            <label className="label">Relacionar com</label>
-            {/* <Form.Item
-              name="type"
-              rules={[{ required: true, message: "Escolha o tipo de valor" }]}
-            > */}
+          <div className="selectField">
+            <label className="label">Atributo do catálogo atual</label>
             <Select
               style={{
                 height: "30px",
                 border: "1px solid #DEE2E6",
               }}
               onChange={(e: string) => {
-                setFieldId(e);
-                handleChangeOptions({ field: e });
+                setOriginFieldId(e);
+
+                if (templateRelation == OPTIONS_TEMPLATE.SAME) {
+                  setFieldId(e);
+                  const current = {
+                    limit: limit,
+                    field: e,
+                    originField: e,
+                    agreementType: agreementType,
+                    templateId: templateId,
+                  };
+                  handleChangeOptions(current);
+                }
               }}
-              // defaultValue={fields.find((e) => e.value == fieldId)?.value}
+              defaultValue={
+                originFields.find((e) => e.value == originFieldId)?.value
+                  ? originFields.find((e) => e.value == originFieldId)?.value
+                  : ""
+              }
               placeholder="Escolha uma coluna"
               disabled={isEdit}
-              value={fields.find((e) => e.value == fieldId)?.value ?? fieldId}
+              value={originFieldId}
             >
-              {fields.map((item, index) => {
+              {originFields.map((item, index) => {
                 return (
                   <Select.Option key={index} value={item.value}>
                     {" "}
@@ -271,7 +358,6 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
                 );
               })}
             </Select>
-            {/* </Form.Item> */}
           </div>
         )}
       </div>
@@ -283,11 +369,18 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
           value={agreementType}
           onChange={(e) => {
             setAgreementType(e.target.value);
-            handleChangeOptions({ agreementType: e.target.value });
+            const current = {
+              limit: limit,
+              field: fieldId,
+              originField: originFieldId,
+              agreementType: e.target.value,
+              templateId: templateId,
+            };
+            handleChangeOptions(current);
           }}
           options={Object.values(OPTIONS_AGREEMENT)}
           className="radio-group"
-          disabled={isEdit}
+          disabled={templateRelation == OPTIONS_TEMPLATE.SAME || isEdit}
         >
           <Space>
             {Object.values(OPTIONS_AGREEMENT).map((option: string) => {

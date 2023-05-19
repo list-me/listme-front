@@ -1,14 +1,12 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
+  margin-top: 6px;
+
   .ant-tree-list-holder-inner {
     display: flex;
     align-items: flex-start;
     justify-content: left;
-  }
-
-  .anticon {
-    /* margin-right: 10px; */
   }
 
   .ant-tree-treenode {

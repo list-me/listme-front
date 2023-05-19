@@ -55,10 +55,10 @@ export const Temp: React.FC<IProps> = ({ options }) => {
         <MenuIcon />
         Visualização
       </Item>
-      <Item>
+      <Item ref={iconRef} onClick={() => setIsOpen(!isOpen)}>
         <EyeOffIcon />
         Colunas Ocultas
-        <ChevronDownIcon ref={iconRef} onClick={() => setIsOpen(!isOpen)} />
+        <ChevronDownIcon ref={iconRef} />
       </Item>
       <Item>
         <FilterIcon />

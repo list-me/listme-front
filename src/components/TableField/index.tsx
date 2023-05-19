@@ -11,6 +11,7 @@ import { CustomRadio } from "../Radio";
 import { CustomCheckBox } from "../CustomCheckBox";
 import Dropzone from "../Dropzone";
 import { ImageContextProvider } from "../../context/images";
+import { Relation } from "./Relation";
 
 export const TableField: React.FC<ITableFieldProps> = ({
   value,
@@ -22,6 +23,8 @@ export const TableField: React.FC<ITableFieldProps> = ({
   row,
   prop,
   td,
+  column,
+  currentItem,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [newValue, setNewValue] = useState<string[]>(value);
@@ -37,6 +40,40 @@ export const TableField: React.FC<ITableFieldProps> = ({
         value: option,
       };
     });
+  };
+
+  const handleGetTemplateId = (column: any): string => {
+    return column?.options[0]?.templateId;
+  };
+
+  const handleGetField = (column: any): string => {
+    return column?.options[0]?.field;
+  };
+
+  const handleChangeValue = (newValue: any) => {
+    instance.setDataAtRowProp(row, prop, newValue);
+  };
+
+  const FIELD_TYPES = {
+    file: (
+      <Dropzone
+        col={col}
+        instance={instance}
+        row={row}
+        value={value}
+        prop={prop}
+      />
+    ),
+    relation: (
+      <Relation
+        value={newValue}
+        templateId={handleGetTemplateId(column)}
+        field={handleGetField(column)}
+        currentItem={currentItem}
+        column={column}
+        handleSave={(e: any) => handleChangeValue(e)}
+      />
+    ),
   };
 
   const onClose = (): void => {
@@ -74,14 +111,8 @@ export const TableField: React.FC<ITableFieldProps> = ({
 
   return (
     <ImageContextProvider>
-      {type == "file" ? (
-        <Dropzone
-          col={col}
-          instance={instance}
-          row={row}
-          value={value}
-          prop={prop}
-        />
+      {type == "relation" || type == "file" ? (
+        FIELD_TYPES[type]
       ) : (
         <Container
           type={type}

@@ -56,9 +56,7 @@ export const Products = () => {
   const { getRootProps, open, isDragActive, isFileDialogActive, rootRef } =
     useDropzone({
       multiple: true,
-      onDragEnter: () => {
-        console.log("Entrou");
-      },
+      onDragEnter: () => {},
       onDragOver: () => {},
       onDragLeave: () => {},
       noClick: true,

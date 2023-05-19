@@ -174,6 +174,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                     <a href={item} target="_blank">
                       {item.includes("jpeg") ||
                       item.includes("jpg") ||
+                      item.includes("svg") ||
                       item.includes("png") ? (
                         <img
                           src={item}

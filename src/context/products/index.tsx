@@ -20,12 +20,19 @@ export interface ICustom {
   order?: string;
 }
 
+interface IRelation {
+  agreementType: string;
+  field: string;
+  mappingType: string;
+  owner: string;
+  templateId: string;
+}
 export interface IHeaderTable {
   title?: string;
   type: string;
   data: string;
   className: string;
-  options: string[];
+  options: string[] | IRelation[];
   hidden?: boolean;
   width?: string;
   frozen?: boolean;
@@ -62,6 +69,7 @@ interface ITypeProductContext {
     column: number,
     fields: any[],
     newColumns: any[],
+    fieldId: string,
   ) => void;
 }
 
@@ -126,6 +134,7 @@ export const ProductContextProvider = ({ children }: any) => {
     LIST: "select",
     CHECKED: "checkbox",
     FILE: "file",
+    RELATION: "relation",
   };
 
   const handleUpdateTemplate = (field: any) => {};
@@ -153,14 +162,31 @@ export const ProductContextProvider = ({ children }: any) => {
     }
   };
 
-  const handleGetProducts = async (templateId: string) => {
+  const handleGetProducts = async (
+    templateId: string,
+    templateFields: IHeaderTable[],
+  ) => {
     return productRequests
       .list({}, templateId)
       .then((response) => {
         const productFields: any = [];
         response?.products?.forEach((item: any) => {
           let object: any = {};
-          item.fields.forEach((field: any) => (object[field.id] = field.value));
+          item.fields.forEach((field: any) => {
+            const currentField = templateFields.find(
+              (e: any) => e.data == field.id,
+            );
+
+            if (currentField && field.value) {
+              const test = !COMPONENT_CELL_PER_TYPE[
+                currentField?.type?.toUpperCase()
+              ]
+                ? field?.value[0]
+                : field?.value;
+
+              object[field?.id] = test;
+            }
+          });
           productFields.push({
             ...object,
             id: item.id,
@@ -168,7 +194,7 @@ export const ProductContextProvider = ({ children }: any) => {
           });
         });
 
-        if (!productFields.length) {
+        if (!productFields.length && template) {
           productFields.push({ [template[0]]: "" });
         }
         setProducts(productFields);
@@ -184,8 +210,8 @@ export const ProductContextProvider = ({ children }: any) => {
 
   const handleRedirectAndGetProducts = async (id: string) => {
     try {
-      await handleGetTemplates(id);
-      await handleGetProducts(id);
+      const template = await handleGetTemplates(id);
+      await handleGetProducts(id, template);
     } catch (error) {
       console.error(error);
       toast.error(
@@ -251,7 +277,10 @@ export const ProductContextProvider = ({ children }: any) => {
         ) {
           obj.push({
             id: field,
-            value: fields[field],
+            value:
+              typeof fields[field] == "object"
+                ? fields[field]
+                : [fields[field]],
           });
         }
       });
@@ -321,6 +350,7 @@ export const ProductContextProvider = ({ children }: any) => {
             }),
         );
         setFilter(undefined);
+        return headers;
       })
       .catch((error) => {
         console.error(error);
@@ -379,7 +409,6 @@ export const ProductContextProvider = ({ children }: any) => {
     } else {
       newValue = [...content, col];
     }
-    console.log({ newValue, content, hidden, col });
 
     setHidden(newValue);
     setCustomFields((prev) => {
@@ -467,11 +496,11 @@ export const ProductContextProvider = ({ children }: any) => {
       });
     });
 
-    templateRequests
-      .customView(template.id, { fields: changeState })
-      .catch((error) =>
-        toast.error("Ocorreu um erro ao definir o freeze da coluna"),
-      );
+    // templateRequests
+    //   .customView(template.id, { fields: changeState })
+    //   .catch((error) =>
+    //     toast.error("Ocorreu um erro ao definir o freeze da coluna"),
+    //   );
 
     return customFields;
   };
@@ -491,7 +520,6 @@ export const ProductContextProvider = ({ children }: any) => {
         };
       });
 
-    console.log({ fields, col });
     // setHeaderTable(col);
     setCustomFields(fields);
     templateRequests
@@ -521,7 +549,6 @@ export const ProductContextProvider = ({ children }: any) => {
     newPosition.splice(newPosition.length - 2, 1);
     newPosition.push({});
     setHeaderTable(newPosition);
-    console.log("Added");
   };
 
   const handleFilter = (word: string): any[] => {
@@ -555,6 +582,7 @@ export const ProductContextProvider = ({ children }: any) => {
     column: number,
     fields: any[],
     newColumns: any[],
+    fieldId: string,
   ) => {
     const newTemplate = template;
     newTemplate.fields.fields = fields;
@@ -563,22 +591,23 @@ export const ProductContextProvider = ({ children }: any) => {
     const keys = newColumns
       .filter((item) => Object.keys(item).length)
       .map((item) => item.data);
-    const customs = customFields.filter((item, index) => {
-      if (keys.includes(item?.id)) {
+    const customs = customFields
+      .filter((item) => {
+        if (keys.includes(item?.id)) return item;
+      })
+      .map((element, index) => {
         return {
-          ...item,
+          ...element,
           order: index.toString(),
         };
-      }
-    });
+      });
 
-    console.log({ customs, newTemplate });
     setCustomFields(customs);
 
     setHeaderTable(newColumns);
     templateRequests
-      .update(window.location.pathname.substring(10), { fields })
-      .then((resolve) => {
+      .removeColumn(window.location.pathname.substring(10), { column: fieldId })
+      .then((resolved) => {
         templateRequests
           .customView(template.id, { fields: customs })
           .catch((error) =>
@@ -586,7 +615,7 @@ export const ProductContextProvider = ({ children }: any) => {
           );
       })
       .catch((error) =>
-        toast.error("Ocorreu um erro ao alterar a visibilidade do campo"),
+        toast.error("Ocorreu um erro ao excluir a coluna do template"),
       );
   };
 
