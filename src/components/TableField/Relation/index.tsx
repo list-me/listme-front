@@ -259,9 +259,7 @@ export const Relation: React.FC<PropsRelation> = ({
   };
 
   const handleClickRemove = (title: any) => {
-    console.log({ oldData });
     const value = oldData?.find((e) => {
-      console.log({ e, title });
       if (title.id == e.id) return e;
     });
 
@@ -290,8 +288,6 @@ export const Relation: React.FC<PropsRelation> = ({
       })
       .map((element) => element.value)[0];
 
-    console.log({ testing, title, actualy });
-
     setCurrentProducts(testing);
   };
 
@@ -312,9 +308,7 @@ export const Relation: React.FC<PropsRelation> = ({
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    console.log({ currentProducts });
-  }, [currentProducts]);
+  useEffect(() => {}, [currentProducts]);
 
   return (
     <Container>
