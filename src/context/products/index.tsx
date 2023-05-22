@@ -388,7 +388,6 @@ export const ProductContextProvider = ({ children }: any) => {
     setCustomFields(customs);
     // const custom = buildCustomFields(template.fields.fields, {width: `${newSize.toString()}`}, col);
 
-    console.log({ customs });
     templateRequests
       .customView(template.id, { fields: customs })
       .catch((error) =>

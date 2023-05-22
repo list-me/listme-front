@@ -289,7 +289,79 @@ export const PersonalModal = ({
             <Description>{TYPES[type]?.description}</Description>
           </div>
           <BodyContent>
-            <form ref={formRef} className="form">
+            <form
+              ref={formRef}
+              className="form"
+              onSubmit={(e) => {
+                e.preventDefault();
+
+                if (title.length == 0) {
+                  toast.warn("O Titulo nao pode ser vazio");
+                  return;
+                }
+
+                if (title.length > 20) {
+                  toast.warn("O titulo não pode conter mais de 20 caracteres");
+                  return;
+                }
+
+                if (
+                  (type == "relation" && options[0].field == "") ||
+                  options[0].originField
+                ) {
+                  toast.warn("O campo para exibição não pode ser vazio");
+                  return;
+                }
+
+                let filtered: any;
+                if (draggerOptions.length > 2) {
+                  filtered = draggerOptions.filter((item) => {
+                    item = item.replace(/ /g, "");
+                    if (item !== "") {
+                      return item;
+                    }
+                  });
+
+                  setDraggerOptions(filtered);
+                } else if (MULTI_SELECT.includes(type)) {
+                  for (const draggOption of draggerOptions) {
+                    if (
+                      draggerOptions.includes("") ||
+                      /^[^a-zA-Z0-9]+$/.test(draggOption)
+                    ) {
+                      toast.warn(`As opções não podem ser vazias`);
+                      return;
+                    }
+                  }
+
+                  filtered = [...draggerOptions];
+                } else if (type == "relation") {
+                  filtered = [...options];
+                } else {
+                  filtered = [...draggerOptions];
+                }
+
+                if (draggerOptions.length < 2 && MULTI_SELECT.includes(type)) {
+                  toast.warn(
+                    `Os campos do to tipo ${TYPES[type]?.label} devem conter mais de uma opção`,
+                  );
+                  return;
+                }
+
+                e.preventDefault();
+                data.title = title;
+
+                handleUpdateTemplate(filtered).then((response) => {
+                  const newColumn = {
+                    ...data,
+                    data: response[response?.length - 1]?.id,
+                    options: filtered,
+                  };
+                  onClickModal();
+                  onUpdate(newColumn, response);
+                });
+              }}
+            >
               <div className="encapsulator">
                 <InputContainer>
                   <Input
@@ -421,82 +493,7 @@ export const PersonalModal = ({
                   {" "}
                   Cancelar{" "}
                 </PrimaryButton>
-                <Principal
-                  type="button"
-                  onClick={(e) => {
-                    if (title.length == 0) {
-                      toast.warn("O Titulo nao pode ser vazio");
-                      return;
-                    }
-
-                    if (title.length > 20) {
-                      toast.warn(
-                        "O titulo não pode conter mais de 20 caracteres",
-                      );
-                      return;
-                    }
-
-                    if (
-                      (type == "relation" && options[0].field == "") ||
-                      options[0].originField
-                    ) {
-                      toast.warn("O campo para exibição não pode ser vazio");
-                      return;
-                    }
-
-                    let filtered: any;
-                    if (draggerOptions.length > 2) {
-                      filtered = draggerOptions.filter((item) => {
-                        item = item.replace(/ /g, "");
-                        if (item !== "") {
-                          return item;
-                        }
-                      });
-
-                      setDraggerOptions(filtered);
-                    } else if (MULTI_SELECT.includes(type)) {
-                      for (const draggOption of draggerOptions) {
-                        if (
-                          draggerOptions.includes("") ||
-                          /^[^a-zA-Z0-9]+$/.test(draggOption)
-                        ) {
-                          toast.warn(`As opções não podem ser vazias`);
-                          return;
-                        }
-                      }
-
-                      filtered = [...draggerOptions];
-                    } else if (type == "relation") {
-                      filtered = [...options];
-                    } else {
-                      filtered = [...draggerOptions];
-                    }
-
-                    if (
-                      draggerOptions.length < 2 &&
-                      MULTI_SELECT.includes(type)
-                    ) {
-                      toast.warn(
-                        `Os campos do to tipo ${TYPES[type]?.label} devem conter mais de uma opção`,
-                      );
-                      return;
-                    }
-
-                    e.preventDefault();
-                    data.title = title;
-
-                    handleUpdateTemplate(filtered).then((response) => {
-                      const newColumn = {
-                        ...data,
-                        data: response[response?.length - 1]?.id,
-                        options: filtered,
-                      };
-                      onClickModal();
-                      onUpdate(newColumn, response);
-                    });
-                  }}
-                  disabled={!enable}
-                >
+                <Principal type="submit" disabled={!enable}>
                   Salvar
                 </Principal>
               </ButtonContainer>
