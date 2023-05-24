@@ -28,8 +28,6 @@ export const Container = styled.div`
       margin-right: 8px;
     }
   }
-
-  background-color: green;
 `;
 
 export const Options = styled.div`
@@ -64,6 +62,4 @@ export const Content = styled.div`
     background: #f7f5ff !important;
     border-radius: 6px;
   }
-
-  background-color: red;
 `;
