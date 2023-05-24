@@ -495,11 +495,11 @@ export const ProductContextProvider = ({ children }: any) => {
       });
     });
 
-    // templateRequests
-    //   .customView(template.id, { fields: changeState })
-    //   .catch((error) =>
-    //     toast.error("Ocorreu um erro ao definir o freeze da coluna"),
-    //   );
+    templateRequests
+      .customView(template.id, { fields: changeState })
+      .catch((error) =>
+        toast.error("Ocorreu um erro ao definir o freeze da coluna"),
+      );
 
     return customFields;
   };

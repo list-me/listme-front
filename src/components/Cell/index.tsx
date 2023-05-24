@@ -138,8 +138,12 @@ export const HeaderCell: React.FC<ICellProps> = ({
             {titleHeader}
           </label>
         </Container>
-        <Options onClick={() => setIsOpen(true)}>
-          <ChevronDownIcon className="settings" ref={iconRef} />
+        <Options>
+          <ChevronDownIcon
+            className="settings"
+            onClick={() => setIsOpen(!isOpen)}
+            ref={iconRef}
+          />
         </Options>
       </Content>
     </>

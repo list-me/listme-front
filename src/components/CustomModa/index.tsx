@@ -224,7 +224,8 @@ export const PersonalModal = ({
                 setDraggerOptions(newState);
               }}
               name={index.toString()}
-              onPressEnter={() => {
+              onPressEnter={(e) => {
+                e.preventDefault();
                 if (draggerOptions.length === 12) {
                   toast.warn("Este campo não pode conter mais que 12 opções");
                   return;
