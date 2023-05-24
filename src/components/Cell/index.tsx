@@ -121,7 +121,7 @@ export const HeaderCell: React.FC<ICellProps> = ({
         template={template}
         col={column?.order}
       />
-      <Content ref={ref}>
+      <Content onClick={() => setIsOpen(!isOpen)} ref={ref}>
         <PersonalModal
           isOpen={isOpenModal}
           onClickModal={() => setIsOpenModal(!isOpenModal)}
@@ -132,14 +132,18 @@ export const HeaderCell: React.FC<ICellProps> = ({
             window.location.reload();
           }}
         />
-        <Container>
+        <Container onClick={() => setIsOpen(!isOpen)} ref={iconRef}>
           <label htmlFor=" ">
             <AltText />
             {titleHeader}
           </label>
         </Container>
-        <Options onClick={() => setIsOpen(true)}>
-          <ChevronDownIcon className="settings" ref={iconRef} />
+        <Options>
+          <ChevronDownIcon
+            className="settings"
+            // onClick={() => setIsOpen(!isOpen)}
+            ref={iconRef}
+          />
         </Options>
       </Content>
     </>
