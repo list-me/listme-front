@@ -576,7 +576,10 @@ const CustomTable: React.FC<CustomTableProps> = ({
                   }
                 });
               } else {
-                if (hotInstance)
+                if (
+                  hotInstance &&
+                  requiredFields.includes(customChanges[0][1])
+                ) {
                   requiredFields.forEach((key: any, index: number) => {
                     const currentClassName = hotInstance.getCellMeta(
                       customChanges[0][0],
@@ -592,9 +595,10 @@ const CustomTable: React.FC<CustomTableProps> = ({
                       );
                     }
                   });
+                  setEnable();
+                }
 
                 handleSave(newDataProvider[customChanges[0][0]]);
-                setEnable();
               }
 
               return true;

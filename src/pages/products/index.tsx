@@ -72,10 +72,6 @@ export const Products = () => {
     }
   }, []);
 
-  useEffect(() => {
-    console.log({ enable });
-  }, [enable]);
-
   return (
     <div
       style={{
@@ -114,7 +110,7 @@ export const Products = () => {
               width="226px"
               className="secondButton"
               onClick={() => {
-                setEnable(true);
+                setEnable(!enable);
                 handleAdd();
               }}
               disabled={enable}
