@@ -45,7 +45,7 @@ export const CellContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start !important;
-  justify-content: space-between !important;
+  justify-content: center !important;
 
   .invalid-cell:after {
     content: "Campo obrigatório!";

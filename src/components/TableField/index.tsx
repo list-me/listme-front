@@ -154,7 +154,11 @@ export const TableField: React.FC<ITableFieldProps> = ({
               <ChevronDownIcon />
             </span>
           </Container>
-          <label htmlFor="" className={className} />
+          {className == "invalid-cell" ? (
+            <label htmlFor="" className={className} />
+          ) : (
+            <></>
+          )}
         </CellContent>
       )}
       {isOpen ? (
