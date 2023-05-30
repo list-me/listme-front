@@ -12,6 +12,8 @@ interface ITableFieldProps {
   td: any;
 
   column: any;
+
+  className: string;
 }
 
 export type { ITableFieldProps };

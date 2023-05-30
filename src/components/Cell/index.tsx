@@ -12,6 +12,7 @@ import { ReactComponent as DescIcon } from "../../assets/sort-desc.svg";
 import { ReactComponent as TrashIcon } from "../../assets/trash-red.svg";
 import { DropdownMenu } from "../DropdownMenu";
 import { PersonalModal } from "../CustomModa";
+import { Tag } from "antd";
 
 export const HeaderCell: React.FC<ICellProps> = ({
   label,
@@ -139,6 +140,23 @@ export const HeaderCell: React.FC<ICellProps> = ({
           </label>
         </Container>
         <Options>
+          {column?.required ? (
+            <Tag
+              style={{
+                width: "fit-content",
+                height: "fit-content",
+                border: "solid 1px #FF0000",
+                borderRadius: "20px",
+                backgroundColor: "none",
+                color: "#FF0000",
+              }}
+            >
+              Obrigatório
+            </Tag>
+          ) : (
+            <></>
+          )}
+
           <ChevronDownIcon
             className="settings"
             onClick={() => setIsOpen(!isOpen)}

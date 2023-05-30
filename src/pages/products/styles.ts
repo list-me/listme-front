@@ -156,6 +156,18 @@ export const Container = styled.div`
     background-color: rgba(135, 206, 250, 0.3);
   }
 
+  .invalid-cell:after {
+    content: "Campo obrigatório!";
+    color: red;
+    font-size: 12px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    height: 50%;
+  }
+
   thead {
     th {
       .customHeader {

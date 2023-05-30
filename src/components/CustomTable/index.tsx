@@ -19,12 +19,18 @@ import { TableField } from "../TableField";
 import { Cell } from "../Cell/index";
 import { NewColumn } from "../NewColumn";
 import { Confirmation } from "../Confirmation";
+import { CellChange, ChangeSource } from "handsontable/common";
 
 registerAllModules();
 
 // const CellMemo = React.memo(Cell);
 // const NewColumnMemo = React.memo(NewColumn);
 // const TableFieldMemo = React.memo(TableField);
+
+interface Required {
+  row: number;
+  col: number;
+}
 
 const CustomTable: React.FC<CustomTableProps> = ({
   dataProvider,
@@ -47,6 +53,8 @@ const CustomTable: React.FC<CustomTableProps> = ({
     filter,
     handleRemoveColumn,
   } = useContext(productContext);
+  console.log("Renderizado");
+
   const [cols, setCols] = useState<any[]>([]);
   const [currentCell, setCurrentCell] = useState<any>({});
   const [columns, setColumns] = useState<any[]>(headerTable);
@@ -55,10 +63,18 @@ const CustomTable: React.FC<CustomTableProps> = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [position, setPosition] = useState(false);
   const [iconClicked] = useState<boolean>(true);
+  const [required, setRequired] = useState<Required[]>([]);
+
+  const requiredFields = template.fields.fields
+    .filter((field: any) => field.required)
+    .map((filtered: any) => filtered.id);
 
   const customRenderer = (
     td: HTMLTableCellElement,
     customComponent: React.ReactElement,
+    col: string,
+    row: number,
+    className: string,
   ): void => {
     if (!td) return;
 
@@ -67,6 +83,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
 
     const myComponent = document.createElement("div");
     myComponent.className = "customComponent htMiddle";
+    // myComponent.id = `ID${col}${row}`;
 
     ReactDOM.render(customComponent, myComponent);
     tdNode?.appendChild(myComponent);
@@ -95,14 +112,19 @@ const CustomTable: React.FC<CustomTableProps> = ({
             col: number,
           ): void => {
             if (dataProvider?.length) {
-              // let initialValue: any[] =
-              //   typeof dataProvider[row]?.[column.data] !== "object"
-              //     ? [dataProvider[row]?.[column.data]]
-              //     : dataProvider[row]?.[column.data];
-
               let initialValue = dataProvider[row]?.[column.data];
               if (!initialValue) {
                 initialValue = [""];
+              }
+
+              const test = instance
+                .getCellMetaAtRow(row)
+                .find((e) => e.className == "invalid-cell");
+              let className = "";
+
+              console.log({ column });
+              if (test && column.required) {
+                className = "invalid-cell";
               }
 
               customRenderer(
@@ -123,7 +145,11 @@ const CustomTable: React.FC<CustomTableProps> = ({
                   td={td}
                   column={column}
                   currentItem={dataProvider[row]}
+                  className={className}
                 />,
+                column.data,
+                row,
+                className,
               );
             }
           },
@@ -347,6 +373,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   );
 
   useEffect(() => {
+    console.log("Effect 1");
     const toFreeze = headerTable.filter((item) => item?.frozen === true);
     if (toFreeze.length > 0) {
       setFrozen(toFreeze.length);
@@ -356,6 +383,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   }, [headerTable, dataProvider]);
 
   useEffect(() => {
+    console.log("Effect 2");
     const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === "f") {
         event.preventDefault();
@@ -419,37 +447,176 @@ const CustomTable: React.FC<CustomTableProps> = ({
         //   changes: Array<CellChange | null>,
         //   source: ChangeSource,
         // ) => {
-        //   const currentCellValue = changes[0][2];
-        //   const newValue = changes[0][3];
-        //   const row = changes[0][0];
-        //   const col = cols.findIndex((col) => col?.data === changes[0][1]);
-        //   const columnType = headerTable[col]?.type;
-
-        //   if (columnType === "text" && newValue.length > 100) {
-        //     toast.warn("The text field cannot be longer than 100 characters");
-        //     return false;
-        //   }
-        //   if (columnType === "paragraph" && newValue.length > 255) {
-        //     toast.warn("O campo parágrafo deve conter até 200 caractéres");
-        //     return false;
-        //   }
-        //   return true;
+        //   // const currentCellValue = changes[0][2];
+        //   // const newValue = changes[0][3];
+        //   // const row = changes[0][0];
+        //   // const col = cols.findIndex((col) => col?.data === changes[0][1]);
+        //   // const columnType = headerTable[col]?.type;
+        //   // if (columnType === "text" && newValue.length > 100) {
+        //   //   toast.warn("The text field cannot be longer than 100 characters");
+        //   //   return false;
+        //   // }
+        //   // if (columnType === "paragraph" && newValue.length > 255) {
+        //   //   toast.warn("O campo parágrafo deve conter até 200 caractéres");
+        //   //   return false;
+        //   // }
+        //   // return true;
         // }}
-        afterChange={async (
-          changes: Handsontable.CellChange[] | null,
-          source,
-        ) => {
-          if (changes?.length && changes[0][2] !== changes[0][3]) {
-            if (dataProvider?.length) {
-              await handleSave(dataProvider[changes[0][0]]);
+        // afterChange={(changes: Handsontable.CellChange[] | null, source) => {
+        //   if (changes !== null && changes?.length) {
+        //     const customChanges = changes as Handsontable.CellChange[];
+        //     const hotInstance = hotRef.current!.hotInstance;
+        //     if (customChanges[0][2] !== customChanges[0][3]) {
+        //       if (dataProvider?.length && hotInstance) {
+        //         const newDataProvider = dataProvider;
+        //         newDataProvider[customChanges[0][0]][customChanges[0][1]] =
+        //           customChanges[0][3];
+
+        //         const currentFields = Object.keys(
+        //           newDataProvider[customChanges[0][0]],
+        //         ).filter((key) => newDataProvider[customChanges[0][0]][key]);
+
+        //         const allElementsExist = requiredFields.every((elem: any) =>
+        //           currentFields.includes(elem),
+        //         );
+
+        //         console.log({ allElementsExist });
+        //         if (!allElementsExist) {
+        //           const rowMeta = hotInstance.getCellMetaAtRow(
+        //             customChanges[0][0],
+        //           );
+        //           const metaExists = rowMeta.find(
+        //             (e) => e.className == "invalid-cell",
+        //           );
+
+        //           if (metaExists) return;
+
+        //           requiredFields.forEach((key: any, index: number) => {
+        //             const currentClassName = hotInstance.getCellMeta(
+        //               customChanges[0][0],
+        //               index,
+        //             ).className;
+
+        //             if (currentClassName !== "invalid-cell") {
+        //               hotInstance.setCellMeta(
+        //                 customChanges[0][0],
+        //                 index,
+        //                 "className",
+        //                 "invalid-cell",
+        //               );
+        //             }
+        //           });
+
+        //           return false;
+        //         } else {
+        //           setTimeout(() => {
+        //             requiredFields.forEach((key: any, index: number) => {
+        //               const currentClassName = hotInstance.getCellMeta(
+        //                 customChanges[0][0],
+        //                 index,
+        //               ).className;
+
+        //               console.log({ currentClassName });
+
+        //               if (currentClassName !== "") {
+        //                 hotInstance.setCellMeta(
+        //                   customChanges[0][0],
+        //                   index,
+        //                   "className",
+        //                   "",
+        //                 );
+        //               }
+        //             });
+
+        //             // hotInstance.render();
+        //           }, 0);
+        //         }
+
+        //         // handleSave(newDataProvider[customChanges[0][0]]);
+        //       }
+        //     }
+        //   }
+        // }}
+        beforeChange={(changes: (Handsontable.CellChange | null)[], source) => {
+          if (changes.length) {
+            const customChanges = changes as Handsontable.CellChange[];
+            if (customChanges[0][2] != customChanges[0][3] && dataProvider) {
+              const hotInstance = hotRef.current!.hotInstance;
+              const requiredFields = template.fields.fields
+                .filter((field: any) => {
+                  return field.required;
+                })
+                .map((filtered: any) => filtered.id);
+
+              const newDataProvider = dataProvider;
+              newDataProvider[customChanges[0][0]][customChanges[0][1]] =
+                customChanges[0][3];
+
+              const currentFields = Object.keys(
+                newDataProvider[customChanges[0][0]],
+              ).filter((key) => newDataProvider[customChanges[0][0]][key]);
+
+              const allElementsExist = requiredFields.every((elem: any) =>
+                currentFields.includes(elem),
+              );
+
+              if (!allElementsExist && hotInstance) {
+                const rowMeta = hotInstance.getCellMetaAtRow(
+                  customChanges[0][0],
+                );
+                const metaExists = rowMeta.find(
+                  (e) => e.className == "invalid-cell",
+                );
+
+                if (metaExists) return true;
+
+                requiredFields.forEach((key: any, index: number) => {
+                  const currentClassName = hotInstance.getCellMeta(
+                    customChanges[0][0],
+                    index,
+                  ).className;
+
+                  if (currentClassName !== "invalid-cell") {
+                    hotInstance.setCellMeta(
+                      customChanges[0][0],
+                      index,
+                      "className",
+                      "invalid-cell",
+                    );
+                  }
+                });
+              } else {
+                if (hotInstance)
+                  requiredFields.forEach((key: any, index: number) => {
+                    const currentClassName = hotInstance.getCellMeta(
+                      customChanges[0][0],
+                      index,
+                    ).className;
+
+                    if (currentClassName == "invalid-cell") {
+                      hotInstance.setCellMeta(
+                        customChanges[0][0],
+                        index,
+                        "className",
+                        "",
+                      );
+                    }
+                  });
+
+                handleSave(newDataProvider[customChanges[0][0]]);
+              }
+
+              return true;
             }
+
+            return false;
           }
         }}
         afterRenderer={(TD, row, col, prop, value, cellProperties) => {
           if (
             value &&
             filter &&
-            value.toString().toLowerCase().includes(filter?.toLowerCase())
+            value.toString().toLowerCase().includes(filter[0]?.toLowerCase())
           ) {
             TD.style.backgroundColor = "#fdff70";
           }

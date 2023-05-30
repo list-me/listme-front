@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { DropzoneRendererProps } from "./Dropzone";
-import { Container, Image, Label, Loader, Zone } from "./styles";
+import { CellContent, Container, Image, Label, Loader, Zone } from "./styles";
 import { imageContext } from "../../context/images";
 import { ReactComponent as AddIcon } from "../../assets/add-gray-large.svg";
 import { ReactComponent as CloseIcon } from "../../assets/close-small-blue.svg";
@@ -15,6 +15,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   row,
   col,
   prop,
+  className,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -39,7 +40,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
           const temp = [...newFiles, ...items].filter((item) => item != "");
 
           setItems(temp.filter((item) => item != ""));
-          instance.setDataAtRowProp(row, prop, temp);
+          // instance.setDataAtRowProp(row, prop, temp);
         }
         setLoading(false);
       } catch (error) {
@@ -143,22 +144,26 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
             setIsOpen(false);
           }
         }}
+        // className={className}
       >
         {isDragActive ? (
           <Zone>Arraste e solte aqui...</Zone>
         ) : (
-          <>
-            <span>
-              {items.map((item, index) => {
-                if (item.length > 1 && index < value.length - 1) {
-                  return `${item}, `;
-                }
+          <CellContent>
+            <div>
+              <span>
+                {items.map((item, index) => {
+                  if (item.length > 1 && index < value.length - 1) {
+                    return `${item}, `;
+                  }
 
-                return item;
-              })}
-            </span>
-            <AddIcon onClick={handleAddIconClick} ref={iconRef} />
-          </>
+                  return item;
+                })}
+              </span>
+              <AddIcon onClick={handleAddIconClick} ref={iconRef} />
+            </div>
+            <label htmlFor="" className={className} />
+          </CellContent>
         )}
         {isOpen && items.length ? (
           <SuspenseMenu

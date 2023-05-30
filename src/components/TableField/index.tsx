@@ -4,7 +4,14 @@ import React, { useCallback, useContext, useRef, useState } from "react";
 import { useEffect } from "react";
 import { Divider } from "antd";
 import { ITableFieldProps } from "./TableField.d";
-import { Container, Footer, Item, Select, SuspenseMenu } from "./styles";
+import {
+  CellContent,
+  Container,
+  Footer,
+  Item,
+  Select,
+  SuspenseMenu,
+} from "./styles";
 import { ReactComponent as ChevronDownIcon } from "../../assets/chevron-down.svg";
 import { ReactComponent as PencilIcon } from "../../assets/pencei-icon.svg";
 import { CustomRadio } from "../Radio";
@@ -25,7 +32,10 @@ export const TableField: React.FC<ITableFieldProps> = ({
   td,
   column,
   currentItem,
+  className,
 }) => {
+  console.log({ className });
+
   const [isOpen, setIsOpen] = useState(false);
   const [newValue, setNewValue] = useState<string[]>(value);
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -62,6 +72,7 @@ export const TableField: React.FC<ITableFieldProps> = ({
         row={row}
         value={value}
         prop={prop}
+        className={className}
       />
     ),
     relation: (
@@ -72,6 +83,7 @@ export const TableField: React.FC<ITableFieldProps> = ({
         currentItem={currentItem}
         column={column}
         handleSave={(e: any) => handleChangeValue(e)}
+        // className={className}
       />
     ),
   };
@@ -114,35 +126,38 @@ export const TableField: React.FC<ITableFieldProps> = ({
       {type == "relation" || type == "file" ? (
         FIELD_TYPES[type]
       ) : (
-        <Container
-          type={type}
-          ref={elementRef}
-          onClick={() => {
-            if (isOpen) {
-              setIsOpen(false);
-              const updatedValue =
-                typeof newValue === "object" ? newValue : [newValue];
-              instance.setDataAtRowProp(row, prop, updatedValue);
+        <CellContent>
+          <Container
+            type={type}
+            ref={elementRef}
+            onClick={() => {
+              if (isOpen) {
+                setIsOpen(false);
+                const updatedValue =
+                  typeof newValue === "object" ? newValue : [newValue];
+                instance.setDataAtRowProp(row, prop, updatedValue);
 
-              return;
-            } else {
-              setIsOpen(true);
-            }
-          }}
-        >
-          <label>
-            {newValue?.map((valueItem: string, index) => {
-              if (newValue.length > 1 && index < newValue.length - 1) {
-                return `${valueItem}, `;
+                return;
+              } else {
+                setIsOpen(true);
               }
+            }}
+          >
+            <label>
+              {newValue?.map((valueItem: string, index) => {
+                if (newValue.length > 1 && index < newValue.length - 1) {
+                  return `${valueItem}, `;
+                }
 
-              return valueItem;
-            })}
-          </label>
-          <span>
-            <ChevronDownIcon />
-          </span>
-        </Container>
+                return valueItem;
+              })}
+            </label>
+            <span>
+              <ChevronDownIcon />
+            </span>
+          </Container>
+          <label htmlFor="" className={className} />
+        </CellContent>
       )}
       {isOpen ? (
         <SuspenseMenu

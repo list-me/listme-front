@@ -4,6 +4,7 @@ interface DropzoneRendererProps {
   row: number;
   col: number;
   prop: string;
+  className: string;
 }
 
 export type { DropzoneRendererProps };

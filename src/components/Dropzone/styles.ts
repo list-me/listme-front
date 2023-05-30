@@ -1,5 +1,18 @@
 import styled from "styled-components";
 
+export const CellContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+
+  .invalid-cell:after {
+    content: "Campo obrigatório!";
+    color: red;
+    font-size: 12px;
+  }
+`;
+
 export const Container = styled.div`
   display: flex;
   align-items: center;
@@ -28,6 +41,16 @@ export const Container = styled.div`
 
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+
+  .invalid-cell:after {
+    content: "Campo obrigatório!";
+    color: red;
+    font-size: 12px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
   }
 `;
 
