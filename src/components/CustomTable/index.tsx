@@ -35,6 +35,7 @@ interface Required {
 const CustomTable: React.FC<CustomTableProps> = ({
   dataProvider,
   colHeaders,
+  setEnable = () => {},
 }) => {
   const hotRef = useRef<HotTable>(null);
   const {
@@ -63,11 +64,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [position, setPosition] = useState(false);
   const [iconClicked] = useState<boolean>(true);
-  const [required, setRequired] = useState<Required[]>([]);
-
-  const requiredFields = template.fields.fields
-    .filter((field: any) => field.required)
-    .map((filtered: any) => filtered.id);
 
   const customRenderer = (
     td: HTMLTableCellElement,
@@ -122,7 +118,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
                 .find((e) => e.className == "invalid-cell");
               let className = "";
 
-              console.log({ column });
               if (test && column.required) {
                 className = "invalid-cell";
               }
@@ -373,7 +368,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
   );
 
   useEffect(() => {
-    console.log("Effect 1");
     const toFreeze = headerTable.filter((item) => item?.frozen === true);
     if (toFreeze.length > 0) {
       setFrozen(toFreeze.length);
@@ -383,7 +377,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
   }, [headerTable, dataProvider]);
 
   useEffect(() => {
-    console.log("Effect 2");
     const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === "f") {
         event.preventDefault();
@@ -561,12 +554,9 @@ const CustomTable: React.FC<CustomTableProps> = ({
               );
 
               if (!allElementsExist && hotInstance) {
-                const rowMeta = hotInstance.getCellMetaAtRow(
-                  customChanges[0][0],
-                );
-                const metaExists = rowMeta.find(
-                  (e) => e.className == "invalid-cell",
-                );
+                const metaExists = hotInstance
+                  .getCellMetaAtRow(customChanges[0][0])
+                  .find((e) => e.className == "invalid-cell");
 
                 if (metaExists) return true;
 
@@ -604,6 +594,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
                   });
 
                 handleSave(newDataProvider[customChanges[0][0]]);
+                setEnable();
               }
 
               return true;

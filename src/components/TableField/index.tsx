@@ -34,8 +34,6 @@ export const TableField: React.FC<ITableFieldProps> = ({
   currentItem,
   className,
 }) => {
-  console.log({ className });
-
   const [isOpen, setIsOpen] = useState(false);
   const [newValue, setNewValue] = useState<string[]>(value);
   const [showMenu, setShowMenu] = useState<boolean>(false);

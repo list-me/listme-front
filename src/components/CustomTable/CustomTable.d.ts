@@ -20,6 +20,7 @@ interface CustomTableProps {
   rowClassName?: () => string;
   components?: {};
   colHeaders?: string[];
+  setEnable: () => void;
 }
 
 interface ICustomColumns {

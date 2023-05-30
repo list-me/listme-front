@@ -5,11 +5,17 @@ const Button: React.FC<any> = ({
   children,
   onClickModal,
   isLoading,
+  disabled = false,
   ...props
 }) => {
   return (
-    <Container onClick={onClickModal}>
-      <ButtonCustom isLoading={isLoading} {...props} type="submit">
+    <Container onClick={onClickModal} disabled>
+      <ButtonCustom
+        isLoading={isLoading}
+        {...props}
+        type="submit"
+        disabled={disabled}
+      >
         {children}
       </ButtonCustom>
     </Container>
