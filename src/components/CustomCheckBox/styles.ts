@@ -12,20 +12,17 @@ export const Container = styled.div`
     flex-direction: column;
     align-items: flex-start;
 
-    padding: 8px;
+    /* padding: 8px; */
 
-    label:not(:last-child) {
+    label {
       min-width: 100px;
 
       font-family: "Satoshi Regular", sans-serif !important;
       font-style: normal;
-      font-size: 14px !important;
+      font-size: 13px !important;
       line-height: 150% !important;
 
       margin-bottom: 15px;
-    }
-
-    label {
       margin-left: 0 !important;
     }
 
@@ -44,14 +41,11 @@ export const Container = styled.div`
 export const StyledCheckbox = styled(Checkbox)`
   display: flex;
   flex-direction: column;
-  /* margin: 0; */
-  /* estilos padrão */
   & + span {
     font-size: 16px;
     color: #333;
   }
 
-  /* estilos da checkbox selecionada */
   &:checked + span {
     color: red;
     font-weight: bold;

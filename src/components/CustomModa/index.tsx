@@ -17,15 +17,14 @@ import {
   BulkButton,
   AddNew,
   ButtonContainer2,
+  Footer,
 } from "./styles";
 import { ReactComponent as ChevronDownIcon } from "../../assets/chevron-down-small.svg";
 import { ReactComponent as TrashIcon } from "../../assets/trash-icon.svg";
 import { ReactComponent as PlusIcon } from "../../assets/plus-small.svg";
 
 import { templateRequests } from "../../services/apis/requests/template";
-import { productContext } from "../../context/products";
 import { RelationForm } from "../NewColumn/RelationForm";
-import { hasOwnProperty } from "handsontable/helpers";
 
 interface PropsModal {
   isOpen: boolean;
@@ -46,6 +45,14 @@ type Options = {
 
 type Option = {
   [key: string]: string | number;
+};
+
+type Field = {
+  name: string;
+  type: string;
+  title: string;
+  option: string[] | Options[];
+  required: boolean;
 };
 
 const EXTENSIOS = {
@@ -102,7 +109,7 @@ export const PersonalModal = ({
   const initial = useRef(options);
   const titleRef = useRef(title);
 
-  const formRef = useRef<HTMLFormElement>(null);
+  const [form] = Form.useForm();
 
   const textOptions = [
     {
@@ -166,14 +173,23 @@ export const PersonalModal = ({
 
   const MULTI_SELECT = ["checked", "radio", "list"];
 
-  const handleUpdateTemplate = async (filtered: string[]): Promise<any> => {
+  const handleUpdateTemplate = async ({
+    option,
+    required,
+    title,
+    type,
+    name,
+  }: Field): Promise<any> => {
     let templateUpdated = [];
     let newField: any;
     if (isUpdate) {
       templateUpdated = template.fields.fields.map((item: any) => {
         if (item.id === data.id) {
-          data.options = filtered;
+          data.options = option;
           data.type = type;
+          data.name = name;
+          data.title = title;
+          data.required = required;
           item = data;
           return item;
         }
@@ -186,7 +202,8 @@ export const PersonalModal = ({
         id: Math.floor(100000 + Math.random() * 900000).toString(),
         type,
         title,
-        options: data?.type == "relation" ? options : filtered,
+        name,
+        options: option,
         required,
         is_public: false,
         help_text: "This fiedl will help you to make a new product register",
@@ -210,30 +227,46 @@ export const PersonalModal = ({
       return {
         title: (
           <>
-            <Input
-              value={item.value ?? item}
-              onChange={(e) => {
-                const { value } = e.target;
-                const newState = [...draggerOptions];
-                newState[index] = value;
-                if (newState[index].length > 15) {
-                  toast.warn("Uma opção não pode conter mais de 15 caracteres");
-                  return;
-                }
+            <Form.Item
+              wrapperCol={{ flex: "auto" }}
+              label={`${index + 1}º Opção`}
+              name="options"
+              rules={[
+                {
+                  required: true,
+                  message: "A opção deve conter até 15 caracteres",
+                  max: 15,
+                },
+              ]}
+              style={{ marginBottom: "6px" }}
+            >
+              <Input
+                value={item.value ?? item}
+                onChange={(e) => {
+                  const { value } = e.target;
+                  const newState = [...draggerOptions];
+                  newState[index] = value;
+                  if (newState[index].length > 15) {
+                    toast.warn(
+                      "Uma opção não pode conter mais de 15 caracteres",
+                    );
+                    return;
+                  }
 
-                setDraggerOptions(newState);
-              }}
-              name={index.toString()}
-              onPressEnter={(e) => {
-                e.preventDefault();
-                if (draggerOptions.length === 12) {
-                  toast.warn("Este campo não pode conter mais que 12 opções");
-                  return;
-                }
-                setDraggerOptions((prevState) => [...prevState, ""]);
-              }}
-              autoFocus={index === draggerOptions.length - 1}
-            />
+                  setDraggerOptions(newState);
+                }}
+                name={index.toString()}
+                // onPressEnter={(e) => {
+                //   e.preventDefault();
+                //   if (draggerOptions.length === 12) {
+                //     toast.warn("Este campo não pode conter mais que 12 opções");
+                //     return;
+                //   }
+                //   setDraggerOptions((prevState) => [...prevState, ""]);
+                // }}
+                autoFocus={index === draggerOptions.length - 1}
+              />
+            </Form.Item>
             <IconContent
               onClick={() => {
                 if (draggerOptions.length <= 2) {
@@ -266,13 +299,13 @@ export const PersonalModal = ({
     if (data?.type == "relation") {
       setEnable(false);
     }
-  }, [isOpen, data, draggerOptions]);
+  }, [isOpen, data]);
 
   useEffect(() => {
     if (options !== initial.current || title !== titleRef.current) {
       setEnable(true);
     }
-  }, [options, title]);
+  }, [options]);
 
   return (
     <>
@@ -290,56 +323,45 @@ export const PersonalModal = ({
             <Description>{TYPES[type]?.description}</Description>
           </div>
           <BodyContent>
-            <form
-              ref={formRef}
-              className="form"
-              onSubmit={(e) => {
-                e.preventDefault();
+            <Form
+              form={form}
+              initialValues={{
+                required,
+                title,
+                name: data?.name,
+                type: data?.type,
+              }}
+              onFinish={(fields) => {
+                // e.preventDefault();
+                // console.log(fields);
 
-                if (title.length == 0) {
-                  toast.warn("O Titulo nao pode ser vazio");
-                  return;
-                }
-
-                if (title.length > 20) {
-                  toast.warn("O titulo não pode conter mais de 20 caracteres");
-                  return;
-                }
+                if (!fields.type) fields.type = type;
 
                 if (
-                  (type == "relation" && options[0].field == "") ||
-                  options[0].originField
+                  fields.type == "relation" &&
+                  (options[0].field == "" || !options[0].originField)
                 ) {
                   toast.warn("O campo para exibição não pode ser vazio");
                   return;
                 }
 
-                let filtered: any;
-                if (draggerOptions.length > 2) {
-                  filtered = draggerOptions.filter((item) => {
-                    item = item.replace(/ /g, "");
-                    if (item !== "") {
-                      return item;
-                    }
-                  });
-
-                  setDraggerOptions(filtered);
-                } else if (MULTI_SELECT.includes(type)) {
-                  for (const draggOption of draggerOptions) {
-                    if (
-                      draggerOptions.includes("") ||
-                      /^[^a-zA-Z0-9]+$/.test(draggOption)
-                    ) {
-                      toast.warn(`As opções não podem ser vazias`);
-                      return;
-                    }
+                const customOptions: any[] = [];
+                Object.keys(fields).forEach((key) => {
+                  if (/option/.test(key) && fields[key]) {
+                    customOptions.push(fields[key]);
+                    delete fields[key];
                   }
+                });
 
-                  filtered = [...draggerOptions];
-                } else if (type == "relation") {
-                  filtered = [...options];
-                } else {
-                  filtered = [...draggerOptions];
+                if (
+                  !customOptions.length &&
+                  ["text", "paragraph", "file"].includes(fields.type)
+                ) {
+                  fields.option = [""];
+                } else if (["radio", "list", "checked"].includes(fields.type)) {
+                  fields.option = customOptions;
+                } else if (fields.type == "relation") {
+                  fields.option = options;
                 }
 
                 if (draggerOptions.length < 2 && MULTI_SELECT.includes(type)) {
@@ -349,14 +371,11 @@ export const PersonalModal = ({
                   return;
                 }
 
-                e.preventDefault();
-                data.title = title;
-
-                handleUpdateTemplate(filtered).then((response) => {
+                handleUpdateTemplate(fields).then((response) => {
                   const newColumn = {
-                    ...data,
+                    ...fields,
                     data: response[response?.length - 1]?.id,
-                    options: filtered,
+                    options: fields.option,
                   };
                   onClickModal();
                   onUpdate(newColumn, response);
@@ -365,31 +384,66 @@ export const PersonalModal = ({
             >
               <div className="encapsulator">
                 <InputContainer>
-                  <Input
-                    style={{
-                      height: "64px",
-                      border: "1px solid #DEE2E6",
-                      marginBottom: "10px",
-                    }}
-                    defaultValue={title}
-                    value={title}
-                    onChange={(e) => {
-                      e.preventDefault();
+                  <Form.Item
+                    wrapperCol={{ flex: "auto" }}
+                    label="Defina o titulo desta coluna"
+                    name="title"
+                    rules={[
+                      {
+                        required: true,
+                        message: "O título deve conter no máximo 15 caracteres",
+                        max: 15,
+                      },
+                    ]}
+                    style={{ marginBottom: "6px" }}
+                  >
+                    <Input
+                      autoFocus
+                      style={{
+                        height: "64px",
+                        border: "1px solid #DEE2E6",
+                      }}
+                      value={title}
+                      onChange={(e) => {
+                        e.preventDefault();
 
-                      setTitle(e.target.value);
-                    }}
-                    placeholder="Informe o nome do campo"
-                  />
+                        setTitle(e.target.value);
+                      }}
+                      placeholder="Informe o titulo da coluna"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    wrapperCol={{ flex: "auto" }}
+                    label="Defina o nome da coluna"
+                    name="name"
+                    rules={[
+                      { required: true, message: "O nome não pode ser vazio" },
+                    ]}
+                    style={{ marginBottom: "6px" }}
+                  >
+                    <Input
+                      style={{
+                        height: "64px",
+                        border: "1px solid #DEE2E6",
+                      }}
+                      onChange={(e) => {
+                        e.preventDefault();
+
+                        setTitle(e.target.value);
+                      }}
+                      placeholder="Informe o nome do campo"
+                    />
+                  </Form.Item>
                   {!MULTI_SELECT.includes(data?.type) &&
                   !["relation", "file"].includes(data?.type) ? (
                     <Form.Item
+                      wrapperCol={{ flex: "auto" }}
                       label="Escolha o tipo de valor"
                       name="type"
-                      // rules={[
-                      //   { required: true, message: "Escolha o tipo de valor" },
-                      // ]}
-                      style={{ marginTop: "10px" }}
-                      className="formContent"
+                      rules={[
+                        { required: true, message: "Escolha o tipo de valor" },
+                      ]}
+                      style={{ marginBottom: "6px" }}
                     >
                       <Select
                         style={{
@@ -421,31 +475,35 @@ export const PersonalModal = ({
                 </InputContainer>
                 {MULTI_SELECT.includes(data?.type) ? (
                   <div className="dragger">
-                    Opções
-                    <Dragger
-                      options={mountOptions()}
-                      handleOnDrop={(info: any) => {
-                        const { dropToGap, node, dragNode } = info;
-                        const newTreeData = [...draggerOptions];
-                        const dragNodeIndex = newTreeData.findIndex(
-                          (n: any) => n.key === dragNode.key,
-                        );
-                        newTreeData.splice(dragNodeIndex, 1);
-                        const targetIndex = node
-                          ? newTreeData.findIndex(
-                              (n: any) => n.key === node.key,
-                            )
-                          : 0;
-                        const dropPosition =
-                          info.dropPosition - Number(info.dropToGap);
-                        const newIndex =
-                          dropPosition === -1 ? targetIndex : targetIndex + 1;
-                        const { title, key, value } = dragNode;
-                        const newNode = { title, key, value };
-                        newTreeData.splice(newIndex, 0, newNode);
-                        // setDraggerOptions(newTreeData);
-                      }}
-                    />
+                    <p>Opções</p>
+                    <Form.Item name="options" className="onDragger">
+                      <Dragger
+                        options={draggerOptions}
+                        setOptions={(values: any) => setDraggerOptions(values)}
+                        handleOnDrop={(info: any) => {
+                          const { dropToGap, node, dragNode } = info;
+                          const newTreeData = [...draggerOptions];
+                          const dragNodeIndex = newTreeData.findIndex(
+                            (n: any) => n.key === dragNode.key,
+                          );
+                          newTreeData.splice(dragNodeIndex, 1);
+                          const targetIndex = node
+                            ? newTreeData.findIndex(
+                                (n: any) => n.key === node.key,
+                              )
+                            : 0;
+                          const dropPosition =
+                            info.dropPosition - Number(info.dropToGap);
+                          const newIndex =
+                            dropPosition === -1 ? targetIndex : targetIndex + 1;
+                          const { title, key, value } = dragNode;
+                          const newNode = { title, key, value };
+                          newTreeData.splice(newIndex, 0, newNode);
+                          // setDraggerOptions(newTreeData);
+                        }}
+                        form={form}
+                      />
+                    </Form.Item>
                     <ButtonContainer2>
                       <BulkButton type="button" onClick={() => onClickModal()}>
                         {" "}
@@ -471,23 +529,34 @@ export const PersonalModal = ({
                 ) : (
                   <></>
                 )}
-                <Item>
-                  Descrição
+              </div>
+              <Footer>
+                <Form.Item
+                  name="description"
+                  label="Descrição"
+                  style={{ marginBottom: "2px" }}
+                >
                   <Switch size="small" />
-                </Item>
-                <Item>
-                  Texto de ajuda
+                </Form.Item>
+                <Form.Item
+                  name="help_text"
+                  label="Texto de ajuda"
+                  style={{ marginBottom: "2px" }}
+                >
                   <Switch size="small" />
-                </Item>
-                <Item>
-                  Campo obrigatório
+                </Form.Item>
+                <Form.Item
+                  name="required"
+                  label="Campo obrigatório"
+                  style={{ marginBottom: "2px" }}
+                >
                   <Switch
                     size="small"
                     onChange={() => setRequired(!required)}
-                    defaultChecked={required}
+                    checked={required}
                   />
-                </Item>
-              </div>
+                </Form.Item>
+              </Footer>
               <Divider style={{ marginTop: "8px", marginBottom: "0" }} />
               <ButtonContainer>
                 <PrimaryButton type="button" onClick={() => onClickModal()}>
@@ -498,7 +567,7 @@ export const PersonalModal = ({
                   Salvar
                 </Principal>
               </ButtonContainer>
-            </form>
+            </Form>
           </BodyContent>
         </Container>
       </Modal>

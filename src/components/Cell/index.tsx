@@ -130,7 +130,7 @@ export const HeaderCell: React.FC<ICellProps> = ({
           template={template}
           onUpdate={(e: any) => {
             setTitleHeader(e.title);
-            window.location.reload();
+            // window.location.reload();
           }}
         />
         <Container>

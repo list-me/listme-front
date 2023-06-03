@@ -414,7 +414,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
         stretchH="all"
         manualColumnResize
         // manualRowResize
-        autoRowSize
+        // autoRowSize
         beforeColumnMove={beforeColumnMove}
         // manualColumnMove
         viewportRowRenderingOffset={10}

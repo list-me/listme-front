@@ -40,7 +40,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
           const temp = [...newFiles, ...items].filter((item) => item != "");
 
           setItems(temp.filter((item) => item != ""));
-          // instance.setDataAtRowProp(row, prop, temp);
+          instance.setDataAtRowProp(row, prop, temp);
         }
         setLoading(false);
       } catch (error) {
