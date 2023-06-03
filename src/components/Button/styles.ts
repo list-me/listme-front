@@ -1,7 +1,12 @@
 import styled, { css } from "styled-components";
 import { IButtonPropsStyles } from "./Button.d";
 
-export const Container = styled.div`
+const ContainerDisabled = css`
+  opacity: 0.6;
+  cursor: not-allowed;
+`;
+
+export const Container = styled.div<{ disabled: boolean }>`
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
@@ -65,4 +70,6 @@ export const ButtonCustom = styled.button<IButtonPropsStyles>`
     height: 60px;
     font-size: ${({ theme }) => theme.fonts.sizes.xxsmall};
   }
+
+  ${(props) => props.disabled && ContainerDisabled}
 `;

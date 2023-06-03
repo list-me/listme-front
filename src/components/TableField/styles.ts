@@ -41,6 +41,19 @@ function getCustomStyle(type: string): FlattenSimpleInterpolation {
   return CUSTOM_STYLE[type as TypeKeys];
 }
 
+export const CellContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start !important;
+  justify-content: center !important;
+
+  .invalid-cell:after {
+    content: "Campo obrigatório!";
+    color: red;
+    font-size: 12px;
+  }
+`;
+
 export const Container = styled.div<{ type: string }>`
   display: flex;
   flex-direction: row;
@@ -102,7 +115,7 @@ export const SuspenseMenu = styled.div<{
   height: auto !important;
   max-height: 500px !important;
 
-  min-width:  150px;
+  min-width: 150px;
   width: ${({ width }) => `${width}px`} !important;
 
   border-radius: 8px;

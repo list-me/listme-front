@@ -230,6 +230,8 @@ export const ProductContextProvider = ({ children }: any) => {
   };
 
   const handleSave = async (value: any) => {
+    console.log("Deu aqui");
+
     const fields = buildProduct(value);
     try {
       if (value?.id) {
@@ -312,6 +314,7 @@ export const ProductContextProvider = ({ children }: any) => {
             data: item.id,
             className: "htLeft htMiddle",
             type: item.type,
+            required: item.required,
             options: item.options,
             order: item.order !== undefined ? item.order : index.toString(),
             hidden: item.hidden ? item.hidden : false,

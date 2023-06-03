@@ -12,4 +12,5 @@ export interface IButtonPropsStyles {
   width?: string;
   height?: string;
   isSecondary?: boolean;
+  disabled?: boolean;
 }

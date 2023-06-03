@@ -33,11 +33,7 @@ import { useDropzone } from "react-dropzone";
 
 export const Products = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  const handleSome = () => {
-    setIsOpen(!isOpen);
-  };
+  const [enable, setEnable] = useState<boolean>(false);
 
   const {
     products,
@@ -50,18 +46,17 @@ export const Products = () => {
     headerTable,
     filteredData,
   } = useContext(productContext);
-  const { handleActiveDrag } = useContext(imageContext);
   const navigate = useNavigate();
 
-  const { getRootProps, open, isDragActive, isFileDialogActive, rootRef } =
-    useDropzone({
-      multiple: true,
-      onDragEnter: () => {},
-      onDragOver: () => {},
-      onDragLeave: () => {},
-      noClick: true,
-      noKeyboard: true,
-    });
+  // const { getRootProps, open, isDragActive, isFileDialogActive, rootRef } =
+  //   useDropzone({
+  //     multiple: true,
+  //     onDragEnter: () => {},
+  //     onDragOver: () => {},
+  //     onDragLeave: () => {},
+  //     noClick: true,
+  //     noKeyboard: true,
+  //   });
 
   useEffect(() => {
     setIsLoading(true);
@@ -114,7 +109,11 @@ export const Products = () => {
               height="52px"
               width="226px"
               className="secondButton"
-              onClick={handleAdd}
+              onClick={() => {
+                setEnable(!enable);
+                handleAdd();
+              }}
+              disabled={enable}
             >
               Adicionar produto
               <PlusIcon />
@@ -142,7 +141,11 @@ export const Products = () => {
           {isLoading ? (
             <Loading />
           ) : (
-            <Table dataProvider={filteredData} colHeaders={colHeaders} />
+            <Table
+              dataProvider={filteredData}
+              colHeaders={colHeaders}
+              setEnable={() => setEnable(!enable)}
+            />
           )}
         </Container>
       </div>
