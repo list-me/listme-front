@@ -101,7 +101,7 @@ export const Container = styled.div`
     height: 72%;
   } */
 
-  height: 100%;
+  height: 70%;
 
   .handsontable .wtHolder::-webkit-scrollbar {
     background: transparent !important;

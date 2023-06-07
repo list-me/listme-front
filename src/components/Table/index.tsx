@@ -1,20 +1,40 @@
 import { useNavigate } from "react-router-dom";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Table, TablePaginationConfig } from "antd";
 import { Container } from "./styles";
 import { productContext } from "../../context/products";
 import { ROUTES } from "../../constants/routes";
+import { toast } from "react-toastify";
 
 export const CustomTable = (props: any) => {
   const productHook = useContext(productContext);
   const navigate = useNavigate();
 
-  const w = window.innerWidth;
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(
+    window.innerWidth >= 1024 && window.innerWidth <= 1536 ? 6 : 10,
+  );
+
+  const handleChangePageSize = (current: number, size: number) => {
+    setCurrentPage(1);
+    setPageSize(size);
+  };
+
+  const handleChangePage = (page: number) => {
+    setCurrentPage(page);
+    // props.onLoadMore({ pageSize, page });
+  };
+
   const sizeType = props.size ?? "middle";
+
   const paginationConfig: TablePaginationConfig = {
     position: ["bottomRight"],
-    size: "small",
-    pageSize: 50,
+    size: sizeType,
+    current: currentPage,
+    pageSize: pageSize,
+    total: props?.dataProvider?.length,
+    onChange: handleChangePage,
+    onShowSizeChange: handleChangePageSize,
   };
 
   return (

@@ -75,7 +75,7 @@ export const TableField: React.FC<ITableFieldProps> = ({
     ),
     relation: (
       <Relation
-        value={newValue}
+        value={value.filter((v) => v != undefined)}
         templateId={handleGetTemplateId(column)}
         field={handleGetField(column)}
         currentItem={currentItem}
@@ -98,6 +98,7 @@ export const TableField: React.FC<ITableFieldProps> = ({
   };
 
   useEffect(() => {
+    console.log("Custom renderizado by effect");
     function handleOutsideClick(event: any) {
       if (elementRef.current && elementRef.current!.contains(event.target)) {
         return;
@@ -117,7 +118,7 @@ export const TableField: React.FC<ITableFieldProps> = ({
       window.removeEventListener("wheel", handleOutsideClick);
       window.removeEventListener("keydown", handleOutsideClick);
     };
-  }, [isOpen, newValue]);
+  }, [value, isOpen]);
 
   return (
     <ImageContextProvider>
@@ -171,9 +172,11 @@ export const TableField: React.FC<ITableFieldProps> = ({
           {type === "radio" ? (
             <CustomRadio
               options={options ?? [""]}
-              value={newValue[0]}
+              value={value[0]}
               handleGetNewValue={(item: any) => {
                 setNewValue([item]);
+                instance.setDataAtRowProp(row, prop, [item]);
+                // setIsOpen(false);
                 // handleSetNewValue(item);
               }}
             />
@@ -200,6 +203,8 @@ export const TableField: React.FC<ITableFieldProps> = ({
               defaultCheckedList={value}
               handleGetNewValue={(e: any) => {
                 setNewValue(e);
+                instance.setDataAtRowProp(row, prop, e);
+
                 // handleSetNewValue(e);
               }}
             />

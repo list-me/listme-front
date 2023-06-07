@@ -13,29 +13,67 @@ import { registerAllModules } from "handsontable/registry";
 import { HotTable } from "@handsontable/react";
 import { toast } from "react-toastify";
 
+import { CellChange, ChangeSource } from "handsontable/common";
+import { useDropzone } from "react-dropzone";
+import { useNavigate } from "react-router-dom";
 import { CustomTableProps } from "./CustomTable.d";
 import { productContext } from "../../context/products";
 import { TableField } from "../TableField";
 import { Cell } from "../Cell/index";
 import { NewColumn } from "../NewColumn";
 import { Confirmation } from "../Confirmation";
-import { CellChange, ChangeSource } from "handsontable/common";
+import { productRequests } from "../../services/apis/requests/product";
+
+import { ReactComponent as EllipsisIcon } from "../../assets/ellipsis.svg";
+import { ReactComponent as DownloadIcon } from "../../assets/download.svg";
+import { ReactComponent as PlusIcon } from "../../assets/add.svg";
+import { ReactComponent as ArrowIcon } from "../../assets/arrow-left.svg";
+import { ReactComponent as FlagIcon } from "../../assets/icons/flag.svg";
+import { ReactComponent as EditIcon } from "../../assets/x-edit.svg";
+import { ReactComponent as HelpIcon } from "../../assets/help.svg";
+import {
+  Header,
+  LeftContent,
+  RightContent,
+  MoreOptions,
+  Container,
+  IconTemplate,
+  Title,
+  Filters,
+  Contents,
+  Item,
+  Content,
+  Line,
+} from "../../pages/products/styles";
+import { ROUTES } from "../../constants/routes";
+import Button from "../Button";
+import Table from ".";
+import { Loading } from "../Loading";
+import { Temp } from "../Temp";
+import { imageContext } from "../../context/images";
 
 registerAllModules();
 
 // const CellMemo = React.memo(Cell);
 // const NewColumnMemo = React.memo(NewColumn);
-// const TableFieldMemo = React.memo(TableField);
+const TableFieldMemo = React.memo(TableField);
 
 interface Required {
   row: number;
   col: number;
 }
 
+const ToDelete = (props: any) => {
+  console.log(props);
+  return <div>Meu template</div>;
+};
+
 const CustomTable: React.FC<CustomTableProps> = ({
-  dataProvider,
+  temp,
   colHeaders,
+  children,
   setEnable = () => {},
+  addProducts = () => {},
 }) => {
   const hotRef = useRef<HotTable>(null);
   const {
@@ -53,6 +91,8 @@ const CustomTable: React.FC<CustomTableProps> = ({
     handleMove,
     filter,
     handleRemoveColumn,
+    handleGetProducts,
+    total,
   } = useContext(productContext);
   console.log("Renderizado");
 
@@ -65,6 +105,13 @@ const CustomTable: React.FC<CustomTableProps> = ({
   const [position, setPosition] = useState(false);
   const [iconClicked] = useState<boolean>(true);
 
+  const [dataProvider, setDataProvider] = useState<any[]>(temp ?? []);
+
+  const [page, setPage] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
+
   const customRenderer = (
     td: HTMLTableCellElement,
     customComponent: React.ReactElement,
@@ -73,16 +120,21 @@ const CustomTable: React.FC<CustomTableProps> = ({
     className: string,
   ): void => {
     if (!td) return;
+    const existent = td.querySelector(".customComponent");
+    if (existent) {
+      ReactDOM.unmountComponentAtNode(existent);
 
-    const tdNode = ReactDOM.findDOMNode(td);
-    td.innerText = "";
+      const myComponent = document.createElement("div");
+      myComponent.className = "customComponent htMiddle";
 
-    const myComponent = document.createElement("div");
-    myComponent.className = "customComponent htMiddle";
-    // myComponent.id = `ID${col}${row}`;
-
-    ReactDOM.render(customComponent, myComponent);
-    tdNode?.appendChild(myComponent);
+      ReactDOM.render(customComponent, myComponent);
+      td.replaceChildren(myComponent);
+    } else {
+      const myComponent = document.createElement("div");
+      myComponent.className = "customComponent htMiddle";
+      ReactDOM.render(customComponent, myComponent);
+      td.replaceChildren(myComponent);
+    }
   };
 
   const handleMountColumns = () => {
@@ -147,12 +199,66 @@ const CustomTable: React.FC<CustomTableProps> = ({
                 className,
               );
             }
+            // if (dataProvider?.length) {
+            // const test = instance
+            //   .getCellMetaAtRow(row)
+            //   .find((e) => e.className == "invalid-cell");
+
+            // let initialValue;
+            // const empty = hotRef.current?.hotInstance?.isEmptyRow(0);
+            // if (row === 0 && empty) {
+            //   console.log("true", empty);
+            //   initialValue = [""];
+            // } else if (row == 0 && test && column.type == "relation") {
+            //   initialValue = [""];
+            // } else {
+            //   initialValue = dataProvider[row]?.[column.data];
+            // }
+
+            // if (row == 0)
+            //   console.log(
+            //     hotRef.current!?.hotInstance?.getDataAtCell(row, col),
+            //   );
+
+            // if (!initialValue) {
+            //   initialValue = [""];
+            // }
+
+            // let className = "";
+            // if (test && column.required) {
+            //   className = "invalid-cell";
+            // }
+
+            // customRenderer(
+            //   td,
+            //   <TableFieldMemo
+            //     value={initialValue}
+            //     type={column.type}
+            //     options={column.options}
+            //     handleSetNewValue={(e: string | number) => {
+            //       const value = typeof e === "object" ? e : [e];
+            //       instance.setDataAtCell(row, col, value);
+            //       return false;
+            //     }}
+            //     col={col}
+            //     instance={hotRef.current!.hotInstance}
+            //     row={row}
+            //     prop={column.data}
+            //     td={td}
+            //     column={column}
+            //     currentItem={dataProvider[row]}
+            //     className={className}
+            //     hot-renderer
+            //   />,
+            //   column.data,
+            //   row,
+            //   className,
+            // );
+            // }
           },
         });
-
         return;
       }
-
       columnsCustom.push({
         data: column.data,
         className: column.className,
@@ -162,7 +268,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
         hidden: column.hidden,
       });
     });
-
     setCols(columnsCustom);
   };
 
@@ -367,6 +472,17 @@ const CustomTable: React.FC<CustomTableProps> = ({
     [headers, template, headerTable, columns, hidden],
   );
 
+  const loadMoreData = async () => {
+    // setIsLoading(true);
+    // await handleGetProducts(template.id, headerTable, page);
+    // setData((prevData) => [...prevData, ...]);
+    // setIsLoading(false);
+  };
+
+  // useEffect(() => {
+  //   handleMountColumns();
+  // }, []);
+
   useEffect(() => {
     const toFreeze = headerTable.filter((item) => item?.frozen === true);
     if (toFreeze.length > 0) {
@@ -376,25 +492,118 @@ const CustomTable: React.FC<CustomTableProps> = ({
     handleMountColumns();
   }, [headerTable, dataProvider]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === "f") {
-        event.preventDefault();
-        if (hotRef.current) {
-          hotRef?.current?.hotInstance?.deselectCell();
-        }
-      }
-    };
+  // useEffect(() => {
+  //   // if (hotRef.current) {
+  //   //   const hotInstance = hotRef.current.hotInstance;
 
-    window.addEventListener("keydown", handleKeyDown);
+  //   //   if (hotInstance) {
+  //   //     const container = hotInstance.rootElement.querySelector(".wtHolder");
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
+  //   //     if (container) {
+  //   //       let lastScrollTop = 0; // New state variable to track last scroll position
+
+  //   //       const handleScroll = () => {
+  //   //         const { scrollTop, clientHeight, scrollHeight } = container;
+
+  //   //         // check if scroll is down and user is at the bottom
+  //   //         if (
+  //   //           scrollTop > lastScrollTop &&
+  //   //           scrollTop + clientHeight >= scrollHeight - 10
+  //   //         ) {
+  //   //           if (!isLoading && total != dataProvider?.length) {
+  //   //             loadMoreData();
+  //   //           }
+  //   //         }
+
+  //   //         lastScrollTop = scrollTop; // update last scroll position
+  //   //       };
+
+  //   //       container.addEventListener("scroll", handleScroll);
+
+  //   //       // Cleanup on unmount
+  //   //       return () => {
+  //   //         container.removeEventListener("scroll", handleScroll);
+  //   //       };
+  //   //     }
+  //   //   }
+  //   // }
+
+  //   const handleKeyDown = (event: KeyboardEvent) => {
+  //     if ((event.ctrlKey || event.metaKey) && event.key === "f") {
+  //       event.preventDefault();
+  //       if (hotRef.current) {
+  //         hotRef?.current?.hotInstance?.deselectCell();
+  //       }
+  //     }
+  //   };
+
+  //   window.addEventListener("keydown", handleKeyDown);
+
+  //   return () => {
+  //     window.removeEventListener("keydown", handleKeyDown);
+  //   };
+  // }, []);
 
   return (
     <>
+      <Content>
+        <Header>
+          <LeftContent>
+            <ArrowIcon
+              onClick={() => {
+                setDataProvider([]);
+                // setHeaderTable([]);
+                setColumns([]);
+                navigate(ROUTES.TEMPLATES);
+              }}
+            />
+            <IconTemplate>
+              <FlagIcon />
+            </IconTemplate>
+            <Title> {template?.name} </Title>
+            <EditIcon />
+          </LeftContent>
+          <RightContent>
+            <MoreOptions>
+              <EllipsisIcon />
+            </MoreOptions>
+            <Button height="52px" width="227px" isSecondary>
+              <DownloadIcon />
+              Importar produtos
+            </Button>
+            <Button
+              height="52px"
+              width="226px"
+              className="secondButton"
+              onClick={() => {
+                // const hotInstance = hotRef.current!.hotInstance;
+                // if (hotInstance) {
+                //   if (hotInstance.isEmptyRow(0))
+                //     return toast.warn("Preencha o produto atual");
+                //   hotInstance.alter("insert_row_above", 0);
+                //   const newRowData: { [key: string]: any } = {};
+                //   Object.keys(newRowData).forEach((key, columnIndex) => {
+                //     hotInstance.setDataAtCell(0, columnIndex, newRowData[key]);
+                //   });
+                // }
+                setDataProvider((prev) => [{}, ...prev]);
+              }}
+            >
+              Adicionar produto
+              <PlusIcon />
+            </Button>
+          </RightContent>
+        </Header>
+        <Filters>
+          <Temp options={headerTable} />
+          <Contents>
+            <Item>
+              <HelpIcon />
+              Ajuda
+            </Item>
+          </Contents>
+        </Filters>
+      </Content>
       <Confirmation
         description="Ao excluir este produto, você perderá todas as informações, inclusive no catálogo em que está cadastrado."
         action="DELETE"
@@ -409,16 +618,17 @@ const CustomTable: React.FC<CustomTableProps> = ({
         colHeaders={headers}
         columns={cols}
         data={dataProvider}
-        // height="100%"
+        height="100%"
         width="100%"
         stretchH="all"
         manualColumnResize
         // manualRowResize
         // autoRowSize
+        autoColumnSize={false}
         beforeColumnMove={beforeColumnMove}
         // manualColumnMove
-        viewportRowRenderingOffset={10}
-        viewportColumnRenderingOffset={999}
+        viewportRowRenderingOffset={300}
+        viewportColumnRenderingOffset={50}
         renderAllRows={false}
         // rerenderOnColumnResize={false}
         rowHeaders
@@ -534,38 +744,36 @@ const CustomTable: React.FC<CustomTableProps> = ({
           if (changes.length) {
             const customChanges = changes as Handsontable.CellChange[];
             if (customChanges[0][2] != customChanges[0][3] && dataProvider) {
-              const hotInstance = hotRef.current!.hotInstance;
+              const { hotInstance } = hotRef.current!;
               const requiredFields = template.fields.fields
                 .filter((field: any) => {
                   return field.required;
                 })
                 .map((filtered: any) => filtered.id);
-
               const newDataProvider = dataProvider;
+              // eslint-disable-next-line prefer-destructuring
               newDataProvider[customChanges[0][0]][customChanges[0][1]] =
                 customChanges[0][3];
-
               const currentFields = Object.keys(
                 newDataProvider[customChanges[0][0]],
-              ).filter((key) => newDataProvider[customChanges[0][0]][key]);
-
+              ).filter(
+                (key) => newDataProvider[customChanges[0][0]][key]?.length,
+              );
               const allElementsExist = requiredFields.every((elem: any) =>
                 currentFields.includes(elem),
               );
 
+              console.log({ allElementsExist, currentFields });
               if (!allElementsExist && hotInstance) {
                 const metaExists = hotInstance
                   .getCellMetaAtRow(customChanges[0][0])
                   .find((e) => e.className == "invalid-cell");
-
                 if (metaExists) return true;
-
                 requiredFields.forEach((key: any, index: number) => {
                   const currentClassName = hotInstance.getCellMeta(
                     customChanges[0][0],
                     index,
                   ).className;
-
                   if (currentClassName !== "invalid-cell") {
                     hotInstance.setCellMeta(
                       customChanges[0][0],
@@ -585,7 +793,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
                       customChanges[0][0],
                       index,
                     ).className;
-
                     if (currentClassName == "invalid-cell") {
                       hotInstance.setCellMeta(
                         customChanges[0][0],
@@ -597,15 +804,22 @@ const CustomTable: React.FC<CustomTableProps> = ({
                   });
                   setEnable();
                 }
-
                 handleSave(newDataProvider[customChanges[0][0]]);
               }
-
               return true;
             }
-
             return false;
           }
+        }}
+        afterSelection={(
+          row: number,
+          column: number,
+          row2: number,
+          column2: number,
+          preventScrolling: { value: boolean },
+          selectionLayerLevel: number,
+        ) => {
+          console.log();
         }}
         afterRenderer={(TD, row, col, prop, value, cellProperties) => {
           if (

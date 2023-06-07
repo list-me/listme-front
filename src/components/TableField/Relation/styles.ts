@@ -120,7 +120,7 @@ export const Content = styled.div`
   overflow: auto;
 
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-    max-height: 500px;
+    max-height: 450px;
   }
 
   padding-right: 1rem;
@@ -262,6 +262,8 @@ export const Content = styled.div`
 export const Loader = styled.div`
   display: flex;
   justify-content: center;
+
+  height: 100px;
 
   @keyframes spinner {
     0% {

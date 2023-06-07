@@ -71,6 +71,12 @@ interface ITypeProductContext {
     newColumns: any[],
     fieldId: string,
   ) => void;
+  handleGetProducts: (
+    templateId: string,
+    templateFields: IHeaderTable[],
+    page: number,
+  ) => Promise<void>;
+  total: number | undefined;
 }
 
 interface IField {
@@ -116,6 +122,8 @@ export const productContext = createContext<ITypeProductContext>({
   handleNewColumn: () => {},
   handleFilter: () => {},
   handleRemoveColumn: () => {},
+  handleGetProducts: async (): Promise<void> => {},
+  total: undefined,
 });
 
 export const ProductContextProvider = ({ children }: any) => {
@@ -128,6 +136,7 @@ export const ProductContextProvider = ({ children }: any) => {
   const [customFields, setCustomFields] = useState<any[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [filter, setFilter] = useState<string | undefined>(undefined);
+  const [total, setTotal] = useState<number | undefined>(undefined);
 
   const COMPONENT_CELL_PER_TYPE: ICustomCellType = {
     RADIO: "radio",
@@ -165,9 +174,11 @@ export const ProductContextProvider = ({ children }: any) => {
   const handleGetProducts = async (
     templateId: string,
     templateFields: IHeaderTable[],
+    page: number = 0,
   ) => {
+    if (total == filteredData.length) return;
     return productRequests
-      .list({}, templateId)
+      .list({ page: page }, templateId)
       .then((response) => {
         const productFields: any = [];
         response?.products?.forEach((item: any) => {
@@ -198,7 +209,12 @@ export const ProductContextProvider = ({ children }: any) => {
           productFields.push({ [template[0]]: "" });
         }
         setProducts(productFields);
-        setFilteredData(productFields);
+
+        const prod = filteredData.length
+          ? [...productFields, ...filteredData]
+          : [...productFields];
+        setFilteredData(prod);
+        setTotal(response.total);
       })
       .catch((error) => {
         console.error(error);
@@ -230,8 +246,6 @@ export const ProductContextProvider = ({ children }: any) => {
   };
 
   const handleSave = async (value: any) => {
-    console.log("Deu aqui");
-
     const fields = buildProduct(value);
     try {
       if (value?.id) {
@@ -648,6 +662,8 @@ export const ProductContextProvider = ({ children }: any) => {
     handleNewColumn,
     handleFilter,
     handleRemoveColumn,
+    handleGetProducts,
+    total,
   };
 
   return (

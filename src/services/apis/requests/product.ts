@@ -8,12 +8,12 @@ interface IPagination {
 
 export const productRequests = {
   list: async (
-    { page = 0, limit = 5 }: IPagination,
+    { page = 0, limit = 30 }: IPagination,
     templateId?: string,
   ): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.get(
-      `/products/?page${page}&limit${limit}&product_template_id=${templateId}`,
+      `/products/?offset=${page}&limit=${limit}&product_template_id=${templateId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
