@@ -44,6 +44,7 @@ export const Products = () => {
     template,
     headerTable,
     filteredData,
+    setFilteredData,
   } = useContext(productContext);
   const navigate = useNavigate();
 

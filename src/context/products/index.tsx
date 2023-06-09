@@ -44,6 +44,7 @@ interface ITypeProductContext {
   filteredData: any[];
   filter: string | undefined;
   setProducts: Function;
+  setFilteredData: Function;
   handleRedirectAndGetProducts: (template: any) => Promise<any>;
   headerTable: IHeaderTable[];
   setHeaderTable: Function;
@@ -93,6 +94,7 @@ interface IField {
   hidden?: boolean;
   width?: string;
   frozen?: boolean;
+  bucket_url: string;
 }
 
 export const productContext = createContext<ITypeProductContext>({
@@ -100,6 +102,7 @@ export const productContext = createContext<ITypeProductContext>({
   filteredData: [],
   filter: "",
   setProducts: () => {},
+  setFilteredData: () => {},
   handleRedirectAndGetProducts: async (): Promise<any> => {},
   headerTable: [],
   setHeaderTable: () => {},
@@ -249,11 +252,11 @@ export const ProductContextProvider = ({ children }: any) => {
     const fields = buildProduct(value);
     try {
       if (value?.id) {
-        await Promise.resolve(
-          productRequests.update({ id: value.id, fields }),
-        ).catch((error) => {
-          throw error;
-        });
+        await Promise.resolve(productRequests.update({ id: value.id, fields }))
+          .then((resolved) => toast.success("Item atualizado com sucesso"))
+          .catch((error) => {
+            throw error;
+          });
         return;
       } else {
         const newProduct = {
@@ -262,17 +265,19 @@ export const ProductContextProvider = ({ children }: any) => {
           fields: fields,
         };
 
-        let product = await handlePost(newProduct);
-        setFilteredData((prev) => {
-          return prev.map((element) => {
-            if (!element?.id) {
-              return {
-                ...element,
-                id: product?.id,
-              };
-            }
-            return element;
-          });
+        await handlePost(newProduct).then((resolved) => {
+          toast.success("Item cadastrado com sucesso"),
+            setFilteredData((prev) => {
+              return prev.map((element) => {
+                if (!element?.id) {
+                  return {
+                    ...element,
+                    id: resolved?.id,
+                  };
+                }
+                return element;
+              });
+            });
         });
       }
     } catch (error: any) {
@@ -334,6 +339,7 @@ export const ProductContextProvider = ({ children }: any) => {
             hidden: item.hidden ? item.hidden : false,
             width: item.width ? item.width : "300px",
             frozen: item.frozen ? item.frozen : false,
+            bucket_url: response.bucket_url,
           };
         });
 
@@ -640,6 +646,7 @@ export const ProductContextProvider = ({ children }: any) => {
     filteredData,
     filter,
     setProducts,
+    setFilteredData,
     handleRedirectAndGetProducts,
     headerTable,
     setHeaderTable,

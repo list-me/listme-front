@@ -1,13 +1,20 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { toast } from "react-toastify";
 import { DropzoneRendererProps } from "./Dropzone";
-import { CellContent, Container, Image, Label, Loader, Zone } from "./styles";
+import {
+  CellContent,
+  Container,
+  Image,
+  Label,
+  Loader,
+  Zone,
+  SuspenseMenu,
+} from "./styles";
 import { imageContext } from "../../context/images";
 import { ReactComponent as AddIcon } from "../../assets/add-gray-large.svg";
 import { ReactComponent as CloseIcon } from "../../assets/close-small-blue.svg";
 import { ReactComponent as FileIcon } from "../../assets/file.svg";
-
-import { SuspenseMenu } from "./styles";
 
 const Dropzone: React.FC<DropzoneRendererProps> = ({
   value,
@@ -16,6 +23,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   col,
   prop,
   className,
+  bucket_url,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -31,21 +39,21 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
 
   const { uploadImages } = useContext(imageContext);
 
-  const onDrop = async (acceptedFiles: File[]) => {
+  const onDrop = async (acceptedFiles: File[]): Promise<void> => {
     if (acceptedFiles.length > 0) {
       setLoading(true);
       try {
-        const newFiles = await uploadImages(acceptedFiles);
+        const newFiles = await uploadImages(acceptedFiles, bucket_url);
         if (newFiles) {
-          const temp = [...newFiles, ...items].filter((item) => item != "");
+          const temp = [...newFiles, ...items].filter((item) => item !== "");
 
-          setItems(temp.filter((item) => item != ""));
+          setItems(temp.filter((item) => item !== ""));
           instance.setDataAtRowProp(row, prop, temp);
         }
         setLoading(false);
       } catch (error) {
         setLoading(false);
-        console.error({ error });
+        if (error instanceof Error) toast.error(error.message);
       }
     }
   };
@@ -116,7 +124,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   if (loading)
     return (
       <Loader className="lds-roller">
-        <div className="loading-spinner"></div>
+        <div className="loading-spinner" />
       </Loader>
     );
 
@@ -176,7 +184,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                 return (
                   <Image key={index}>
                     <CloseIcon onClick={(e) => handleRemove(item, e)} />
-                    <a href={item} target="_blank">
+                    <a href={item} target="_blank" rel="noreferrer">
                       {item.includes("jpeg") ||
                       item.includes("jpg") ||
                       item.includes("svg") ||

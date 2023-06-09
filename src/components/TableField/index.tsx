@@ -71,6 +71,7 @@ export const TableField: React.FC<ITableFieldProps> = ({
         value={value}
         prop={prop}
         className={className}
+        bucket_url={column?.bucket_url}
       />
     ),
     relation: (

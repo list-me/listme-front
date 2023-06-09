@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-return */
+/* eslint-disable consistent-return */
 import ReactDOM from "react-dom";
 import React, {
   useCallback,
@@ -92,7 +94,9 @@ const CustomTable: React.FC<CustomTableProps> = ({
     filter,
     handleRemoveColumn,
     handleGetProducts,
-    total,
+    setProducts,
+    setHeaderTable,
+    setFilteredData,
   } = useContext(productContext);
   console.log("Renderizado");
 
@@ -552,8 +556,9 @@ const CustomTable: React.FC<CustomTableProps> = ({
             <ArrowIcon
               onClick={() => {
                 setDataProvider([]);
-                // setHeaderTable([]);
-                setColumns([]);
+                setHeaderTable([]);
+                setFilteredData([]);
+                // setColumns([]);
                 navigate(ROUTES.TEMPLATES);
               }}
             />
@@ -576,16 +581,10 @@ const CustomTable: React.FC<CustomTableProps> = ({
               width="226px"
               className="secondButton"
               onClick={() => {
-                // const hotInstance = hotRef.current!.hotInstance;
-                // if (hotInstance) {
-                //   if (hotInstance.isEmptyRow(0))
-                //     return toast.warn("Preencha o produto atual");
-                //   hotInstance.alter("insert_row_above", 0);
-                //   const newRowData: { [key: string]: any } = {};
-                //   Object.keys(newRowData).forEach((key, columnIndex) => {
-                //     hotInstance.setDataAtCell(0, columnIndex, newRowData[key]);
-                //   });
-                // }
+                const { hotInstance } = hotRef.current!;
+                if (hotInstance && hotInstance.isEmptyRow(0))
+                  return toast.warn("Preencha o produto atual");
+
                 setDataProvider((prev) => [{}, ...prev]);
               }}
             >
@@ -665,81 +664,26 @@ const CustomTable: React.FC<CustomTableProps> = ({
         //   // }
         //   // return true;
         // }}
-        // afterChange={(changes: Handsontable.CellChange[] | null, source) => {
-        //   if (changes !== null && changes?.length) {
-        //     const customChanges = changes as Handsontable.CellChange[];
-        //     const hotInstance = hotRef.current!.hotInstance;
-        //     if (customChanges[0][2] !== customChanges[0][3]) {
-        //       if (dataProvider?.length && hotInstance) {
-        //         const newDataProvider = dataProvider;
-        //         newDataProvider[customChanges[0][0]][customChanges[0][1]] =
-        //           customChanges[0][3];
+        afterChange={(changes: Handsontable.CellChange[] | null, source) => {
+          if (changes !== null && changes?.length) {
+            const customChanges = changes as Handsontable.CellChange[];
+            if (
+              customChanges[0][2] !== customChanges[0][3] &&
+              dataProvider.length
+            ) {
+              const { hotInstance } = hotRef.current!;
 
-        //         const currentFields = Object.keys(
-        //           newDataProvider[customChanges[0][0]],
-        //         ).filter((key) => newDataProvider[customChanges[0][0]][key]);
+              if (hotInstance) {
+                const metaExists = hotInstance
+                  .getCellMetaAtRow(customChanges[0][0])
+                  .find((e) => e.className == "invalid-cell");
+                if (metaExists) return false;
+              }
 
-        //         const allElementsExist = requiredFields.every((elem: any) =>
-        //           currentFields.includes(elem),
-        //         );
-
-        //         console.log({ allElementsExist });
-        //         if (!allElementsExist) {
-        //           const rowMeta = hotInstance.getCellMetaAtRow(
-        //             customChanges[0][0],
-        //           );
-        //           const metaExists = rowMeta.find(
-        //             (e) => e.className == "invalid-cell",
-        //           );
-
-        //           if (metaExists) return;
-
-        //           requiredFields.forEach((key: any, index: number) => {
-        //             const currentClassName = hotInstance.getCellMeta(
-        //               customChanges[0][0],
-        //               index,
-        //             ).className;
-
-        //             if (currentClassName !== "invalid-cell") {
-        //               hotInstance.setCellMeta(
-        //                 customChanges[0][0],
-        //                 index,
-        //                 "className",
-        //                 "invalid-cell",
-        //               );
-        //             }
-        //           });
-
-        //           return false;
-        //         } else {
-        //           setTimeout(() => {
-        //             requiredFields.forEach((key: any, index: number) => {
-        //               const currentClassName = hotInstance.getCellMeta(
-        //                 customChanges[0][0],
-        //                 index,
-        //               ).className;
-
-        //               console.log({ currentClassName });
-
-        //               if (currentClassName !== "") {
-        //                 hotInstance.setCellMeta(
-        //                   customChanges[0][0],
-        //                   index,
-        //                   "className",
-        //                   "",
-        //                 );
-        //               }
-        //             });
-
-        //             // hotInstance.render();
-        //           }, 0);
-        //         }
-
-        //         // handleSave(newDataProvider[customChanges[0][0]]);
-        //       }
-        //     }
-        //   }
-        // }}
+              return handleSave(dataProvider[customChanges[0][0]]);
+            }
+          }
+        }}
         beforeChange={(changes: (Handsontable.CellChange | null)[], source) => {
           if (changes.length) {
             const customChanges = changes as Handsontable.CellChange[];
@@ -763,7 +707,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
                 currentFields.includes(elem),
               );
 
-              console.log({ allElementsExist, currentFields });
               if (!allElementsExist && hotInstance) {
                 const metaExists = hotInstance
                   .getCellMetaAtRow(customChanges[0][0])
@@ -783,32 +726,28 @@ const CustomTable: React.FC<CustomTableProps> = ({
                     );
                   }
                 });
-              } else {
-                if (
-                  hotInstance &&
-                  requiredFields.includes(customChanges[0][1])
-                ) {
-                  requiredFields.forEach((key: any, index: number) => {
-                    const currentClassName = hotInstance.getCellMeta(
+                return;
+              }
+
+              if (hotInstance && requiredFields.includes(customChanges[0][1])) {
+                requiredFields.forEach((key: any, index: number) => {
+                  const currentClassName = hotInstance.getCellMeta(
+                    customChanges[0][0],
+                    index,
+                  ).className;
+                  if (currentClassName == "invalid-cell") {
+                    hotInstance.setCellMeta(
                       customChanges[0][0],
                       index,
-                    ).className;
-                    if (currentClassName == "invalid-cell") {
-                      hotInstance.setCellMeta(
-                        customChanges[0][0],
-                        index,
-                        "className",
-                        "",
-                      );
-                    }
-                  });
-                  setEnable();
-                }
-                handleSave(newDataProvider[customChanges[0][0]]);
+                      "className",
+                      "",
+                    );
+                  }
+                });
+                setEnable();
+                return;
               }
-              return true;
             }
-            return false;
           }
         }}
         afterSelection={(

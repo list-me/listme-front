@@ -8,7 +8,7 @@ interface IPagination {
 
 export const productRequests = {
   list: async (
-    { page = 0, limit = 30 }: IPagination,
+    { page = 0, limit = 100 }: IPagination,
     templateId?: string,
   ): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
