@@ -2,7 +2,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
 
-import { Contents, Item } from "./styles";
+import { ButtonCustom, Contents, Item } from "./styles";
 import { ReactComponent as ChevronDownIcon } from "../../assets/chevron-down.svg";
 import { ReactComponent as EyeOffIcon } from "../../assets/eye-off.svg";
 import { ReactComponent as FilterIcon } from "../../assets/filter.svg";
@@ -13,23 +13,36 @@ import DropdownMenu from "../RepDropdownMenu";
 import { Input } from "../Input";
 import Modal from "../Modal";
 import { productContext } from "../../context/products";
+import Button from "../Button";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface IProps {
   options?: any[];
+  handleSetFilter?: Function;
+  handleSearch: Function;
 }
 
-export const Temp: React.FC<IProps> = ({ options }) => {
+export const Temp: React.FC<IProps> = ({
+  options,
+  handleSetFilter = () => {},
+  handleSearch = () => {},
+}) => {
   const iconRef = useRef(null);
   const searchRef = useRef(null);
 
-  const { handleFilter } = useContext(productContext);
+  // const { handleFilter } = useContext(productContext);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [onSearch, setOnSearch] = useState<boolean>(false);
+  const [filter, setFilter] = useState<string>("");
 
-  const handleCustomChange = debounce((newValue: string) => {
-    handleFilter(newValue);
-  }, 200);
+  const variants = {
+    open: { x: 0, opacity: 1 },
+    closed: { x: "-100%", opacity: 0, transition: { duration: 1 } },
+  };
+  // const handleCustomChange = debounce((newValue: string) => {
+  //   handleSetFilter(newValue);
+  // }, 200);
 
   useEffect(() => {
     window.addEventListener("keydown", function (e) {
@@ -64,19 +77,42 @@ export const Temp: React.FC<IProps> = ({ options }) => {
         <FilterIcon />
         Filtrar
       </Item>
-      <Item ref={searchRef} onClick={() => setOnSearch(true)}>
+      <Item ref={searchRef}>
         <SearchIcon onClick={() => setOnSearch(!onSearch)} />
-        {!onSearch ? (
-          "Buscar"
-        ) : (
-          <Input
-            name="search"
-            type="input"
-            autoFocus
-            handleCustomChange={handleCustomChange}
-            background
-          />
-        )}
+        <AnimatePresence>
+          {onSearch ? (
+            <motion.div
+              initial="closed"
+              animate="open"
+              exit="closed"
+              variants={variants}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Input
+                name="search"
+                type="input"
+                autoFocus
+                handleCustomChange={setFilter}
+                background
+                onPressEnter={() => handleSearch(filter)}
+                height="39px"
+              />
+              <ButtonCustom
+                height="37px"
+                width="85px"
+                onClick={() => handleSearch(filter)}
+              >
+                Buscar
+              </ButtonCustom>
+            </motion.div>
+          ) : (
+            <span onClick={() => setOnSearch(!onSearch)}>Buscar</span>
+          )}
+        </AnimatePresence>
       </Item>
     </Contents>
   );

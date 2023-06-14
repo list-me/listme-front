@@ -162,7 +162,7 @@ export const ProductContextProvider = ({ children }: any) => {
       productRequests
         .delete(product.id)
         .then((response: any) => {
-          setFilteredData(currentProducts);
+          // setFilteredData(currentProducts);
           toast.success("Produto excluído com sucesso");
         })
         .catch((error) => {
@@ -178,10 +178,11 @@ export const ProductContextProvider = ({ children }: any) => {
     templateId: string,
     templateFields: IHeaderTable[],
     page: number = 0,
+    limit: number = 100,
   ) => {
     if (total == filteredData.length) return;
     return productRequests
-      .list({ page: page }, templateId)
+      .list({ page: page, limit }, templateId)
       .then((response) => {
         const productFields: any = [];
         response?.products?.forEach((item: any) => {
@@ -265,20 +266,24 @@ export const ProductContextProvider = ({ children }: any) => {
           fields: fields,
         };
 
+        let newItem;
         await handlePost(newProduct).then((resolved) => {
           toast.success("Item cadastrado com sucesso"),
-            setFilteredData((prev) => {
-              return prev.map((element) => {
-                if (!element?.id) {
-                  return {
-                    ...element,
-                    id: resolved?.id,
-                  };
-                }
-                return element;
-              });
-            });
+            (newItem = resolved?.id);
+          // setFilteredData((prev) => {
+          //   return prev.map((element) => {
+          //     if (!element?.id) {
+          //       return {
+          //         ...element,
+          //         id: resolved?.id,
+          //       };
+          //     }
+          //     return element;
+          //   });
+          // });
         });
+
+        return newItem;
       }
     } catch (error: any) {
       console.error(error.response.data.message[0]);
@@ -625,7 +630,6 @@ export const ProductContextProvider = ({ children }: any) => {
       });
 
     setCustomFields(customs);
-
     setHeaderTable(newColumns);
     templateRequests
       .removeColumn(window.location.pathname.substring(10), { column: fieldId })

@@ -1,3 +1,5 @@
+/* eslint-disable  */
+
 import React, { useContext, useEffect, useState } from "react";
 import { Table } from "antd";
 import { toast } from "react-toastify";
@@ -29,7 +31,10 @@ export const Relation: React.FC<PropsRelation> = ({
   field,
   currentItem,
   column,
-  handleSave = () => {},
+  // handleSave = () => {},
+  instance,
+  dataProvider,
+  row,
 }) => {
   const buildProduct = (fields: any) => {
     const obj: any[] = [];
@@ -63,6 +68,8 @@ export const Relation: React.FC<PropsRelation> = ({
 
   const [opt, setOpt] = useState<string>();
   const [limit, setLimit] = useState(column.options[0].limit);
+
+  const { handleSave } = useContext(productContext);
 
   const handleChangeVisible = () => {
     setData([]);
@@ -302,9 +309,15 @@ export const Relation: React.FC<PropsRelation> = ({
       if (item.id == column.data) {
         return item;
       }
-    }).value;
+    })?.value;
 
-    handleSave(values);
+    setCurrentProducts(values);
+
+    const newData = dataProvider;
+    newData[row][column.data] = values;
+
+    const id = await handleSave(newData[row]);
+    if (id) dataProvider[row].id = id;
   };
 
   useEffect(() => {
@@ -317,7 +330,7 @@ export const Relation: React.FC<PropsRelation> = ({
   useEffect(() => {}, [currentProducts]);
 
   return (
-    <Container>
+    <Container onClick={() => {}}>
       <Modal isOpen={isOpen} changeVisible={handleChangeVisible} width="60vw">
         {isLoading ? (
           <Loading />
@@ -351,8 +364,8 @@ export const Relation: React.FC<PropsRelation> = ({
                 )}
               </div>
               <div className="contentTable">
-                {currentProducts.filter((e) => e !== "").length >= limit ? (
-                  <label> Máximo de items relacionados </label>
+                {currentProducts?.filter((e) => e !== "").length >= limit ? (
+                  <label> Número máximo de items já relacionados </label>
                 ) : (
                   <>
                     <Title> Relacionar items </Title>
@@ -394,8 +407,8 @@ export const Relation: React.FC<PropsRelation> = ({
         <Tag onClick={handleChangeVisible} maxWidth="fit-content">
           <label>
             {" "}
-            {currentProducts.filter((e) => e !== "").length ||
-              contentProducts.filter((e) => e !== "").length}{" "}
+            {currentProducts?.filter((e) => e !== "").length ||
+              contentProducts?.filter((e) => e !== "").length}{" "}
             Item(s) relacionados{" "}
           </label>
         </Tag>

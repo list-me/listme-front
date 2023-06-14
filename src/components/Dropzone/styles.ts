@@ -6,11 +6,13 @@ export const CellContent = styled.div`
   align-items: flex-start !important;
   justify-content: space-between !important;
 
-  .invalid-cell:after {
+  /* .invalid-cell:after {
     content: "Campo obrigatório!";
     color: red;
     font-size: 12px;
-  }
+  } */
+
+  width: 100%;
 `;
 
 export const Container = styled.div`
@@ -43,7 +45,7 @@ export const Container = styled.div`
     text-overflow: ellipsis;
   }
 
-  .invalid-cell:after {
+  /* .invalid-cell:after {
     content: "Campo obrigatório!";
     color: red;
     font-size: 12px;
@@ -51,7 +53,7 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-  }
+  } */
 `;
 
 export const Label = styled.span`

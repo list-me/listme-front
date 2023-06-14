@@ -15,6 +15,7 @@ import { imageContext } from "../../context/images";
 import { ReactComponent as AddIcon } from "../../assets/add-gray-large.svg";
 import { ReactComponent as CloseIcon } from "../../assets/close-small-blue.svg";
 import { ReactComponent as FileIcon } from "../../assets/file.svg";
+import { productContext } from "../../context/products";
 
 const Dropzone: React.FC<DropzoneRendererProps> = ({
   value,
@@ -24,18 +25,22 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   prop,
   className,
   bucket_url,
+  dataProvider,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [imageLoading, setImageLoading] = useState<Record<string, boolean>>({});
 
-  const [items, setItems] = useState<string[]>(value);
+  const [oldItems, setOldItems] = useState<string[]>(value);
+  const [items, setItems] = useState<any[]>(value ?? [""]);
   const [top, setTop] = useState<any>("");
 
   const modalRef = useRef<HTMLDivElement | null>(null);
   const iconRef = useRef<SVGSVGElement | null>(null);
   const dropDownRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { handleSave } = useContext(productContext);
 
   const { uploadImages } = useContext(imageContext);
 
@@ -44,11 +49,17 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
       setLoading(true);
       try {
         const newFiles = await uploadImages(acceptedFiles, bucket_url);
+
+        console.log("new added", { newFiles, items, value });
         if (newFiles) {
           const temp = [...newFiles, ...items].filter((item) => item !== "");
 
-          setItems(temp.filter((item) => item !== ""));
-          instance.setDataAtRowProp(row, prop, temp);
+          const newData = dataProvider;
+          newData[row][prop] = temp;
+
+          setItems(temp);
+          const id = await handleSave(newData[row]);
+          if (id) newData[row].id = id;
         }
         setLoading(false);
       } catch (error) {
@@ -85,9 +96,15 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     onDragLeave: () => {},
   });
 
-  const onClose = () => {
-    instance.setDataAtRowProp(row, prop, items);
+  const onClose = async () => {
     setIsOpen(false);
+    if (oldItems?.length > items?.length) {
+      const newData = dataProvider;
+      newData[row][prop] = items;
+
+      const id = await handleSave(newData[row]);
+      // if (id) newData[row].id = id;
+    }
   };
 
   const handleAddIconClick = () => {
@@ -97,9 +114,13 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   };
 
   useEffect(() => {
+    setItems(value ?? [""]);
+  }, []);
+
+  useEffect(() => {
     if (modalRef.current!) {
       const topPosition = modalRef.current!.offsetParent as unknown as any;
-      setTop(topPosition);
+      setTop(topPosition?.offsetTop);
     }
 
     function handleOutsideClick(event: any) {
@@ -144,12 +165,20 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
       <Container
         {...getRootProps()}
         ref={modalRef}
-        onClick={() => {
+        onClick={async () => {
           if (!isOpen) {
             setIsOpen(true);
           } else {
-            instance.setDataAtRowProp(row, prop, items);
+            // instance.setDataAtRowProp(row, prop, items);
             setIsOpen(false);
+            if (oldItems?.length > items?.length) {
+              const newData = dataProvider;
+              newData[row][prop] = items;
+
+              // console.log({ newData: newData[row][prop] });
+              const id = await handleSave(newData[row]);
+              if (id) newData[row].id = id;
+            }
           }
         }}
         // className={className}
@@ -160,8 +189,8 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
           <CellContent>
             <div>
               <span>
-                {items.map((item, index) => {
-                  if (item.length > 1 && index < value.length - 1) {
+                {items?.map((item, index) => {
+                  if (item?.length > 1 && index < value?.length - 1) {
                     return `${item}, `;
                   }
 
@@ -170,40 +199,40 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
               </span>
               <AddIcon onClick={handleAddIconClick} ref={iconRef} />
             </div>
-            <label htmlFor="" className={className} />
+            {/* <label htmlFor="" className={className} /> */}
           </CellContent>
         )}
-        {isOpen && items.length ? (
+        {isOpen && items?.length ? (
           <SuspenseMenu
-            width={String(instance.getColWidth(col) - 30)}
-            top={String(top?.offsetTop + 55)}
+            width={String(250)}
+            top={String(top + 55)}
             ref={dropDownRef}
           >
-            {items.map((item, index) => {
+            {items?.map((item, index) => {
               if (item.length > 1) {
                 return (
                   <Image key={index}>
                     <CloseIcon onClick={(e) => handleRemove(item, e)} />
                     <a href={item} target="_blank" rel="noreferrer">
-                      {item.includes("jpeg") ||
+                      {/* {item.includes("jpeg") ||
                       item.includes("jpg") ||
                       item.includes("svg") ||
-                      item.includes("png") ? (
-                        <img
-                          src={item}
-                          onLoad={() => handleImageLoadEnd(item)}
-                          onError={() => handleImageLoadEnd(item)}
-                          style={{
-                            opacity: imageLoading[item] ? 0.5 : 1,
-                            transition: "opacity 0.3s",
-                            backgroundColor: "#f7f7f7",
-                          }}
-                        />
-                      ) : (
+                      item.includes("png") ? ( */}
+                      <img
+                        src={item}
+                        onLoad={() => handleImageLoadEnd(item)}
+                        onError={() => handleImageLoadEnd(item)}
+                        style={{
+                          opacity: imageLoading[item] ? 0.5 : 1,
+                          transition: "opacity 0.3s",
+                          backgroundColor: "#f7f7f7",
+                        }}
+                      />
+                      {/* ) : (
                         // <span className="fileIcon">
                         <FileIcon className="fileIcon" />
                         // </span>
-                      )}
+                      )} */}
                     </a>
                   </Image>
                 );

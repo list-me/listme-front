@@ -56,7 +56,7 @@ const theme: ITheme = {
       bold: '"Satoshi Bold", sans-serif',
     },
     sizes: {
-      xxxsmall: "14px",
+      xxxsmall: "13px",
       xxsmall: "16px",
       xsmall: "1.6rem",
       small: "14px",

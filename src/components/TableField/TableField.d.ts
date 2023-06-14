@@ -1,19 +1,20 @@
 interface ITableFieldProps {
   options?: string[];
-  value: string[];
+  value?: string[];
   type: string;
   handleSetNewValue?: Function;
   currentItem?: any;
 
-  instance: any;
-  row: number;
-  col: number;
+  instance?: any;
+  // row?: number;
+  col?: number;
   prop: string;
-  td: any;
+  td?: any;
 
   column: any;
 
-  className: string;
+  className?: string;
+  dataProvider: any[];
 }
 
 export type { ITableFieldProps };

@@ -54,16 +54,13 @@ export const InputCustom = styled(Input)<IPropStyle>`
   border-radius: 8px;
 
   font-family: ${({ theme }) => theme.fonts.family.default};
-  font-size: ${({ theme }) => theme.fonts.sizes.normal};
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
   color: #495057;
   font-weight: 400;
   line-height: 150%;
 
-  /* &::before {
-    transition: opacity 3s ease-in;
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    height: 40px !important;
+    font-size: ${({ theme }) => theme.fonts.sizes.small};
   }
-
-  &::after {
-    transition: opacity 1s ease-out;
-  } */
 `;

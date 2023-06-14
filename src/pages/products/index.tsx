@@ -30,33 +30,65 @@ import { Loading } from "../../components/Loading";
 import { Temp } from "../../components/Temp";
 import { imageContext } from "../../context/images";
 import { useDropzone } from "react-dropzone";
+import { productRequests } from "../../services/apis/requests/product";
 
 export const Products = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
-    products,
-    setHeaderTable,
     handleRedirectAndGetProducts,
-    handleAdd,
     colHeaders,
     setProducts,
     template,
     headerTable,
     filteredData,
-    setFilteredData,
+    COMPONENT_CELL_PER_TYPE,
   } = useContext(productContext);
-  const navigate = useNavigate();
+  const handleGetProductFiltered = (keyword: string): void => {
+    setIsLoading(true);
+    try {
+      productRequests
+        .list({ keyword }, window.location.pathname.substring(10))
+        .then((response) => {
+          const productFields: any = [];
+          response?.products?.forEach((item: any) => {
+            const object: any = {};
+            item.fields.forEach((field: any) => {
+              const currentField = headerTable.find(
+                (e: any) => e.data == field.id,
+              );
 
-  // const { getRootProps, open, isDragActive, isFileDialogActive, rootRef } =
-  //   useDropzone({
-  //     multiple: true,
-  //     onDragEnter: () => {},
-  //     onDragOver: () => {},
-  //     onDragLeave: () => {},
-  //     noClick: true,
-  //     noKeyboard: true,
-  //   });
+              if (currentField && field.value) {
+                const test = !COMPONENT_CELL_PER_TYPE[
+                  currentField?.type?.toUpperCase()
+                ]
+                  ? field?.value[0]
+                  : field?.value;
+
+                object[field?.id] = test;
+              }
+            });
+            productFields.push({
+              ...object,
+              id: item.id,
+              created_at: item.created_at,
+            });
+          });
+
+          if (!productFields.length && template) {
+            productFields.push({ [template[0]]: "" });
+          }
+
+          setProducts(productFields);
+          setIsLoading(false);
+        })
+        .catch((errr: any) => {
+          console.log(errr);
+        });
+    } catch (e) {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -83,7 +115,7 @@ export const Products = () => {
     >
       <div
         style={{
-          height: "100%",
+          // height: "60%",
           overflow: "inherit",
           flex: 1,
         }}

@@ -41,17 +41,15 @@ function getCustomStyle(type: string): FlattenSimpleInterpolation {
   return CUSTOM_STYLE[type as TypeKeys];
 }
 
-export const CellContent = styled.div`
+export const CellContent = styled.div<{ isSearchResult: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: flex-start !important;
   justify-content: center !important;
 
-  .invalid-cell:after {
-    content: "Campo obrigatório!";
-    color: red;
-    font-size: 12px;
-  }
+  padding: 0 8px 0 6px;
+
+  background-color: ${(prop) => (prop.isSearchResult ? "#FCEDD9" : "none")};
 `;
 
 export const Container = styled.div<{ type: string }>`

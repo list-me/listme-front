@@ -1,11 +1,12 @@
 interface DropzoneRendererProps {
-  value: string[];
+  value: any[];
   instance: any;
   row: number;
   col: number;
   prop: string;
-  className: string;
+  className?: string;
   bucket_url: string;
+  dataProvider: any[];
 }
 
 export type { DropzoneRendererProps };
