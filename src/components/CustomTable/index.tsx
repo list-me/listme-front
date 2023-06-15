@@ -1,4 +1,4 @@
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import React, {
   useCallback,
   useContext,
@@ -174,7 +174,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
 
       const existent = TH.querySelector(".customHeader");
       if (existent) {
-        ReactDOM.unmountComponentAtNode(existent);
+        ReactDOM.createRoot(existent).unmount();
         const myComponent = document.createElement("div");
         myComponent.className = "customHeader";
 
@@ -185,7 +185,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
         });
 
         if (headers[column] === " ") {
-          ReactDOM.render(
+          ReactDOM.createRoot(myComponent).render(
             <NewColumn
               template={template}
               newColumn={template}
@@ -215,10 +215,9 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
                 handleNewColumn(newColumn, templateUpdated);
               }}
             />,
-            myComponent,
           );
         } else {
-          ReactDOM.render(
+          ReactDOM.createRoot(myComponent).render(
             <Cell
               label={headers[column]}
               column={col}
@@ -311,7 +310,6 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
                 setIsOpen(!isOpen);
               }}
             />,
-            myComponent,
           );
         }
 
@@ -329,55 +327,51 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
 
   const handleGetProductFiltered = (keyword: string): void => {
     setLoading(true);
-    try {
-      productRequests
-        .list({ keyword, limit: 100 }, window.location.pathname.substring(10))
-        .then((response) => {
-          const productFields: any[] = [];
-          response?.products?.forEach((item: any) => {
-            const object: any = {};
-            item.fields.forEach((field: any) => {
-              const currentField = headerTable.find(
-                (e: any) => e.data == field.id,
-              );
+    productRequests
+      .list({ keyword, limit: 100 }, window.location.pathname.substring(10))
+      .then((response) => {
+        const productFields: any[] = [];
+        response?.products?.forEach((item: any) => {
+          const object: any = {};
+          item.fields.forEach((field: any) => {
+            const currentField = headerTable.find(
+              (e: any) => e.data == field.id,
+            );
 
-              if (currentField && field.value) {
-                const test = !COMPONENT_CELL_PER_TYPE[
-                  currentField?.type?.toUpperCase()
-                ]
-                  ? field?.value[0]
-                  : field?.value;
+            if (currentField && field.value) {
+              const test = !COMPONENT_CELL_PER_TYPE[
+                currentField?.type?.toUpperCase()
+              ]
+                ? field?.value[0]
+                : field?.value;
 
-                object[field?.id] = test;
-              }
-            });
-            productFields.push({
-              ...object,
-              id: item.id,
-              created_at: item.created_at,
-            });
+              object[field?.id] = test;
+            }
           });
-
-          if (!productFields.length && template) {
-            productFields.push({ [template[0]]: "" });
-          }
-
-          setDataProvider(productFields);
-          setLoading(false);
-
-          hotRef.current?.hotInstance?.loadData(productFields);
-          const plugin = hotRef.current!.hotInstance?.getPlugin("search");
-          plugin?.query(keyword);
-          hotRef.current!?.hotInstance?.render();
-        })
-        .catch((errr: any) => {
-          setLoading(false);
-          throw errr.data;
+          productFields.push({
+            ...object,
+            id: item.id,
+            created_at: item.created_at,
+          });
         });
-    } catch (e: any) {
-      setLoading(false);
-      toast.error(e?.message);
-    }
+
+        if (!productFields.length && template) {
+          productFields.push({ [template[0]]: "" });
+        }
+
+        setDataProvider(productFields);
+        setLoading(false);
+
+        hotRef.current?.hotInstance?.loadData(productFields);
+        const plugin = hotRef.current!.hotInstance?.getPlugin("search");
+        plugin?.query(keyword);
+        hotRef.current!?.hotInstance?.render();
+      })
+      .catch((errr: any) => {
+        setLoading(false);
+        hotRef.current!?.hotInstance?.render();
+        toast.error(errr.response.data.message);
+      });
   };
 
   useEffect(() => {

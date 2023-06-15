@@ -44,51 +44,6 @@ export const Products = () => {
     filteredData,
     COMPONENT_CELL_PER_TYPE,
   } = useContext(productContext);
-  const handleGetProductFiltered = (keyword: string): void => {
-    setIsLoading(true);
-    try {
-      productRequests
-        .list({ keyword }, window.location.pathname.substring(10))
-        .then((response) => {
-          const productFields: any = [];
-          response?.products?.forEach((item: any) => {
-            const object: any = {};
-            item.fields.forEach((field: any) => {
-              const currentField = headerTable.find(
-                (e: any) => e.data == field.id,
-              );
-
-              if (currentField && field.value) {
-                const test = !COMPONENT_CELL_PER_TYPE[
-                  currentField?.type?.toUpperCase()
-                ]
-                  ? field?.value[0]
-                  : field?.value;
-
-                object[field?.id] = test;
-              }
-            });
-            productFields.push({
-              ...object,
-              id: item.id,
-              created_at: item.created_at,
-            });
-          });
-
-          if (!productFields.length && template) {
-            productFields.push({ [template[0]]: "" });
-          }
-
-          setProducts(productFields);
-          setIsLoading(false);
-        })
-        .catch((errr: any) => {
-          console.log(errr);
-        });
-    } catch (e) {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
     setIsLoading(true);
