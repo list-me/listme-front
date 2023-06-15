@@ -270,24 +270,17 @@ export const ProductContextProvider = ({ children }: any) => {
         await handlePost(newProduct).then((resolved) => {
           toast.success("Item cadastrado com sucesso"),
             (newItem = resolved?.id);
-          // setFilteredData((prev) => {
-          //   return prev.map((element) => {
-          //     if (!element?.id) {
-          //       return {
-          //         ...element,
-          //         id: resolved?.id,
-          //       };
-          //     }
-          //     return element;
-          //   });
-          // });
         });
 
         return newItem;
       }
     } catch (error: any) {
-      console.error(error.response.data.message[0]);
-      toast.error(error.response.data.message);
+      const message =
+        typeof error?.response?.data?.message == "object"
+          ? error?.response?.data?.message[0]
+          : error?.response?.data?.message;
+
+      toast.error(message);
     }
   };
 

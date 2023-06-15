@@ -589,21 +589,12 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
             changes: Handsontable.CellChange[] | null,
             source,
           ) => {
-            console.log("value", changes);
             if (changes !== null && changes?.length) {
               const customChanges = changes as Handsontable.CellChange[];
               if (
                 customChanges[0][2] !== customChanges[0][3] &&
                 dataProvider.length
               ) {
-                const { hotInstance } = hotRef.current!;
-                if (hotInstance) {
-                  // hotInstance?.getPlugin("dropdownMenu").close();
-                  // const metaExists = hotInstance
-                  //   .getCellMetaAtRow(customChanges[0][0])
-                  //   .find((e) => e.className == "invalid-cell");
-                  // if (metaExists) return false;
-                }
                 const id = await handleSave(dataProvider[customChanges[0][0]]);
                 if (id) dataProvider[customChanges[0][0]].id = id;
               }
