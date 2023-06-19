@@ -2,6 +2,7 @@ import React, { ReactComponentElement, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Space, Table, Tag } from "antd";
 import { TableRowSelection } from "antd/es/table/interface";
+import { toast } from "react-toastify";
 import { Sidebar } from "../../components/Sidebar";
 import { Header } from "../../components/Header";
 import { TitlePage, Container, Content, Capsule } from "./styles";
@@ -18,14 +19,13 @@ import { CustomTable } from "../../components/Table/index";
 import { templateRequests } from "../../services/apis/requests/template";
 import { TemplateDefault } from "../../components/TemplateDefault";
 import Select from "../../components/Select";
-import { toast } from "react-toastify";
 
 interface IPaginationTemplate {
   page?: number;
   limit?: number;
 }
 
-export const Template = () => {
+const Template = () => {
   const [templates, setTemplates] = useState();
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -187,3 +187,6 @@ export const Template = () => {
     </TemplateDefault>
   );
 };
+
+// eslint-disable-next-line import/prefer-default-export
+export { Template };
