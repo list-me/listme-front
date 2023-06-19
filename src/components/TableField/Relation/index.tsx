@@ -331,7 +331,22 @@ export const Relation: React.FC<PropsRelation> = ({
 
   return (
     <Container onClick={() => {}}>
-      <Modal isOpen={isOpen} changeVisible={handleChangeVisible} width="60vw">
+      <div className="tagContent">
+        <Tag onClick={handleChangeVisible} maxWidth="fit-content">
+          <label>
+            {" "}
+            {currentProducts?.filter((e) => e !== "").length ||
+              contentProducts?.filter((e) => e !== "").length}{" "}
+            Item(s) relacionados{" "}
+          </label>
+        </Tag>
+      </div>
+      <Modal
+        isOpen={isOpen}
+        changeVisible={handleChangeVisible}
+        width="60vw"
+        top="2%"
+      >
         {isLoading ? (
           <Loading />
         ) : (
@@ -347,7 +362,7 @@ export const Relation: React.FC<PropsRelation> = ({
                   fieldTitle.map((content, index) => {
                     return (
                       <div className="tagItem" key={index}>
-                        <Tag key={index}>
+                        <Tag>
                           {" "}
                           <label>{content?.value}</label>
                         </Tag>
@@ -379,7 +394,9 @@ export const Relation: React.FC<PropsRelation> = ({
                           },
                         };
                       }}
+                      scroll={{ y: "calc(100vh - 420px)" }}
                       pagination={false}
+                      size="middle"
                     />
                   </>
                 )}
@@ -402,17 +419,6 @@ export const Relation: React.FC<PropsRelation> = ({
           </>
         )}
       </Modal>
-
-      <div className="tagContent">
-        <Tag onClick={handleChangeVisible} maxWidth="fit-content">
-          <label>
-            {" "}
-            {currentProducts?.filter((e) => e !== "").length ||
-              contentProducts?.filter((e) => e !== "").length}{" "}
-            Item(s) relacionados{" "}
-          </label>
-        </Tag>
-      </div>
     </Container>
   );
 };
