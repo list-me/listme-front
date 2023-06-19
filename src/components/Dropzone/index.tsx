@@ -6,7 +6,6 @@ import {
   CellContent,
   Container,
   Image,
-  Label,
   Loader,
   Zone,
   SuspenseMenu,
@@ -16,6 +15,7 @@ import { ReactComponent as AddIcon } from "../../assets/add-gray-large.svg";
 import { ReactComponent as CloseIcon } from "../../assets/close-small-blue.svg";
 import { ReactComponent as FileIcon } from "../../assets/file.svg";
 import { productContext } from "../../context/products";
+import { fileRequests } from "../../services/apis/requests/file";
 
 const Dropzone: React.FC<DropzoneRendererProps> = ({
   value,
@@ -49,8 +49,6 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
       setLoading(true);
       try {
         const newFiles = await uploadImages(acceptedFiles, bucket_url);
-
-        console.log("new added", { newFiles, items, value });
         if (newFiles) {
           const temp = [...newFiles, ...items].filter((item) => item !== "");
 
@@ -69,16 +67,25 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     }
   };
 
-  const handleRemove = (imageUrl: string, event: React.MouseEvent) => {
+  const handleRemove = async (
+    imageUrl: string,
+    event: React.MouseEvent,
+  ): Promise<void> => {
     event.stopPropagation();
     const newValue = items.filter((item) => {
-      if (item != imageUrl) {
+      if (item !== imageUrl) {
         return item;
       }
     });
 
     if (newValue.length) {
       setItems(newValue);
+      await fileRequests.dropFile(
+        imageUrl,
+        "template",
+        window.location.pathname.substring(10),
+        dataProvider[row]?.id,
+      );
     } else {
       setItems([]);
     }
@@ -96,15 +103,8 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     onDragLeave: () => {},
   });
 
-  const onClose = async () => {
+  const onClose = (): void => {
     setIsOpen(false);
-    if (oldItems?.length > items?.length) {
-      const newData = dataProvider;
-      newData[row][prop] = items;
-
-      const id = await handleSave(newData[row]);
-      // if (id) newData[row].id = id;
-    }
   };
 
   const handleAddIconClick = () => {
@@ -169,37 +169,35 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
           if (!isOpen) {
             setIsOpen(true);
           } else {
-            // instance.setDataAtRowProp(row, prop, items);
             setIsOpen(false);
             if (oldItems?.length > items?.length) {
               const newData = dataProvider;
               newData[row][prop] = items;
 
-              // console.log({ newData: newData[row][prop] });
               const id = await handleSave(newData[row]);
               if (id) newData[row].id = id;
             }
           }
         }}
-        // className={className}
       >
         {isDragActive ? (
           <Zone>Arraste e solte aqui...</Zone>
         ) : (
           <CellContent>
             <div>
-              <span>
-                {items?.map((item, index) => {
-                  if (item?.length > 1 && index < value?.length - 1) {
-                    return `${item}, `;
-                  }
+              <span onClick={(e) => e.preventDefault()}>
+                {items?.length
+                  ? items?.map((item, index) => {
+                      if (item?.length > 1 && index < value?.length - 1) {
+                        return `${item}, `;
+                      }
 
-                  return item;
-                })}
+                      return item;
+                    })
+                  : []}
               </span>
               <AddIcon onClick={handleAddIconClick} ref={iconRef} />
             </div>
-            {/* <label htmlFor="" className={className} /> */}
           </CellContent>
         )}
         {isOpen && items?.length ? (

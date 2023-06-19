@@ -32,7 +32,7 @@ export const fileRequests = {
         {
           headers: {
             "API-Version": "v1",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4YmY1NzM1ZS0yZTA2LTQ4NjEtYWViOS05NzZmOTdhOTY4MTMiLCJzZXNzaW9uSWQiOiJkN2IwMDBhOC0xNDI4LTQyZTEtYWNlMS1kMzM4MDE0YjczYzIiLCJuYW1lIjoiTGlzdG1lIiwiZW1haWwiOiJhcGlAbGlzdG1lLmlvIiwiaWF0IjoxNjg2MTcyMDAyLCJleHAiOjE2ODY2MDQwMDJ9.LsRsxZmq8rGvZMwgrfGUsmfun7ebKzxH0Z2-m5OYip0`,
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MDgxNjc0Ni1hYjU3LTRjNDgtOTM5ZC0wNmI5ODBmZWRlZjciLCJzZXNzaW9uSWQiOiIxZDlhMGRlNS1kM2EyLTQ2YTUtYjE4My0xMjgxMWY4NTQ0MjgiLCJuYW1lIjoiV2FuZGVyc29uIiwiZW1haWwiOiJ3YW5kZXJzb24uanVuaW9hbnR1bmVzQGdtYWlsLmNvbSIsImlhdCI6MTY4Njg1Njk5MSwiZXhwIjoxNjg3Mjg4OTkxfQ.07wbME-xmCAgmpAOGovoBecdzNEJwe8pjrlAQl5sYg4`,
           },
         },
       );
@@ -61,5 +61,26 @@ export const fileRequests = {
 
     if (response.status !== 200)
       throw "Ocorreu um erro ao realizar o upload de uma das imagens";
+  },
+  dropFile: async (
+    file: string,
+    entity: string,
+    identifier: string,
+    productId: string,
+  ): Promise<void> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+
+    const data = {
+      entity,
+      identifier,
+      file,
+      productId,
+    };
+
+    await api.patch(`file/delete`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   },
 };
