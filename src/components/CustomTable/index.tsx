@@ -100,6 +100,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
           options: column.options,
           isCustom: true,
           readOnly: true,
+          bucket_url: column.bucket_url,
         });
         return;
       }
@@ -111,6 +112,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
         order: column.order,
         hidden: column.hidden,
         isCustom: false,
+        bucket_url: column.bucket_url,
       });
     });
     setCols(columnsCustom);
@@ -461,14 +463,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
                 if (hotInstance) {
                   if (hotInstance.isEmptyRow(0))
                     return toast.warn("Preencha o produto atual");
-                  // hotInstance.alter(
-                  //   "insert_row_above",
-                  //   0,
-                  //   1,
-                  //   JSON.stringify([""]),
-                  // );
                 }
-
                 setDataProvider((prev) => [{}, ...prev]);
               }}
             >
@@ -741,6 +736,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
                     options={col.options}
                     handleSetNewValue={handleSetNewValue}
                     dataProvider={dataProvider}
+                    bucket_url={col.bucket_url}
                   />
                 </HotColumn>
               );

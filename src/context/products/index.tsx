@@ -253,11 +253,11 @@ export const ProductContextProvider = ({ children }: any) => {
     const fields = buildProduct(value);
     try {
       if (value?.id) {
-        await Promise.resolve(productRequests.update({ id: value.id, fields }))
-          .then((resolved) => toast.success("Item atualizado com sucesso"))
-          .catch((error) => {
-            throw error;
-          });
+        await Promise.resolve(
+          productRequests.update({ id: value.id, fields }),
+        ).catch((error) => {
+          throw error;
+        });
         return;
       } else {
         const newProduct = {
@@ -267,10 +267,13 @@ export const ProductContextProvider = ({ children }: any) => {
         };
 
         let newItem;
-        await handlePost(newProduct).then((resolved) => {
-          toast.success("Item cadastrado com sucesso"),
-            (newItem = resolved?.id);
-        });
+        await handlePost(newProduct)
+          .then((resolved) => {
+            newItem = resolved?.id;
+          })
+          .catch((error) => {
+            throw error;
+          });
 
         return newItem;
       }
@@ -337,7 +340,7 @@ export const ProductContextProvider = ({ children }: any) => {
             hidden: item.hidden ? item.hidden : false,
             width: item.width ? item.width : "300px",
             frozen: item.frozen ? item.frozen : false,
-            bucket_url: response.bucket_url,
+            bucket_url: response?.bucket_url,
           };
         });
 

@@ -38,6 +38,7 @@ export const TableField: React.FC<any> = ({
   dataProvider,
   row,
   cellProperties,
+  bucket_url,
   ...props
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -153,7 +154,7 @@ export const TableField: React.FC<any> = ({
             value={value}
             prop={column.data}
             // className={className}
-            bucket_url={column?.bucket_url}
+            bucket_url={bucket_url}
             dataProvider={dataProvider}
           />
         ) : (
@@ -218,11 +219,6 @@ export const TableField: React.FC<any> = ({
 
                 const id = await handleSave(newData[row]);
                 if (id) dataProvider[row].id = id;
-                // handleSetNewValue({
-                //   row: cellMeta[0][0],
-                //   data: prop,
-                //   value: [item],
-                // });
               }}
             />
           ) : type === "list" ? (
