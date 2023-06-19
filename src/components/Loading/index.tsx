@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { motion, useCycle } from "framer-motion";
 import { Container } from "./styles";
 
-export const Loading = () => {
+const Loading = () => {
   const loadingContainer = {
     width: "2rem",
     height: "2rem",
@@ -82,3 +82,6 @@ export const Loading = () => {
     </Container>
   );
 };
+
+// eslint-disable-next-line import/prefer-default-export
+export { Loading };
