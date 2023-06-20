@@ -113,12 +113,11 @@ export const Title = styled.h1`
 `;
 
 export const Content = styled.div`
-  max-height: 750px;
+  max-height: 800px;
   width: 100%;
 
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-    height: 500px;
-    max-height: 600px;
+    max-height: 650px;
   }
 
   padding-right: 1rem;
@@ -261,6 +260,12 @@ export const Content = styled.div`
       }
     }
   }
+`;
+
+export const HeaderTable = styled.div`
+  display: flex;
+  width: 100%;
+  padding: 1rem;
 `;
 
 export const Loader = styled.div`

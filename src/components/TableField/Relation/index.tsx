@@ -10,6 +10,7 @@ import {
   ButtonContainer,
   Container,
   Content,
+  HeaderTable,
   Loader,
   PrimaryButton,
   Tag,
@@ -24,6 +25,7 @@ import { templateRequests } from "../../../services/apis/requests/template";
 import { productRequests } from "../../../services/apis/requests/product";
 import { productContext } from "../../../context/products";
 import { Loading } from "../../Loading";
+import { SearchBar } from "../../SearchBar/SearchBar";
 
 export const Relation: React.FC<PropsRelation> = ({
   value,
@@ -69,6 +71,9 @@ export const Relation: React.FC<PropsRelation> = ({
   const [opt, setOpt] = useState<string>();
   const [limit, setLimit] = useState(column.options[0].limit);
 
+  const [keyword, setKeyword] = useState<string>("");
+  const [templateRelation, setTemplateRelation] = useState<any>({});
+
   const { handleSave } = useContext(productContext);
 
   const handleChangeVisible = () => {
@@ -96,7 +101,9 @@ export const Relation: React.FC<PropsRelation> = ({
         templateRequests.get(templateId).then((response) => {
           let templateRel: any;
           const columnsTable = response.fields.fields
-            .map((attribute: any) => {
+            .map((attribute: any, index: number) => {
+              if (index === 0) setTemplateRelation(attribute);
+
               if (column.options[0].agrrementType == "bilateral") {
                 if (attribute.id == column.data) {
                   setOpt(attribute.options[0].field);
@@ -115,12 +122,12 @@ export const Relation: React.FC<PropsRelation> = ({
             })
             .slice(0, 4);
 
-          productRequests.list({ limit: 200 }, templateId).then((response) => {
+          productRequests.list({ limit: 50 }, templateId).then((response) => {
             const fields: any[] = [];
             const allFields: any[] = [];
             response.products?.forEach((product: any) => {
-              const currentIds = currentProducts.map((e) => e.id);
-              if (!currentIds.includes(product.id)) {
+              const currentIds = currentProducts?.map((e) => e.id);
+              if (currentIds && !currentIds.includes(product.id)) {
                 const props: any = {};
 
                 const exceedLimit = product.fields.find((productField: any) => {
@@ -320,6 +327,74 @@ export const Relation: React.FC<PropsRelation> = ({
     if (id) dataProvider[row].id = id;
   };
 
+  const handleSearchProducts = async (): Promise<void> => {
+    setIsLoading(true);
+    try {
+      productRequests
+        .list({ limit: 200, keyword }, templateId)
+        .then((response) => {
+          const fields: any[] = [];
+          const allFields: any[] = [];
+          response.products?.forEach((product: any) => {
+            const currentIds = currentProducts?.map((e) => e.id);
+            if (!currentIds.includes(product.id)) {
+              const props: any = {};
+
+              const exceedLimit = product.fields.find((productField: any) => {
+                if (
+                  productField.id == column.data &&
+                  templateRelation.options[0].limit <= productField.value.length
+                ) {
+                  return productField;
+                }
+              });
+
+              if (!exceedLimit) {
+                product.fields.forEach((element: any) => {
+                  if (element && Object.keys(element).length) {
+                    props[element?.id] = handleGetValueString(element.value);
+                    props.id = product.id;
+                  }
+                });
+                allFields.push(props);
+                return fields.push(props);
+              }
+            } else {
+              const props: any = {};
+              const exceedLimit = product.fields.find((productField: any) => {
+                if (
+                  productField.id == column.data &&
+                  templateRelation.options[0].limit <= productField.value.length
+                ) {
+                  return productField;
+                }
+              });
+
+              if (!exceedLimit) {
+                product.fields.forEach((element: any) => {
+                  if (element && Object.keys(element).length) {
+                    props[element?.id] = handleGetValueString(element.value);
+                    props.id = product.id;
+                  }
+                });
+                return allFields.push(props);
+              }
+            }
+          });
+
+          setData(fields);
+          setOldData(allFields);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          throw error;
+        });
+    } catch (error) {
+      setIsLoading(false);
+      toast.error("Ocorreu um erro durante a busca");
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
       buildColumns();
@@ -347,43 +422,47 @@ export const Relation: React.FC<PropsRelation> = ({
         width="60vw"
         top="2%"
       >
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <>
-            <Title>
-              Produtos relacionados
-              <CloseWindowIcon onClick={handleChangeVisible} />
-            </Title>
+        <>
+          <Title>
+            Produtos relacionados
+            <CloseWindowIcon onClick={handleChangeVisible} />
+          </Title>
 
-            <Content>
-              <div className="contentProducts">
-                {fieldTitle.length ? (
-                  fieldTitle.map((content, index) => {
-                    return (
-                      <div className="tagItem" key={index}>
-                        <Tag>
-                          {" "}
-                          <label>{content?.value}</label>
-                        </Tag>
-                        <span>
-                          <CloseIcon
-                            onClick={() => handleClickRemove(content)}
-                          />
-                        </span>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <label> Nenhum produto relacionado </label>
-                )}
-              </div>
-              <div className="contentTable">
-                {currentProducts?.filter((e) => e !== "").length >= limit ? (
-                  <label> Número máximo de items já relacionados </label>
-                ) : (
-                  <>
+          <Content>
+            <div className="contentProducts">
+              {fieldTitle.length ? (
+                fieldTitle.map((content, index) => {
+                  return (
+                    <div className="tagItem" key={index}>
+                      <Tag>
+                        {" "}
+                        <label>{content?.value}</label>
+                      </Tag>
+                      <span>
+                        <CloseIcon onClick={() => handleClickRemove(content)} />
+                      </span>
+                    </div>
+                  );
+                })
+              ) : (
+                <label> Nenhum produto relacionado </label>
+              )}
+            </div>
+            <div className="contentTable">
+              {currentProducts?.filter((e) => e !== "").length >= limit ? (
+                <label> Número máximo de items já relacionados </label>
+              ) : (
+                <>
+                  <HeaderTable>
                     <Title> Relacionar items </Title>
+                    <SearchBar
+                      handleChangeInput={(value: string) => setKeyword(value)}
+                      onPressEnter={handleSearchProducts}
+                    />
+                  </HeaderTable>
+                  {isLoading ? (
+                    <Loading />
+                  ) : (
                     <Table
                       columns={columns}
                       dataSource={data}
@@ -394,30 +473,30 @@ export const Relation: React.FC<PropsRelation> = ({
                           },
                         };
                       }}
-                      scroll={{ y: "calc(100vh - 420px)" }}
+                      scroll={{ y: "calc(100vh - 430px)" }}
                       pagination={false}
                       size="middle"
                     />
-                  </>
-                )}
-              </div>
-            </Content>
+                  )}
+                </>
+              )}
+            </div>
+          </Content>
 
-            <ButtonContainer>
-              <PrimaryButton onClick={handleChangeVisible}>
-                Cancelar
-              </PrimaryButton>
-              <Button
-                onClick={() => {
-                  setIsOpen(!isOpen);
-                  handleUpdateProduct();
-                }}
-              >
-                Salvar
-              </Button>
-            </ButtonContainer>
-          </>
-        )}
+          <ButtonContainer>
+            <PrimaryButton onClick={handleChangeVisible}>
+              Cancelar
+            </PrimaryButton>
+            <Button
+              onClick={() => {
+                setIsOpen(!isOpen);
+                handleUpdateProduct();
+              }}
+            >
+              Salvar
+            </Button>
+          </ButtonContainer>
+        </>
       </Modal>
     </Container>
   );
