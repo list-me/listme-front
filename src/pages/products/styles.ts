@@ -252,9 +252,11 @@ export const Container = styled.div`
       font-weight: 400;
       line-height: 150%;
 
-      align-self: center;
+      align-self: center !important;
 
-      padding: 0 !important;
+      justify-content: center;
+      text-align: start;
+      padding-top: 16px;
 
       div {
         width: 100%;
@@ -263,6 +265,10 @@ export const Container = styled.div`
         display: flex;
         align-items: center;
       }
+    }
+
+    td:has(> div) {
+      padding: 0 !important;
     }
   }
 `;
