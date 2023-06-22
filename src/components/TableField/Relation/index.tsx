@@ -40,22 +40,15 @@ export const Relation: React.FC<PropsRelation> = ({
 }) => {
   const buildProduct = (fields: any) => {
     const obj: any[] = [];
-    if (fields && Object.keys(fields).length) {
-      Object.keys(fields).forEach((field: any) => {
-        if (fields[field] && !["id", "created_at"].includes(field)) {
-          obj.push({
-            id: field,
-            value:
-              typeof fields[field] === "object"
-                ? fields[field]
-                : [fields[field]],
-          });
-        }
-      });
-    }
 
-    return obj;
+    return fields?.map((field: any) => {
+      return {
+        id: field.field,
+        value: field.id,
+      };
+    });
   };
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [contentProducts, setContentProducts] = useState<any[]>(value ?? []);
   const [currentProducts, setCurrentProducts] = useState<any[]>(value ?? []);
@@ -64,7 +57,7 @@ export const Relation: React.FC<PropsRelation> = ({
   const [data, setData] = useState<any[]>([]);
   const [oldData, setOldData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [relations, setRelations] = useState<any[]>(buildProduct(currentItem));
+  const [relations, setRelations] = useState<any[]>(buildProduct(value ?? []));
 
   const [fieldTitle, setFieldTitle] = useState<any[]>([]);
 
@@ -226,7 +219,7 @@ export const Relation: React.FC<PropsRelation> = ({
 
     setData((prev) => {
       return prev.filter((e) => {
-        if (e.id !== product.id) return e;
+        if (e?.id !== product?.id) return e;
       });
     });
 
@@ -283,7 +276,8 @@ export const Relation: React.FC<PropsRelation> = ({
       if (title.id == e.id) return e;
     });
 
-    setData((prev) => [value, ...prev]);
+    if (value) setData((prev) => [value, ...prev]);
+
     setFieldTitle((prev) => {
       return prev.filter((e) => {
         if (e.id !== title.id) return e;
@@ -300,6 +294,7 @@ export const Relation: React.FC<PropsRelation> = ({
 
       return element;
     });
+
     setRelations(actualy);
 
     const testing = actualy
@@ -337,7 +332,10 @@ export const Relation: React.FC<PropsRelation> = ({
           const allFields: any[] = [];
           response.products?.forEach((product: any) => {
             const currentIds = currentProducts?.map((e) => e.id);
-            if (!currentIds.includes(product.id)) {
+            if (
+              (currentIds && !currentIds.includes(product.id)) ||
+              !currentProducts?.length
+            ) {
               const props: any = {};
 
               const exceedLimit = product.fields.find((productField: any) => {
