@@ -78,6 +78,9 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
       }
     });
 
+    const newData = dataProvider;
+    newData[row][prop] = newValue;
+
     if (newValue.length) {
       setItems(newValue);
       await fileRequests.dropFile(
@@ -87,8 +90,12 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         dataProvider[row]?.id,
       );
     } else {
+      delete newData[row][prop];
       setItems([]);
     }
+
+    const id = await handleSave(newData[row]);
+    if (id) newData[row].id = id;
   };
 
   const handleImageLoadEnd = (src: string) => {
