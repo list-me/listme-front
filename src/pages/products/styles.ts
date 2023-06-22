@@ -242,9 +242,11 @@ export const Container = styled.div`
     td {
       width: fit-content;
       max-width: 500px;
-      max-height: 51px;
+      max-height: 51px !important;
 
-      white-space: pre;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
 
       font-family: ${({ theme }) => theme.fonts.family.default};
       font-size: ${({ theme }) => theme.fonts.sizes.small};
