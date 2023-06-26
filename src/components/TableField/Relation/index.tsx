@@ -97,12 +97,12 @@ export const Relation: React.FC<PropsRelation> = ({
             .map((attribute: any, index: number) => {
               if (index === 0) setTemplateRelation(attribute);
 
-              if (column.options[0].agrrementType == "bilateral") {
+              if (column.options[0].agreementType == "bilateral") {
                 if (attribute.id == column.data) {
                   setOpt(attribute.options[0].field);
                 }
               } else {
-                setOpt(attribute.options[0].field);
+                setOpt(attribute.options[0]?.field);
               }
 
               templateRel = attribute;
