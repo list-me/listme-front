@@ -8,12 +8,9 @@ const AuthProvider: React.FC<any> = ({ children }) => {
   const [itemStorage, setItem] = useLocalStorage(STORAGE.TOKEN);
   const [token, setToken] = useState<string>(itemStorage as string);
 
-  const value = useMemo(
-    (): AuthContextValues => ({
-      isAuthenticated: !token,
-    }),
-    [],
-  );
+  const value: AuthContextValues = {
+    isAuthenticated: !token,
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

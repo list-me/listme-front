@@ -257,9 +257,3 @@ export const TableField: React.FC<any> = ({
     </ImageContextProvider>
   );
 };
-
-const areEqual = (prevProps: any, nextProps: any) => {
-  return _.isEqual(prevProps, nextProps);
-};
-
-export const TableFieldMemo = React.memo(TableField, areEqual);
