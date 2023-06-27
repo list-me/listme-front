@@ -1,14 +1,6 @@
 import styled from "styled-components";
 
-export const Contents = styled.div`
-  display: flex;
-
-  span:not(:last-child) {
-    margin-right: 24px;
-  }
-`;
-
-export const Item = styled.span`
+const Container = styled.div`
   font-family: ${({ theme }) => theme.fonts.family.bold};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
   font-style: normal;
@@ -29,11 +21,16 @@ export const Item = styled.span`
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
 
   &:hover {
     cursor: pointer;
   }
+
+  width: 80px;
+
+  position: relative;
+  right: 220px;
 `;
 
 export const ButtonCustom = styled.button<{ width: string; height: string }>`
@@ -50,10 +47,10 @@ export const ButtonCustom = styled.button<{ width: string; height: string }>`
   height: ${({ height }) => height || "100%"};
 
   font-family: ${({ theme }) => theme.fonts.family.bold};
-  font-size: ${({ theme }) => theme.fonts.sizes.small};
+  font-size: ${({ theme }) => theme.fonts.sizes.xxxsmall};
   font-style: normal;
   font-weight: 400;
-  letter-spacing: 0.5px;
+  /* letter-spacing: 0.5px; */
   text-align: center;
 
   color: ${({ theme }) => theme.colors.secondary};
@@ -84,3 +81,5 @@ export const ButtonCustom = styled.button<{ width: string; height: string }>`
     font-size: ${({ theme }) => theme.fonts.sizes.xxxsmall};
   }
 `;
+
+export { Container };

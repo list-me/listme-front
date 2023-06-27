@@ -1,53 +1,89 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
-import { Tree } from "antd";
+import React, { useEffect, useState } from "react";
+import { Form, Input, Tree } from "antd";
 import { IDraggerProps } from "./Dragger.d";
-import { Container } from "./styles";
+import { Container, Content, IconContent } from "./styles";
 import { ReactComponent as MenuIcon } from "../../assets/menu-small-gray.svg";
+import { toast } from "react-toastify";
+
+import { ReactComponent as TrashIcon } from "../../assets/trash-icon.svg";
 
 // eslint-disable-next-line import/prefer-default-export
 export const Dragger: React.FC<IDraggerProps> = ({
   options,
-  handleOnDrop = () => {},
+  setOptions = (values: any) => {},
+  form,
 }) => {
-  const [treeData, setTreeData] = useState<any[]>(options);
-
-  const handleOnDropC = (info: any) => {
-    const { dropToGap, node, dragNode } = info;
-
-    const newTreeData = [...treeData];
-    const dragNodeIndex = newTreeData.findIndex(
-      (n: any) => n.key === dragNode.key,
-    );
-    newTreeData.splice(dragNodeIndex, 1);
-    const targetIndex = node
-      ? newTreeData.findIndex((n: any) => n.key === node.key)
-      : 0;
-    const dropPosition = info.dropPosition - Number(info.dropToGap);
-    const newIndex = dropPosition === -1 ? targetIndex : targetIndex + 1;
-    const { title, key } = dragNode;
-    const newNode = { title, key };
-    newTreeData.splice(newIndex, 0, newNode);
-    setTreeData(newTreeData);
-  };
-
   useEffect(() => {}, [options]);
 
   return (
     <Container>
-      <Tree
-        className="draggable-tree"
-        treeData={options}
-        showLine
-        // draggable
-        icon={() => {
-          return <MenuIcon className="custom-drag-icon" />;
-        }}
-        onDrop={(e) => {
-          handleOnDrop(e);
-        }}
-      />
+      {options.map((item, index) => {
+        const fieldName = "option" + index;
+
+        return (
+          <Content key={index}>
+            <Form.Item
+              wrapperCol={{ flex: "auto" }}
+              label={index + 1}
+              name={fieldName}
+              rules={[
+                {
+                  message: "A opção deve conter até 15 caracteres",
+                  max: 15,
+                  required: true,
+                  whitespace: true,
+                },
+              ]}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+              initialValue={item}
+            >
+              <Input
+                value={item}
+                onChange={(e) => {
+                  form.setFieldsValue({ [fieldName]: e.target.value });
+                }}
+                onPressEnter={(e) => {
+                  form
+                    .validateFields([fieldName])
+                    .then(() => {
+                      if (options.length === 12) {
+                        toast.warn(
+                          "Este campo não pode conter mais que 12 opções",
+                        );
+                        return;
+                      }
+
+                      setOptions([...options, ""]);
+                    })
+                    .catch((errors: any) => {
+                      console.log("Errors in form: ", errors);
+                    });
+                }}
+                autoFocus={index === options.length - 1}
+              />
+            </Form.Item>
+            <IconContent
+              onClick={() => {
+                if (options.length <= 2) {
+                  toast.warning("Necessário conter ao menos duas opções");
+                  return;
+                }
+
+                const newState = [...options];
+                newState.splice(index, 1);
+                setOptions(newState);
+              }}
+            >
+              <TrashIcon />
+            </IconContent>
+          </Content>
+        );
+      })}
     </Container>
   );
 };

@@ -27,6 +27,7 @@ export const Input: React.FC<IInputProps> = ({
   background,
   validation,
   padding,
+  onPressEnter = () => {},
 }) => {
   const [inputText, setInputText] = useState<string>("");
   const { handleFilter } = useContext(productContext);
@@ -64,7 +65,7 @@ export const Input: React.FC<IInputProps> = ({
         <Label>
           <span>
             {label}{" "}
-            <span style={{ color: "red", fontWeight: 700 }}> "excluir"</span>
+            <span style={{ color: "red", fontWeight: 700 }}> "excluir" </span>
           </span>
         </Label>
       ) : null}
@@ -89,6 +90,7 @@ export const Input: React.FC<IInputProps> = ({
             if (handleCustomChange) handleCustomChange(newValue);
           }}
           autoFocus={autoFocus}
+          onPressEnter={() => onPressEnter()}
         />
       </Form.Item>
     </Container>

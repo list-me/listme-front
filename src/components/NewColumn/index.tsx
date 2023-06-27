@@ -59,7 +59,7 @@ export const NewColumn: React.FC<NewColumnProps> = ({
       type: "list",
     },
     {
-      label: "File",
+      label: "Arquivo",
       icon: <FileIcon />,
       type: "file",
     },

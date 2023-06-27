@@ -6,6 +6,7 @@ const Modal: React.FC<IModalProps> = ({
   isOpen,
   children,
   width,
+  top,
 }) => {
   return (
     <>
@@ -16,7 +17,7 @@ const Modal: React.FC<IModalProps> = ({
         width={width}
         wrapClassName="custom-modal"
         closable={false}
-        style={{ padding: 0 }}
+        style={{ padding: 0, top }}
       >
         {children}
       </CustomModal>

@@ -14,6 +14,7 @@ interface IInputProps {
     matchWord?: string;
   };
   padding?: string;
+  onPressEnter?: Function;
 }
 
 export type { IInputProps };

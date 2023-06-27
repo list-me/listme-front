@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Tag } from "antd";
 import { Container, Content, Options } from "./styles";
 import { ICellProps, IOption } from "./Cell.d";
 import { ReactComponent as ChevronDownIcon } from "../../assets/chevron-down-small.svg";
@@ -12,7 +13,6 @@ import { ReactComponent as DescIcon } from "../../assets/sort-desc.svg";
 import { ReactComponent as TrashIcon } from "../../assets/trash-red.svg";
 import { DropdownMenu } from "../DropdownMenu";
 import { PersonalModal } from "../CustomModa";
-import { Tag } from "antd";
 
 export const HeaderCell: React.FC<ICellProps> = ({
   label,
@@ -130,7 +130,7 @@ export const HeaderCell: React.FC<ICellProps> = ({
           template={template}
           onUpdate={(e: any) => {
             setTitleHeader(e.title);
-            window.location.reload();
+            // window.location.reload();
           }}
         />
         <Container>

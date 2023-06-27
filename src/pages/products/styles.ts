@@ -1,9 +1,6 @@
 import styled from "styled-components";
 
-export const Content = styled.div`
-  /* height: 100vh; */
-  height: fit-content;
-`;
+export const Content = styled.div``;
 
 export const LeftContent = styled.div`
   display: flex;
@@ -97,11 +94,11 @@ export const HeaderContent = styled.div`
 `;
 
 export const Container = styled.div`
-  /* @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-    height: 72%;
-  } */
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    height: 73.5%;
+  }
 
-  height: 100%;
+  height: 79.5%;
 
   .handsontable .wtHolder::-webkit-scrollbar {
     background: transparent !important;
@@ -245,9 +242,11 @@ export const Container = styled.div`
     td {
       width: fit-content;
       max-width: 500px;
-      max-height: 51px;
+      max-height: 51px !important;
 
-      white-space: pre;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
 
       font-family: ${({ theme }) => theme.fonts.family.default};
       font-size: ${({ theme }) => theme.fonts.sizes.small};
@@ -255,18 +254,23 @@ export const Container = styled.div`
       font-weight: 400;
       line-height: 150%;
 
-      align-self: center;
+      align-self: center !important;
+
+      justify-content: center;
+      text-align: start;
+      padding-top: 16px;
 
       div {
-        /* margin-top: 8px; */
-
-        /* background: red; */
         width: 100%;
         height: 100%;
 
         display: flex;
         align-items: center;
       }
+    }
+
+    td:has(> div) {
+      padding: 0 !important;
     }
   }
 `;

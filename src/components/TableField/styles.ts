@@ -41,17 +41,15 @@ function getCustomStyle(type: string): FlattenSimpleInterpolation {
   return CUSTOM_STYLE[type as TypeKeys];
 }
 
-export const CellContent = styled.div`
+export const CellContent = styled.div<{ isSearchResult: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: flex-start !important;
   justify-content: center !important;
 
-  .invalid-cell:after {
-    content: "Campo obrigatório!";
-    color: red;
-    font-size: 12px;
-  }
+  padding: 0 8px 0 6px;
+
+  background-color: ${(prop) => (prop.isSearchResult ? "#FCEDD9" : "none")};
 `;
 
 export const Container = styled.div<{ type: string }>`
@@ -65,16 +63,21 @@ export const Container = styled.div<{ type: string }>`
   max-height: 32px;
   flex-wrap: nowrap;
 
+  overflow: hidden;
+
   ${({ type }) => getCustomStyle(type.toUpperCase())}
 
   label {
-    width: auto;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
+
+    width: auto;
 
     font-family: "Satoshi Regular", sans-serif;
     font-style: normal;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 12.8px;
     line-height: 150%;
     color: #212529;
 
@@ -113,7 +116,6 @@ export const SuspenseMenu = styled.div<{
   showMenu: boolean;
 }>`
   height: auto !important;
-  max-height: 500px !important;
 
   min-width: 150px;
   width: ${({ width }) => `${width}px`} !important;
@@ -134,8 +136,30 @@ export const SuspenseMenu = styled.div<{
 
   padding: 8px;
 
+  max-height: 500px;
+  overflow-y: scroll;
   overflow-x: hidden;
-  overflow-y: auto;
+
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    max-height: 290px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: unset;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #cccccc;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #3818d9;
+  }
 `;
 
 export const Select = styled.div`
@@ -158,7 +182,7 @@ export const Item = styled.div`
   font-family: "Satoshi regular", sans-serif;
   font-style: normal;
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 150%;
 
   &:hover {

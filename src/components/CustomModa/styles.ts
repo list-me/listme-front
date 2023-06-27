@@ -21,11 +21,29 @@ export const Container = styled.div`
 
   .dragger {
     width: fit-content;
-    margin-top: 10px;
+    margin-top: 12px;
 
     font-family: "Satoshi Bold";
-    font-size: 16px;
+    font-size: 15px;
     color: #212529;
+
+    p:first-child {
+      margin-bottom: -8px;
+    }
+
+    .onDragger {
+      height: fit-content !important;
+      margin: 0 !important;
+
+      label {
+        font-family: "Satoshi Regular", sans-serif;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 150%;
+        color: #212529;
+      }
+    }
   }
 
   .titleContainer {
@@ -88,6 +106,7 @@ export const BodyContent = styled.div`
     overflow: auto;
 
     height: fit-content;
+    max-height: 600px;
     width: 100%;
 
     padding-right: 16px;
@@ -110,7 +129,50 @@ export const BodyContent = styled.div`
     }
 
     @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-      max-height: 500px;
+      max-height: 400px;
+    }
+  }
+`;
+
+export const Footer = styled.div`
+  height: auto;
+  margin-top: 16px;
+
+  .ant-form-item-label {
+    height: fit-content !important;
+    margin: 0 !important;
+
+    label {
+      font-family: "Satoshi Bold", sans-serif;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 150%;
+      color: #212529;
+    }
+  }
+
+  .ant-switch {
+    width: 24px !important;
+    height: 16px !important;
+  }
+
+  .ant-switch-inner {
+    &:hover {
+      background: #3818d9;
+    }
+  }
+
+  .ant-switch-handle::before {
+    &:hover {
+      background: #3818d9;
+    }
+  }
+
+  .ant-switch-checked {
+    background: #3818d9;
+    &:hover {
+      background: #3818d9;
     }
   }
 `;
@@ -118,16 +180,29 @@ export const BodyContent = styled.div`
 export const InputContainer = styled.div`
   width: 100%;
 
+  .no-bold-label .ant-form-item-label > label {
+    font-weight: normal !important;
+  }
+
   .ant-form-item-label {
     display: flex;
     height: 24px !important;
     width: 100%;
     margin-bottom: 6px !important;
 
-    font-family: "Satoshi Regular", sans-serif;
+    label {
+      font-family: "Satoshi Regular", sans-serif !important;
+      font-style: normal;
+      font-weight: 400 !important;
+      font-size: 13px !important;
+    }
+  }
+
+  .ant-form-item-explain-error {
+    font-family: "Satoshi Regular", sans-serif !important;
     font-style: normal;
-    font-weight: 400;
-    font-size: 13px;
+    font-weight: 400 !important;
+    font-size: 13px !important;
   }
 
   .ant-form-item-required {
@@ -163,10 +238,19 @@ export const InputContainer = styled.div`
 
     border: 1px solid #e9ecef;
     border-radius: 8px;
+
+    ::placeholder {
+      font-size: 14px !important;
+    }
   }
 
   .ant-select {
     border: none !important;
+    height: fit-content !important;
+  }
+
+  .ant-select-selection-placeholder {
+    font-size: 14px !important;
   }
 
   .ant-select-selector {
@@ -189,6 +273,10 @@ export const InputContainer = styled.div`
 
     border: 1px solid #e9ecef;
     border-radius: 8px;
+
+    ::placeholder {
+      font-size: 14px !important;
+    }
   }
 
   .ant-row .ant-form-item-row {
@@ -256,7 +344,7 @@ export const ButtonContainer2 = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 92px;
+  height: fit-content;
 `;
 
 export const PrimaryButton = styled.button`
@@ -376,7 +464,7 @@ export const Principal = styled.button`
   }
 
   &:disabled {
-    background-color: #DEE2E6;
+    background-color: #dee2e6;
     cursor: auto;
   }
 `;

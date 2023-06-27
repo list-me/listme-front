@@ -6,7 +6,7 @@ import { Container } from "./styles";
 
 interface IProps {
   options: string[];
-  value: string;
+  value: any[];
   handleGetNewValue: Function;
 }
 

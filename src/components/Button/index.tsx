@@ -11,8 +11,8 @@ const Button: React.FC<any> = ({
   return (
     <Container onClick={onClickModal} disabled>
       <ButtonCustom
-        isLoading={isLoading}
         {...props}
+        isLoading={isLoading}
         type="submit"
         disabled={disabled}
       >

@@ -15,12 +15,15 @@ interface DataType {
 }
 
 interface CustomTableProps {
-  dataProvider?: any[];
+  // dataProvider?: any[];
+  temp?: any[];
   bordered?: boolean;
   rowClassName?: () => string;
   components?: {};
   colHeaders?: string[];
-  setEnable: () => void;
+  setEnable?: () => void;
+  addProducts?: () => void;
+  children?: any;
 }
 
 interface ICustomColumns {

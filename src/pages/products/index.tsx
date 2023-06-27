@@ -30,33 +30,20 @@ import { Loading } from "../../components/Loading";
 import { Temp } from "../../components/Temp";
 import { imageContext } from "../../context/images";
 import { useDropzone } from "react-dropzone";
+import { productRequests } from "../../services/apis/requests/product";
 
 export const Products = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [enable, setEnable] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
-    products,
-    setHeaderTable,
     handleRedirectAndGetProducts,
-    handleAdd,
     colHeaders,
     setProducts,
     template,
     headerTable,
     filteredData,
+    COMPONENT_CELL_PER_TYPE,
   } = useContext(productContext);
-  const navigate = useNavigate();
-
-  // const { getRootProps, open, isDragActive, isFileDialogActive, rootRef } =
-  //   useDropzone({
-  //     multiple: true,
-  //     onDragEnter: () => {},
-  //     onDragOver: () => {},
-  //     onDragLeave: () => {},
-  //     noClick: true,
-  //     noKeyboard: true,
-  //   });
 
   useEffect(() => {
     setIsLoading(true);
@@ -81,58 +68,9 @@ export const Products = () => {
         height: "100vh",
       }}
     >
-      <Content>
-        <Header>
-          <LeftContent>
-            <ArrowIcon
-              onClick={() => {
-                setProducts([]);
-                setHeaderTable([]);
-                navigate(ROUTES.TEMPLATES);
-              }}
-            />
-            <IconTemplate>
-              <FlagIcon />
-            </IconTemplate>
-            <Title> {template?.name} </Title>
-            <EditIcon />
-          </LeftContent>
-          <RightContent>
-            <MoreOptions>
-              <EllipsisIcon />
-            </MoreOptions>
-            <Button height="52px" width="227px" isSecondary>
-              <DownloadIcon />
-              Importar produtos
-            </Button>
-            <Button
-              height="52px"
-              width="226px"
-              className="secondButton"
-              onClick={() => {
-                setEnable(!enable);
-                handleAdd();
-              }}
-              disabled={enable}
-            >
-              Adicionar produto
-              <PlusIcon />
-            </Button>
-          </RightContent>
-        </Header>
-        <Filters>
-          <Temp options={headerTable} />
-          <Contents>
-            <Item>
-              <HelpIcon />
-              Ajuda
-            </Item>
-          </Contents>
-        </Filters>
-      </Content>
       <div
         style={{
-          height: "100%",
+          // height: "60%",
           overflow: "inherit",
           flex: 1,
         }}
@@ -141,11 +79,7 @@ export const Products = () => {
           {isLoading ? (
             <Loading />
           ) : (
-            <Table
-              dataProvider={filteredData}
-              colHeaders={colHeaders}
-              setEnable={() => setEnable(!enable)}
-            />
+            <Table temp={filteredData} colHeaders={colHeaders} />
           )}
         </Container>
       </div>

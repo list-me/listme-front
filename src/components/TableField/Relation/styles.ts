@@ -41,7 +41,7 @@ export const Container = styled.div`
 
 export const ButtonContainer = styled.div`
   width: 100%;
-  padding: 2rem 0;
+  padding: 2rem 1rem 0 1rem;
 
   display: flex;
   justify-content: right;
@@ -113,14 +113,11 @@ export const Title = styled.h1`
 `;
 
 export const Content = styled.div`
+  max-height: 800px;
   width: 100%;
-  height: fit-content;
-
-  max-height: 700px;
-  overflow: auto;
 
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-    max-height: 500px;
+    max-height: 650px;
   }
 
   padding-right: 1rem;
@@ -132,7 +129,7 @@ export const Content = styled.div`
 
     width: 100%;
     height: fit-content;
-    max-height: 200px;
+    max-height: 90px;
     min-height: 60px;
 
     font-family: "Satoshi Regular", sans-serif;
@@ -184,6 +181,10 @@ export const Content = styled.div`
     ::-webkit-scrollbar-thumb:hover {
       background-color: #3818d9;
     }
+
+    @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+      max-height: 70px;
+    }
   }
 
   .contentTable {
@@ -217,7 +218,7 @@ export const Content = styled.div`
 
     .ant-table-cell {
       font-family: "Satoshi Regular", sans-serif;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 400;
 
       overflow: hidden;
@@ -239,29 +240,39 @@ export const Content = styled.div`
     .ant-checkbox-inner {
       border: 2px solid #e9ecef !important;
     }
-  }
 
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
+    .ant-table-body {
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
 
-  ::-webkit-scrollbar-track {
-    background-color: unset;
-  }
+      ::-webkit-scrollbar-track {
+        background-color: unset;
+      }
 
-  ::-webkit-scrollbar-thumb {
-    background-color: #cccccc;
-    border-radius: 4px;
-  }
+      ::-webkit-scrollbar-thumb {
+        background-color: #cccccc;
+        border-radius: 4px;
+      }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: #3818d9;
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #3818d9;
+      }
+    }
   }
+`;
+
+export const HeaderTable = styled.div`
+  display: flex;
+  width: 100%;
+  padding: 1rem;
 `;
 
 export const Loader = styled.div`
   display: flex;
   justify-content: center;
+
+  height: 100px;
 
   @keyframes spinner {
     0% {

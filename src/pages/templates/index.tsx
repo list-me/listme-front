@@ -2,6 +2,7 @@ import React, { ReactComponentElement, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Space, Table, Tag } from "antd";
 import { TableRowSelection } from "antd/es/table/interface";
+import { toast } from "react-toastify";
 import { Sidebar } from "../../components/Sidebar";
 import { Header } from "../../components/Header";
 import { TitlePage, Container, Content, Capsule } from "./styles";
@@ -19,23 +20,49 @@ import { templateRequests } from "../../services/apis/requests/template";
 import { TemplateDefault } from "../../components/TemplateDefault";
 import Select from "../../components/Select";
 
-export const Template = () => {
+interface IPaginationTemplate {
+  page?: number;
+  limit?: number;
+}
+
+const Template = () => {
   const [templates, setTemplates] = useState();
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+  const [loading, setLoading] = useState<boolean>(false);
+
   const navigate = useNavigate();
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
-  const handleGetTemplates = () => {
+  const handleTakeNewPages = async ({
+    limit,
+    page,
+  }: IPaginationTemplate): Promise<void> => {
+    setLoading(true);
+    try {
+      handleGetTemplates({ page, limit });
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      toast.error("Ocorreu um erro ao carregar os demais catálogos");
+    }
+  };
+
+  const handleGetTemplates = ({
+    page = 0,
+    limit = 50,
+  }: IPaginationTemplate) => {
     templateRequests
-      .list({})
+      .list({ limit, page })
       .then((response) => {
         setTemplates(response);
       })
       .catch((error) => {
+        toast.error("Ocorreu um erro ao listar os catálogos");
         console.error(error);
       });
   };
@@ -142,7 +169,7 @@ export const Template = () => {
   ];
 
   useEffect(() => {
-    handleGetTemplates();
+    handleGetTemplates({});
   }, [modalIsOpen]);
 
   return (
@@ -154,8 +181,12 @@ export const Template = () => {
           dataProvider={templates}
           size="large"
           rowSelection={rowSelection}
+          onLoadMore={handleTakeNewPages}
         />
       </Content>
     </TemplateDefault>
   );
 };
+
+// eslint-disable-next-line import/prefer-default-export
+export { Template };

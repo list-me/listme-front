@@ -4,16 +4,17 @@ import { STORAGE } from "../../../constants/localStorage";
 interface IPagination {
   page?: number;
   limit?: number;
+  keyword?: string;
 }
 
 export const productRequests = {
   list: async (
-    { page = 0, limit = 5 }: IPagination,
+    { page = 0, limit = 200, keyword }: IPagination,
     templateId?: string,
   ): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.get(
-      `/products/?page${page}&limit${limit}&product_template_id=${templateId}`,
+      `/products/?product_template_id=${templateId}&key=${keyword}&limit=${limit}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

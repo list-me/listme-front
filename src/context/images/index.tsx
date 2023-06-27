@@ -1,11 +1,11 @@
 import { createContext, useCallback, useState } from "react";
+import { toast } from "react-toastify";
 import {
   ImageContext,
   ImageContextProps,
   SignedUrlResponse,
 } from "./image.context.d";
 import { fileRequests } from "../../services/apis/requests/file";
-import { toast } from "react-toastify";
 
 const imageContext = createContext<ImageContext>({
   uploadImages: async (): Promise<string[]> => [""],
@@ -16,12 +16,19 @@ const imageContext = createContext<ImageContext>({
 const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
   const [isDragActive, setIsDragActive] = useState<boolean>(false);
 
+  const getSignedUrl = async (
+    type: string,
+    url: string,
+  ): Promise<SignedUrlResponse> => {
+    return fileRequests.getSignedUrl(type, url);
+  };
+
   const uploadImages = useCallback(
-    async (files: File[]): Promise<string[] | void> => {
+    async (files: File[], url: string): Promise<string[] | void> => {
       try {
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {
-          const signedUrl = await getSignedUrl(file.type);
+          const signedUrl = await getSignedUrl(file.type, url);
           filesNames.push(signedUrl.access_url);
           return fileRequests.uploadFile(file, signedUrl.url);
         });
@@ -29,15 +36,11 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
         await Promise.all(uploadPromises);
         return filesNames;
       } catch (error) {
-        toast.error("Ocorreu um erro");
+        throw new Error("Ocorreu um erro ao realizar o upload dos arquivos");
       }
     },
     [],
   );
-
-  const getSignedUrl = async (type: string): Promise<SignedUrlResponse> => {
-    return fileRequests.getSignedUrl(type);
-  };
 
   const handleActiveDrag = (): void => {
     setIsDragActive(true);
