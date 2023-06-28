@@ -590,7 +590,9 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
                 customChanges[0][2] !== customChanges[0][3] &&
                 dataProvider.length
               ) {
-                const id = await handleSave(dataProvider[customChanges[0][0]]);
+                const id = handleSave(dataProvider[customChanges[0][0]])
+                  .then((response: any) => response)
+                  .catch((error) => toast.error(error));
                 if (id) dataProvider[customChanges[0][0]].id = id;
               }
             }
