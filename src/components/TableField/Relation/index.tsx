@@ -50,7 +50,7 @@ export const Relation: React.FC<PropsRelation> = ({
   };
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [contentProducts, setContentProducts] = useState<any[]>(value ?? []);
+  const [total, setTotal] = useState<number>(value?.length ?? 0);
   const [currentProducts, setCurrentProducts] = useState<any[]>(value ?? []);
 
   const [columns, setColumns] = useState<any[]>([]);
@@ -73,8 +73,13 @@ export const Relation: React.FC<PropsRelation> = ({
     setData([]);
     setOldData([]);
     setFieldTitle([]);
-    // setCurrentProducts([]);
+    setCurrentProducts(value ?? []);
     setIsOpen(!isOpen);
+  };
+
+  const handleCancel = (): void => {
+    setTotal(value?.length ?? 0);
+    setIsOpen(false);
   };
 
   const handleGetValueString = (value: any) => {
@@ -268,6 +273,7 @@ export const Relation: React.FC<PropsRelation> = ({
       .map((element) => element.value)[0];
 
     setCurrentProducts(testing);
+    setTotal(testing?.length ?? 0);
     setRelations(updatedProduct);
   };
 
@@ -304,6 +310,7 @@ export const Relation: React.FC<PropsRelation> = ({
       .map((element) => element.value)[0];
 
     setCurrentProducts(testing);
+    setTotal(testing?.length ?? 0);
   };
 
   const handleUpdateProduct = async () => {
@@ -406,12 +413,7 @@ export const Relation: React.FC<PropsRelation> = ({
     <Container onClick={() => {}}>
       <div className="tagContent">
         <Tag onClick={handleChangeVisible} maxWidth="fit-content">
-          <label>
-            {" "}
-            {currentProducts?.filter((e) => e !== "").length ||
-              contentProducts?.filter((e) => e !== "").length}{" "}
-            Item(s) relacionados{" "}
-          </label>
+          <label> {total} Item(s) relacionados </label>
         </Tag>
       </div>
       <Modal
@@ -423,7 +425,7 @@ export const Relation: React.FC<PropsRelation> = ({
         <>
           <Title>
             Produtos relacionados
-            <CloseWindowIcon onClick={handleChangeVisible} />
+            <CloseWindowIcon onClick={handleCancel} />
           </Title>
 
           <Content>
@@ -447,7 +449,7 @@ export const Relation: React.FC<PropsRelation> = ({
               )}
             </div>
             <div className="contentTable">
-              {currentProducts?.filter((e) => e !== "").length >= limit ? (
+              {total >= limit ? (
                 <label> Número máximo de items já relacionados </label>
               ) : (
                 <>
@@ -482,9 +484,7 @@ export const Relation: React.FC<PropsRelation> = ({
           </Content>
 
           <ButtonContainer>
-            <PrimaryButton onClick={handleChangeVisible}>
-              Cancelar
-            </PrimaryButton>
+            <PrimaryButton onClick={handleCancel}>Cancelar</PrimaryButton>
             <Button
               onClick={() => {
                 setIsOpen(!isOpen);
