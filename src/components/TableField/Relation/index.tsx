@@ -11,13 +11,11 @@ import {
   Container,
   Content,
   HeaderTable,
-  Loader,
   PrimaryButton,
   Tag,
   Title,
 } from "./styles";
 
-import { ReactComponent as AddIcon } from "../../../assets/add-column.svg";
 import { ReactComponent as CloseIcon } from "../../../assets/close-xsmall-blue.svg";
 import { ReactComponent as CloseWindowIcon } from "../../../assets/close-gray.svg";
 
