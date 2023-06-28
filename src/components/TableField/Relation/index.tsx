@@ -247,7 +247,15 @@ export const Relation: React.FC<PropsRelation> = ({
     const newData = dataProvider;
     newData[row][column.data] = currentProducts;
 
-    const id = await handleSave(newData[row]);
+    const id = handleSave(newData[row])
+      .then((id) => {
+        setIsOpen(false);
+        return id;
+      })
+      .catch((error) => {
+        toast.error(error);
+      });
+
     setValue(currentProducts);
     if (id) dataProvider[row].id = id;
   };
@@ -401,14 +409,7 @@ export const Relation: React.FC<PropsRelation> = ({
 
           <ButtonContainer>
             <PrimaryButton onClick={handleCancel}>Cancelar</PrimaryButton>
-            <Button
-              onClick={() => {
-                setIsOpen(!isOpen);
-                handleUpdateProduct();
-              }}
-            >
-              Salvar
-            </Button>
+            <Button onClick={handleUpdateProduct}>Salvar</Button>
           </ButtonContainer>
         </>
       </Modal>
