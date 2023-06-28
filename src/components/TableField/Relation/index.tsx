@@ -160,27 +160,41 @@ export const Relation: React.FC<PropsRelation> = ({
   };
 
   const handleGetProducts = async () => {
-    const productPromises = await currentProducts.map(async (product) => {
-      if (product) {
-        productRequests.get(product?.id).then((response) => {
-          const title = response?.fields?.find((e: any) => {
-            return e.id == product.field;
-          });
+    setIsLoading(true);
+    try {
+      const productPromises = await currentProducts.map(async (product) => {
+        if (product) {
+          productRequests
+            .get(product?.id)
+            .then((response) => {
+              const title = response?.fields?.find((e: any) => {
+                return e.id == product.field;
+              });
 
-          setFieldTitle((prev) => [
-            {
-              id: product?.id,
-              value: title ? title.value[0] : "*Campo sem valor*",
-            },
-            ...prev,
-          ]);
-        });
+              setFieldTitle((prev) => [
+                {
+                  id: product?.id,
+                  value: title ? title.value[0] : "*Campo sem valor*",
+                },
+                ...prev,
+              ]);
+            })
+            .catch((error) => {
+              throw error;
+            });
 
-        return product;
-      }
-    });
+          return product;
+        }
+      });
 
-    await Promise.all(productPromises);
+      await Promise.all(productPromises);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      toast.error(
+        "Ocorreu um erro ao carregar os produtos à serem relacionados",
+      );
+    }
   };
 
   const handleClick = (product: any) => {
@@ -312,7 +326,7 @@ export const Relation: React.FC<PropsRelation> = ({
   useEffect(() => {
     if (isOpen) {
       buildColumns();
-      handleGetProducts().then();
+      handleGetProducts();
     }
   }, [isOpen]);
 
