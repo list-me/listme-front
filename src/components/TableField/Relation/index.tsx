@@ -45,11 +45,7 @@ export const Relation: React.FC<PropsRelation> = ({
   const [data, setData] = useState<any[]>([]);
   const [oldData, setOldData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
   const [fieldTitle, setFieldTitle] = useState<any[]>([]);
-
-  const [opt, setOpt] = useState<string>();
-  const [limit, setLimit] = useState(column.options[0].limit);
 
   const [keyword, setKeyword] = useState<string>("");
   const [templateRelation, setTemplateRelation] = useState<any>({});
@@ -57,8 +53,6 @@ export const Relation: React.FC<PropsRelation> = ({
   const { handleSave } = useContext(productContext);
 
   const handleChangeVisible = () => {
-    console.log("Change visible");
-
     // setData([]);
     // setOldData([]);
     setFieldTitle([]);
@@ -96,13 +90,13 @@ export const Relation: React.FC<PropsRelation> = ({
             .map((attribute: any, index: number) => {
               if (index === 0) setTemplateRelation(attribute);
 
-              if (column.options[0].agreementType == "bilateral") {
-                if (attribute.id == column.data) {
-                  setOpt(attribute.options[0].field);
-                }
-              } else {
-                setOpt(attribute.options[0]?.field);
-              }
+              // if (column.options[0].agreementType == "bilateral") {
+              //   if (attribute.id == column.data) {
+              //     setOpt(attribute.options[0].field);
+              //   }
+              // } else {
+              //   setOpt(attribute.options[0]?.field);
+              // }
 
               templateRel = attribute;
               return {
@@ -441,7 +435,7 @@ export const Relation: React.FC<PropsRelation> = ({
               )}
             </div>
             <div className="contentTable">
-              {total >= limit ? (
+              {total >= column.options[0].limit ? (
                 <label> Número máximo de items já relacionados </label>
               ) : (
                 <>
