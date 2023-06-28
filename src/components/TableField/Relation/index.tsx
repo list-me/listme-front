@@ -50,19 +50,13 @@ export const Relation: React.FC<PropsRelation> = ({
 
   const { handleSave } = useContext(productContext);
 
-  const handleChangeVisible = () => {
-    // setData([]);
-    // setOldData([]);
+  const handleChangeVisible = (): void => {
     setFieldTitle([]);
-    // setCurrentProducts(value ?? []);
     setIsOpen(!isOpen);
   };
 
   const handleCancel = (): void => {
     setFieldTitle([]);
-
-    console.log("On cancel", { value });
-
     setCurrentProducts(value);
     setTotal(value.length);
     setIsOpen(false);
@@ -87,14 +81,6 @@ export const Relation: React.FC<PropsRelation> = ({
           const columnsTable = response.fields.fields
             .map((attribute: any, index: number) => {
               if (index === 0) setTemplateRelation(attribute);
-
-              // if (column.options[0].agreementType == "bilateral") {
-              //   if (attribute.id == column.data) {
-              //     setOpt(attribute.options[0].field);
-              //   }
-              // } else {
-              //   setOpt(attribute.options[0]?.field);
-              // }
 
               templateRel = attribute;
               return {
@@ -212,14 +198,6 @@ export const Relation: React.FC<PropsRelation> = ({
       });
     });
 
-    // const fieldId = column?.data;
-    // let updatedProduct = relations;
-    // const currentField = updatedProduct?.find((item) => {
-    //   if (item.id == fieldId) {
-    //     return item;
-    //   }
-    // });
-
     const newProduct = {
       id: product.id,
       field: fieldTemplate,
@@ -229,45 +207,6 @@ export const Relation: React.FC<PropsRelation> = ({
     const products: any[] = [newProduct, ...currentProducts];
     setCurrentProducts(products);
     setTotal(products.length);
-
-    // if (!currentField) {
-    //   updatedProduct = [
-    //     {
-    //       id: fieldId,
-    //       value: [
-    //         {
-    //           id: product.id,
-    //           field: fieldTemplate,
-    //           templateId: column.options[0].templateId,
-    //         },
-    //       ],
-    //     },
-    //     ...updatedProduct,
-    //   ];
-    // } else {
-    //   updatedProduct = updatedProduct.map((e) => {
-    //     if (e.id == currentField.id) {
-    //       e.value = [
-    //         {
-    //           id: product.id,
-    //           field: fieldTemplate,
-    //           templateId: column.options[0].templateId,
-    //         },
-    //         ...e.value,
-    //       ];
-    //     }
-    //     return e;
-    //   });
-    // }
-
-    // const testing = updatedProduct
-    //   .filter((e) => {
-    //     if (e.id == column.data) return e;
-    //   })
-    //   .map((element) => element.value)[0];
-
-    // setCurrentProducts(testing);
-    // setRelations(updatedProduct);
   };
 
   const handleClickRemove = (title: any) => {
@@ -288,27 +227,6 @@ export const Relation: React.FC<PropsRelation> = ({
     );
     setCurrentProducts(products);
     setTotal(products.length);
-
-    // const fieldId = column.data;
-    // const actualy = relations.map((element) => {
-    //   if (element.id == fieldId) {
-    //     element.value = element.value.filter(
-    //       (item: any) => item.id !== title.id,
-    //     );
-    //   }
-
-    //   return element;
-    // });
-
-    // setRelations(actualy);
-
-    // const testing = actualy
-    //   .filter((e) => {
-    //     if (e.id == column.data) return e;
-    //   })
-    //   .map((element) => element.value)[0];
-
-    // setCurrentProducts(testing);
   };
 
   const handleUpdateProduct = async () => {
