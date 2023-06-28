@@ -49,7 +49,7 @@ interface ITypeProductContext {
   headerTable: IHeaderTable[];
   setHeaderTable: Function;
   handleAdd: Function;
-  handleSave: Function;
+  handleSave: (value: any) => Promise<any>;
   editing: boolean;
   setEditing: Function;
   colHeaders: string[];
@@ -107,7 +107,7 @@ export const productContext = createContext<ITypeProductContext>({
   headerTable: [],
   setHeaderTable: () => {},
   handleAdd: () => {},
-  handleSave: () => {},
+  handleSave: async (): Promise<any> => {},
   editing: false,
   setEditing: () => {},
   colHeaders: [],
@@ -249,7 +249,7 @@ export const ProductContextProvider = ({ children }: any) => {
       });
   };
 
-  const handleSave = async (value: any) => {
+  const handleSave = async (value: any): Promise<any> => {
     const fields = buildProduct(value);
     try {
       if (value?.id) {
@@ -283,7 +283,7 @@ export const ProductContextProvider = ({ children }: any) => {
           ? error?.response?.data?.message[0]
           : error?.response?.data?.message;
 
-      toast.error(message);
+      throw message;
     }
   };
 
