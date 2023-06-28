@@ -1,5 +1,5 @@
 interface PropsRelation {
-  value: any;
+  currentValue: Array<any>;
   templateId: string;
   field: string;
   currentItem: any;

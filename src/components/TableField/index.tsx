@@ -159,7 +159,9 @@ export const TableField: React.FC<any> = ({
           />
         ) : (
           <Relation
-            value={value?.filter((e: any) => e != undefined || e != "")}
+            currentValue={
+              value ? value?.filter((e: any) => e != undefined || e != "") : []
+            }
             templateId={handleGetTemplateId(column)}
             field={handleGetField(column)}
             currentItem={currentItem}

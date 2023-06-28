@@ -28,7 +28,7 @@ import { Loading } from "../../Loading";
 import { SearchBar } from "../../SearchBar/SearchBar";
 
 export const Relation: React.FC<PropsRelation> = ({
-  value,
+  currentValue,
   templateId,
   field,
   currentItem,
@@ -38,26 +38,16 @@ export const Relation: React.FC<PropsRelation> = ({
   dataProvider,
   row,
 }) => {
-  const buildProduct = (fields: any) => {
-    const obj: any[] = [];
-
-    return fields?.map((field: any) => {
-      return {
-        id: field.field,
-        value: field.id,
-      };
-    });
-  };
+  const [value, setValue] = useState<any[]>(currentValue);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [total, setTotal] = useState<number>(value?.length ?? 0);
-  const [currentProducts, setCurrentProducts] = useState<any[]>(value ?? []);
+  const [total, setTotal] = useState<number>(value.length);
+  const [currentProducts, setCurrentProducts] = useState<any[]>(value);
 
   const [columns, setColumns] = useState<any[]>([]);
   const [data, setData] = useState<any[]>([]);
   const [oldData, setOldData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [relations, setRelations] = useState<any[]>(buildProduct(value ?? []));
 
   const [fieldTitle, setFieldTitle] = useState<any[]>([]);
 
@@ -70,15 +60,22 @@ export const Relation: React.FC<PropsRelation> = ({
   const { handleSave } = useContext(productContext);
 
   const handleChangeVisible = () => {
-    setData([]);
-    setOldData([]);
+    console.log("Change visible");
+
+    // setData([]);
+    // setOldData([]);
     setFieldTitle([]);
-    setCurrentProducts(value ?? []);
+    // setCurrentProducts(value ?? []);
     setIsOpen(!isOpen);
   };
 
   const handleCancel = (): void => {
-    setTotal(value?.length ?? 0);
+    setFieldTitle([]);
+
+    console.log("On cancel", { value });
+
+    setCurrentProducts(value);
+    setTotal(value.length);
     setIsOpen(false);
   };
 
@@ -213,7 +210,6 @@ export const Relation: React.FC<PropsRelation> = ({
 
   const handleClick = (product: any) => {
     const fieldTemplate = column.options[0].field;
-
     const values =
       typeof product[field] === "object"
         ? product[field][0]
@@ -221,60 +217,68 @@ export const Relation: React.FC<PropsRelation> = ({
     const newTitle = { value: values, id: product.id };
 
     setFieldTitle((prev) => [newTitle, ...prev]);
-
     setData((prev) => {
       return prev.filter((e) => {
         if (e?.id !== product?.id) return e;
       });
     });
 
-    const fieldId = column?.data;
-    let updatedProduct = relations;
-    const currentField = updatedProduct?.find((item) => {
-      if (item.id == fieldId) {
-        return item;
-      }
-    });
+    // const fieldId = column?.data;
+    // let updatedProduct = relations;
+    // const currentField = updatedProduct?.find((item) => {
+    //   if (item.id == fieldId) {
+    //     return item;
+    //   }
+    // });
 
-    if (!currentField) {
-      updatedProduct = [
-        {
-          id: fieldId,
-          value: [
-            {
-              id: product.id,
-              field: fieldTemplate,
-              templateId: column.options[0].templateId,
-            },
-          ],
-        },
-        ...updatedProduct,
-      ];
-    } else {
-      updatedProduct = updatedProduct.map((e) => {
-        if (e.id == currentField.id) {
-          e.value = [
-            {
-              id: product.id,
-              field: fieldTemplate,
-              templateId: column.options[0].templateId,
-            },
-            ...e.value,
-          ];
-        }
-        return e;
-      });
-    }
+    const newProduct = {
+      id: product.id,
+      field: fieldTemplate,
+      templateId: column.options[0].templateId,
+    };
 
-    const testing = updatedProduct
-      .filter((e) => {
-        if (e.id == column.data) return e;
-      })
-      .map((element) => element.value)[0];
+    const products: any[] = [newProduct, ...currentProducts];
+    setCurrentProducts(products);
+    setTotal(products.length);
 
-    setCurrentProducts(testing);
-    setTotal(testing?.length ?? 0);
-    setRelations(updatedProduct);
+    // if (!currentField) {
+    //   updatedProduct = [
+    //     {
+    //       id: fieldId,
+    //       value: [
+    //         {
+    //           id: product.id,
+    //           field: fieldTemplate,
+    //           templateId: column.options[0].templateId,
+    //         },
+    //       ],
+    //     },
+    //     ...updatedProduct,
+    //   ];
+    // } else {
+    //   updatedProduct = updatedProduct.map((e) => {
+    //     if (e.id == currentField.id) {
+    //       e.value = [
+    //         {
+    //           id: product.id,
+    //           field: fieldTemplate,
+    //           templateId: column.options[0].templateId,
+    //         },
+    //         ...e.value,
+    //       ];
+    //     }
+    //     return e;
+    //   });
+    // }
+
+    // const testing = updatedProduct
+    //   .filter((e) => {
+    //     if (e.id == column.data) return e;
+    //   })
+    //   .map((element) => element.value)[0];
+
+    // setCurrentProducts(testing);
+    // setRelations(updatedProduct);
   };
 
   const handleClickRemove = (title: any) => {
@@ -290,42 +294,40 @@ export const Relation: React.FC<PropsRelation> = ({
       });
     });
 
-    const fieldId = column.data;
-    const actualy = relations.map((element) => {
-      if (element.id == fieldId) {
-        element.value = element.value.filter(
-          (item: any) => item.id !== title.id,
-        );
-      }
+    const products: any[] = currentProducts.filter(
+      (current) => current.id !== title.id,
+    );
+    setCurrentProducts(products);
+    setTotal(products.length);
 
-      return element;
-    });
+    // const fieldId = column.data;
+    // const actualy = relations.map((element) => {
+    //   if (element.id == fieldId) {
+    //     element.value = element.value.filter(
+    //       (item: any) => item.id !== title.id,
+    //     );
+    //   }
 
-    setRelations(actualy);
+    //   return element;
+    // });
 
-    const testing = actualy
-      .filter((e) => {
-        if (e.id == column.data) return e;
-      })
-      .map((element) => element.value)[0];
+    // setRelations(actualy);
 
-    setCurrentProducts(testing);
-    setTotal(testing?.length ?? 0);
+    // const testing = actualy
+    //   .filter((e) => {
+    //     if (e.id == column.data) return e;
+    //   })
+    //   .map((element) => element.value)[0];
+
+    // setCurrentProducts(testing);
   };
 
   const handleUpdateProduct = async () => {
-    const values = relations.find((item) => {
-      if (item.id == column.data) {
-        return item;
-      }
-    })?.value;
-
-    setCurrentProducts(values);
-
     const newData = dataProvider;
-    newData[row][column.data] = values;
+    newData[row][column.data] = currentProducts;
 
     const id = await handleSave(newData[row]);
+    setValue(currentProducts);
     if (id) dataProvider[row].id = id;
   };
 
@@ -407,8 +409,6 @@ export const Relation: React.FC<PropsRelation> = ({
     }
   }, [isOpen]);
 
-  useEffect(() => {}, [currentProducts]);
-
   return (
     <Container onClick={() => {}}>
       <div className="tagContent">
@@ -416,12 +416,7 @@ export const Relation: React.FC<PropsRelation> = ({
           <label> {total} Item(s) relacionados </label>
         </Tag>
       </div>
-      <Modal
-        isOpen={isOpen}
-        changeVisible={handleChangeVisible}
-        width="60vw"
-        top="2%"
-      >
+      <Modal isOpen={isOpen} changeVisible={() => {}} width="60vw" top="2%">
         <>
           <Title>
             Produtos relacionados
