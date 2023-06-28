@@ -31,10 +31,7 @@ export const Relation: React.FC<PropsRelation> = ({
   currentValue,
   templateId,
   field,
-  currentItem,
   column,
-  // handleSave = () => {},
-  instance,
   dataProvider,
   row,
 }) => {

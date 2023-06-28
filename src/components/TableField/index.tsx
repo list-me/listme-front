@@ -164,13 +164,9 @@ export const TableField: React.FC<any> = ({
             }
             templateId={handleGetTemplateId(column)}
             field={handleGetField(column)}
-            currentItem={currentItem}
             column={column}
-            // handleSave={(e: any) => handleChangeValue(e)}
-            instance={instance}
             dataProvider={dataProvider}
             row={row}
-            // className={className}
           />
         )
       ) : (
