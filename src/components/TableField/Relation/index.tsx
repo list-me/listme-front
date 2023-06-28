@@ -247,9 +247,10 @@ export const Relation: React.FC<PropsRelation> = ({
     const newData = dataProvider;
     newData[row][column.data] = currentProducts;
 
-    const id = handleSave(newData[row])
+    handleSave(newData[row])
       .then((id) => {
         setIsOpen(false);
+        if (id) dataProvider[row].id = id;
         return id;
       })
       .catch((error) => {
@@ -257,7 +258,6 @@ export const Relation: React.FC<PropsRelation> = ({
       });
 
     setValue(currentProducts);
-    if (id) dataProvider[row].id = id;
   };
 
   const handleSearchProducts = async (): Promise<void> => {
