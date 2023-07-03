@@ -25,14 +25,18 @@ export const fileRequests = {
   ): Promise<SignedUrlResponse> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
 
-    if (url === CATEGORY_URL) {
+    if (
+      url === CATEGORY_URL &&
+      window.location.pathname.substring(10) ==
+        "e15b38b5-ea66-4293-b4ac-13d8aa0e043c"
+    ) {
       const response = await axios.post(
         url,
         { filename: generateUUID() },
         {
           headers: {
             "API-Version": "v1",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MDgxNjc0Ni1hYjU3LTRjNDgtOTM5ZC0wNmI5ODBmZWRlZjciLCJzZXNzaW9uSWQiOiI5ZDc0ZmRlMS1mMmZhLTRmNGYtYWYzMS02YTEzOWE4MjhiODMiLCJuYW1lIjoiV2FuZGVyc29uIiwiZW1haWwiOiJ3YW5kZXJzb24uanVuaW9hbnR1bmVzQGdtYWlsLmNvbSIsImlhdCI6MTY4NzcxNjAxMiwiZXhwIjoxNjg4MTQ4MDEyfQ.DdMc_Q-Pq1wHXf4xMC6b6JGDXRMOOgWlkSft3bRu_Sk`,
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MDgxNjc0Ni1hYjU3LTRjNDgtOTM5ZC0wNmI5ODBmZWRlZjciLCJzZXNzaW9uSWQiOiI2OTgzZWE3Yy1lZGZhLTRmMmQtYjIzMS0wOTFiZWVjYzBlNmYiLCJuYW1lIjoiV2FuZGVyc29uIiwiZW1haWwiOiJ3YW5kZXJzb24uanVuaW9hbnR1bmVzQGdtYWlsLmNvbSIsImlhdCI6MTY4ODM5Njc2NSwiZXhwIjoxNjg4ODI4NzY1fQ.6azq4FUVsooa8DHSqrO81eiIKG8zVy1En3Pzpzb5O40`,
           },
         },
       );
