@@ -80,7 +80,7 @@ export const Relation: React.FC<PropsRelation> = ({
           let templateRel: any;
           const columnsTable = response.fields.fields
             .map((attribute: any, index: number) => {
-              if (index === 0) setTemplateRelation(attribute);
+              if (column.data === attribute.id) setTemplateRelation(attribute);
 
               templateRel = attribute;
               return {
