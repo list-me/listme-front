@@ -16,6 +16,7 @@ import { ReactComponent as CloseIcon } from "../../assets/close-small-blue.svg";
 import { ReactComponent as FileIcon } from "../../assets/file.svg";
 import { productContext } from "../../context/products";
 import { fileRequests } from "../../services/apis/requests/file";
+import { DEFAULT_FILE_ICON_SRC } from "../../constants/default.styles";
 
 const Dropzone: React.FC<DropzoneRendererProps> = ({
   value,
@@ -215,30 +216,27 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
           >
             {items?.map((item, index) => {
               if (item.length > 1) {
+                const srcValue = ["jpeg", "jpg", "svg", "png"].some(
+                  (extension) => item.includes(extension),
+                )
+                  ? item
+                  : DEFAULT_FILE_ICON_SRC;
+
                 return (
                   <Image key={index}>
                     <CloseIcon onClick={(e) => handleRemove(item, e)} />
                     <a href={item} target="_blank" rel="noreferrer">
-                      {/* {item.includes("jpeg") ||
-                      item.includes("jpg") ||
-                      item.includes("svg") ||
-                      item.includes("png") ? ( */}
                       <img
-                        src={item}
+                        src={srcValue}
                         alt="content file"
                         onLoad={() => handleImageLoadEnd(item)}
                         onError={() => handleImageLoadEnd(item)}
                         style={{
                           opacity: imageLoading[item] ? 0.5 : 1,
                           transition: "opacity 0.3s",
-                          backgroundColor: "#f7f7f7",
+                          backgroundColor: "white",
                         }}
                       />
-                      {/* ) : (
-                        // <span className="fileIcon">
-                        <FileIcon className="fileIcon" />
-                        // </span>
-                      )} */}
                     </a>
                   </Image>
                 );

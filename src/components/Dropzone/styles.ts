@@ -112,7 +112,7 @@ export const SuspenseMenu = styled.div<{ width: string; top: string }>`
   background: #dae0ed;
 
   position: absolute;
-  z-index: 999;
+  z-index: 2;
 
   display: block;
   flex-direction: row;
@@ -151,9 +151,6 @@ export const SuspenseMenu = styled.div<{ width: string; top: string }>`
 
 export const Image = styled.div`
   flex: 0 0 25%;
-  justify-content: start;
-
-  margin-bottom: 8px;
 
   svg {
     width: 20px;
@@ -170,16 +167,6 @@ export const Image = styled.div`
     &:hover {
       cursor: pointer;
     }
-  }
-
-  .fileIcon {
-    width: 40px;
-    height: 40px;
-
-    margin: 0;
-
-    top: 8px;
-    z-index: 998;
   }
 
   img {
