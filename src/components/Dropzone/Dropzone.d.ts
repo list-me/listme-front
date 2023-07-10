@@ -5,7 +5,7 @@ interface DropzoneRendererProps {
   col: number;
   prop: string;
   className?: string;
-  bucket_url: string;
+  templateId: string;
   dataProvider: any[];
 }
 

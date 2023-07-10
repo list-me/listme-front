@@ -740,7 +740,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
                     options={col.options}
                     handleSetNewValue={handleSetNewValue}
                     dataProvider={dataProvider}
-                    bucket_url={col.bucket_url}
+                    templateId={template.id}
                   />
                 </HotColumn>
               );

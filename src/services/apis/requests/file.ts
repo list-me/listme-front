@@ -15,42 +15,21 @@ function generateUUID(): string {
   });
 }
 
-const CATEGORY_URL =
-  "https://api-dev.collectionplugin.com.br/category/presigned-url";
-
 export const fileRequests = {
   getSignedUrl: async (
     type: string,
-    url: string,
+    templateId: string,
   ): Promise<SignedUrlResponse> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
 
-    if (url === CATEGORY_URL) {
-      const response = await axios.post(
-        url,
-        { filename: generateUUID() },
-        {
-          headers: {
-            "API-Version": "v1",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MDgxNjc0Ni1hYjU3LTRjNDgtOTM5ZC0wNmI5ODBmZWRlZjciLCJzZXNzaW9uSWQiOiI5ZDc0ZmRlMS1mMmZhLTRmNGYtYWYzMS02YTEzOWE4MjhiODMiLCJuYW1lIjoiV2FuZGVyc29uIiwiZW1haWwiOiJ3YW5kZXJzb24uanVuaW9hbnR1bmVzQGdtYWlsLmNvbSIsImlhdCI6MTY4NzcxNjAxMiwiZXhwIjoxNjg4MTQ4MDEyfQ.DdMc_Q-Pq1wHXf4xMC6b6JGDXRMOOgWlkSft3bRu_Sk`,
-          },
+    const response = await api.get(
+      `template/signed-url?fileType=${type}&templateId=${templateId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
-
-      console.log(response.data);
-
-      const { key, presignedUrl } = response.data;
-      return {
-        access_url: `https://d1ptd3zs6hice0.cloudfront.net/categories/${key}.png`,
-        url: presignedUrl,
-      };
-    }
-
-    const response = await api.get(`company/signed-url?fileType=${type}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
       },
-    });
+    );
 
     return response.data;
   },

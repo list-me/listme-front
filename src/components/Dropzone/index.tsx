@@ -24,7 +24,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   col,
   prop,
   className,
-  bucket_url,
+  templateId,
   dataProvider,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -48,7 +48,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     if (acceptedFiles.length > 0) {
       setLoading(true);
       try {
-        const newFiles = await uploadImages(acceptedFiles, bucket_url);
+        const newFiles = await uploadImages(acceptedFiles, templateId);
         if (newFiles) {
           const temp = [...newFiles, ...items].filter((item) => item !== "");
 
@@ -83,19 +83,19 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
 
     if (newValue.length) {
       setItems(newValue);
-      await fileRequests.dropFile(
-        imageUrl,
-        "template",
-        window.location.pathname.substring(10),
-        dataProvider[row]?.id,
-      );
     } else {
       delete newData[row][prop];
       setItems([]);
     }
 
-    const id = await handleSave(newData[row]);
-    if (id) newData[row].id = id;
+    await fileRequests.dropFile(
+      `${imageUrl}.png`,
+      "template",
+      window.location.pathname.substring(10),
+      dataProvider[row]?.id,
+    );
+    // const id = await handleSave(newData[row]);
+    // if (id) newData[row].id = id;
   };
 
   const handleImageLoadEnd = (src: string) => {
@@ -225,6 +225,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                       item.includes("png") ? ( */}
                       <img
                         src={item}
+                        alt="content file"
                         onLoad={() => handleImageLoadEnd(item)}
                         onError={() => handleImageLoadEnd(item)}
                         style={{

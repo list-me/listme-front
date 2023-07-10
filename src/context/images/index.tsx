@@ -18,9 +18,9 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
 
   const getSignedUrl = async (
     type: string,
-    url: string,
+    templateId: string,
   ): Promise<SignedUrlResponse> => {
-    return fileRequests.getSignedUrl(type, url);
+    return fileRequests.getSignedUrl(type, templateId);
   };
 
   const uploadImages = useCallback(

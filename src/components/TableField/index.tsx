@@ -38,7 +38,7 @@ export const TableField: React.FC<any> = ({
   dataProvider,
   row,
   cellProperties,
-  bucket_url,
+  templateId,
   ...props
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -154,7 +154,7 @@ export const TableField: React.FC<any> = ({
             value={value}
             prop={column.data}
             // className={className}
-            bucket_url={bucket_url}
+            templateId={templateId}
             dataProvider={dataProvider}
           />
         ) : (
