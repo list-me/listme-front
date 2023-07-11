@@ -81,7 +81,7 @@ const Template = () => {
       dataIndex: "order",
       width: "5%",
       render: (_: any, record: any) => {
-        return <label style={{ color: "#212529" }}> {record.order} </label>;
+        return <span style={{ color: "#212529" }}> {record.order} </span>;
       },
     },
     {
@@ -90,7 +90,7 @@ const Template = () => {
       dataIndex: "name",
       width: "55%",
       render: (_: any, record: any) => {
-        return <label style={{ color: "#212529" }}> {record.name} </label>;
+        return <span style={{ color: "#212529" }}> {record.name} </span>;
       },
     },
     {
@@ -100,7 +100,11 @@ const Template = () => {
       width: "5%",
       align: "center",
       render: (_: any, record: any) => {
-        return <label style={{ color: "#3818D9" }}> {record.total} </label>;
+        const total =
+          record.total >= 1000
+            ? Number(record.total / 1000).toFixed(3)
+            : record.total;
+        return <span style={{ color: "#3818D9" }}> {total} </span>;
       },
     },
     {
@@ -124,8 +128,10 @@ const Template = () => {
       width: "10%",
       align: "center",
       render: (_: any, record: any) => {
-        const background = record.is_public ? "#3818D9" : "#DEE2E6";
-        const color = record.is_public ? "#FFFFFF" : "#212529";
+        // const background = record.is_public ? "#3818D9" : "#DEE2E6";
+        // const color = record.is_public ? "#FFFFFF" : "#212529";
+        const background = "#DEE2E6";
+        const color = "#212529";
         return (
           <Tag
             color={background}
@@ -142,7 +148,8 @@ const Template = () => {
               fontWeight: 700,
             }}
           >
-            {record.is_public ? "Público" : "Privado"}
+            Privado
+            {/* {record.is_public ? "Público" : "Privado"} */}
           </Tag>
         );
       },
