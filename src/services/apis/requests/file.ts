@@ -1,6 +1,9 @@
+/* eslint-disable */
+
 import axios from "axios";
 import { STORAGE } from "../../../constants/localStorage";
 import { api } from "../api";
+import { toast } from "react-toastify";
 
 interface SignedUrlResponse {
   url: string;
@@ -34,12 +37,13 @@ export const fileRequests = {
     return response.data;
   },
   uploadFile: async (file: File, url: string): Promise<void> => {
-    const response = await axios.put(url, file, {
-      headers: { "Content-Type": file.type },
-    });
-
-    if (response.status !== 200)
-      throw "Ocorreu um erro ao realizar o upload de uma das imagens";
+    await axios
+      .put(url, file, {
+        headers: { "Content-Type": file.type },
+      })
+      .catch((error) => {
+        toast.error("Ocorreu um erro ao realizar o upload de uma das imagens");
+      });
   },
   dropFile: async (
     file: string,

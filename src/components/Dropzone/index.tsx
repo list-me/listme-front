@@ -30,7 +30,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [imageLoading, setImageLoading] = useState<Record<string, boolean>>({});
+  const [imageLoading, setImageLoading] = useState<boolean>(false);
 
   const [oldItems, setOldItems] = useState<string[]>(value);
   const [items, setItems] = useState<any[]>(value ?? [""]);
@@ -73,35 +73,48 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     event: React.MouseEvent,
   ): Promise<void> => {
     event.stopPropagation();
-    const newValue = items.filter((item) => {
-      if (item !== imageUrl) {
-        return item;
+
+    setImageLoading(true);
+    try {
+      await fileRequests.dropFile(
+        `${imageUrl}`,
+        "template",
+        window.location.pathname.substring(10),
+        dataProvider[row]?.id,
+      );
+
+      const newValue = items.filter((item) => {
+        if (item !== imageUrl) {
+          return item;
+        }
+      });
+
+      const newData = dataProvider;
+      newData[row][prop] = newValue;
+
+      if (newValue.length) {
+        setItems(newValue);
+      } else {
+        setItems([]);
+        newData[row][prop] = [];
+        await handleSave(newData[row]);
       }
-    });
 
-    const newData = dataProvider;
-    newData[row][prop] = newValue;
-
-    if (newValue.length) {
-      setItems(newValue);
-    } else {
-      delete newData[row][prop];
-      setItems([]);
+      setImageLoading(false);
+    } catch (error) {
+      setImageLoading(false);
+      toast.error(
+        "Não foi possível remover a imagem, por favor tente novamente",
+      );
     }
 
-    await fileRequests.dropFile(
-      `${imageUrl}.png`,
-      "template",
-      window.location.pathname.substring(10),
-      dataProvider[row]?.id,
-    );
     // const id = await handleSave(newData[row]);
     // if (id) newData[row].id = id;
   };
 
-  const handleImageLoadEnd = (src: string) => {
-    setImageLoading((prev) => ({ ...prev, [src]: false }));
-  };
+  // const handleImageLoadEnd = (src: string) => {
+  //   setImageLoading((prev) => ({ ...prev, [src]: false }));
+  // };
 
   const { getRootProps, open, isDragActive } = useDropzone({
     onDrop,
@@ -214,7 +227,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
             top={String(top + 55)}
             ref={dropDownRef}
           >
-            {items?.map((item, index) => {
+            {items.map((item, index) => {
               if (item.length > 1) {
                 const srcValue = ["jpeg", "jpg", "svg", "png"].some(
                   (extension) => item.includes(extension),
@@ -224,18 +237,18 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
 
                 return (
                   <Image key={index}>
-                    <CloseIcon onClick={(e) => handleRemove(item, e)} />
+                    {!imageLoading ? (
+                      <CloseIcon onClick={(e) => handleRemove(item, e)} />
+                    ) : (
+                      <></>
+                    )}
                     <a href={item} target="_blank" rel="noreferrer">
                       <img
                         src={srcValue}
                         alt="content file"
-                        onLoad={() => handleImageLoadEnd(item)}
-                        onError={() => handleImageLoadEnd(item)}
-                        style={{
-                          opacity: imageLoading[item] ? 0.5 : 1,
-                          transition: "opacity 0.3s",
-                          backgroundColor: "white",
-                        }}
+                        // onLoad={() => handleImageLoadEnd(item)}
+                        // onError={() => handleImageLoadEnd(item)}
+                        style={{ backgroundColor: "white" }}
                       />
                     </a>
                   </Image>

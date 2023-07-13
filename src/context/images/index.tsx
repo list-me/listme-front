@@ -28,7 +28,8 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
       try {
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {
-          const signedUrl = await getSignedUrl(file.type, url);
+          const type = file.type.includes("image") ? "image/png" : file.type;
+          const signedUrl = await getSignedUrl(type, url);
           filesNames.push(signedUrl.access_url);
           return fileRequests.uploadFile(file, signedUrl.url);
         });
