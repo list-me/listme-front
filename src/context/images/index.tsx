@@ -17,10 +17,11 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
   const [isDragActive, setIsDragActive] = useState<boolean>(false);
 
   const getSignedUrl = async (
-    type: string,
+    fileName: string,
+    fileType: string,
     templateId: string,
   ): Promise<SignedUrlResponse> => {
-    return fileRequests.getSignedUrl(type, templateId);
+    return fileRequests.getSignedUrl(fileName, fileType, templateId);
   };
 
   const uploadImages = useCallback(
@@ -28,8 +29,9 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
       try {
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {
-          const type = file.type.includes("image") ? "image/png" : file.type;
-          const signedUrl = await getSignedUrl(type, url);
+          const [fileName, fileType] = file.name.split(".");
+
+          const signedUrl = await getSignedUrl(fileName, fileType, url);
           filesNames.push(signedUrl.access_url);
           return fileRequests.uploadFile(file, signedUrl.url);
         });

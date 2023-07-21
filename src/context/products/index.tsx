@@ -252,7 +252,7 @@ export const ProductContextProvider = ({ children }: any) => {
   const handleSave = async (value: any): Promise<any> => {
     try {
       const fields = buildProduct(value);
-      if (value?.id) {
+      if (value["id"] !== undefined) {
         await Promise.resolve(
           productRequests.update({ id: value.id, fields }),
         ).catch((error) => {

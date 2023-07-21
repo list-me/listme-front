@@ -97,7 +97,6 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
       } else {
         setItems([]);
         newData[row][prop] = [];
-        await handleSave(newData[row]);
       }
 
       setImageLoading(false);
@@ -107,14 +106,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         "Não foi possível remover a imagem, por favor tente novamente",
       );
     }
-
-    // const id = await handleSave(newData[row]);
-    // if (id) newData[row].id = id;
   };
-
-  // const handleImageLoadEnd = (src: string) => {
-  //   setImageLoading((prev) => ({ ...prev, [src]: false }));
-  // };
 
   const { getRootProps, open, isDragActive } = useDropzone({
     onDrop,
@@ -161,7 +153,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     return () => {
       window.removeEventListener("mousedown", handleOutsideClick);
     };
-  }, [isOpen, items]);
+  }, [isOpen]);
 
   if (loading)
     return (
@@ -186,20 +178,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
       <Container
         {...getRootProps()}
         ref={modalRef}
-        onClick={async () => {
-          if (!isOpen) {
-            setIsOpen(true);
-          } else {
-            setIsOpen(false);
-            if (oldItems?.length > items?.length) {
-              const newData = dataProvider;
-              newData[row][prop] = items;
-
-              const id = await handleSave(newData[row]);
-              if (id) newData[row].id = id;
-            }
-          }
-        }}
+        onClick={async () => setIsOpen(!isOpen)}
       >
         {isDragActive ? (
           <Zone>Arraste e solte aqui...</Zone>

@@ -11,7 +11,7 @@ interface IProps {
 }
 
 export const CustomRadio = ({ options, value, handleGetNewValue }: IProps) => {
-  const [newValue, setNewValue] = useState<any>(value);
+  const [newValue, setNewValue] = useState<any>(value?.length ? value[0] : "");
 
   const handleState = (e: RadioChangeEvent) => {
     setNewValue(e.target.value);

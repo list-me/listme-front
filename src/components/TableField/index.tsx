@@ -31,7 +31,7 @@ export const TableField: React.FC<any> = ({
   col,
   instance,
   prop,
-  td,
+  TD,
   column,
   currentItem,
   className,
@@ -121,7 +121,6 @@ export const TableField: React.FC<any> = ({
   };
 
   useEffect(() => {
-    console.log("Custom renderizado by effect");
     function handleOutsideClick(event: any) {
       if (elementRef.current && elementRef.current!.contains(event.target)) {
         return;
@@ -201,7 +200,7 @@ export const TableField: React.FC<any> = ({
         <SuspenseMenu
           ref={modalRef}
           width={200}
-          top={td?.offsetTop}
+          top={TD?.offsetTop}
           showMenu={showMenu}
         >
           {type === "radio" ? (
@@ -224,11 +223,20 @@ export const TableField: React.FC<any> = ({
               {options?.map((option: any) => {
                 return (
                   <Item
-                    onClick={() => {
-                      // handleSetNewValue(option);
-                      setNewValue([option]);
+                    onClick={async () => {
                       setIsOpen(false);
-                      instance.setDataAtRowProp(row, prop, [option]);
+                      setNewValue([option]);
+
+                      const newData = dataProvider;
+                      newData[row][prop] = [option];
+
+                      const id = await handleSave(newData[row]);
+                      if (id) dataProvider[row].id = id;
+
+                      // handleSetNewValue(option);
+                      // setNewValue([option]);
+                      // setIsOpen(false);
+                      // instance.setDataAtRowProp(row, prop, [option]);
                     }}
                   >
                     {option}

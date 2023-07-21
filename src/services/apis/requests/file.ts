@@ -20,13 +20,14 @@ function generateUUID(): string {
 
 export const fileRequests = {
   getSignedUrl: async (
-    type: string,
+    fileName: string,
+    fileType: string,
     templateId: string,
   ): Promise<SignedUrlResponse> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
 
     const response = await api.get(
-      `template/signed-url?fileType=${type}&templateId=${templateId}`,
+      `template/signed-url?fileType=${fileType}&templateId=${templateId}&fileName=${fileName}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
