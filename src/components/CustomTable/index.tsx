@@ -154,10 +154,10 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
         currentCell?.id,
       );
 
-      console.log(currentCell);
       // const { hotInstance } = hotRef.current!;
       // hotInstance?.alter("remove_col", column);
 
+      window.location.reload();
       toast.success("Coluna deletada com sucesso");
     } catch (error) {
       console.error(error);
@@ -542,6 +542,11 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
                   selection: any[],
                   clickEvent: MouseEvent,
                 ) {
+                  if (dataProvider?.length == 1)
+                    return toast.warn(
+                      "O catálogo deve conter ao menos um produto",
+                    );
+
                   if (dataProvider?.length) {
                     const { hotInstance } = hotRef.current!;
                     if (hotInstance) {
@@ -580,22 +585,22 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
           //   // }
           //   // return true;
           // }}
-          afterChange={async (
-            changes: Handsontable.CellChange[] | null,
-            source,
-          ) => {
+          afterChange={async (changes: Handsontable.CellChange[] | null) => {
             if (changes !== null && changes?.length) {
               const customChanges = changes as Handsontable.CellChange[];
               if (
                 customChanges[0][2] !== customChanges[0][3] &&
                 dataProvider.length
               ) {
-                handleSave(dataProvider[customChanges[0][0]])
-                  .then((response: any) => {
-                    if (response)
-                      dataProvider[customChanges[0][0]].id = response;
-                  })
-                  .catch((error) => toast.error(error));
+                const id = await handleSave(
+                  dataProvider[customChanges[0][0]],
+                ).catch((error) => toast.error(error));
+
+                if (id) {
+                  const updated = dataProvider;
+                  updated[customChanges[0][0]].id = id;
+                  setDataProvider(updated);
+                }
               }
             }
           }}
@@ -727,6 +732,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
                   data={col.data}
                   width={col.width}
                   key={index}
+                  readOnly
                 >
                   {/* <ToDelete hot-renderer /> */}
                   <TableFieldMemo

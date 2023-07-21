@@ -127,6 +127,7 @@ export const SuspenseMenu = styled.div<{
 
   position: absolute;
   top: ${({ top }) => `${top + 55}px`} !important;
+
   z-index: 9999;
 
   display: flex;
