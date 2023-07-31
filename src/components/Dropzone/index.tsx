@@ -81,6 +81,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         "template",
         window.location.pathname.substring(10),
         dataProvider[row]?.id,
+        prop,
       );
 
       const newValue = items.filter((item) => {
@@ -208,7 +209,8 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
           >
             {items.map((item, index) => {
               if (item.length > 1) {
-                const srcValue = ["jpeg", "jpg", "svg", "png"].some(
+                const altName = item.split("/").pop();
+                const srcValue = ["jpeg", "jpg", "svg", "png", "thumb"].some(
                   (extension) => item.includes(extension),
                 )
                   ? item
@@ -224,9 +226,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                     <a href={item} target="_blank" rel="noreferrer">
                       <img
                         src={srcValue}
-                        alt="content file"
-                        // onLoad={() => handleImageLoadEnd(item)}
-                        // onError={() => handleImageLoadEnd(item)}
+                        alt={altName}
                         style={{ backgroundColor: "white" }}
                       />
                     </a>
