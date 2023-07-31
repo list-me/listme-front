@@ -47,6 +47,7 @@ export const fileRequests = {
     entity: string,
     identifier: string,
     productId: string,
+    field: string,
   ): Promise<void> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
 
@@ -55,6 +56,7 @@ export const fileRequests = {
       identifier,
       file,
       productId,
+      field,
     };
 
     await api.patch(`file/delete`, data, {

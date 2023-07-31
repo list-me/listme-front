@@ -81,6 +81,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         "template",
         window.location.pathname.substring(10),
         dataProvider[row]?.id,
+        prop,
       );
 
       const newValue = items.filter((item) => {
