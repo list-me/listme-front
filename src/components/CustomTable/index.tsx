@@ -525,7 +525,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
           autoRowSize={false}
           autoColumnSize={false}
           // beforeColumnMove={beforeColumnMove}
-          manualColumnMove
+          // manualColumnMove
           // manualColumnFreeze
           search
           viewportRowRenderingOffset={200}
