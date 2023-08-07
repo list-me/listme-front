@@ -97,12 +97,9 @@ export const Relation: React.FC<PropsRelation> = ({
           })
           .slice(0, 4);
 
-        const { products } = await productRequests.list(
-          { limit: 50 },
-          templateId,
-        );
+        const { data } = await productRequests.list({ limit: 50 }, templateId);
 
-        listItems(products, templateRel);
+        listItems(data.products, templateRel);
 
         setColumns(columnsTable);
         setIsLoading(false);
@@ -216,12 +213,12 @@ export const Relation: React.FC<PropsRelation> = ({
   const handleSearchProducts = async (): Promise<void> => {
     setIsLoading(true);
     try {
-      const { products } = await productRequests.list(
+      const { data } = await productRequests.list(
         { limit: 200, keyword },
         templateId,
       );
 
-      listItems(products, templateRelation);
+      listItems(data.products, templateRelation);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);

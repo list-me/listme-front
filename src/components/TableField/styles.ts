@@ -65,7 +65,7 @@ export const Container = styled.div<{ type: string }>`
 
   overflow: hidden;
 
-  ${({ type }) => getCustomStyle(type.toUpperCase())}
+  ${({ type }) => getCustomStyle(type?.toUpperCase())}
 
   label {
     white-space: nowrap;

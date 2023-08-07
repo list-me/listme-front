@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import { api } from "../api";
 import { STORAGE } from "../../../constants/localStorage";
 
@@ -11,7 +12,7 @@ export const productRequests = {
   list: async (
     { page = 0, limit = 200, keyword }: IPagination,
     templateId?: string,
-  ): Promise<any> => {
+  ): Promise<AxiosResponse> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.get(
       `/products/?product_template_id=${templateId}&key=${keyword}&limit=${limit}`,
@@ -22,7 +23,7 @@ export const productRequests = {
       },
     );
 
-    return response.data;
+    return response;
   },
   save: async (product: any): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);

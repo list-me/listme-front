@@ -1,82 +1,131 @@
-/* eslint-disable @typescript-eslint/no-useless-constructor */
 import React, { createRef } from "react";
-
 import { BaseEditorComponent } from "@handsontable/react";
+import { Radio } from "antd";
 import { RadioProps, RadioState } from "./Radio";
+import { Container } from "./style";
 
 class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
-  state: RadioState = {
-    value: this.props.value ?? "",
-    newValue: "",
-  };
-
   rootRef = createRef<HTMLDivElement>();
+  containerStyle: any;
 
   constructor(props: any) {
     super(props);
+
+    this.state = {
+      value: "",
+      radioRefs: this.props.options.map(() =>
+        React.createRef<HTMLInputElement>(),
+      ),
+      currentIndex: 0,
+    };
+
+    this.containerStyle = {
+      display: "none",
+      position: "absolute",
+      left: 0,
+      top: 0,
+      width: "fit-content",
+      height: "fit-content",
+      background: "#fff",
+      border: "1px solid #000",
+      padding: "15px",
+      zIndex: 999,
+    };
   }
 
-  setValue(value: string, callback: () => {}): void {
-    this.setState((state: any, props: any) => {
-      return { value };
-    }, callback);
+  onBeforeKeyDown(event: any): void {
+    if (event.target.type !== "textarea") {
+      event.stopImmediatePropagation();
+    }
   }
 
-  getValue() {
-    return this.state.value;
+  setValue(value: string): void {
+    this.setState({ value });
   }
 
-  open() {
+  getValue(): string {
+    return this.state.value
+  }
+
+  open(): void {
     if (this.rootRef.current) this.rootRef.current.style.display = "block";
+    document.addEventListener("keydown", this.onBeforeKeyDown, true);
+
+    requestAnimationFrame(() => {
+      const selectedRadio = this.state.radioRefs[this.state.currentIndex]?.current;
+      if (selectedRadio) {
+        selectedRadio.focus();
+      }
+    });
   }
 
-  close() {
+  close(): void {
     if (this.rootRef.current) this.rootRef.current.style.display = "none";
+    document.removeEventListener("keydown", this.onBeforeKeyDown, true);
   }
 
   prepare(
-    row: any,
-    col: any,
+    row: number,
+    col: number,
     prop: any,
     td: any,
     originalValue: any,
     cellProperties: any,
-  ) {
-    // We'll need to call the `prepare` method from
-    // the `BaseEditorComponent` class, as it provides
-    // the component with the information needed to use the editor
-    // (hotInstance, row, col, prop, TD, originalValue, cellProperties)
+  ): void {
     super.prepare(row, col, prop, td, originalValue, cellProperties);
 
+    const value =
+      typeof originalValue === "object" ? originalValue[0] : (originalValue ?? '');
+
+    const currentIndex = this.props.options.indexOf(value);
+    this.setState({ currentIndex, value });
+
     const tdPosition = td.getBoundingClientRect();
-
-    // As the `prepare` method is triggered after selecting
-    // any cell, we're updating the styles for the editor element,
-    // so it shows up in the correct position.
-
     if (this.rootRef.current!) {
-      this.rootRef.current.style.left = `${
-        tdPosition.left + window.pageXOffset
-      }px`;
-      this.rootRef.current.style.top = `${
-        tdPosition.top + window.pageYOffset
-      }px`;
+      this.rootRef.current.style.left = `${tdPosition.left + window.pageXOffset
+        }px`;
+      this.rootRef.current.style.top = `${tdPosition.top + 57 + window.pageYOffset
+        }px`;
     }
   }
 
-  setLowerCase() {
-    this.setState(
-      (state, props) => {
-        return { value: this.state.value.toString().toLowerCase() };
-      },
-      () => {
-        this.finishEditing();
-      },
-    );
+  handleChange(value: string): void {
+    this.setState({ value });
+  }
+
+  stopMousedownPropagation(e: any): void {
+    e.stopPropagation();
   }
 
   render() {
-    return <div> Value </div>;
+    return (
+      <div
+        style={this.containerStyle}
+        ref={this.rootRef}
+        id="editorElement"
+        onMouseDown={this.stopMousedownPropagation}
+      >
+        <Container>
+          <div className="radio-group">
+            {this.props.options.map((option: string, index: number) => {
+              const isChecked = option === this.state.value
+              return (
+                <label key={index}>
+                  <input
+                    type="radio"
+                    value={option}
+                    checked={isChecked}
+                    onChange={(e) => this.handleChange(e.target.value)}
+                    ref={this.state.radioRefs[index]}
+                  />
+                  {option}
+                </label>
+              );
+            })}
+          </div>
+        </Container>
+      </div>
+    );
   }
 }
 

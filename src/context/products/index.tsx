@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { productRequests } from "../../services/apis/requests/product";
 import { templateRequests } from "../../services/apis/requests/template";
 import { ICustomCellType } from "./product.context";
+import { AxiosResponse } from "axios";
 
 export interface ICustomField {
   hidden?: boolean;
@@ -75,9 +76,14 @@ interface ITypeProductContext {
   handleGetProducts: (
     templateId: string,
     templateFields: IHeaderTable[],
-    page: number,
-  ) => Promise<void>;
+  ) => Promise<any>;
+
+  handleGetTemplate: (templateId: string) => Promise<void>;
   total: number | undefined;
+  handleGetProductsFiltered: (
+    key: string,
+    templateId: string,
+  ) => Promise<any[]>;
 }
 
 interface IField {
@@ -125,8 +131,13 @@ export const productContext = createContext<ITypeProductContext>({
   handleNewColumn: () => {},
   handleFilter: () => {},
   handleRemoveColumn: () => {},
-  handleGetProducts: async (): Promise<void> => {},
+  handleGetProducts: async (): Promise<any> => {},
+  handleGetTemplate: async (): Promise<void> => {},
   total: undefined,
+  handleGetProductsFiltered: async (
+    key: string,
+    templateId: string,
+  ): Promise<any[]> => [],
 });
 
 export const ProductContextProvider = ({ children }: any) => {
@@ -148,6 +159,18 @@ export const ProductContextProvider = ({ children }: any) => {
     FILE: "file",
     RELATION: "relation",
   };
+
+  async function handleGetProductsFiltered(
+    key: string,
+    templateId: string,
+  ): Promise<any[]> {
+    const { data } = await productRequests.list(
+      { keyword: key, limit: 100 },
+      templateId,
+    );
+
+    return data;
+  }
 
   const handleUpdateTemplate = (field: any) => {};
 
@@ -178,60 +201,61 @@ export const ProductContextProvider = ({ children }: any) => {
     templateId: string,
     templateFields: IHeaderTable[],
     page: number = 0,
-    limit: number = 50,
+    limit: number = 1000,
   ) => {
     if (total == filteredData.length) return;
-    return productRequests
-      .list({ page: page, limit }, templateId)
-      .then((response) => {
-        const productFields: any = [];
-        response?.products?.forEach((item: any) => {
-          let object: any = {};
-          item.fields.forEach((field: any) => {
-            const currentField = templateFields.find(
-              (e: any) => e.data == field.id,
-            );
+    const { data } = await productRequests.list(
+      { page: page, limit },
+      templateId,
+    );
 
-            if (currentField && field.value) {
-              const test = !COMPONENT_CELL_PER_TYPE[
-                currentField?.type?.toUpperCase()
-              ]
-                ? field?.value[0]
-                : field?.value;
+    // .catch((error) => {
+    //   console.error(error);
+    //   toast.error(
+    //     "Não foi possível carregar os produtos, por favor tente novamente!",
+    //   );
+    // });
 
-              object[field?.id] = test;
-            }
-          });
-          productFields.push({
-            ...object,
-            id: item.id,
-            created_at: item.created_at,
-          });
-        });
-
-        if (!productFields.length && template) {
-          productFields.push({ [template[0]]: "" });
-        }
-        setProducts(productFields);
-
-        const prod = filteredData.length
-          ? [...productFields, ...filteredData]
-          : [...productFields];
-        setFilteredData(prod);
-        setTotal(response.total);
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error(
-          "Não foi possível carregar os produtos, por favor tente novamente!",
+    const productFields: any = [];
+    data?.products?.forEach((item: any) => {
+      let object: any = {};
+      item.fields.forEach((field: any) => {
+        const currentField = templateFields.find(
+          (e: any) => e.data == field.id,
         );
+
+        if (currentField && field.value) {
+          const test = !COMPONENT_CELL_PER_TYPE[
+            currentField?.type?.toUpperCase()
+          ]
+            ? field?.value[0]
+            : field?.value;
+
+          object[field?.id] = test;
+        }
       });
+
+      productFields.push({
+        ...object,
+        id: item.id,
+        created_at: item.created_at,
+      });
+    });
+
+    if (!productFields.length && template) {
+      productFields.push({ [template[0]]: "" });
+    }
+
+    setProducts(productFields);
+    return { products, headerTable };
+    // setTotal(data?.total);
   };
 
   const handleRedirectAndGetProducts = async (id: string) => {
     try {
-      const template = await handleGetTemplates(id);
-      await handleGetProducts(id, template);
+      const template: IHeaderTable[] = await handleGetTemplate(id);
+      const product = await handleGetProducts(id, template);
+      return product;
     } catch (error) {
       console.error(error);
       toast.error(
@@ -250,41 +274,38 @@ export const ProductContextProvider = ({ children }: any) => {
   };
 
   const handleSave = async (value: any): Promise<any> => {
-    try {
-      const fields = buildProduct(value);
-      if (value["id"] !== undefined) {
-        await Promise.resolve(
-          productRequests.update({ id: value.id, fields }),
-        ).catch((error) => {
-          throw error;
-        });
-        return;
-      } else {
-        const newProduct = {
-          product_template_id: window.location.pathname.substring(10),
-          is_public: true,
-          fields: fields,
-        };
-
-        let newItem;
-        await handlePost(newProduct)
-          .then((resolved) => {
-            newItem = resolved?.id;
-          })
-          .catch((error) => {
-            throw error;
-          });
-
-        return newItem;
-      }
-    } catch (error: any) {
-      const message =
-        typeof error?.response?.data?.message == "object"
-          ? error?.response?.data?.message[0]
-          : error?.response?.data?.message;
-
-      throw message;
-    }
+    // try {
+    //   const fields = buildProduct(value);
+    //   if (value["id"] !== undefined) {
+    //     await Promise.resolve(
+    //       productRequests.update({ id: value.id, fields }),
+    //     ).catch((error) => {
+    //       throw error;
+    //     });
+    //     return;
+    //   } else {
+    //     const newProduct = {
+    //       product_template_id: window.location.pathname.substring(10),
+    //       is_public: true,
+    //       fields: fields,
+    //     };
+    //     let newItem;
+    //     await handlePost(newProduct)
+    //       .then((resolved) => {
+    //         newItem = resolved?.id;
+    //       })
+    //       .catch((error) => {
+    //         throw error;
+    //       });
+    //     return newItem;
+    //   }
+    // } catch (error: any) {
+    //   const message =
+    //     typeof error?.response?.data?.message == "object"
+    //       ? error?.response?.data?.message[0]
+    //       : error?.response?.data?.message;
+    //   throw message;
+    // }
   };
 
   const buildProduct = (fields: any) => {
@@ -320,7 +341,7 @@ export const ProductContextProvider = ({ children }: any) => {
     setFilteredData((old) => [{}, ...old]);
   };
 
-  const handleGetTemplates = async (templateId: string) => {
+  const handleGetTemplate = async (templateId: string) => {
     return templateRequests
       .get(templateId)
       .then((response) => {
@@ -660,6 +681,7 @@ export const ProductContextProvider = ({ children }: any) => {
     handleUpdateTemplate,
     template,
     hidden,
+    total,
     handleHidden,
     setHidden,
     handleResize,
@@ -670,7 +692,8 @@ export const ProductContextProvider = ({ children }: any) => {
     handleFilter,
     handleRemoveColumn,
     handleGetProducts,
-    total,
+    handleGetProductsFiltered,
+    handleGetTemplate,
   };
 
   return (

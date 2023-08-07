@@ -1,11 +1,11 @@
 type RadioProps = {
   options: string[];
-  value: string;
 };
 
 type RadioState = {
-  newValue: string;
   value: string;
+  radioRefs: Array<HTMLInputElement>;
+  currentIndex: number;
 };
 
 export { RadioProps, RadioState };

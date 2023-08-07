@@ -15,12 +15,11 @@ interface DataType {
 }
 
 interface CustomTableProps {
-  // dataProvider?: any[];
-  temp?: any[];
+  data?: any[];
   bordered?: boolean;
   rowClassName?: () => string;
   components?: {};
-  colHeaders?: string[];
+  // colHeaders?: string[];
   setEnable?: () => void;
   addProducts?: () => void;
   children?: any;

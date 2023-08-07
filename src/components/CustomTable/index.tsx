@@ -1,5 +1,8 @@
+/* eslint-disable react/no-array-index-key */
 import ReactDOM from "react-dom/client";
+import { unmountComponentAtNode } from "react-dom";
 import React, {
+  startTransition,
   useCallback,
   useContext,
   useEffect,
@@ -9,7 +12,7 @@ import React, {
 
 import Handsontable from "handsontable";
 import "handsontable/dist/handsontable.full.min.css";
-import { registerAllModules } from "handsontable/registry";
+import { registerAllEditors, registerAllModules } from "handsontable/registry";
 import { HotColumn, HotTable } from "@handsontable/react";
 import { toast } from "react-toastify";
 
@@ -45,12 +48,15 @@ import { ROUTES } from "../../constants/routes";
 import Button from "../Button";
 import { Loading } from "../Loading";
 import { Temp } from "../Temp";
+import Wrapper from "./Wrapper";
+import RadioEditor from "./Editors/Radio";
 
 registerAllModules();
+registerAllEditors();
 
 const TableFieldMemo = React.memo(TableField);
 
-const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
+const CustomTable: React.FC<CustomTableProps> = ({ data }) => {
   const hotRef = useRef<HotTable>(null);
   const {
     handleSave,
@@ -61,29 +67,32 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
     hidden,
     handleResize,
     handleHidden,
-    handleFreeze,
     handleNewColumn,
     handleMove,
     handleRemoveColumn,
-    setHeaderTable,
-    setFilteredData,
+    handleGetProducts,
+    products,
+    colHeaders,
   } = useContext(productContext);
-  console.log("Renderizado");
 
   const [cols, setCols] = useState<any[]>([]);
+
+  // Deverá ser removido
   const [currentCell, setCurrentCell] = useState<any>({});
-  const [columns, setColumns] = useState<any[]>(headerTable);
-  const [headers, setHeaders] = useState<string[]>(colHeaders ?? [""]);
+
+  // Deverá ser removido
+  const [columns, setColumns] = useState<any[]>([]);
+  const [headers, setHeaders] = useState<string[]>(colHeaders);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [dataProvider, setDataProvider] = useState<any[]>(temp ?? []);
+  const [dataProvider, setDataProvider] = useState<any[]>(products ?? []);
 
   const navigate = useNavigate();
 
   const handleMountColumns = () => {
     const columnsCustom: any[] = [];
-    columns.sort().forEach((column) => {
+    headerTable.sort().forEach((column) => {
       if (
         Object.keys(COMPONENT_CELL_PER_TYPE).includes(
           column.type?.toString()?.toUpperCase(),
@@ -99,8 +108,9 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
           type: column.type,
           options: column.options,
           isCustom: true,
-          readOnly: true,
-          bucket_url: column.bucket_url,
+          // readOnly: true,
+          // editor: RadioEditor,
+          // bucket_url: column.bucket_url,
         });
         return;
       }
@@ -112,9 +122,11 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
         order: column.order,
         hidden: column.hidden,
         isCustom: false,
-        bucket_url: column.bucket_url,
+        // editor: Text,
+        type: "text",
       });
     });
+
     setCols(columnsCustom);
   };
 
@@ -176,7 +188,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
 
       const existent = TH.querySelector(".customHeader");
       if (existent) {
-        ReactDOM.createRoot(existent).unmount();
+        unmountComponentAtNode(existent);
         const myComponent = document.createElement("div");
         myComponent.className = "customHeader";
 
@@ -327,64 +339,68 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
     [headers, template, headerTable, columns, hidden],
   );
 
-  const handleGetProductFiltered = (keyword: string): void => {
-    setLoading(true);
-    productRequests
-      .list({ keyword, limit: 100 }, window.location.pathname.substring(10))
-      .then((response) => {
-        const productFields: any[] = [];
-        response?.products?.forEach((item: any) => {
-          const object: any = {};
-          item.fields.forEach((field: any) => {
-            const currentField = headerTable.find(
-              (e: any) => e.data == field.id,
-            );
+  // const handleGetProductFiltered = (keyword: string): void => {
+  //   setLoading(true);
+  //   productRequests
+  //     .list({ keyword, limit: 100 }, window.location.pathname.substring(10))
+  //     .then((response) => {
+  //       const productFields: any[] = [];
+  //       response?.products?.forEach((item: any) => {
+  //         const object: any = {};
+  //         item.fields.forEach((field: any) => {
+  //           const currentField = headerTable.find(
+  //             (e: any) => e.data == field.id,
+  //           );
 
-            if (currentField && field.value) {
-              const test = !COMPONENT_CELL_PER_TYPE[
-                currentField?.type?.toUpperCase()
-              ]
-                ? field?.value[0]
-                : field?.value;
+  //           if (currentField && field.value) {
+  //             const test = !COMPONENT_CELL_PER_TYPE[
+  //               currentField?.type?.toUpperCase()
+  //             ]
+  //               ? field?.value[0]
+  //               : field?.value;
 
-              object[field?.id] = test;
-            }
-          });
-          productFields.push({
-            ...object,
-            id: item.id,
-            created_at: item.created_at,
-          });
-        });
+  //             object[field?.id] = test;
+  //           }
+  //         });
+  //         productFields.push({
+  //           ...object,
+  //           id: item.id,
+  //           created_at: item.created_at,
+  //         });
+  //       });
 
-        if (!productFields.length && template) {
-          productFields.push({ [template[0]]: "" });
-        }
+  //       if (!productFields.length && template) {
+  //         productFields.push({ [template[0]]: "" });
+  //       }
 
-        setDataProvider(productFields);
-        setLoading(false);
+  //       setDataProvider(productFields);
+  //       setLoading(false);
 
-        hotRef.current?.hotInstance?.loadData(productFields);
-        const plugin = hotRef.current!.hotInstance?.getPlugin("search");
-        plugin?.query(keyword);
-        hotRef.current!?.hotInstance?.render();
-      })
-      .catch((errr: any) => {
-        setLoading(false);
-        hotRef.current!?.hotInstance?.render();
-        toast.error(errr.response.data.message);
-      });
-  };
+  //       hotRef.current?.hotInstance?.loadData(productFields);
+  //       const plugin = hotRef.current!.hotInstance?.getPlugin("search");
+  //       plugin?.query(keyword);
+  //       hotRef.current!?.hotInstance?.render();
+  //     })
+  //     .catch((errr: any) => {
+  //       setLoading(false);
+  //       hotRef.current!?.hotInstance?.render();
+  //       toast.error(errr.response.data.message);
+  //     });
+  // };
 
   useEffect(() => {
     console.log("Rendered by effect 1");
+
     // const toFreeze = headerTable.filter((item) => item?.frozen === true);
     // if (toFreeze.length > 0) {
     //   setFrozen(toFreeze.length);
     // }
 
+    setColumns(headerTable);
     handleMountColumns();
-  }, [dataProvider, headerTable]);
+
+    setDataProvider(products);
+  }, [headerTable]);
 
   // useEffect(() => {
   //   const handleKeyDown = (event: KeyboardEvent) => {
@@ -428,77 +444,6 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
 
   return (
     <>
-      <Content>
-        <Header>
-          <LeftContent>
-            <ArrowIcon
-              onClick={() => {
-                setDataProvider([]);
-                setHeaderTable([]);
-                setFilteredData([]);
-                // setColumns([]);
-                navigate(ROUTES.TEMPLATES);
-              }}
-            />
-            <IconTemplate>
-              <FlagIcon />
-            </IconTemplate>
-            <Title> {template?.name} </Title>
-            <EditIcon />
-          </LeftContent>
-          <RightContent>
-            <MoreOptions>
-              <EllipsisIcon />
-            </MoreOptions>
-            <Button height="52px" width="227px" isSecondary>
-              <DownloadIcon />
-              Importar produtos
-            </Button>
-            <Button
-              height="52px"
-              width="226px"
-              className="secondButton"
-              onClick={() => {
-                const { hotInstance } = hotRef.current!;
-                if (hotInstance) {
-                  if (hotInstance.isEmptyRow(0))
-                    return toast.warn("Preencha o produto atual");
-                }
-                setDataProvider((prev) => [{}, ...prev]);
-              }}
-            >
-              Adicionar produto
-              <PlusIcon />
-            </Button>
-          </RightContent>
-        </Header>
-        <Filters>
-          <Temp
-            options={headerTable}
-            handleSetFilter={(value: any) => {
-              // const filtersPlugin =
-              //   hotRef.current!.hotInstance?.getPlugin("filters");
-              // if (filtersPlugin !== undefined) {
-              //   if (!value.length) {
-              //     filtersPlugin.clearConditions();
-              //     filtersPlugin.filter();
-              //     return;
-              //   }
-              //   filtersPlugin.clearConditions();
-              //   filtersPlugin?.addCondition(0, "contains", [value]);
-              //   filtersPlugin?.filter();
-              // }
-            }}
-            handleSearch={handleGetProductFiltered}
-          />
-          <Contents>
-            <Item>
-              <HelpIcon />
-              Ajuda
-            </Item>
-          </Contents>
-        </Filters>
-      </Content>
       <Confirmation
         description="Ao excluir este produto, você perderá todas as informações, inclusive no catálogo em que está cadastrado."
         action="DELETE"
@@ -516,6 +461,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
         <HotTable
           ref={hotRef}
           colHeaders={headers}
+          columns={cols}
           data={dataProvider}
           height="100%"
           width="100%"
@@ -528,8 +474,8 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
           manualColumnMove
           // manualColumnFreeze
           search
-          viewportRowRenderingOffset={200}
-          viewportColumnRenderingOffset={50}
+          viewportRowRenderingOffset={100}
+          viewportColumnRenderingOffset={100}
           renderAllRows={false}
           rowHeaders
           columnSorting={{ sortEmptyCells: false, headerAction: false }}
@@ -586,6 +532,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
           //   // return true;
           // }}
           afterChange={async (changes: Handsontable.CellChange[] | null) => {
+            console.log({ changes });
             if (changes !== null && changes?.length) {
               const customChanges = changes as Handsontable.CellChange[];
               if (
@@ -684,7 +631,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
             }
           }}
           fixedColumnsStart={1}
-          afterGetColHeader={renderHeaderComponent}
+          // afterGetColHeader={renderHeaderComponent}
           hiddenColumns={{ columns: hidden, indicators: true }}
           afterColumnResize={async (
             newSize: number,
@@ -725,34 +672,34 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
           }}
         >
           {cols.map((col: any, index: number) => {
-            if (col.isCustom) {
+            console.log({ type: col.type })
+            if (col.isCustom && col.type == "radio") {
               return (
                 <HotColumn
+                  width={col.width}
                   _columnIndex={col.order}
                   data={col.data}
-                  width={col.width}
                   key={index}
-                  readOnly
                 >
-                  {/* <ToDelete hot-renderer /> */}
-                  <TableFieldMemo
-                    className="ok"
-                    column={col}
-                    instance={hotRef.current!?.hotInstance}
-                    prop={col.data}
-                    hot-renderer
-                    // value={dataProvider[index] ?? [""]}
-                    type={col.type}
-                    options={col.options}
-                    handleSetNewValue={handleSetNewValue}
-                    dataProvider={dataProvider}
-                    templateId={template.id}
+                  <RadioEditor
+                    hot-editor
+                    options={[...col.options, '']}
+                    editorColumnScope={0}
+                  // column={col}
+                  // dataProvider={dataProvider}
                   />
                 </HotColumn>
               );
             }
 
-            return <HotColumn data={col.data} width={col.width} />;
+            return (
+              <HotColumn
+                width={col.width}
+                _columnIndex={col.order}
+                data={col.data}
+                key={index}
+              />
+            );
           })}
         </HotTable>
       )}
