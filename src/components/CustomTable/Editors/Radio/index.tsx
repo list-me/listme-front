@@ -1,7 +1,7 @@
 import React, { createRef } from "react";
 import { BaseEditorComponent } from "@handsontable/react";
 import { RadioProps, RadioState } from "./Radio";
-import { Container, Input, Label, Option } from "./style";
+import { Container, Input, Label, Option } from "./styles";
 
 class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
   rootRef = createRef<HTMLDivElement>();
