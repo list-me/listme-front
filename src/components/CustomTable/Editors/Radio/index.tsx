@@ -1,7 +1,7 @@
 import React, { createRef } from "react";
 import { BaseEditorComponent } from "@handsontable/react";
 import { RadioProps, RadioState } from "./Radio";
-import { Container } from "./style";
+import { Container, Input, Label, Option } from "./style";
 
 class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
   rootRef = createRef<HTMLDivElement>();
@@ -28,9 +28,11 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
       width: "fit-content",
       height: "fit-content",
       background: "#fff",
-      border: "1px solid #000",
       padding: "15px",
       zIndex: 999,
+      borderRadius: "8px",
+      boxShadow:
+        "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     };
   }
 
@@ -158,23 +160,22 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
         onMouseDown={this.stopMousedownPropagation}
       >
         <Container>
-          <div className="radio-group">
-            {this.props.options.map((option: string, index: number) => {
-              const isChecked = option === this.state.newValue;
-              return (
-                <label key={index}>
-                  <input
-                    type="radio"
-                    value={option}
-                    checked={isChecked}
-                    onChange={(e) => this.handleChange(e.target.value)}
-                    ref={this.state.radioRefs[index]}
-                  />
-                  {option}
-                </label>
-              );
-            })}
-          </div>
+          {this.props.options.map((option: string, index: number) => {
+            const isChecked = option === this.state.newValue;
+            return (
+              <Option key={index} isChecked={isChecked}>
+                <Input
+                  type="radio"
+                  value={option}
+                  checked={isChecked}
+                  onChange={(e) => this.handleChange(e.target.value)}
+                  ref={this.state.radioRefs[index]}
+                />
+
+                <Label>{option}</Label>
+              </Option>
+            );
+          })}
         </Container>
       </div>
     );

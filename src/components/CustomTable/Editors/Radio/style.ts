@@ -1,38 +1,36 @@
-import { Radio } from "antd";
 import styled from "styled-components";
 
-/* eslint-disable import/prefer-default-export */
 export const Container = styled.div`
-  width: 100%;
-
-  /* font-family: "Satoshi Bold", sans-serif; */
-  font-style: normal;
-  /* font-weight: 700; */
-  font-size: 14px;
-  line-height: 150%;
+  min-width: 120px;
 
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+`;
 
-  .radio-group {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: flex-start !important;
-    align-items: start;
-  }
+export const Label = styled.label`
+  font-family: inherit;
+  color: inherit;
 
-  .ant-radio-wrapper.ant-radio-wrapper-checked {
-    font-family: "Satoshi Bold", sans-serif !important;
-    color: #3818d9 !important;
+  height: 20px;
 
-    .ant-radio-inner {
-      background: white !important;
-      border: 2.4px solid #3818d9 !important;
-    }
+  margin-left: 2px;
+  margin-top: 0;
+`;
 
-    .ant-radio-inner::after {
-      background: #3818d9;
-    }
-  }
+export const Option = styled.div<{ isChecked?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  height: 25px;
+
+  font-family: ${({ theme }) => theme.fonts.default};
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
+
+  color: ${({ isChecked }) => (!isChecked ? "black" : "#3818d9")};
+`;
+
+export const Input = styled.input`
+  margin-top: 4px;
 `;
