@@ -46,18 +46,32 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
         this.close();
       }
 
-      this.navigateToNextCell();
+      this.navigateToNextDownCell();
       event.preventDefault();
+      return;
     }
 
-    if (event.key === "Tab") {
+    if (["Tab", " "].includes(event.key)) {
       this.finishEditing();
       this.close();
-      this.navigateToNextCell();
+      this.navigateToNextRightCell();
+    }
+
+    if (["Escape"].includes(event.key)) {
+      this.finishEditing();
+      this.close();
     }
   };
 
-  navigateToNextCell(): void {
+  navigateToNextDownCell(): void {
+    const { hotInstance } = this;
+    if (hotInstance) {
+      const { row, col } = this.state;
+      hotInstance.selectCell(row + 1, col);
+    }
+  }
+
+  navigateToNextRightCell(): void {
     const { hotInstance } = this;
     if (hotInstance) {
       const { row, col } = this.state;
@@ -100,14 +114,18 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
     cellProperties: any,
   ): void {
     super.prepare(row, col, prop, td, originalValue, cellProperties);
-
-    const value =
-      typeof originalValue === "object"
-        ? originalValue[0]
-        : originalValue ?? "";
+    let value: string;
+    if (originalValue) {
+      value =
+        typeof originalValue === "object"
+          ? originalValue[0]
+          : originalValue ?? "";
+    } else {
+      value = "";
+    }
 
     const currentIndex = this.props.options.indexOf(value);
-    this.setState({ currentIndex, value, row, col });
+    this.setState({ currentIndex, row, value, col });
 
     const tdPosition = td.getBoundingClientRect();
     if (this.rootRef.current!) {
@@ -118,8 +136,13 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
     }
   }
 
+  finishEditing(): void {
+    this.hotInstance.setDataAtCell(this.row, this.col, this.getValue());
+    super.finishEditing();
+  }
+
   handleChange(value: string): void {
-    this.setState({ value });
+    this.setValue(value);
   }
 
   stopMousedownPropagation(e: any): void {

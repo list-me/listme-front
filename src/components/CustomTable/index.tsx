@@ -672,7 +672,6 @@ const CustomTable: React.FC<CustomTableProps> = ({ data }) => {
           }}
         >
           {cols.map((col: any, index: number) => {
-            console.log({ type: col.type })
             if (col.isCustom && col.type == "radio") {
               return (
                 <HotColumn
@@ -683,7 +682,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ data }) => {
                 >
                   <RadioEditor
                     hot-editor
-                    options={[...col.options, '']}
+                    options={[...col.options, ""]}
                     editorColumnScope={0}
                   // column={col}
                   // dataProvider={dataProvider}
