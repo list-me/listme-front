@@ -143,6 +143,12 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
     this.setValue(value);
   }
 
+  handleSelectOption(index: number): void {
+    const item = this.state.radioRefs[index].current as HTMLInputElement;
+    this.setValue(item.value);
+    item.focus();
+  }
+
   stopMousedownPropagation(e: any): void {
     e.stopPropagation();
   }
@@ -163,7 +169,11 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
           {this.props.options.map((option: string, index: number) => {
             const isChecked = option === this.state.newValue;
             return (
-              <Option key={index} isChecked={isChecked}>
+              <Option
+                key={index}
+                isChecked={isChecked}
+                onClick={() => this.handleSelectOption(index)}
+              >
                 <Input
                   type="radio"
                   value={option}
@@ -171,7 +181,6 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
                   onChange={(e) => this.handleChange(e.target.value)}
                   ref={this.state.radioRefs[index]}
                 />
-
                 <Label>{option}</Label>
               </Option>
             );

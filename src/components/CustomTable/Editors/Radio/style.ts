@@ -16,6 +16,10 @@ export const Label = styled.label`
 
   margin-left: 2px;
   margin-top: 0;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export const Option = styled.div<{ isChecked?: boolean }>`
@@ -29,8 +33,16 @@ export const Option = styled.div<{ isChecked?: boolean }>`
   font-size: ${({ theme }) => theme.fonts.sizes.small};
 
   color: ${({ isChecked }) => (!isChecked ? "black" : "#3818d9")};
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export const Input = styled.input`
   margin-top: 4px;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
