@@ -12,7 +12,8 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
     super(props);
 
     this.state = {
-      value: "",
+      value: [""],
+      newValue: "",
       radioRefs: this.props.options.map(() =>
         React.createRef<HTMLInputElement>(),
       ),
@@ -80,11 +81,11 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
   }
 
   setValue(value: string): void {
-    this.setState({ value });
+    this.setState({ newValue: value, value: [value] });
   }
 
-  getValue(): string {
-    return this.state.value;
+  getValue(): string[] {
+    return [this.state.newValue];
   }
 
   open(): void {
@@ -125,7 +126,7 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
     }
 
     const currentIndex = this.props.options.indexOf(value);
-    this.setState({ currentIndex, row, value, col });
+    this.setState({ currentIndex, row, newValue: value, col });
 
     const tdPosition = td.getBoundingClientRect();
     if (this.rootRef.current!) {
@@ -134,11 +135,6 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
       this.rootRef.current.style.top = `${tdPosition.top + 57 + window.pageYOffset
         }px`;
     }
-  }
-
-  finishEditing(): void {
-    this.hotInstance.setDataAtCell(this.row, this.col, this.getValue());
-    super.finishEditing();
   }
 
   handleChange(value: string): void {
@@ -164,7 +160,7 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
         <Container>
           <div className="radio-group">
             {this.props.options.map((option: string, index: number) => {
-              const isChecked = option === this.state.value;
+              const isChecked = option === this.state.newValue;
               return (
                 <label key={index}>
                   <input

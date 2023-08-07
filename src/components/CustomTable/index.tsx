@@ -631,7 +631,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ data }) => {
             }
           }}
           fixedColumnsStart={1}
-          // afterGetColHeader={renderHeaderComponent}
+          afterGetColHeader={renderHeaderComponent}
           hiddenColumns={{ columns: hidden, indicators: true }}
           afterColumnResize={async (
             newSize: number,

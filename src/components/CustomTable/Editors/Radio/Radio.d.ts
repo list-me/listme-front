@@ -3,7 +3,8 @@ type RadioProps = {
 };
 
 type RadioState = {
-  value: string;
+  value: string[];
+  newValue: string;
   radioRefs: Array<HTMLInputElement>;
   row: number;
   col: number;
