@@ -50,6 +50,7 @@ import { Loading } from "../Loading";
 import { Temp } from "../Temp";
 import Wrapper from "./Wrapper";
 import RadioEditor from "./Editors/Radio";
+import DropdownEditor from "./Editors/Dropdown";
 
 registerAllModules();
 registerAllEditors();
@@ -673,6 +674,22 @@ const CustomTable: React.FC<CustomTableProps> = ({ data }) => {
         >
           {cols.map((col: any, index: number) => {
             if (col.isCustom && col.type == "radio") {
+              // return (
+              //   <HotColumn
+              //     width={col.width}
+              //     _columnIndex={col.order}
+              //     data={col.data}
+              //     key={index}
+              //   >
+              //     <RadioEditor
+              //       hot-editor
+              //       options={[...col.options, ""]}
+              //       editorColumnScope={0}
+              //       // column={col}
+              //       // dataProvider={dataProvider}
+              //     />
+              //   </HotColumn>
+              // );
               return (
                 <HotColumn
                   width={col.width}
@@ -680,12 +697,12 @@ const CustomTable: React.FC<CustomTableProps> = ({ data }) => {
                   data={col.data}
                   key={index}
                 >
-                  <RadioEditor
+                  <DropdownEditor
                     hot-editor
                     options={[...col.options, ""]}
                     editorColumnScope={0}
-                  // column={col}
-                  // dataProvider={dataProvider}
+                    // column={col}
+                    // dataProvider={dataProvider}
                   />
                 </HotColumn>
               );
