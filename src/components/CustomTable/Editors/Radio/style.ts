@@ -6,6 +6,28 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+
+  max-height: 150px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  ::-webkit-scrollbar {
+    background: transparent !important;
+    width: 3px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: unset !important;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #cccccc !important;
+    border-radius: 8px !important;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #3818d9 !important;
+  }
 `;
 
 export const Label = styled.label`
@@ -40,7 +62,7 @@ export const Option = styled.div<{ isChecked?: boolean }>`
 `;
 
 export const Input = styled.input`
-  margin-top: 4px;
+  margin-top: 2px;
 
   &:hover {
     cursor: pointer;
