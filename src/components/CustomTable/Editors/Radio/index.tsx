@@ -1,11 +1,11 @@
 import React, { createRef } from "react";
 import { BaseEditorComponent } from "@handsontable/react";
-import { Radio } from "antd";
 import { RadioProps, RadioState } from "./Radio";
 import { Container } from "./style";
 
 class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
   rootRef = createRef<HTMLDivElement>();
+
   containerStyle: any;
 
   constructor(props: any) {
@@ -33,9 +33,35 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
     };
   }
 
-  onBeforeKeyDown(event: any): void {
-    if (event.target.type !== "textarea") {
+  onBeforeKeyDown = (event: KeyboardEvent): void => {
+    const target = event.target as HTMLInputElement;
+    if (target.type !== "textarea") {
       event.stopImmediatePropagation();
+    }
+
+    if (event.key === "Enter") {
+      if (target) {
+        this.handleChange(target.value);
+        this.finishEditing();
+        this.close();
+      }
+
+      this.navigateToNextCell();
+      event.preventDefault();
+    }
+
+    if (event.key === "Tab") {
+      this.finishEditing();
+      this.close();
+      this.navigateToNextCell();
+    }
+  };
+
+  navigateToNextCell(): void {
+    const { hotInstance } = this;
+    if (hotInstance) {
+      const { row, col } = this.state;
+      hotInstance.selectCell(row, col + 1);
     }
   }
 
@@ -44,7 +70,7 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
   }
 
   getValue(): string {
-    return this.state.value
+    return this.state.value;
   }
 
   open(): void {
@@ -52,7 +78,8 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
     document.addEventListener("keydown", this.onBeforeKeyDown, true);
 
     requestAnimationFrame(() => {
-      const selectedRadio = this.state.radioRefs[this.state.currentIndex]?.current;
+      const selectedRadio =
+        this.state.radioRefs[this.state.currentIndex]?.current;
       if (selectedRadio) {
         selectedRadio.focus();
       }
@@ -75,10 +102,12 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
     super.prepare(row, col, prop, td, originalValue, cellProperties);
 
     const value =
-      typeof originalValue === "object" ? originalValue[0] : (originalValue ?? '');
+      typeof originalValue === "object"
+        ? originalValue[0]
+        : originalValue ?? "";
 
     const currentIndex = this.props.options.indexOf(value);
-    this.setState({ currentIndex, value });
+    this.setState({ currentIndex, value, row, col });
 
     const tdPosition = td.getBoundingClientRect();
     if (this.rootRef.current!) {
@@ -97,6 +126,10 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
     e.stopPropagation();
   }
 
+  componentWillUnmount(): void {
+    document.removeEventListener("keydown", this.onBeforeKeyDown, true);
+  }
+
   render() {
     return (
       <div
@@ -108,7 +141,7 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
         <Container>
           <div className="radio-group">
             {this.props.options.map((option: string, index: number) => {
-              const isChecked = option === this.state.value
+              const isChecked = option === this.state.value;
               return (
                 <label key={index}>
                   <input

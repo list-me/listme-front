@@ -5,6 +5,8 @@ type RadioProps = {
 type RadioState = {
   value: string;
   radioRefs: Array<HTMLInputElement>;
+  row: number;
+  col: number;
   currentIndex: number;
 };
 
