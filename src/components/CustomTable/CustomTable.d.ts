@@ -1,5 +1,5 @@
 import { Table } from "antd";
-import { BaseRenderer } from "handsontable/renderers";
+import { ReactElement } from "react";
 
 type EditableTableProps = Parameters<typeof Table>[0];
 type ColumnTypes = Exclude<EditableTableProps["columns"], undefined>;
@@ -29,4 +29,9 @@ interface ICustomColumns {
   [key: string]: string[];
 }
 
-export type { CustomTableProps, ICustomColumns, ColumnTypes };
+type CustomEditors = {
+  list: ReactElement;
+  radio: ReactElement;
+};
+
+export type { CustomTableProps, ICustomColumns, ColumnTypes, CustomEditors };
