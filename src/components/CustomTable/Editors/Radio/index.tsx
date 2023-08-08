@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable class-methods-use-this */
 import React, { createRef } from "react";
 import { BaseEditorComponent } from "@handsontable/react";
 import { RadioProps, RadioState } from "./Radio";
@@ -132,10 +134,12 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
 
     const tdPosition = td.getBoundingClientRect();
     if (this.rootRef.current!) {
-      this.rootRef.current.style.left = `${tdPosition.left + window.pageXOffset
-        }px`;
-      this.rootRef.current.style.top = `${tdPosition.top + 57 + window.pageYOffset
-        }px`;
+      this.rootRef.current.style.left = `${
+        tdPosition.left + window.pageXOffset
+      }px`;
+      this.rootRef.current.style.top = `${
+        tdPosition.top + 57 + window.pageYOffset
+      }px`;
     }
   }
 
