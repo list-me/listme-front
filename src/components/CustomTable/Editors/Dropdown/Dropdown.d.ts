@@ -4,8 +4,7 @@ type DropdownProps = {
 
 type DropdownState = {
   value: string[];
-  newValue: string;
-  radioRefs: Array<HTMLInputElement>;
+  dropdownRefs: Array<HTMLDivElement>;
   row: number;
   col: number;
   currentIndex: number;

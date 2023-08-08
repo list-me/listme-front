@@ -3,12 +3,16 @@ import React, { ReactNode, createRef } from "react";
 import { BaseEditorComponent } from "@handsontable/react";
 import { DropdownState, DropdownProps } from "./Dropdown.d";
 
+import { Item, Select } from "./styles";
+
 class DropdownEditor extends BaseEditorComponent<
   DropdownProps,
   DropdownState,
   any
 > {
   rootRef = createRef<HTMLDivElement>();
+
+  selectRef = createRef<HTMLDivElement>();
 
   containerStyle: any;
 
@@ -17,9 +21,8 @@ class DropdownEditor extends BaseEditorComponent<
 
     this.state = {
       value: [""],
-      newValue: "",
-      radioRefs: this.props.options.map(() =>
-        React.createRef<HTMLInputElement>(),
+      dropdownRefs: this.props.options.map(() =>
+        React.createRef<HTMLDivElement>(),
       ),
       currentIndex: 0,
     };
@@ -32,25 +35,42 @@ class DropdownEditor extends BaseEditorComponent<
       width: "fit-content",
       height: "fit-content",
       background: "#fff",
-      padding: "15px",
+      padding: "12px 4px",
       zIndex: 999,
       borderRadius: "8px",
       boxShadow:
         "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     };
+
+    this.selectRef = React.createRef();
   }
 
   onBeforeKeyDown = (event: KeyboardEvent): void => {
-    const target = event.target as HTMLInputElement;
-    if (target.type !== "textarea") {
+    const target = event.target as HTMLDivElement;
+    if (target.tagName !== "textarea") {
       event.stopImmediatePropagation();
+    }
+
+    const { options } = this.props;
+    let { currentIndex } = this.state;
+
+    if (["ArrowDown", "ArrowLeft"].includes(event.key)) {
+      currentIndex = (currentIndex + 1) % options.length;
+      this.setState({ currentIndex });
+      return;
+    }
+
+    if (["ArrowUp", "ArrowRight"].includes(event.key)) {
+      currentIndex = (currentIndex - 1 + options.length) % options.length;
+      this.setState({ currentIndex });
+      return;
     }
 
     if (event.key === "Enter") {
       if (target) {
-        // this.handleChange(target.value);
-        this.finishEditing();
-        this.close();
+        this.handleChange(
+          this.state.dropdownRefs[currentIndex].current.innerText?.trim(),
+        );
       }
 
       this.navigateToNextDownCell();
@@ -59,8 +79,9 @@ class DropdownEditor extends BaseEditorComponent<
     }
 
     if (["Tab", " "].includes(event.key)) {
-      this.finishEditing();
-      this.close();
+      this.handleChange(
+        this.state.dropdownRefs[currentIndex].current.innerText?.trim(),
+      );
       this.navigateToNextRightCell();
     }
 
@@ -87,11 +108,11 @@ class DropdownEditor extends BaseEditorComponent<
   }
 
   setValue(value: string): void {
-    this.setState({ newValue: value, value: [value] });
+    this.hotInstance.setDataAtCell(this.state.row, this.state.col, [value]);
   }
 
   getValue(): string[] {
-    return [this.state.newValue];
+    return this.state.value;
   }
 
   open(): void {
@@ -100,7 +121,7 @@ class DropdownEditor extends BaseEditorComponent<
 
     requestAnimationFrame(() => {
       const selectedRadio =
-        this.state.radioRefs[this.state.currentIndex]?.current;
+        this.state.dropdownRefs[this.state.currentIndex]?.current;
       if (selectedRadio) {
         selectedRadio.focus();
       }
@@ -132,8 +153,7 @@ class DropdownEditor extends BaseEditorComponent<
     }
 
     const currentIndex = this.props.options.indexOf(value);
-    this.setState({ currentIndex, row, newValue: value, col });
-
+    this.setState({ currentIndex, row, col });
     const tdPosition = td.getBoundingClientRect();
     if (this.rootRef.current!) {
       this.rootRef.current.style.left = `${
@@ -145,8 +165,40 @@ class DropdownEditor extends BaseEditorComponent<
     }
   }
 
+  handleChange(value: string): void {
+    this.setValue(value);
+  }
+
+  handleClick = (value: string): void => {
+    this.handleChange(value);
+  };
+
   render(): ReactNode {
-    return <></>;
+    return (
+      <div style={this.containerStyle} ref={this.rootRef} id="editorElement">
+        <Select tabIndex={0}>
+          {this.props.options.map((option: string, index: number) => {
+            return (
+              <Item
+                key={index}
+                ref={this.state.dropdownRefs[index]}
+                tabIndex={-1}
+                style={{
+                  background:
+                    index === this.state.currentIndex ? "#3818d9" : "white",
+                  color: index === this.state.currentIndex ? "white" : "black",
+                }}
+                onClick={() => this.handleClick(option)}
+                defaultValue={option}
+              >
+                {" "}
+                {option}{" "}
+              </Item>
+            );
+          })}
+        </Select>
+      </div>
+    );
   }
 }
 
