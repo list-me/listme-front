@@ -121,7 +121,8 @@ export const Products = () => {
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
-          height: "100vh",
+          height: "70vh",
+          background: "red"
         }}
       >
         <Container>
