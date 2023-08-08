@@ -23,32 +23,8 @@ import { TableField } from "../TableField";
 import { Cell } from "../Cell/index";
 import { NewColumn } from "../NewColumn";
 import { Confirmation } from "../Confirmation";
-import { productRequests } from "../../services/apis/requests/product";
 
-import { ReactComponent as EllipsisIcon } from "../../assets/ellipsis.svg";
-import { ReactComponent as DownloadIcon } from "../../assets/download.svg";
-import { ReactComponent as PlusIcon } from "../../assets/add.svg";
-import { ReactComponent as ArrowIcon } from "../../assets/arrow-left.svg";
-import { ReactComponent as FlagIcon } from "../../assets/icons/flag.svg";
-import { ReactComponent as EditIcon } from "../../assets/x-edit.svg";
-import { ReactComponent as HelpIcon } from "../../assets/help.svg";
-import {
-  Header,
-  LeftContent,
-  RightContent,
-  MoreOptions,
-  IconTemplate,
-  Title,
-  Filters,
-  Contents,
-  Item,
-  Content,
-} from "../../pages/products/styles";
-import { ROUTES } from "../../constants/routes";
-import Button from "../Button";
 import { Loading } from "../Loading";
-import { Temp } from "../Temp";
-import Wrapper from "./Wrapper";
 import RadioEditor from "./Editors/Radio";
 import DropdownEditor from "./Editors/Dropdown";
 
@@ -673,23 +649,26 @@ const CustomTable: React.FC<CustomTableProps> = ({ data }) => {
           }}
         >
           {cols.map((col: any, index: number) => {
-            if (col.isCustom && col.type == "radio") {
-              // return (
-              //   <HotColumn
-              //     width={col.width}
-              //     _columnIndex={col.order}
-              //     data={col.data}
-              //     key={index}
-              //   >
-              //     <RadioEditor
-              //       hot-editor
-              //       options={[...col.options, ""]}
-              //       editorColumnScope={0}
-              //       // column={col}
-              //       // dataProvider={dataProvider}
-              //     />
-              //   </HotColumn>
-              // );
+            if (col.isCustom && col.type === "radio") {
+              return (
+                <HotColumn
+                  width={col.width}
+                  _columnIndex={col.order}
+                  data={col.data}
+                  key={index}
+                >
+                  <RadioEditor
+                    hot-editor
+                    options={[...col.options, ""]}
+                    editorColumnScope={0}
+                    // column={col}
+                    // dataProvider={dataProvider}
+                  />
+                </HotColumn>
+              );
+            }
+
+            if (col.isCustom && col.type == "list") {
               return (
                 <HotColumn
                   width={col.width}
@@ -701,8 +680,6 @@ const CustomTable: React.FC<CustomTableProps> = ({ data }) => {
                     hot-editor
                     options={[...col.options, ""]}
                     editorColumnScope={0}
-                    // column={col}
-                    // dataProvider={dataProvider}
                   />
                 </HotColumn>
               );
