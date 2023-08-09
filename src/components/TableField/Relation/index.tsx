@@ -35,7 +35,7 @@ export const Relation: React.FC<PropsRelation> = ({
 }) => {
   const [value, setValue] = useState<any[]>(currentValue);
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
   const [total, setTotal] = useState<number>(value.length);
   const [currentProducts, setCurrentProducts] = useState<any[]>(value);
 
