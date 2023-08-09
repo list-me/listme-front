@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable class-methods-use-this */
-import React, { createRef } from "react";
+import React, { ReactNode, createRef } from "react";
 import { BaseEditorComponent } from "@handsontable/react";
 import { RadioProps, RadioState } from "./Radio";
 import { Container, Input, Label, Option } from "./styles";
@@ -161,7 +161,7 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
     document.removeEventListener("keydown", this.onBeforeKeyDown, true);
   }
 
-  render() {
+  render(): ReactNode {
     return (
       <div
         style={this.containerStyle}
