@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/no-array-index-key */
 import ReactDOM from "react-dom/client";
 import { unmountComponentAtNode } from "react-dom";
@@ -27,6 +28,7 @@ import { Confirmation } from "../Confirmation";
 import { Loading } from "../Loading";
 import RadioEditor from "./Editors/Radio";
 import DropdownEditor from "./Editors/Dropdown";
+import RelationEditor from "./Editors/Relation";
 
 registerAllModules();
 registerAllEditors();
@@ -419,6 +421,19 @@ const CustomTable: React.FC<CustomTableProps> = ({ data }) => {
     [hotRef],
   );
 
+  function customRenderer(
+    instance: Handsontable,
+    td: HTMLTableCellElement,
+    row: number,
+    col: number,
+    prop: string | number,
+    value: any,
+    cellProperties: Handsontable.CellProperties,
+  ): void {
+    const total = value ? value.length : 0;
+    td.innerHTML = `<div class="tagContent">${total} Items relacionados</div>`;
+  }
+
   return (
     <>
       <Confirmation
@@ -451,9 +466,9 @@ const CustomTable: React.FC<CustomTableProps> = ({ data }) => {
           manualColumnMove
           // manualColumnFreeze
           search
+          renderAllRows={false}
           viewportRowRenderingOffset={100}
           viewportColumnRenderingOffset={100}
-          renderAllRows={false}
           rowHeaders
           columnSorting={{ sortEmptyCells: false, headerAction: false }}
           contextMenu={{
@@ -668,7 +683,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ data }) => {
               );
             }
 
-            if (col.isCustom && col.type == "list") {
+            if (col.isCustom && col.type === "list") {
               return (
                 <HotColumn
                   width={col.width}
@@ -680,6 +695,28 @@ const CustomTable: React.FC<CustomTableProps> = ({ data }) => {
                     hot-editor
                     options={[...col.options, ""]}
                     editorColumnScope={0}
+                  />
+                </HotColumn>
+              );
+            }
+
+            if (col.type === "relation") {
+              return (
+                <HotColumn
+                  _columnIndex={col.order}
+                  data={col.data}
+                  width={col.width}
+                  key={index}
+                  // eslint-disable-next-line react/jsx-no-bind
+                  renderer={customRenderer}
+                >
+                  <RelationEditor
+                    hot-editor
+                    editorColumnScope={0}
+                    templateId={col.options[0].templateId}
+                    column={col}
+                    dataProvider={dataProvider}
+                    field={col.options[0].field}
                   />
                 </HotColumn>
               );

@@ -263,12 +263,32 @@ export const Container = styled.div`
       text-align: start;
       padding-top: 16px;
 
-      div {
+      /* div {
         width: 100%;
         height: 100%;
 
         display: flex;
         align-items: center;
+      } */
+
+      .tagContent {
+        background-color: #dee2e6 !important;
+
+        width: 50% !important;
+        height: 25px !important;
+
+        margin-top: 11px;
+        margin-left: 8px;
+
+        display: flex;
+        align-items: center;
+
+        padding-left: 8px;
+        border-radius: 8px;
+
+        &:hover {
+          cursor: pointer;
+        }
       }
     }
 
