@@ -41,12 +41,7 @@ const RelationComponent: React.FC<PropsRelation> = ({
   onChange,
   onCancel,
 }) => {
-  const [value, setValue] = useState<any[]>(
-    typeof currentValue === "object" ? currentValue : [],
-  );
-
-  const [isOpen, setIsOpen] = useState<boolean>(true);
-  const [total, setTotal] = useState<number>(value.length);
+  const [total, setTotal] = useState<number>(currentValue.length);
   const [currentProducts, setCurrentProducts] = useState<any[]>(
     typeof currentValue === "object" ? currentValue : [],
   );
@@ -61,20 +56,11 @@ const RelationComponent: React.FC<PropsRelation> = ({
   const [keyword, setKeyword] = useState<string>("");
   const [templateRelation, setTemplateRelation] = useState<any>({});
 
-  const { handleSave } = useContext(productContext);
-
-  const handleChangeVisible = (): void => {
-    setFieldTitle([]);
-    // setIsOpen(!isOpen);
-  };
-
   const handleCancel = (): void => {
     setFieldTitle([]);
-    setCurrentProducts(value);
+    setCurrentProducts(currentValue);
 
     onCancel();
-    // setTotal(value.length);
-    // setIsOpen(false);
   };
 
   const handleGetValueString = (value: any) => {
@@ -92,7 +78,7 @@ const RelationComponent: React.FC<PropsRelation> = ({
         let templateRel: any;
         const columnsTable = template.fields.fields
           .map((attribute: any, index: number) => {
-            // if (column.data === attribute.id) setTemplateRelation(attribute);
+            if (column.data === attribute.id) setTemplateRelation(attribute);
 
             templateRel = attribute;
             return {
@@ -124,7 +110,6 @@ const RelationComponent: React.FC<PropsRelation> = ({
       toast.error(
         "Ocorreu um erro ao carregar os produtos à serem relacionados",
       );
-      // setIsOpen(false);
     }
   }, []);
 
@@ -214,20 +199,7 @@ const RelationComponent: React.FC<PropsRelation> = ({
     newData[row][column.data] = currentProducts;
 
     setButtonLoading(false);
-    setValue(currentProducts);
-    console.log({ currentProducts });
     onChange(currentProducts);
-    // setIsOpen(false);
-    // handleSave(newData[row])
-    //   .then((id) => {
-    //     if (id) dataProvider[row].id = id;
-    //     return id;
-    //   })
-    //   .catch((error) => {
-    //     newData[row][column.data] = currentValue;
-    //     setButtonLoading(false);
-    //     toast.error(error);
-    //   });
   };
 
   const handleSearchProducts = async (): Promise<void> => {
@@ -305,20 +277,12 @@ const RelationComponent: React.FC<PropsRelation> = ({
   };
 
   useEffect(() => {
-    // console.log({ currentValue, columns });
-    // if (!fieldTitle.length) {
     buildColumns();
     handleGetProducts();
-    // }
   }, []);
 
   return (
     <Container onClick={() => {}}>
-      {/* <div className="tagContent">
-        <Tag onClick={handleChangeVisible} maxWidth="fit-content">
-          <label> {total} Item(s) relacionados </label>
-        </Tag>
-      </div> */}
       <Modal isOpen={true} changeVisible={() => {}} width="60vw" top="2%">
         <>
           <Title>
