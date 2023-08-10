@@ -166,6 +166,9 @@ export const TableField: React.FC<any> = ({
             column={column}
             dataProvider={dataProvider}
             row={row}
+            onChange={(newValue: any[]) => {}}
+            onCancel={() => {}}
+            isOpen={false}
           />
         )
       ) : (
