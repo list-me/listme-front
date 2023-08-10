@@ -421,18 +421,21 @@ const CustomTable: React.FC<CustomTableProps> = ({ data }) => {
     [hotRef],
   );
 
-  function customRenderer(
-    instance: Handsontable,
-    td: HTMLTableCellElement,
-    row: number,
-    col: number,
-    prop: string | number,
-    value: any,
-    cellProperties: Handsontable.CellProperties,
-  ): void {
-    const total = value ? value.length : 0;
-    td.innerHTML = `<div class="tagContent">${total} Items relacionados</div>`;
-  }
+  const customRenderer = useCallback(
+    (
+      instance: Handsontable,
+      td: HTMLTableCellElement,
+      row: number,
+      col: number,
+      prop: string | number,
+      value: any,
+      cellProperties: Handsontable.CellProperties,
+    ) => {
+      const total = value ? value.length : 0;
+      td.innerHTML = `<div class="tagContent">${total} Items relacionados</div>`;
+    },
+    [],
+  );
 
   return (
     <>
