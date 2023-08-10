@@ -1,6 +1,12 @@
 /* eslint-disable  */
 
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Table } from "antd";
 import { toast } from "react-toastify";
 import { PropsRelation } from "./Relation.d";
@@ -25,19 +31,25 @@ import { productContext } from "../../../context/products";
 import { Loading } from "../../Loading";
 import { SearchBar } from "../../SearchBar/SearchBar";
 
-export const Relation: React.FC<PropsRelation> = ({
+const RelationComponent: React.FC<PropsRelation> = ({
   currentValue,
   templateId,
   field,
   column,
   dataProvider,
   row,
+  onChange,
+  onCancel,
 }) => {
-  const [value, setValue] = useState<any[]>(currentValue);
+  const [value, setValue] = useState<any[]>(
+    typeof currentValue === "object" ? currentValue : [],
+  );
 
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [total, setTotal] = useState<number>(value.length);
-  const [currentProducts, setCurrentProducts] = useState<any[]>(value);
+  const [currentProducts, setCurrentProducts] = useState<any[]>(
+    typeof currentValue === "object" ? currentValue : [],
+  );
 
   const [columns, setColumns] = useState<any[]>([]);
   const [data, setData] = useState<any[]>([]);
@@ -53,14 +65,16 @@ export const Relation: React.FC<PropsRelation> = ({
 
   const handleChangeVisible = (): void => {
     setFieldTitle([]);
-    setIsOpen(!isOpen);
+    // setIsOpen(!isOpen);
   };
 
   const handleCancel = (): void => {
     setFieldTitle([]);
     setCurrentProducts(value);
-    setTotal(value.length);
-    setIsOpen(false);
+
+    onCancel();
+    // setTotal(value.length);
+    // setIsOpen(false);
   };
 
   const handleGetValueString = (value: any) => {
@@ -69,7 +83,8 @@ export const Relation: React.FC<PropsRelation> = ({
     });
   };
 
-  const buildColumns = async () => {
+  const buildColumns = useCallback(async () => {
+    console.log("Dentro do build");
     setIsLoading(true);
     try {
       if (templateId) {
@@ -77,7 +92,7 @@ export const Relation: React.FC<PropsRelation> = ({
         let templateRel: any;
         const columnsTable = template.fields.fields
           .map((attribute: any, index: number) => {
-            if (column.data === attribute.id) setTemplateRelation(attribute);
+            // if (column.data === attribute.id) setTemplateRelation(attribute);
 
             templateRel = attribute;
             return {
@@ -109,40 +124,46 @@ export const Relation: React.FC<PropsRelation> = ({
       toast.error(
         "Ocorreu um erro ao carregar os produtos à serem relacionados",
       );
-      setIsOpen(false);
+      // setIsOpen(false);
     }
-  };
+  }, []);
 
-  const handleGetProducts = async () => {
+  const handleGetProducts = useCallback(async () => {
+    console.log("No get");
     setIsLoading(true);
     try {
-      const productPromises = await currentProducts.map(async (product) => {
-        if (product) {
-          const response = await productRequests.get(product?.id);
-          const title = response?.fields?.find((e: any) => {
-            return e.id == product.field;
-          });
+      console.log(currentProducts);
+      if (Object.keys(currentProducts).length) {
+        const productPromises = await currentProducts?.map(async (product) => {
+          if (Object.keys(product).length) {
+            const response = await productRequests.get(product?.id);
+            const title = response?.fields?.find((e: any) => {
+              return e.id == product.field;
+            });
 
-          setFieldTitle((prev) => [
-            {
-              id: product?.id,
-              value: title ? title.value[0] : "*Campo sem valor*",
-            },
-            ...prev,
-          ]);
-          return product;
-        }
-      });
+            setFieldTitle((prev) => [
+              {
+                id: product?.id,
+                value: title ? title.value[0] : "*Campo sem valor*",
+              },
+              ...prev,
+            ]);
+            return product;
+          }
+        });
 
-      await Promise.all(productPromises);
+        await Promise.all(productPromises);
+      }
+
       setIsLoading(false);
     } catch (error) {
+      console.log({ error });
       setIsLoading(false);
       toast.error(
         "Ocorreu um erro ao carregar os produtos à serem relacionados",
       );
     }
-  };
+  }, []);
 
   const handleClick = (product: any) => {
     const fieldTemplate = column.options[0].field;
@@ -151,20 +172,17 @@ export const Relation: React.FC<PropsRelation> = ({
         ? product[field][0]
         : "*Campo sem valor*";
     const newTitle = { value: values, id: product.id };
-
     setFieldTitle((prev) => [newTitle, ...prev]);
     setData((prev) => {
       return prev.filter((e) => {
         if (e?.id !== product?.id) return e;
       });
     });
-
     const newProduct = {
       id: product.id,
       field: fieldTemplate,
       templateId: column.options[0].templateId,
     };
-
     const products: any[] = [newProduct, ...currentProducts];
     setCurrentProducts(products);
     setTotal(products.length);
@@ -195,19 +213,21 @@ export const Relation: React.FC<PropsRelation> = ({
     const newData = dataProvider;
     newData[row][column.data] = currentProducts;
 
-    handleSave(newData[row])
-      .then((id) => {
-        setButtonLoading(false);
-        setValue(currentProducts);
-        setIsOpen(false);
-        if (id) dataProvider[row].id = id;
-        return id;
-      })
-      .catch((error) => {
-        newData[row][column.data] = currentValue;
-        setButtonLoading(false);
-        toast.error(error);
-      });
+    setButtonLoading(false);
+    setValue(currentProducts);
+    console.log({ currentProducts });
+    onChange(currentProducts);
+    // setIsOpen(false);
+    // handleSave(newData[row])
+    //   .then((id) => {
+    //     if (id) dataProvider[row].id = id;
+    //     return id;
+    //   })
+    //   .catch((error) => {
+    //     newData[row][column.data] = currentValue;
+    //     setButtonLoading(false);
+    //     toast.error(error);
+    //   });
   };
 
   const handleSearchProducts = async (): Promise<void> => {
@@ -285,20 +305,21 @@ export const Relation: React.FC<PropsRelation> = ({
   };
 
   useEffect(() => {
-    if (isOpen) {
-      buildColumns();
-      handleGetProducts();
-    }
-  }, [isOpen]);
+    // console.log({ currentValue, columns });
+    // if (!fieldTitle.length) {
+    buildColumns();
+    handleGetProducts();
+    // }
+  }, []);
 
   return (
     <Container onClick={() => {}}>
-      <div className="tagContent">
+      {/* <div className="tagContent">
         <Tag onClick={handleChangeVisible} maxWidth="fit-content">
           <label> {total} Item(s) relacionados </label>
         </Tag>
-      </div>
-      <Modal isOpen={isOpen} changeVisible={() => {}} width="60vw" top="2%">
+      </div> */}
+      <Modal isOpen={true} changeVisible={() => {}} width="60vw" top="2%">
         <>
           <Title>
             Produtos relacionados
@@ -308,19 +329,27 @@ export const Relation: React.FC<PropsRelation> = ({
           <Content>
             <div className="contentProducts">
               {fieldTitle.length ? (
-                fieldTitle.map((content, index) => {
-                  return (
-                    <div className="tagItem" key={index}>
-                      <Tag>
-                        {" "}
-                        <label>{content?.value}</label>
-                      </Tag>
-                      <span>
-                        <CloseIcon onClick={() => handleClickRemove(content)} />
-                      </span>
-                    </div>
-                  );
-                })
+                fieldTitle
+                  .filter((value, index, self) => {
+                    return (
+                      self.findIndex((t) => t.value === value.value) === index
+                    );
+                  })
+                  .map((content: any, index: number) => {
+                    return (
+                      <div className="tagItem" key={index}>
+                        <Tag>
+                          {" "}
+                          <label>{content?.value}</label>
+                        </Tag>
+                        <span>
+                          <CloseIcon
+                            onClick={() => handleClickRemove(content)}
+                          />
+                        </span>
+                      </div>
+                    );
+                  })
               ) : (
                 <label> Nenhum produto relacionado </label>
               )}
@@ -375,3 +404,5 @@ export const Relation: React.FC<PropsRelation> = ({
     </Container>
   );
 };
+
+export const Relation = React.memo(RelationComponent);
