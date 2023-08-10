@@ -24,17 +24,6 @@ class RelationEditor extends BaseEditorComponent<
 
     this.containerStyle = {
       display: "none",
-      position: "absolute",
-      left: 0,
-      top: 0,
-      width: "fit-content",
-      height: "fit-content",
-      background: "#fff",
-      padding: "15px",
-      zIndex: 999,
-      borderRadius: "8px",
-      boxShadow:
-        "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     };
   }
 
@@ -69,8 +58,6 @@ class RelationEditor extends BaseEditorComponent<
   };
 
   setValue(value: any): void {
-    console.log("On set", { value });
-    // // const parsedValue = typeof value === "string" ? [{}] : value;
     this.setState({ value, newValue: value });
   }
 
@@ -91,8 +78,6 @@ class RelationEditor extends BaseEditorComponent<
     document.removeEventListener("keydown", this.onBeforeKeyDown, true);
 
     this.setState({ isOpen: false });
-
-    console.log("On close");
   }
 
   prepare(
@@ -114,8 +99,7 @@ class RelationEditor extends BaseEditorComponent<
       value = [{}];
     }
 
-    console.log({ value });
-    this.setState({ row, col, newValue: originalValue });
+    this.setState({ row, col, newValue: value });
 
     const tdPosition = td.getBoundingClientRect();
     if (this.rootRef.current!) {
@@ -138,6 +122,7 @@ class RelationEditor extends BaseEditorComponent<
 
   handleChange(value: any): void {
     this.finishEditing();
+    this.close();
 
     const { hotInstance } = this;
     if (hotInstance) {
