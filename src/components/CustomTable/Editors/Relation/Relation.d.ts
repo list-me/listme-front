@@ -15,10 +15,11 @@ type RelationProps = {
 };
 
 type RelationState = {
-  value: string[];
-  newValue: string;
+  value: any;
+  newValue: any;
   row: number;
   col: number;
+  isOpen: boolean;
 };
 
 export type { PropsRelation, RelationProps, RelationState };
