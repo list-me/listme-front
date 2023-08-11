@@ -28,37 +28,29 @@ class RelationEditor extends BaseEditorComponent<
   }
 
   onBeforeKeyDown = (event: KeyboardEvent): void => {
-    const target = event.target as HTMLInputElement;
-    if (target.type !== "textarea") {
-      event.stopImmediatePropagation();
-    }
-
-    if (event.key === "Enter") {
-      if (target) {
-        // this.handleChange(target.value);
-        this.finishEditing();
-        this.close();
-      }
-
-      // this.navigateToNextDownCell();
-      event.preventDefault();
-      return;
-    }
-
-    if (["Tab"].includes(event.key)) {
-      this.close();
-      this.finishEditing();
-      // this.navigateToNextRightCell();
-    }
-
-    if (["Escape"].includes(event.key)) {
-      this.close();
-      this.finishEditing();
-    }
+    // const target = event.target as HTMLDivElement;
+    // if (target.tagName !== "TEXTAREA") {
+    //   console.log({ target });
+    //   event.stopImmediatePropagation();
+    //   event.preventDefault();
+    // }
+    // if (event.key === "Enter") {
+    //   console.log("ON ENTER");
+    //   this.navigateToNextDownCell();
+    // }
+    // if (["Tab"].includes(event.key)) {
+    //   this.close();
+    //   this.finishEditing();
+    //   // this.navigateToNextRightCell();
+    // }
+    // if (["Escape"].includes(event.key)) {
+    //   this.close();
+    //   this.finishEditing();
+    // }
   };
 
   setValue(value: any): void {
-    this.setState({ value, newValue: value });
+    this.setState({ value });
   }
 
   getValue(): any {
@@ -67,15 +59,15 @@ class RelationEditor extends BaseEditorComponent<
 
   open(): void {
     if (this.rootRef.current) this.rootRef.current.style.display = "block";
-    document.addEventListener("keydown", this.onBeforeKeyDown, true);
+    // document.addEventListener("keydown", this.onBeforeKeyDown, true);
 
-    console.log("Dentro do open", this.state.value);
+    // console.log("Dentro do open", this.state.value);
     this.setState({ isOpen: true });
   }
 
   close(): void {
     if (this.rootRef.current) this.rootRef.current.style.display = "none";
-    document.removeEventListener("keydown", this.onBeforeKeyDown, true);
+    // document.removeEventListener("keydown", this.onBeforeKeyDown, true);
 
     this.setState({ isOpen: false });
   }
@@ -94,9 +86,9 @@ class RelationEditor extends BaseEditorComponent<
       value =
         typeof originalValue === "object" && originalValue?.length
           ? originalValue
-          : [{}];
+          : [];
     } else {
-      value = [{}];
+      value = [];
     }
 
     this.setState({ row, col, newValue: value });
@@ -120,15 +112,23 @@ class RelationEditor extends BaseEditorComponent<
     }
   }
 
-  handleChange(value: any): void {
-    this.finishEditing();
-    this.close();
+  navigateToNextDownCell(): void {
+    const { hotInstance } = this;
+    if (hotInstance) {
+      const { row, col } = this.state;
+      hotInstance.selectCell(row + 1, col);
+    }
+  }
 
+  handleChange(value: any): void {
     const { hotInstance } = this;
     if (hotInstance) {
       hotInstance.setDataAtCell(this.state.row, this.state.col, value);
+      this.navigateToNextRightCell();
     }
-    this.navigateToNextRightCell();
+
+    this.close();
+    this.finishEditing();
   }
 
   handleCancel(): void {
@@ -157,13 +157,9 @@ class RelationEditor extends BaseEditorComponent<
             templateId={this.props.templateId}
             field={this.props.field}
             dataProvider={this.props.dataProvider}
-            onChange={(newValue: Array<any>): void => {
-              this.handleChange(newValue?.filter(Boolean));
-              // this.setValue(newValue);
-
-              // this.setState({ newValue: newValue?.filter(Boolean) });
-              // this.finishEditing();
-            }}
+            onChange={(newValue: Array<any>): void =>
+              this.handleChange(newValue?.filter(Boolean))
+            }
             onCancel={() => this.handleCancel()}
           />
         ) : (

@@ -27,7 +27,6 @@ import { ReactComponent as CloseWindowIcon } from "../../../assets/close-gray.sv
 
 import { templateRequests } from "../../../services/apis/requests/template";
 import { productRequests } from "../../../services/apis/requests/product";
-import { productContext } from "../../../context/products";
 import { Loading } from "../../Loading";
 import { SearchBar } from "../../SearchBar/SearchBar";
 
@@ -276,13 +275,35 @@ const RelationComponent: React.FC<PropsRelation> = ({
     setOldData(allFields);
   };
 
+  const onBeforeKeyDown = async (event: any): Promise<void> => {
+    if (event.target.tagName === "INPUT") {
+      if (event.key === "Enter") {
+        await handleSearchProducts();
+      }
+
+      return;
+    }
+
+    if (event.key === "Enter") return onChange(currentProducts);
+
+    if (["Tab", "Escape"].includes(event.key)) {
+      onCancel();
+    }
+  };
+
   useEffect(() => {
+    window.addEventListener("keydown", onBeforeKeyDown);
+
     buildColumns();
     handleGetProducts();
+
+    return () => {
+      window.removeEventListener("keydown", onBeforeKeyDown);
+    };
   }, []);
 
   return (
-    <Container onClick={() => {}}>
+    <Container onClick={() => {}} onKeyDown={onBeforeKeyDown}>
       <Modal isOpen={true} changeVisible={() => {}} width="60vw" top="2%">
         <>
           <Title>
