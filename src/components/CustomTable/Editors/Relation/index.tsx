@@ -1,3 +1,6 @@
+/* eslint-disable class-methods-use-this */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { ReactNode, createRef } from "react";
 import { BaseEditorComponent } from "@handsontable/react";
 
@@ -145,7 +148,6 @@ class RelationEditor extends BaseEditorComponent<
       <div
         ref={this.rootRef}
         style={this.containerStyle}
-        onClick={() => console.log()}
         id="editorElement"
         onMouseDown={this.stopMousedownPropagation}
       >
