@@ -50,7 +50,7 @@ interface ITypeProductContext {
   headerTable: IHeaderTable[];
   setHeaderTable: Function;
   handleAdd: Function;
-  handleSave: (value: any) => Promise<any>;
+  handleSave: (value: any, isNew: boolean, productId?: string) => Promise<any>;
   editing: boolean;
   setEditing: Function;
   colHeaders: string[];
@@ -273,39 +273,48 @@ export const ProductContextProvider = ({ children }: any) => {
       });
   };
 
-  const handleSave = async (value: any): Promise<any> => {
-    // try {
-    //   const fields = buildProduct(value);
-    //   if (value["id"] !== undefined) {
-    //     await Promise.resolve(
-    //       productRequests.update({ id: value.id, fields }),
-    //     ).catch((error) => {
-    //       throw error;
-    //     });
-    //     return;
-    //   } else {
-    //     const newProduct = {
-    //       product_template_id: window.location.pathname.substring(10),
-    //       is_public: true,
-    //       fields: fields,
-    //     };
-    //     let newItem;
-    //     await handlePost(newProduct)
-    //       .then((resolved) => {
-    //         newItem = resolved?.id;
-    //       })
-    //       .catch((error) => {
-    //         throw error;
-    //       });
-    //     return newItem;
-    //   }
-    // } catch (error: any) {
-    //   const message =
-    //     typeof error?.response?.data?.message == "object"
-    //       ? error?.response?.data?.message[0]
-    //       : error?.response?.data?.message;
-    //   throw message;
-    // }
+  const handleSave = async (
+    value: any,
+    isNew: boolean,
+    productId?: string,
+  ): Promise<any> => {
+    try {
+      const fields = buildProduct(value);
+
+      console.log({ isNew });
+      if (isNew) {
+        setTimeout(async () => {
+          await Promise.resolve(
+            productRequests.update({ id: productId, fields }),
+          ).catch((error) => {
+            throw error;
+          });
+        }, 2000);
+      } else {
+        const newProduct = {
+          product_template_id: window.location.pathname.substring(10),
+          is_public: true,
+          fields: fields,
+        };
+        let newItem;
+
+        await handlePost(newProduct)
+          .then((resolved) => {
+            newItem = resolved?.id;
+          })
+          .catch((error) => {
+            throw error;
+          });
+
+        return newItem;
+      }
+    } catch (error: any) {
+      const message =
+        typeof error?.response?.data?.message == "object"
+          ? error?.response?.data?.message[0]
+          : error?.response?.data?.message;
+      throw message;
+    }
   };
 
   const buildProduct = (fields: any) => {
@@ -338,7 +347,7 @@ export const ProductContextProvider = ({ children }: any) => {
       return;
     }
 
-    setFilteredData((old) => [{}, ...old]);
+    setProducts((old) => [{}, ...old]);
   };
 
   const handleGetTemplate = async (templateId: string) => {

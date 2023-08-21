@@ -69,7 +69,6 @@ const RelationComponent: React.FC<PropsRelation> = ({
   };
 
   const buildColumns = useCallback(async () => {
-    console.log("Dentro do build");
     setIsLoading(true);
     try {
       if (templateId) {
@@ -113,10 +112,8 @@ const RelationComponent: React.FC<PropsRelation> = ({
   }, []);
 
   const handleGetProducts = useCallback(async () => {
-    console.log("No get");
     setIsLoading(true);
     try {
-      console.log(currentProducts);
       if (Object.keys(currentProducts).length) {
         const productPromises = await currentProducts?.map(async (product) => {
           if (Object.keys(product).length) {
@@ -212,6 +209,7 @@ const RelationComponent: React.FC<PropsRelation> = ({
       listItems(data.products, templateRelation);
       setIsLoading(false);
     } catch (error) {
+      console.log({ error });
       setIsLoading(false);
       toast.error(
         "Ocorreu um erro durante o filtro de produtos, por favor contacte o suporte",
@@ -220,59 +218,62 @@ const RelationComponent: React.FC<PropsRelation> = ({
   };
 
   const listItems = (items: any[], relTemplate: any): void => {
-    const fields: any[] = [];
-    const allFields: any[] = [];
-    items.forEach((product: any) => {
-      const currentIds = currentProducts?.map((e) => e.id);
-      if (currentIds && !currentIds.includes(product.id)) {
-        const props: any = {};
+    if (relTemplate.options) {
+      const fields: any[] = [];
+      const allFields: any[] = [];
+      items.forEach((product: any) => {
+        const currentIds = currentProducts?.map((e) => e.id);
+        if (currentIds && !currentIds.includes(product.id)) {
+          const props: any = {};
 
-        const exceedLimit = product.fields.find((productField: any) => {
-          if (
-            productField.id == column.data &&
-            relTemplate.options[0].limit <= productField.value.length &&
-            relTemplate.options[0].agreementType != "unilateral"
-          ) {
-            return productField;
-          }
-        });
-
-        if (!exceedLimit) {
-          product.fields.forEach((element: any) => {
-            if (element && Object.keys(element).length) {
-              props[element?.id] = handleGetValueString(element.value);
-              props.id = product.id;
+          const exceedLimit = product.fields.find((productField: any) => {
+            console.log(relTemplate.options);
+            if (
+              productField.id == column.data &&
+              relTemplate?.options[0]?.limit <= productField.value.length &&
+              relTemplate?.options[0]?.agreementType != "unilateral"
+            ) {
+              return productField;
             }
           });
-          allFields.push(props);
-          return fields.push(props);
-        }
-      } else {
-        const props: any = {};
-        const exceedLimit = product.fields.find((productField: any) => {
-          if (
-            productField.id == column.data &&
-            relTemplate.options[0].limit <= productField.value.length &&
-            relTemplate.options[0].agreementType != "unilateral"
-          ) {
-            return productField;
-          }
-        });
 
-        if (!exceedLimit) {
-          product.fields.forEach((element: any) => {
-            if (element && Object.keys(element).length) {
-              props[element?.id] = handleGetValueString(element.value);
-              props.id = product.id;
+          if (!exceedLimit) {
+            product.fields.forEach((element: any) => {
+              if (element && Object.keys(element).length) {
+                props[element?.id] = handleGetValueString(element.value);
+                props.id = product.id;
+              }
+            });
+            allFields.push(props);
+            return fields.push(props);
+          }
+        } else {
+          const props: any = {};
+          const exceedLimit = product.fields.find((productField: any) => {
+            if (
+              productField.id == column.data &&
+              relTemplate.options[0].limit <= productField.value.length &&
+              relTemplate.options[0].agreementType != "unilateral"
+            ) {
+              return productField;
             }
           });
-          return allFields.push(props);
-        }
-      }
-    });
 
-    setData(fields);
-    setOldData(allFields);
+          if (!exceedLimit) {
+            product.fields.forEach((element: any) => {
+              if (element && Object.keys(element).length) {
+                props[element?.id] = handleGetValueString(element.value);
+                props.id = product.id;
+              }
+            });
+            return allFields.push(props);
+          }
+        }
+      });
+
+      setData(fields);
+      setOldData(allFields);
+    }
   };
 
   const onBeforeKeyDown = async (event: any): Promise<void> => {

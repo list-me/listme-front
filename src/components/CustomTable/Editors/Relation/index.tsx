@@ -127,7 +127,7 @@ class RelationEditor extends BaseEditorComponent<
     const { hotInstance } = this;
     if (hotInstance) {
       hotInstance.setDataAtCell(this.state.row, this.state.col, value);
-      this.navigateToNextRightCell();
+      this.navigateToNextDownCell();
     }
 
     this.close();
@@ -167,16 +167,6 @@ class RelationEditor extends BaseEditorComponent<
         ) : (
           <></>
         )}
-        {/* <button
-          onClick={() => {
-            this.handleChange([
-              { id: "asd", value: "11" },
-              { id: "sss", value: "snake" },
-            ]);
-          }}
-        >
-          CLICK
-        </button> */}
       </div>
     );
   }

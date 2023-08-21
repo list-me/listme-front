@@ -1,12 +1,10 @@
 interface DropzoneRendererProps {
-  value: any[];
-  instance: any;
-  row: number;
-  col: number;
-  prop: string;
-  className?: string;
+  value: Array<string>;
   templateId: string;
-  dataProvider: any[];
+  productId: string;
+  field: string;
+  onSuccess: (images: Array<string>) => void;
+  onCancel: () => void;
 }
 
 export type { DropzoneRendererProps };

@@ -44,6 +44,7 @@ export const Products = () => {
     template,
     headerTable,
     handleGetProductsFiltered,
+    handleAdd,
   } = useContext(productContext);
 
   useEffect(() => {
@@ -57,79 +58,11 @@ export const Products = () => {
   }, []);
 
   return (
-    <>
-      <Content>
-        <Header>
-          <LeftContent>
-            <ArrowIcon
-              onClick={() => {
-                // setDataProvider([]);
-                // setHeaderTable([]);
-                // setFilteredData([]);
-                // setColumns([]);
-                navigate(ROUTES.TEMPLATES);
-              }}
-            />
-            <IconTemplate>
-              <FlagIcon />
-            </IconTemplate>
-            <Title> {template?.name} </Title>
-            <EditIcon />
-          </LeftContent>
-          <RightContent>
-            <MoreOptions>
-              <EllipsisIcon />
-            </MoreOptions>
-            <Button height="52px" width="227px" isSecondary>
-              <DownloadIcon />
-              Importar produtos
-            </Button>
-            <Button
-              height="52px"
-              width="226px"
-              className="secondButton"
-              onClick={() => {
-                //Adicionar função de nova linha em branco via context
-                // const { hotInstance } = hotRef.current!;
-                // if (hotInstance) {
-                //   if (hotInstance.isEmptyRow(0))
-                //     return toast.warn("Preencha o produto atual");
-                // }
-                // setDataProvider((prev) => [{}, ...prev]);
-              }}
-            >
-              Adicionar produto
-              <PlusIcon />
-            </Button>
-          </RightContent>
-        </Header>
-        <Filters>
-          <Temp
-            options={headerTable}
-            handleSearch={handleGetProductsFiltered}
-          />
-          <Contents>
-            <Item>
-              <HelpIcon />
-              Ajuda
-            </Item>
-          </Contents>
-        </Filters>
-      </Content>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          height: "70vh",
-          background: "red"
-        }}
-      >
-        <Container>
-          {isLoading ? <Loading /> : <Table data={products} />}
-        </Container>
-      </div>
-    </>
+    <Content>
+      <Container>
+        {isLoading ? <Loading /> : <Table data={products} />}
+      </Container>
+    </Content>
   );
 
   // return (

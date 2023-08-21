@@ -49,11 +49,7 @@ export const SearchBar: React.FC<ISearchBarProps> = ({
           onPressEnter={onPressEnter}
           height="39px"
         />
-        <ButtonCustom
-          height="35px"
-          width="70px"
-          //   onClick={() => handleSearch(filter)}
-        >
+        <ButtonCustom height="35px" width="70px" onClick={onPressEnter}>
           Buscar
         </ButtonCustom>
       </div>
