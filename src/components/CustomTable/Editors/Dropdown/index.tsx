@@ -1,8 +1,13 @@
 import React, { ReactNode, createRef } from "react";
 
 import { BaseEditorComponent } from "@handsontable/react";
-import { DropdownState, DropdownProps } from "./Dropdown.d";
-
+import {
+  DropdownState,
+  DropdownProps,
+  NavigationAction,
+  Navigate,
+  NavigationFunction,
+} from "./Dropdown.d";
 import { Item, Select } from "./styles";
 
 class DropdownEditor extends BaseEditorComponent<
@@ -15,6 +20,11 @@ class DropdownEditor extends BaseEditorComponent<
   selectRef = createRef<HTMLDivElement>();
 
   containerStyle: any;
+
+  navigate: Navigate = {
+    [NavigationAction.RIGHT]: this.navigateToNextRightCell.bind(this),
+    [NavigationAction.DOWN]: this.navigateToNextDownCell.bind(this),
+  };
 
   constructor(props: any) {
     super(props);
@@ -41,8 +51,6 @@ class DropdownEditor extends BaseEditorComponent<
       boxShadow:
         "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     };
-
-    this.selectRef = React.createRef();
   }
 
   onBeforeKeyDown = (event: KeyboardEvent): void => {
@@ -70,10 +78,9 @@ class DropdownEditor extends BaseEditorComponent<
       if (target) {
         this.handleChange(
           this.state.dropdownRefs[currentIndex].current.innerText?.trim(),
+          this.navigate[NavigationAction.DOWN],
         );
       }
-
-      this.navigateToNextDownCell();
       event.preventDefault();
       return;
     }
@@ -81,13 +88,12 @@ class DropdownEditor extends BaseEditorComponent<
     if (["Tab", " "].includes(event.key)) {
       this.handleChange(
         this.state.dropdownRefs[currentIndex].current.innerText?.trim(),
+        this.navigate[NavigationAction.RIGHT],
       );
-      this.navigateToNextRightCell();
     }
 
     if (["Escape"].includes(event.key)) {
       this.finishEditing();
-      this.close();
     }
   };
 
@@ -107,12 +113,12 @@ class DropdownEditor extends BaseEditorComponent<
     }
   }
 
-  setValue(value: string): void {
-    this.hotInstance.setDataAtCell(this.state.row, this.state.col, [value]);
+  setValue(value: any): void {
+    this.setState({ value });
   }
 
   getValue(): string[] {
-    return this.state.value;
+    return this.state.newValue;
   }
 
   open(): void {
@@ -153,7 +159,8 @@ class DropdownEditor extends BaseEditorComponent<
     }
 
     const currentIndex = this.props.options.indexOf(value);
-    this.setState({ currentIndex, row, col });
+    this.setState({ currentIndex, row, col, newValue: [value] });
+
     const tdPosition = td.getBoundingClientRect();
     if (this.rootRef.current!) {
       this.rootRef.current.style.left = `${
@@ -165,17 +172,35 @@ class DropdownEditor extends BaseEditorComponent<
     }
   }
 
-  handleChange(value: string): void {
-    this.setValue(value);
+  handleChange(value: string, action: NavigationFunction): void {
+    this.setState({ value: [value], newValue: [value] }, () => {
+      this.finishEditing();
+      action();
+    });
   }
 
   handleClick = (value: string): void => {
-    this.handleChange(value);
+    this.setState({ value: [value], newValue: [value] }, () => {
+      this.finishEditing();
+    });
   };
+
+  stopMousedownPropagation(e: any): void {
+    e.stopPropagation();
+  }
+
+  componentWillUnmount(): void {
+    document.removeEventListener("keydown", this.onBeforeKeyDown, true);
+  }
 
   render(): ReactNode {
     return (
-      <div style={this.containerStyle} ref={this.rootRef} id="editorElement">
+      <div
+        style={this.containerStyle}
+        ref={this.rootRef}
+        id="editorElement"
+        onMouseDown={this.stopMousedownPropagation}
+      >
         <Select tabIndex={0}>
           {this.props.options.map((option: string, index: number) => {
             return (
@@ -188,7 +213,9 @@ class DropdownEditor extends BaseEditorComponent<
                     index === this.state.currentIndex ? "#3818d9" : "white",
                   color: index === this.state.currentIndex ? "white" : "black",
                 }}
-                onClick={() => this.handleClick(option)}
+                onClick={() => {
+                  this.handleClick(option);
+                }}
                 defaultValue={option}
               >
                 {" "}
