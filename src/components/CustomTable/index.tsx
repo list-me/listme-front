@@ -30,12 +30,10 @@ import "handsontable/dist/handsontable.full.min.css";
 
 import { CustomTableProps } from "./CustomTable.d";
 import { productContext } from "../../context/products";
-import { TableField } from "../TableField";
 import { Cell } from "../Cell/index";
 import { NewColumn } from "../NewColumn";
 import { Confirmation } from "../Confirmation";
 
-import { Loading } from "../Loading";
 import RadioEditor from "./Editors/Radio";
 import DropdownEditor from "./Editors/Dropdown";
 import RelationEditor from "./Editors/Relation";
@@ -58,6 +56,7 @@ import Button from "../Button";
 import { Temp } from "../Temp";
 import { productRequests } from "../../services/apis/requests/product";
 import { Container } from "./styles";
+import { LoadingFetch } from "./LoadingFetch";
 
 registerAllModules();
 registerAllEditors();
@@ -82,6 +81,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
   const [cols, setCols] = useState<any[]>([]);
   const [isTableLocked, setIsTableLocked] = useState(false);
+  const [page, setPage] = useState<number>(1);
 
   // Deverá ser removido
   const [currentCell, setCurrentCell] = useState<any>({});
@@ -114,9 +114,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           type: column.type,
           options: column.options,
           isCustom: true,
-          // readOnly: true,
-          // editor: RadioEditor,
-          // bucket_url: column.bucket_url,
         });
         return;
       }
@@ -406,8 +403,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
   };
 
   useEffect(() => {
-    console.log("Rendered by effect 1");
-
     // const toFreeze = headerTable.filter((item) => item?.frozen === true);
     // if (toFreeze.length > 0) {
     //   setFrozen(toFreeze.length);
@@ -418,83 +413,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
     setDataProvider(products);
   }, [headerTable]);
-
-  // useEffect(() => {
-  //   const handleKeyDown = (event: KeyboardEvent) => {
-  //     if (
-  //       (event.ctrlKey || event.metaKey) &&
-  //       event.key === "f" &&
-  //       hotRef.current!?.hotInstance?.getSelected() !== undefined
-  //     ) {
-  //       event.preventDefault();
-  //       const instance = hotRef.current!?.hotInstance;
-
-  //       // if (!instance?.isListening()) {
-  //       instance?.deselectCell();
-  //       // }
-  //     }
-  //   };
-
-  //   window.addEventListener("keydown", handleKeyDown);
-
-  //   return () => {
-  //     window.removeEventListener("keydown", handleKeyDown);
-  //   };
-  // }, []);
-
-  const handleSetNewValue = React.useCallback(
-    (props: any) => {
-      const { row, data, value } = props;
-
-      setDataProvider((prev) =>
-        prev.map((element, index) => {
-          if (index == row) {
-            return (element = value);
-          }
-
-          return element;
-        }),
-      );
-    },
-    [hotRef],
-  );
-
-  async function handleDataChange(
-    row: any,
-    prop: any,
-    oldValue: any,
-    newValue: any,
-  ) {
-    const isNew = !!dataProvider[row].id;
-
-    if (oldValue !== newValue && dataProvider.length) {
-      try {
-        if (!isNew) setIsTableLocked(true);
-
-        const id = await handleSave(
-          dataProvider[row],
-          isNew,
-          dataProvider[row]?.id,
-        );
-        if (
-          id &&
-          /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(
-            id.toString(),
-          )
-        ) {
-          const updated = dataProvider;
-          updated[row].id = id;
-          setDataProvider(updated);
-        }
-      } catch (error) {
-        // toast.error(error);
-      } finally {
-        if (!isNew) setIsTableLocked(false); // Desbloqueia o Handsontable
-      }
-    } else {
-      // setIsTableLocked(false); // Desbloqueia o Handsontable se não entrar na condição
-    }
-  }
 
   const getRowsInterval = (start: number, end: number): Array<number> => {
     if (start > end) {
@@ -537,7 +455,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     ) => {
       if (value?.length > 0) {
         td.innerHTML = value
-          .map((url: string) => {
+          .map((url: string): string => {
             const fileNameWithExtension = getFilenameFromUrl(url);
             if (fileNameWithExtension) {
               const lastDotIndex = fileNameWithExtension.lastIndexOf(".");
@@ -546,8 +464,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 lastDotIndex + 1,
               );
               if (
-                !["jpg", "jpeg", "png", "thumb"].includes(
-                  fileType.toLowerCase(),
+                !["jpg", "jpeg", "png", "thumb", "PNG", "JPG"].includes(
+                  fileType,
                 )
               ) {
                 const icon = "https://prod-listme.s3.amazonaws.com/file.svg";
@@ -561,6 +479,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                   <img class="imgItem" title="${fileName}" src="${url}" style="width:25px;height:25px;margin-right:4px;" onerror="this.onerror=null;this.src='https://d1ptd3zs6hice0.cloudfront.net/users-data-homolog/IMG_IJ06ikQw9qqGOhPdTBpz.png';">
                 `;
             }
+
+            return "";
           })
           .join("");
       } else {
@@ -589,10 +509,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             <LeftContent>
               <ArrowIcon
                 onClick={() => {
-                  // setDataProvider([]);
-                  // setHeaderTable([]);
-                  // setFilteredData([]);
-                  // setColumns([]);
                   navigate(ROUTES.TEMPLATES);
                 }}
               />
@@ -641,9 +557,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             </Contents>
           </Filters>
         </Content>
-        {/* {loading ? (
-          <Loading />
-        ) : ( */}
         <Container>
           <HotTable
             readOnly={isTableLocked}
@@ -663,7 +576,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             // manualColumnFreeze
             search
             renderAllRows={false}
-            viewportRowRenderingOffset={100}
+            viewportRowRenderingOffset={200}
             viewportColumnRenderingOffset={100}
             rowHeaders
             columnSorting={{ sortEmptyCells: false, headerAction: false }}
@@ -734,7 +647,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 ) {
                   try {
                     if (!isNew) setIsTableLocked(true);
-
                     const id = await handleSave(
                       dataProvider[customChanges[0][0]],
                       isNew,
@@ -875,6 +787,81 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 TD.style.display = "none";
               }
             }}
+            afterScrollVertically={(): void => {
+              const { hotInstance } = hotRef.current!;
+              if (hotInstance) {
+                const holder =
+                  hotInstance.rootElement.querySelector(".wtHolder");
+                if (holder) {
+                  const scrollableHeight = holder.scrollHeight;
+                  const { scrollTop } = holder;
+                  const visibleHeight = holder.clientHeight;
+
+                  if (scrollTop + visibleHeight >= scrollableHeight) {
+                    setLoading(true);
+                    setIsTableLocked(true);
+                    productRequests
+                      .list(
+                        { page, limit: 100 },
+                        window.location.pathname.substring(10),
+                      )
+                      .then((response) => {
+                        const productFields: any[] = [];
+
+                        const { data } = response;
+                        if (data) {
+                          data.products?.forEach((item: any) => {
+                            const object: any = {};
+                            item.fields.forEach((field: any) => {
+                              const currentField = headerTable.find(
+                                (e: any) => e.data == field.id,
+                              );
+
+                              if (currentField && field.value) {
+                                const test = !COMPONENT_CELL_PER_TYPE[
+                                  currentField?.type?.toUpperCase()
+                                ]
+                                  ? field?.value[0]
+                                  : field?.value;
+
+                                object[field?.id] = test;
+                              }
+                            });
+                            productFields.push({
+                              ...object,
+                              id: item.id,
+                              created_at: item.created_at,
+                            });
+                          });
+
+                          if (!productFields.length && template) {
+                            productFields.push({ [template[0]]: "" });
+                          }
+
+                          setDataProvider((prev) => [
+                            ...prev,
+                            ...productFields,
+                          ]);
+
+                          setPage(page + 1);
+                          setLoading(false);
+                          setIsTableLocked(false);
+                        }
+                      })
+                      .catch((errr: any) => {
+                        setLoading(false);
+                        setIsTableLocked(false);
+
+                        const hotInstance = hotRef.current!?.hotInstance;
+                        if (hotInstance) {
+                          hotInstance.render();
+                        }
+                        toast.error(errr.response.data.message);
+                      });
+                  }
+                }
+              }
+            }}
             fixedColumnsStart={1}
             afterGetColHeader={renderHeaderComponent}
             hiddenColumns={{ columns: hidden, indicators: true }}
@@ -917,25 +904,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             }}
           >
             {cols.map((col: any, index: number) => {
-              if (col.isCustom && col.type === "radio") {
-                return (
-                  <HotColumn
-                    width={col.width}
-                    _columnIndex={col.order}
-                    data={col.data}
-                    key={index}
-                  >
-                    <RadioEditor
-                      hot-editor
-                      options={[...col.options, ""]}
-                      editorColumnScope={0}
-                      // column={col}
-                      // dataProvider={dataProvider}
-                    />
-                  </HotColumn>
-                );
-              }
-
               if (col.isCustom && col.type === "list") {
                 return (
                   <HotColumn
@@ -945,6 +913,23 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                     key={index}
                   >
                     <DropdownEditor
+                      hot-editor
+                      options={[...col.options, ""]}
+                      editorColumnScope={0}
+                    />
+                  </HotColumn>
+                );
+              }
+
+              if (col.isCustom && col.type === "radio") {
+                return (
+                  <HotColumn
+                    width={col.width}
+                    _columnIndex={col.order}
+                    data={col.data}
+                    key={index}
+                  >
+                    <RadioEditor
                       hot-editor
                       options={[...col.options, ""]}
                       editorColumnScope={0}
@@ -1005,6 +990,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             })}
           </HotTable>
         </Container>
+        {loading ? <LoadingFetch /> : <></>}
       </>
     </>
   );

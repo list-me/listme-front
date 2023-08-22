@@ -20,10 +20,18 @@ export const isEquivalent = (a: any, b: any) => {
 
 export const getFilenameFromUrl = (urlString: string): string | null => {
   try {
-    const url = new URL(urlString);
-    const { pathname } = url;
-    const parts = pathname.split("/");
-    return parts[parts.length - 1];
+    const regex = new RegExp(
+      "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+",
+    );
+
+    if (regex.test(urlString)) {
+      const url = new URL(urlString);
+      const { pathname } = url;
+      const parts = pathname.split("/");
+      return parts[parts.length - 1];
+    }
+
+    return null;
   } catch (error) {
     console.error("Invalid URL:", urlString);
     return null;

@@ -15,7 +15,7 @@ export const productRequests = {
   ): Promise<AxiosResponse> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.get(
-      `/products/?product_template_id=${templateId}&key=${keyword}&limit=${limit}`,
+      `/products/?product_template_id=${templateId}&key=${keyword}&limit=${limit}&offset=${page}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

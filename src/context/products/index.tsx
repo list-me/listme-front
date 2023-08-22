@@ -185,7 +185,6 @@ export const ProductContextProvider = ({ children }: any) => {
       productRequests
         .delete(product.id)
         .then((response: any) => {
-          // setFilteredData(currentProducts);
           toast.success("Produto excluído com sucesso");
         })
         .catch((error) => {
@@ -201,20 +200,13 @@ export const ProductContextProvider = ({ children }: any) => {
     templateId: string,
     templateFields: IHeaderTable[],
     page: number = 0,
-    limit: number = 1000,
+    limit: number = 500,
   ) => {
     if (total == filteredData.length) return;
     const { data } = await productRequests.list(
       { page: page, limit },
       templateId,
     );
-
-    // .catch((error) => {
-    //   console.error(error);
-    //   toast.error(
-    //     "Não foi possível carregar os produtos, por favor tente novamente!",
-    //   );
-    // });
 
     const productFields: any = [];
     data?.products?.forEach((item: any) => {
@@ -248,7 +240,6 @@ export const ProductContextProvider = ({ children }: any) => {
 
     setProducts(productFields);
     return { products, headerTable };
-    // setTotal(data?.total);
   };
 
   const handleRedirectAndGetProducts = async (id: string) => {
