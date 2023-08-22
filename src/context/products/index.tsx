@@ -200,7 +200,7 @@ export const ProductContextProvider = ({ children }: any) => {
     templateId: string,
     templateFields: IHeaderTable[],
     page: number = 0,
-    limit: number = 10,
+    limit: number = 500,
   ) => {
     // if (total == prod.length) return;
     const { data } = await productRequests.list(
@@ -238,8 +238,9 @@ export const ProductContextProvider = ({ children }: any) => {
       productFields.push({ [template[0]]: "" });
     }
 
+    console.log({ data });
     setProducts(productFields);
-    setTotal(productFields?.length);
+    setTotal(data?.total);
     return { products, headerTable };
   };
 

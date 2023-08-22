@@ -77,6 +77,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     handleRemoveColumn,
     products,
     colHeaders,
+    total,
   } = useContext(productContext);
 
   const [cols, setCols] = useState<any[]>([]);
@@ -797,7 +798,10 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                   const { scrollTop } = holder;
                   const visibleHeight = holder.clientHeight;
 
-                  if (scrollTop + visibleHeight >= scrollableHeight) {
+                  if (
+                    scrollTop + visibleHeight >= scrollableHeight &&
+                    total > dataProvider.length
+                  ) {
                     setLoading(true);
                     setIsTableLocked(true);
                     productRequests
