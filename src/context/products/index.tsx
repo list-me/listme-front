@@ -79,7 +79,7 @@ interface ITypeProductContext {
   ) => Promise<any>;
 
   handleGetTemplate: (templateId: string) => Promise<void>;
-  total: number | undefined;
+  total: number;
   handleGetProductsFiltered: (
     key: string,
     templateId: string,
@@ -133,7 +133,7 @@ export const productContext = createContext<ITypeProductContext>({
   handleRemoveColumn: () => {},
   handleGetProducts: async (): Promise<any> => {},
   handleGetTemplate: async (): Promise<void> => {},
-  total: undefined,
+  total: 0,
   handleGetProductsFiltered: async (
     key: string,
     templateId: string,
@@ -150,7 +150,7 @@ export const ProductContextProvider = ({ children }: any) => {
   const [customFields, setCustomFields] = useState<any[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [filter, setFilter] = useState<string | undefined>(undefined);
-  const [total, setTotal] = useState<number | undefined>(undefined);
+  const [total, setTotal] = useState<number>(0);
 
   const COMPONENT_CELL_PER_TYPE: ICustomCellType = {
     RADIO: "radio",
@@ -200,9 +200,9 @@ export const ProductContextProvider = ({ children }: any) => {
     templateId: string,
     templateFields: IHeaderTable[],
     page: number = 0,
-    limit: number = 500,
+    limit: number = 10,
   ) => {
-    if (total == filteredData.length) return;
+    // if (total == prod.length) return;
     const { data } = await productRequests.list(
       { page: page, limit },
       templateId,
@@ -239,6 +239,7 @@ export const ProductContextProvider = ({ children }: any) => {
     }
 
     setProducts(productFields);
+    setTotal(productFields?.length);
     return { products, headerTable };
   };
 
