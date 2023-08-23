@@ -906,6 +906,35 @@ const CustomTable: React.FC<CustomTableProps> = () => {
               setColumns(newColumns);
               handleMove(newColumns);
             }}
+            afterDocumentKeyDown={(event: KeyboardEvent): void => {
+              const { hotInstance } = hotRef.current!;
+              if (hotInstance) {
+                if (event.key === "ArrowRight" && event.ctrlKey) {
+                  const selected = hotInstance.getSelected();
+                  if (selected) {
+                    const [startRow, , endRow] = selected[0];
+
+                    let lastVisibleCol = hotInstance.countCols() - 2;
+                    while (
+                      hotInstance.getColWidth(lastVisibleCol) === 0 &&
+                      lastVisibleCol >= 0
+                    ) {
+                      lastVisibleCol--;
+                    }
+
+                    if (lastVisibleCol >= 0) {
+                      hotInstance.selectCell(
+                        startRow,
+                        lastVisibleCol,
+                        endRow,
+                        lastVisibleCol,
+                      );
+                    }
+                  }
+                  event.preventDefault();
+                }
+              }
+            }}
           >
             {cols.map((col: any, index: number) => {
               if (col.isCustom && col.type === "list") {
