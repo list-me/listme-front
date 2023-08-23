@@ -672,13 +672,11 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             afterPaste={async (data: CellValue[][], coords: RangeType[]) => {
               if (data.length && !isTableLocked) {
                 const range = coords[0];
-
                 const fieldColumns = cols
                   .slice(range.startCol, range.endCol + 1)
                   .map((column) => {
                     return { field: column.data, type: column.type };
                   });
-
                 const rangeOfRows: number = range.endRow - range.startRow + 1;
                 const rows: number[] = getRowsInterval(
                   range.startRow,
@@ -686,7 +684,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 );
 
                 const changesPromises: Array<any> = [];
-
                 for (let i = 0; rangeOfRows > i; i++) {
                   const row: number = rows[i];
                   const changes = dataProvider[row];
@@ -694,14 +691,13 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                     const value = Object.keys(COMPONENT_CELL_PER_TYPE).includes(
                       column.type.toString().toUpperCase(),
                     )
-                      ? [data[0][index]]
-                      : data[0][index];
+                      ? [data[i][index]]
+                      : data[i][index];
+
                     changes[column.field] = value;
                   });
-
                   changesPromises.push(handleSave(changes, true, changes?.id));
                 }
-
                 await Promise.all(changesPromises);
                 const { hotInstance } = hotRef.current!;
                 if (hotInstance) {
@@ -709,80 +705,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 }
               }
             }}
-            // beforeChange={(changes: (Handsontable.CellChange | null)[], source) => {
-            //   // if (changes.length) {
-            //   //   const customChanges = changes as Handsontable.CellChange[];
-            //   //   if (customChanges[0][2] != customChanges[0][3] && dataProvider) {
-            //   //     const { hotInstance } = hotRef.current!;
-            //   //     const requiredFields = template.fields.fields
-            //   //       .filter((field: any) => {
-            //   //         return field.required;
-            //   //       })
-            //   //       .map((filtered: any) => filtered.id);
-            //   //     const newDataProvider = dataProvider;
-            //   //     // eslint-disable-next-line prefer-destructuring
-            //   //     newDataProvider[customChanges[0][0]][customChanges[0][1]] =
-            //   //       customChanges[0][3];
-            //   //     const currentFields = Object.keys(
-            //   //       newDataProvider[customChanges[0][0]],
-            //   //     ).filter(
-            //   //       (key) => newDataProvider[customChanges[0][0]][key]?.length,
-            //   //     );
-            //   //     const allElementsExist = requiredFields.every((elem: any) =>
-            //   //       currentFields.includes(elem),
-            //   //     );
-            //   //     if (!allElementsExist && hotInstance) {
-            //   //       const metaExists = hotInstance
-            //   //         .getCellMetaAtRow(customChanges[0][0])
-            //   //         .find((e) => e.className == "invalid-cell");
-            //   //       if (metaExists) return true;
-            //   //       requiredFields.forEach((key: any, index: number) => {
-            //   //         const currentClassName = hotInstance.getCellMeta(
-            //   //           customChanges[0][0],
-            //   //           index,
-            //   //         ).className;
-            //   //         if (currentClassName !== "invalid-cell") {
-            //   //           hotInstance.setCellMeta(
-            //   //             customChanges[0][0],
-            //   //             index,
-            //   //             "className",
-            //   //             "invalid-cell",
-            //   //           );
-            //   //         }
-            //   //       });
-            //   //       return;
-            //   //     }
-            //   //     if (hotInstance && requiredFields.includes(customChanges[0][1])) {
-            //   //       requiredFields.forEach((key: any, index: number) => {
-            //   //         const currentClassName = hotInstance.getCellMeta(
-            //   //           customChanges[0][0],
-            //   //           index,
-            //   //         ).className;
-            //   //         if (currentClassName == "invalid-cell") {
-            //   //           hotInstance.setCellMeta(
-            //   //             customChanges[0][0],
-            //   //             index,
-            //   //             "className",
-            //   //             "",
-            //   //           );
-            //   //         }
-            //   //       });
-            //   //       setEnable();
-            //   //       return;
-            //   //     }
-            //   //   }
-            //   // }
-            // }}
-            // afterSelection={(
-            //   row: number,
-            //   column: number,
-            //   row2: number,
-            //   column2: number,
-            //   preventScrolling: { value: boolean },
-            //   selectionLayerLevel: number,
-            // ) => {
-            //   console.log();
-            // }}
             afterRenderer={(TD, row, col, prop, value, cellProperties) => {
               if (col + 1 === headers.length) {
                 TD.style.display = "none";
