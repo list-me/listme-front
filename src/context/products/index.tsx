@@ -567,7 +567,7 @@ export const ProductContextProvider = ({ children }: any) => {
       });
 
     // setHeaderTable(col);
-    setCustomFields(fields);
+    // setCustomFields(fields);
     templateRequests
       .customView(window.location.pathname.substring(10), { fields })
       .catch((error) =>

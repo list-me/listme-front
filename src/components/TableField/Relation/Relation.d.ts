@@ -1,3 +1,5 @@
+import { NavigationAction } from "../../CustomTable/Editors/Editors.d";
+
 interface PropsRelation {
   currentValue: Array<any>;
   templateId: string;
@@ -5,9 +7,9 @@ interface PropsRelation {
   column: any;
   dataProvider: any[];
   row: number;
-  onChange: (newValue: Array<T>) => void;
-  onCancel: () => void;
   isOpen?: boolean;
+  onChange: (newValue: Array<T>, action: NavigationAction) => void;
+  onCancel: () => void;
 }
 
 export type { PropsRelation };

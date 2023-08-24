@@ -32,16 +32,19 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
     return this.state.value;
   }
 
+  onBeforeKeyDown = (event: KeyboardEvent): void => {
+    if (event.key === "Tab") {
+      this.finishEditing();
+    }
+  };
+
   open(): void {
     if (this.rootRef.current) this.rootRef.current.style.display = "block";
-    // document.addEventListener("keydown", this.onBeforeKeyDown, true);
-
-    // console.log("Dentro do open", this.state.value);
+    document.addEventListener("keydown", this.onBeforeKeyDown, true);
   }
 
   close(): void {
     if (this.rootRef.current) this.rootRef.current.style.display = "none";
-    // document.removeEventListener("keydown", this.onBeforeKeyDown, true);
   }
 
   prepare(
@@ -88,6 +91,10 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
     }
   }
 
+  componentWillUnmount(): void {
+    document.removeEventListener("keydown", this.onBeforeKeyDown, true);
+  }
+
   render(): ReactNode {
     return (
       <div
@@ -110,8 +117,6 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
             onSuccess={(images: Array<string>) => {
               this.setState({ newValue: images });
               this.setValue(images);
-
-              // console.log({ images });
             }}
           />
         ) : (

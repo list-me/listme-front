@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
@@ -6,6 +7,7 @@ import { BaseEditorComponent } from "@handsontable/react";
 
 import { RelationProps, RelationState } from "./Relation.d";
 import { Relation } from "../../../TableField/Relation";
+import { Navigate, NavigationAction, NavigationFunction } from "../Editors.d";
 
 class RelationEditor extends BaseEditorComponent<
   RelationProps,
@@ -15,6 +17,13 @@ class RelationEditor extends BaseEditorComponent<
   rootRef = createRef<HTMLDivElement>();
 
   containerStyle: any;
+
+  navigate: Navigate = {
+    [NavigationAction.RIGHT]: this.navigateToNextRightCell.bind(this),
+    [NavigationAction.DOWN]: this.navigateToNextDownCell.bind(this),
+    [NavigationAction.UP]: this.navigateToNextUpCell.bind(this),
+    [NavigationAction.LEFT]: this.navigateToPreviousLeftCell.bind(this),
+  };
 
   constructor(props: any) {
     super(props);
@@ -31,16 +40,17 @@ class RelationEditor extends BaseEditorComponent<
   }
 
   onBeforeKeyDown = (event: KeyboardEvent): void => {
-    // const target = event.target as HTMLDivElement;
+    const target = event.target as HTMLDivElement;
     // if (target.tagName !== "TEXTAREA") {
     //   console.log({ target });
     //   event.stopImmediatePropagation();
     //   event.preventDefault();
     // }
-    // if (event.key === "Enter") {
-    //   console.log("ON ENTER");
-    //   this.navigateToNextDownCell();
-    // }
+
+    if (event.key === "Escape") {
+      this.finishEditing();
+    }
+
     // if (["Tab"].includes(event.key)) {
     //   this.close();
     //   this.finishEditing();
@@ -62,7 +72,7 @@ class RelationEditor extends BaseEditorComponent<
 
   open(): void {
     if (this.rootRef.current) this.rootRef.current.style.display = "block";
-    // document.addEventListener("keydown", this.onBeforeKeyDown, true);
+    document.addEventListener("keydown", this.onBeforeKeyDown, true);
 
     // console.log("Dentro do open", this.state.value);
     this.setState({ isOpen: true });
@@ -115,6 +125,8 @@ class RelationEditor extends BaseEditorComponent<
     }
   }
 
+  navigateToPreviousLeftCell(): void {}
+
   navigateToNextDownCell(): void {
     const { hotInstance } = this;
     if (hotInstance) {
@@ -123,11 +135,19 @@ class RelationEditor extends BaseEditorComponent<
     }
   }
 
-  handleChange(value: any): void {
+  navigateToNextUpCell(): void {
+    const { hotInstance } = this;
+    if (hotInstance) {
+      const { row, col } = this.state;
+      hotInstance.selectCell(row - 1, col);
+    }
+  }
+
+  handleChange(value: any, action: NavigationFunction): void {
     const { hotInstance } = this;
     if (hotInstance) {
       hotInstance.setDataAtCell(this.state.row, this.state.col, value);
-      this.navigateToNextDownCell();
+      action();
     }
 
     this.close();
@@ -135,12 +155,15 @@ class RelationEditor extends BaseEditorComponent<
   }
 
   handleCancel(): void {
-    this.close();
     this.finishEditing();
   }
 
   stopMousedownPropagation(e: any): void {
     e.stopPropagation();
+  }
+
+  componentWillUnmount(): void {
+    document.removeEventListener("keydown", this.onBeforeKeyDown, true);
   }
 
   render(): ReactNode {
@@ -159,8 +182,11 @@ class RelationEditor extends BaseEditorComponent<
             templateId={this.props.templateId}
             field={this.props.field}
             dataProvider={this.props.dataProvider}
-            onChange={(newValue: Array<any>): void =>
-              this.handleChange(newValue?.filter(Boolean))
+            onChange={(newValue: Array<any>, action: NavigationAction): void =>
+              this.handleChange(
+                newValue?.filter(Boolean),
+                this.navigate[action],
+              )
             }
             onCancel={() => this.handleCancel()}
           />

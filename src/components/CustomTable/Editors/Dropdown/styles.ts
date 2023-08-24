@@ -27,7 +27,7 @@ export const Item = styled.div`
 
   &:hover {
     cursor: pointer;
-    background: #3818d9 !important;
-    color: white !important;
+    background: #f7f5ff !important;
+    color: #a899f1 !important;
   }
 `;

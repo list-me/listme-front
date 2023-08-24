@@ -29,6 +29,7 @@ import { templateRequests } from "../../../services/apis/requests/template";
 import { productRequests } from "../../../services/apis/requests/product";
 import { Loading } from "../../Loading";
 import { SearchBar } from "../../SearchBar/SearchBar";
+import { NavigationAction } from "../../CustomTable/Editors/Editors.d";
 
 const RelationComponent: React.FC<PropsRelation> = ({
   currentValue,
@@ -49,6 +50,7 @@ const RelationComponent: React.FC<PropsRelation> = ({
   const [data, setData] = useState<any[]>([]);
   const [oldData, setOldData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
   const [buttonLoading, setButtonLoading] = useState<boolean>(false);
   const [fieldTitle, setFieldTitle] = useState<any[]>([]);
 
@@ -195,7 +197,7 @@ const RelationComponent: React.FC<PropsRelation> = ({
     newData[row][column.data] = currentProducts;
 
     setButtonLoading(false);
-    onChange(currentProducts);
+    onChange(currentProducts, NavigationAction.RIGHT);
   };
 
   const handleSearchProducts = async (): Promise<void> => {
@@ -285,10 +287,18 @@ const RelationComponent: React.FC<PropsRelation> = ({
       return;
     }
 
-    if (event.key === "Enter") return onChange(currentProducts);
+    if (event.shiftKey && event.key === "Enter")
+      return onChange(currentProducts, NavigationAction.UP);
 
-    if (["Tab", "Escape"].includes(event.key)) {
-      onCancel();
+    if (event.shiftKey && event.key === "Tab")
+      return onChange(currentProducts, NavigationAction.LEFT);
+
+    if (event.key === "Enter")
+      return onChange(currentProducts, NavigationAction.DOWN);
+
+    if (event.key === "Tab") {
+      setIsOpen(false);
+      return onChange(currentProducts, NavigationAction.RIGHT);
     }
   };
 
@@ -305,7 +315,7 @@ const RelationComponent: React.FC<PropsRelation> = ({
 
   return (
     <Container onClick={() => {}} onKeyDown={onBeforeKeyDown}>
-      <Modal isOpen={true} changeVisible={() => {}} width="60vw" top="2%">
+      <Modal isOpen={isOpen} changeVisible={() => {}} width="60vw" top="2%">
         <>
           <Title>
             Produtos relacionados

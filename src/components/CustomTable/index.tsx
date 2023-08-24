@@ -534,10 +534,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 onClick={() => {
                   const { hotInstance } = hotRef.current!;
                   if (hotInstance) {
-                    if (hotInstance.isEmptyRow(0))
-                      return toast.warn("Preencha o produto atual");
+                    setDataProvider((prev) => [{}, ...prev]);
                   }
-                  setDataProvider((prev) => [{}, ...prev]);
                 }}
               >
                 Adicionar produto
@@ -677,6 +675,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                   .map((column) => {
                     return { field: column.data, type: column.type };
                   });
+
                 const rangeOfRows: number = range.endRow - range.startRow + 1;
                 const rows: number[] = getRowsInterval(
                   range.startRow,
@@ -687,16 +686,20 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 for (let i = 0; rangeOfRows > i; i++) {
                   const row: number = rows[i];
                   const changes = dataProvider[row];
+
                   fieldColumns.forEach((column: any, index: number): void => {
+                    const position: number = data.length > 1 ? i : 0;
                     const value = Object.keys(COMPONENT_CELL_PER_TYPE).includes(
                       column.type.toString().toUpperCase(),
                     )
-                      ? [data[i][index]]
-                      : data[i][index];
+                      ? [data[position][index]]
+                      : data[position][index];
 
                     changes[column.field] = value;
                   });
-                  changesPromises.push(handleSave(changes, true, changes?.id));
+                  changesPromises.push(
+                    handleSave(changes, !!changes?.id, changes?.id),
+                  );
                 }
                 await Promise.all(changesPromises);
                 const { hotInstance } = hotRef.current!;
@@ -825,7 +828,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
               });
 
               setHeaders(newColumns.map((item) => item?.title ?? " "));
-              setColumns(newColumns);
               handleMove(newColumns);
             }}
             afterDocumentKeyDown={(event: KeyboardEvent): void => {

@@ -37,14 +37,8 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
-
-  const [oldItems, setOldItems] = useState<string[]>(value);
   const [items, setItems] = useState<any[]>(value ?? []);
-  const [top, setTop] = useState<any>("");
 
-  const modalRef = useRef<HTMLDivElement | null>(null);
-  const iconRef = useRef<SVGSVGElement | null>(null);
-  const dropDownRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { uploadImages } = useContext(imageContext);
@@ -126,7 +120,19 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     }
   };
 
-  useEffect(() => {}, []);
+  const onBeforeKeyDown = async (event: any): Promise<void> => {
+    if (event.key === "Tab") {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", onBeforeKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", onBeforeKeyDown);
+    };
+  }, []);
 
   return (
     <ImageContextProvider>
@@ -252,80 +258,6 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
           )}
         </Container>
       </Modal>
-      {/* <input
-        type="file"
-        ref={fileInputRef}
-        multiple
-        style={{ display: "none" }}
-        onChange={(e) => {
-          if (e.target.files) {
-            onDrop(Array.from(e.target.files));
-          }
-        }}
-      />
-      <Container
-        {...getRootProps()}
-        ref={modalRef}
-        onClick={async () => setIsOpen(!isOpen)}
-      >
-        {isDragActive ? (
-          <Zone>Arraste e solte aqui...</Zone>
-        ) : (
-          <CellContent>
-            <div>
-              <span onClick={(e) => e.preventDefault()}>
-                {items?.length
-                  ? items?.map((item, index) => {
-                      if (item?.length > 1 && index < value?.length - 1) {
-                        return `${item}, `;
-                      }
-
-                      return item;
-                    })
-                  : []}
-              </span>
-              <AddIcon onClick={handleAddIconClick} ref={iconRef} />
-            </div>
-          </CellContent>
-        )}
-        {isOpen && items?.length ? (
-          <SuspenseMenu
-            width={String(250)}
-            top={String(top + 55)}
-            ref={dropDownRef}
-          >
-            {items.map((item, index) => {
-              if (item.length > 1) {
-                const altName = item.split("/").pop();
-                const srcValue = ["jpeg", "jpg", "svg", "png", "thumb"].some(
-                  (extension) => item.includes(extension),
-                )
-                  ? item
-                  : DEFAULT_FILE_ICON_SRC;
-
-                return (
-                  <Image key={index}>
-                    {!imageLoading ? (
-                      <CloseIcon onClick={(e) => handleRemove(item, e)} />
-                    ) : (
-                      <></>
-                    )}
-                    <a href={item} target="_blank" rel="noreferrer">
-                      <img
-                        src={srcValue}
-                        alt={altName}
-                        style={{ backgroundColor: "white" }}
-                      />
-                    </a>
-                  </Image>
-                );
-              }
-            })}
-          </SuspenseMenu>
-        ) : (
-          <></>
-        )}
-      </Container> */}
     </ImageContextProvider>
   );
 };
