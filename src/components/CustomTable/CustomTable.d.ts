@@ -1,5 +1,5 @@
 import { Table } from "antd";
-import { BaseRenderer } from "handsontable/renderers";
+import { ReactElement } from "react";
 
 type EditableTableProps = Parameters<typeof Table>[0];
 type ColumnTypes = Exclude<EditableTableProps["columns"], undefined>;
@@ -15,12 +15,11 @@ interface DataType {
 }
 
 interface CustomTableProps {
-  // dataProvider?: any[];
-  temp?: any[];
+  data?: any[];
   bordered?: boolean;
   rowClassName?: () => string;
   components?: {};
-  colHeaders?: string[];
+  // colHeaders?: string[];
   setEnable?: () => void;
   addProducts?: () => void;
   children?: any;
@@ -30,4 +29,9 @@ interface ICustomColumns {
   [key: string]: string[];
 }
 
-export type { CustomTableProps, ICustomColumns, ColumnTypes };
+type CustomEditors = {
+  list: ReactElement;
+  radio: ReactElement;
+};
+
+export type { CustomTableProps, ICustomColumns, ColumnTypes, CustomEditors };

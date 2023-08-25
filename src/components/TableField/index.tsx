@@ -146,16 +146,17 @@ export const TableField: React.FC<any> = ({
     <ImageContextProvider>
       {["file", "relation"].includes(type) ? (
         type == "file" ? (
-          <Dropzone
-            col={0}
-            instance={instance}
-            row={row}
-            value={value}
-            prop={column.data}
-            // className={className}
-            templateId={templateId}
-            dataProvider={dataProvider}
-          />
+          // <Dropzone
+          //   col={0}
+          //   instance={instance}
+          //   row={row}
+          //   value={value}
+          //   prop={column.data}
+          //   // className={className}
+          //   templateId={templateId}
+          //   dataProvider={dataProvider}
+          // />
+          <></>
         ) : (
           <Relation
             currentValue={
@@ -166,6 +167,9 @@ export const TableField: React.FC<any> = ({
             column={column}
             dataProvider={dataProvider}
             row={row}
+            onChange={(newValue: any[]) => {}}
+            onCancel={() => {}}
+            isOpen={false}
           />
         )
       ) : (
@@ -214,8 +218,8 @@ export const TableField: React.FC<any> = ({
                 const newData = dataProvider;
                 newData[row][prop] = [item];
 
-                const id = await handleSave(newData[row]);
-                if (id) dataProvider[row].id = id;
+                // const id = await handleSave(newData[row]);
+                // if (id) dataProvider[row].id = id;
               }}
             />
           ) : type === "list" ? (
@@ -230,8 +234,8 @@ export const TableField: React.FC<any> = ({
                       const newData = dataProvider;
                       newData[row][prop] = [option];
 
-                      const id = await handleSave(newData[row]);
-                      if (id) dataProvider[row].id = id;
+                      // const id = await handleSave(newData[row]);
+                      // if (id) dataProvider[row].id = id;
 
                       // handleSetNewValue(option);
                       // setNewValue([option]);

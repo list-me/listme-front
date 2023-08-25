@@ -1,61 +1,112 @@
 import styled from "styled-components";
 
-export const CellContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
+export const Content = styled.div`
+  width: fit-content;
+  height: fit-content;
+  /* height: 120px; */
 
-  /* .invalid-cell:after {
-    content: "Campo obrigatório!";
-    color: red;
-    font-size: 12px;
-  } */
-
-  width: 100%;
-`;
-
-export const Container = styled.div`
-  display: flex;
+  padding-top: 12px;
   align-items: center;
-  /* justify-content: space-between; */
 
-  width: 100%;
-  height: 100%;
-
-  /* padding: 8px; */
+  overflow: none;
 
   svg {
-    min-width: 20px;
-    margin-right: 16px;
+    width: 20px;
+    height: 20px;
+
+    position: relative;
+    left: 140px;
+    bottom: 165px;
+
+    display: flex;
+    justify-content: flex-end;
+    background-color: white;
 
     &:hover {
       cursor: pointer;
     }
   }
-
-  span {
-    width: auto;
-    overflow: hidden;
-
-    align-self: center;
-    margin: 0 8px;
-
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  /* .invalid-cell:after {
-    content: "Campo obrigatório!";
-    color: red;
-    font-size: 12px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-  } */
 `;
 
+export const ModalHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  font-family: ${({ theme }) => theme.fonts.family.bold};
+  font-size: ${({ theme }) => theme.fonts.sizes.medium};
+
+  svg {
+    width: 25px;
+    height: 25px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+`;
+
+export const Container = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+
+  padding-top: 8px;
+
+  max-height: 700px;
+
+  overflow: auto;
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: unset;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #cccccc;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #3818d9;
+  }
+
+  div:not(:last-child) {
+    margin-right: 8px !important;
+    margin-bottom: 8px !important;
+  }
+
+  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    max-height: 500px;
+  }
+`;
+
+export const NewContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 150px;
+  height: 150px;
+
+  border-radius: 8px;
+  border: 2px dotted #cccccc;
+
+  margin-top: 12px;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
 export const Label = styled.span`
   width: auto;
   height: 80%;
@@ -150,33 +201,39 @@ export const SuspenseMenu = styled.div<{ width: string; top: string }>`
 `;
 
 export const Image = styled.div`
-  flex: 0 0 25%;
+  width: 150px;
 
-  svg {
-    width: 20px;
-    height: 20px;
+  border: 2px solid #cccccc;
+  border-radius: 8px;
 
-    position: absolute;
-    z-index: 9999;
-    margin-bottom: 40px;
-    margin-left: 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-    display: flex;
-    justify-content: flex-end;
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
+  padding: 8px;
 
   img {
-    width: 40px;
-    height: 40px;
+    width: 100px;
+    height: 100px;
 
     border-radius: 5px;
 
     &:hover {
       cursor: pointer;
     }
+  }
+
+  label {
+    font-family: ${({ theme }) => theme.fonts.family.normal};
+    font-size: ${({ theme }) => theme.fonts.sizes.xxxsmall};
+
+    max-width: 100px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+
+    margin: 0 6px !important;
   }
 `;

@@ -1,6 +1,11 @@
 import styled from "styled-components";
 
-export const Content = styled.div``;
+export const Content = styled.div`
+  /* @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    height: 100vh;
+  } */
+  overflow: hidden;
+`;
 
 export const LeftContent = styled.div`
   display: flex;
@@ -94,11 +99,11 @@ export const HeaderContent = styled.div`
 `;
 
 export const Container = styled.div`
-  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-    height: 73.5%;
-  }
+  /* @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
+    height: 50% !important;
+  } */
 
-  height: 79.5%;
+  overflow: hidden;
 
   .handsontable .wtHolder::-webkit-scrollbar {
     background: transparent !important;
@@ -260,12 +265,46 @@ export const Container = styled.div`
       text-align: start;
       padding-top: 16px;
 
-      div {
+      /* div {
         width: 100%;
         height: 100%;
 
         display: flex;
         align-items: center;
+      } */
+
+      .tagContent {
+        background-color: #dee2e6 !important;
+
+        width: 140px !important;
+        height: 27px !important;
+
+        margin-top: 11px;
+        margin-left: 8px;
+
+        display: flex;
+        align-items: center;
+
+        padding-left: 8px;
+        border-radius: 7px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      .fileItem {
+        margin-top: 16px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      .imgItem {
+        &:hover {
+          cursor: pointer;
+        }
       }
     }
 

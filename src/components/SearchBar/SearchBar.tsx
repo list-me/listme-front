@@ -9,7 +9,7 @@ import { Input } from "../Input";
 
 interface ISearchBarProps {
   handleChangeInput: Function;
-  onPressEnter: Function;
+  onPressEnter: (e: any) => void;
 }
 
 export const SearchBar: React.FC<ISearchBarProps> = ({
@@ -46,14 +46,10 @@ export const SearchBar: React.FC<ISearchBarProps> = ({
             handleChangeInput(value);
           }}
           background
-          onPressEnter={() => onPressEnter()}
+          onPressEnter={onPressEnter}
           height="39px"
         />
-        <ButtonCustom
-          height="35px"
-          width="70px"
-          //   onClick={() => handleSearch(filter)}
-        >
+        <ButtonCustom height="35px" width="70px" onClick={onPressEnter}>
           Buscar
         </ButtonCustom>
       </div>

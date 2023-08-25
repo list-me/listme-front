@@ -1,47 +1,45 @@
+/* eslint-disable react/no-array-index-key */
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
 import { DropzoneRendererProps } from "./Dropzone";
 import {
-  CellContent,
   Container,
   Image,
   Loader,
   Zone,
-  SuspenseMenu,
+  NewContainer,
+  Content,
+  ModalHeader,
 } from "./styles";
-import { imageContext } from "../../context/images";
+import { ImageContextProvider, imageContext } from "../../context/images";
+import { ReactComponent as CloseModalIcon } from "../../assets/close-gray.svg";
+import { ReactComponent as CloseIcon } from "../../assets/close-xsmall-blue.svg";
 import { ReactComponent as AddIcon } from "../../assets/add-gray-large.svg";
-import { ReactComponent as CloseIcon } from "../../assets/close-small-blue.svg";
+
 import { ReactComponent as FileIcon } from "../../assets/file.svg";
 import { productContext } from "../../context/products";
 import { fileRequests } from "../../services/apis/requests/file";
 import { DEFAULT_FILE_ICON_SRC } from "../../constants/default.styles";
 
+import Modal from "../Modal";
+import { Loading } from "../Loading";
+import { getFilenameFromUrl } from "../../utils";
+
 const Dropzone: React.FC<DropzoneRendererProps> = ({
   value,
-  instance,
-  row,
-  col,
-  prop,
-  className,
   templateId,
-  dataProvider,
+  productId,
+  field,
+  onCancel,
+  onSuccess,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
+  const [items, setItems] = useState<any[]>(value ?? []);
 
-  const [oldItems, setOldItems] = useState<string[]>(value);
-  const [items, setItems] = useState<any[]>(value ?? [""]);
-  const [top, setTop] = useState<any>("");
-
-  const modalRef = useRef<HTMLDivElement | null>(null);
-  const iconRef = useRef<SVGSVGElement | null>(null);
-  const dropDownRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const { handleSave } = useContext(productContext);
 
   const { uploadImages } = useContext(imageContext);
 
@@ -50,18 +48,15 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
       setLoading(true);
       try {
         const newFiles = await uploadImages(acceptedFiles, templateId);
+
         if (newFiles) {
-          const temp = [...newFiles, ...items].filter((item) => item !== "");
-
-          const newData = dataProvider;
-          newData[row][prop] = temp;
-
-          setItems(temp);
-          const id = await handleSave(newData[row]);
-          if (id) newData[row].id = id;
+          setItems((prev) => [...prev, ...newFiles]);
+          onSuccess([...newFiles, ...items]);
         }
+
         setLoading(false);
       } catch (error) {
+        onCancel();
         setLoading(false);
         if (error instanceof Error) toast.error(error.message);
       }
@@ -80,8 +75,8 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         `${imageUrl}`,
         "template",
         window.location.pathname.substring(10),
-        dataProvider[row]?.id,
-        prop,
+        productId,
+        field,
       );
 
       const newValue = items.filter((item) => {
@@ -90,15 +85,13 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         }
       });
 
-      const newData = dataProvider;
-      newData[row][prop] = newValue;
-
       if (newValue.length) {
         setItems(newValue);
       } else {
         setItems([]);
-        newData[row][prop] = [];
       }
+
+      onSuccess(newValue);
 
       setImageLoading(false);
     } catch (error) {
@@ -127,119 +120,145 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     }
   };
 
-  useEffect(() => {
-    setItems(value ?? [""]);
-  }, []);
-
-  useEffect(() => {
-    if (modalRef.current!) {
-      const topPosition = modalRef.current!.offsetParent as unknown as any;
-      setTop(topPosition?.offsetTop);
+  const onBeforeKeyDown = async (event: any): Promise<void> => {
+    if (event.key === "Tab") {
+      setIsOpen(false);
     }
+  };
 
-    function handleOutsideClick(event: any) {
-      if (iconRef.current && iconRef.current!.contains(event.target)) {
-        return;
-      }
-
-      if (modalRef.current && !modalRef.current!.contains(event.target)) {
-        if (isOpen) {
-          onClose();
-        }
-      }
-    }
-
-    window.addEventListener("mousedown", handleOutsideClick);
+  useEffect(() => {
+    window.addEventListener("keydown", onBeforeKeyDown);
 
     return () => {
-      window.removeEventListener("mousedown", handleOutsideClick);
+      window.removeEventListener("keydown", onBeforeKeyDown);
     };
-  }, [isOpen]);
-
-  if (loading)
-    return (
-      <Loader className="lds-roller">
-        <div className="loading-spinner" />
-      </Loader>
-    );
+  }, []);
 
   return (
-    <>
-      <input
-        type="file"
-        ref={fileInputRef}
-        multiple
-        style={{ display: "none" }}
-        onChange={(e) => {
-          if (e.target.files) {
-            onDrop(Array.from(e.target.files));
-          }
+    <ImageContextProvider>
+      <Modal
+        isOpen={isOpen}
+        changeVisible={() => {
+          if (loading) return;
+          setIsOpen(!isOpen);
+          onCancel();
         }}
-      />
-      <Container
-        {...getRootProps()}
-        ref={modalRef}
-        onClick={async () => setIsOpen(!isOpen)}
+        width={1000}
+        top="8%"
       >
-        {isDragActive ? (
-          <Zone>Arraste e solte aqui...</Zone>
-        ) : (
-          <CellContent>
-            <div>
-              <span onClick={(e) => e.preventDefault()}>
-                {items?.length
-                  ? items?.map((item, index) => {
-                      if (item?.length > 1 && index < value?.length - 1) {
-                        return `${item}, `;
-                      }
-
-                      return item;
-                    })
-                  : []}
-              </span>
-              <AddIcon onClick={handleAddIconClick} ref={iconRef} />
-            </div>
-          </CellContent>
-        )}
-        {isOpen && items?.length ? (
-          <SuspenseMenu
-            width={String(250)}
-            top={String(top + 55)}
-            ref={dropDownRef}
-          >
-            {items.map((item, index) => {
-              if (item.length > 1) {
-                const altName = item.split("/").pop();
-                const srcValue = ["jpeg", "jpg", "svg", "png", "thumb"].some(
-                  (extension) => item.includes(extension),
-                )
-                  ? item
-                  : DEFAULT_FILE_ICON_SRC;
-
-                return (
-                  <Image key={index}>
-                    {!imageLoading ? (
-                      <CloseIcon onClick={(e) => handleRemove(item, e)} />
-                    ) : (
-                      <></>
-                    )}
-                    <a href={item} target="_blank" rel="noreferrer">
-                      <img
-                        src={srcValue}
-                        alt={altName}
-                        style={{ backgroundColor: "white" }}
-                      />
-                    </a>
-                  </Image>
-                );
-              }
-            })}
-          </SuspenseMenu>
-        ) : (
-          <></>
-        )}
-      </Container>
-    </>
+        <input
+          type="file"
+          ref={fileInputRef}
+          multiple
+          style={{ display: "none" }}
+          onChange={(e) => {
+            if (e.target.files) {
+              onDrop(Array.from(e.target.files));
+            }
+          }}
+        />
+        <ModalHeader
+          onClick={() => {
+            if (loading) return;
+            setIsOpen(false);
+            onCancel();
+          }}
+        >
+          Imagens
+          <CloseModalIcon
+            onClick={() => {
+              if (loading) return;
+              onClose();
+            }}
+          />
+        </ModalHeader>
+        <Container>
+          {!loading ? (
+            <>
+              {items.length ? (
+                items?.map((item: string, index: number) => {
+                  const fileNameWithExtension = getFilenameFromUrl(item);
+                  if (fileNameWithExtension) {
+                    const lastDotIndex = fileNameWithExtension.lastIndexOf(".");
+                    const fileType = fileNameWithExtension.substring(
+                      lastDotIndex + 1,
+                    );
+                    const icon =
+                      "https://prod-listme.s3.amazonaws.com/file.svg";
+                    return (
+                      <Content>
+                        <Image key={index}>
+                          {!["jpg", "jpeg", "png", "thumb"].includes(
+                            fileType,
+                          ) ? (
+                            <>
+                              <a
+                                href={item}
+                                target="_blank"
+                                rel="noreferrer"
+                                download
+                              >
+                                <img
+                                  src={icon}
+                                  alt="altName"
+                                  style={{ backgroundColor: "white" }}
+                                  // onError={(e) => {
+                                  //   (e.target as HTMLImageElement).src =
+                                  //     "https://d1ptd3zs6hice0.cloudfront.net/users-data-homolog/IMG_IJ06ikQw9qqGOhPdTBpz.png";
+                                  // }}
+                                />
+                              </a>
+                              <label
+                                htmlFor="null"
+                                title={getFilenameFromUrl(item) ?? ""}
+                              >
+                                {getFilenameFromUrl(item)}
+                              </label>
+                            </>
+                          ) : (
+                            <>
+                              <a href={item} target="_blank" rel="noreferrer">
+                                <img
+                                  src={item}
+                                  alt={getFilenameFromUrl(item) ?? ""}
+                                  style={{ backgroundColor: "white" }}
+                                  // onError={(e) => {
+                                  //   (e.target as HTMLImageElement).src =
+                                  //     "https://d1ptd3zs6hice0.cloudfront.net/users-data-homolog/IMG_IJ06ikQw9qqGOhPdTBpz.png";
+                                  // }}
+                                />
+                              </a>
+                              <label
+                                htmlFor="null"
+                                title={getFilenameFromUrl(item) ?? ""}
+                              >
+                                {getFilenameFromUrl(item)}
+                              </label>
+                            </>
+                          )}
+                        </Image>
+                        {!imageLoading ? (
+                          <CloseIcon onClick={(e) => handleRemove(item, e)} />
+                        ) : (
+                          <></>
+                        )}
+                      </Content>
+                    );
+                  }
+                })
+              ) : (
+                <></>
+              )}
+              <NewContainer onClick={handleAddIconClick}>
+                <AddIcon />
+              </NewContainer>
+            </>
+          ) : (
+            <Loading />
+          )}
+        </Container>
+      </Modal>
+    </ImageContextProvider>
   );
 };
 

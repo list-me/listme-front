@@ -18,19 +18,15 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface IProps {
   options?: any[];
-  handleSetFilter?: Function;
   handleSearch: Function;
 }
 
 export const Temp: React.FC<IProps> = ({
   options,
-  handleSetFilter = () => {},
   handleSearch = () => {},
 }) => {
   const iconRef = useRef(null);
   const searchRef = useRef(null);
-
-  // const { handleFilter } = useContext(productContext);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [onSearch, setOnSearch] = useState<boolean>(false);
@@ -98,13 +94,17 @@ export const Temp: React.FC<IProps> = ({
                 autoFocus
                 handleCustomChange={setFilter}
                 background
-                onPressEnter={() => handleSearch(filter)}
+                onPressEnter={() =>
+                  handleSearch(filter, window.location.pathname.substring(10))
+                }
                 height="39px"
               />
               <ButtonCustom
                 height="37px"
                 width="85px"
-                onClick={() => handleSearch(filter)}
+                onClick={() =>
+                  handleSearch(filter, window.location.pathname.substring(10))
+                }
               >
                 Buscar
               </ButtonCustom>

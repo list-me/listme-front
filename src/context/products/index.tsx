@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { productRequests } from "../../services/apis/requests/product";
 import { templateRequests } from "../../services/apis/requests/template";
 import { ICustomCellType } from "./product.context";
+import { AxiosResponse } from "axios";
 
 export interface ICustomField {
   hidden?: boolean;
@@ -49,7 +50,7 @@ interface ITypeProductContext {
   headerTable: IHeaderTable[];
   setHeaderTable: Function;
   handleAdd: Function;
-  handleSave: (value: any) => Promise<any>;
+  handleSave: (value: any, isNew: boolean, productId?: string) => Promise<any>;
   editing: boolean;
   setEditing: Function;
   colHeaders: string[];
@@ -75,9 +76,14 @@ interface ITypeProductContext {
   handleGetProducts: (
     templateId: string,
     templateFields: IHeaderTable[],
-    page: number,
-  ) => Promise<void>;
-  total: number | undefined;
+  ) => Promise<any>;
+
+  handleGetTemplate: (templateId: string) => Promise<void>;
+  total: number;
+  handleGetProductsFiltered: (
+    key: string,
+    templateId: string,
+  ) => Promise<any[]>;
 }
 
 interface IField {
@@ -125,8 +131,13 @@ export const productContext = createContext<ITypeProductContext>({
   handleNewColumn: () => {},
   handleFilter: () => {},
   handleRemoveColumn: () => {},
-  handleGetProducts: async (): Promise<void> => {},
-  total: undefined,
+  handleGetProducts: async (): Promise<any> => {},
+  handleGetTemplate: async (): Promise<void> => {},
+  total: 0,
+  handleGetProductsFiltered: async (
+    key: string,
+    templateId: string,
+  ): Promise<any[]> => [],
 });
 
 export const ProductContextProvider = ({ children }: any) => {
@@ -139,7 +150,7 @@ export const ProductContextProvider = ({ children }: any) => {
   const [customFields, setCustomFields] = useState<any[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [filter, setFilter] = useState<string | undefined>(undefined);
-  const [total, setTotal] = useState<number | undefined>(undefined);
+  const [total, setTotal] = useState<number>(0);
 
   const COMPONENT_CELL_PER_TYPE: ICustomCellType = {
     RADIO: "radio",
@@ -148,6 +159,18 @@ export const ProductContextProvider = ({ children }: any) => {
     FILE: "file",
     RELATION: "relation",
   };
+
+  async function handleGetProductsFiltered(
+    key: string,
+    templateId: string,
+  ): Promise<any[]> {
+    const { data } = await productRequests.list(
+      { keyword: key, limit: 100 },
+      templateId,
+    );
+
+    return data;
+  }
 
   const handleUpdateTemplate = (field: any) => {};
 
@@ -162,7 +185,6 @@ export const ProductContextProvider = ({ children }: any) => {
       productRequests
         .delete(product.id)
         .then((response: any) => {
-          // setFilteredData(currentProducts);
           toast.success("Produto excluído com sucesso");
         })
         .catch((error) => {
@@ -178,60 +200,55 @@ export const ProductContextProvider = ({ children }: any) => {
     templateId: string,
     templateFields: IHeaderTable[],
     page: number = 0,
-    limit: number = 50,
+    limit: number = 500,
   ) => {
-    if (total == filteredData.length) return;
-    return productRequests
-      .list({ page: page, limit }, templateId)
-      .then((response) => {
-        const productFields: any = [];
-        response?.products?.forEach((item: any) => {
-          let object: any = {};
-          item.fields.forEach((field: any) => {
-            const currentField = templateFields.find(
-              (e: any) => e.data == field.id,
-            );
+    // if (total == prod.length) return;
+    const { data } = await productRequests.list(
+      { page: page, limit },
+      templateId,
+    );
 
-            if (currentField && field.value) {
-              const test = !COMPONENT_CELL_PER_TYPE[
-                currentField?.type?.toUpperCase()
-              ]
-                ? field?.value[0]
-                : field?.value;
-
-              object[field?.id] = test;
-            }
-          });
-          productFields.push({
-            ...object,
-            id: item.id,
-            created_at: item.created_at,
-          });
-        });
-
-        if (!productFields.length && template) {
-          productFields.push({ [template[0]]: "" });
-        }
-        setProducts(productFields);
-
-        const prod = filteredData.length
-          ? [...productFields, ...filteredData]
-          : [...productFields];
-        setFilteredData(prod);
-        setTotal(response.total);
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error(
-          "Não foi possível carregar os produtos, por favor tente novamente!",
+    const productFields: any = [];
+    data?.products?.forEach((item: any) => {
+      let object: any = {};
+      item.fields.forEach((field: any) => {
+        const currentField = templateFields.find(
+          (e: any) => e.data == field.id,
         );
+
+        if (currentField && field.value) {
+          const test = !COMPONENT_CELL_PER_TYPE[
+            currentField?.type?.toUpperCase()
+          ]
+            ? field?.value[0]
+            : field?.value;
+
+          object[field?.id] = test;
+        }
       });
+
+      productFields.push({
+        ...object,
+        id: item.id,
+        created_at: item.created_at,
+      });
+    });
+
+    if (!productFields.length && template) {
+      productFields.push({ [template[0]]: "" });
+    }
+
+    console.log({ data });
+    setProducts(productFields);
+    setTotal(data?.total);
+    return { products, headerTable };
   };
 
   const handleRedirectAndGetProducts = async (id: string) => {
     try {
-      const template = await handleGetTemplates(id);
-      await handleGetProducts(id, template);
+      const template: IHeaderTable[] = await handleGetTemplate(id);
+      const product = await handleGetProducts(id, template);
+      return product;
     } catch (error) {
       console.error(error);
       toast.error(
@@ -249,24 +266,31 @@ export const ProductContextProvider = ({ children }: any) => {
       });
   };
 
-  const handleSave = async (value: any): Promise<any> => {
+  const handleSave = async (
+    value: any,
+    isNew: boolean,
+    productId?: string,
+  ): Promise<any> => {
     try {
       const fields = buildProduct(value);
-      if (value["id"] !== undefined) {
-        await Promise.resolve(
-          productRequests.update({ id: value.id, fields }),
-        ).catch((error) => {
-          throw error;
-        });
-        return;
+
+      console.log({ isNew });
+      if (isNew) {
+        setTimeout(async () => {
+          await Promise.resolve(
+            productRequests.update({ id: productId, fields }),
+          ).catch((error) => {
+            throw error;
+          });
+        }, 2000);
       } else {
         const newProduct = {
           product_template_id: window.location.pathname.substring(10),
           is_public: true,
           fields: fields,
         };
-
         let newItem;
+
         await handlePost(newProduct)
           .then((resolved) => {
             newItem = resolved?.id;
@@ -282,7 +306,6 @@ export const ProductContextProvider = ({ children }: any) => {
         typeof error?.response?.data?.message == "object"
           ? error?.response?.data?.message[0]
           : error?.response?.data?.message;
-
       throw message;
     }
   };
@@ -317,10 +340,10 @@ export const ProductContextProvider = ({ children }: any) => {
       return;
     }
 
-    setFilteredData((old) => [{}, ...old]);
+    setProducts((old) => [{}, ...old]);
   };
 
-  const handleGetTemplates = async (templateId: string) => {
+  const handleGetTemplate = async (templateId: string) => {
     return templateRequests
       .get(templateId)
       .then((response) => {
@@ -544,7 +567,7 @@ export const ProductContextProvider = ({ children }: any) => {
       });
 
     // setHeaderTable(col);
-    setCustomFields(fields);
+    // setCustomFields(fields);
     templateRequests
       .customView(window.location.pathname.substring(10), { fields })
       .catch((error) =>
@@ -660,6 +683,7 @@ export const ProductContextProvider = ({ children }: any) => {
     handleUpdateTemplate,
     template,
     hidden,
+    total,
     handleHidden,
     setHidden,
     handleResize,
@@ -670,7 +694,8 @@ export const ProductContextProvider = ({ children }: any) => {
     handleFilter,
     handleRemoveColumn,
     handleGetProducts,
-    total,
+    handleGetProductsFiltered,
+    handleGetTemplate,
   };
 
   return (

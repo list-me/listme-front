@@ -1,4 +1,9 @@
+/* eslint-disable no-return-assign */
+/* eslint-disable no-plusplus */
+/* eslint-disable no-param-reassign */
+/* eslint-disable react/no-array-index-key */
 import ReactDOM from "react-dom/client";
+import { unmountComponentAtNode } from "react-dom";
 import React, {
   useCallback,
   useContext,
@@ -8,20 +13,11 @@ import React, {
 } from "react";
 
 import Handsontable from "handsontable";
-import "handsontable/dist/handsontable.full.min.css";
-import { registerAllModules } from "handsontable/registry";
+import { registerAllEditors, registerAllModules } from "handsontable/registry";
 import { HotColumn, HotTable } from "@handsontable/react";
 import { toast } from "react-toastify";
-
 import { useNavigate } from "react-router-dom";
-import { CustomTableProps } from "./CustomTable.d";
-import { productContext } from "../../context/products";
-import { TableField } from "../TableField";
-import { Cell } from "../Cell/index";
-import { NewColumn } from "../NewColumn";
-import { Confirmation } from "../Confirmation";
-import { productRequests } from "../../services/apis/requests/product";
-
+import { CellValue, RangeType } from "handsontable/common";
 import { ReactComponent as EllipsisIcon } from "../../assets/ellipsis.svg";
 import { ReactComponent as DownloadIcon } from "../../assets/download.svg";
 import { ReactComponent as PlusIcon } from "../../assets/add.svg";
@@ -29,28 +25,43 @@ import { ReactComponent as ArrowIcon } from "../../assets/arrow-left.svg";
 import { ReactComponent as FlagIcon } from "../../assets/icons/flag.svg";
 import { ReactComponent as EditIcon } from "../../assets/x-edit.svg";
 import { ReactComponent as HelpIcon } from "../../assets/help.svg";
+
+import "handsontable/dist/handsontable.full.min.css";
+
+import { CustomTableProps } from "./CustomTable.d";
+import { productContext } from "../../context/products";
+import { Cell } from "../Cell/index";
+import { NewColumn } from "../NewColumn";
+import { Confirmation } from "../Confirmation";
+
+import RadioEditor from "./Editors/Radio";
+import DropdownEditor from "./Editors/Dropdown";
+import RelationEditor from "./Editors/Relation";
+import { FileEditor } from "./Editors/File";
+import { getFilenameFromUrl } from "../../utils";
 import {
-  Header,
-  LeftContent,
-  RightContent,
-  MoreOptions,
-  IconTemplate,
-  Title,
-  Filters,
-  Contents,
-  Item,
   Content,
+  Contents,
+  Filters,
+  Header,
+  IconTemplate,
+  Item,
+  LeftContent,
+  MoreOptions,
+  RightContent,
+  Title,
 } from "../../pages/products/styles";
 import { ROUTES } from "../../constants/routes";
 import Button from "../Button";
-import { Loading } from "../Loading";
 import { Temp } from "../Temp";
+import { productRequests } from "../../services/apis/requests/product";
+import { Container } from "./styles";
+import { LoadingFetch } from "./LoadingFetch";
 
 registerAllModules();
+registerAllEditors();
 
-const TableFieldMemo = React.memo(TableField);
-
-const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
+const CustomTable: React.FC<CustomTableProps> = () => {
   const hotRef = useRef<HotTable>(null);
   const {
     handleSave,
@@ -61,29 +72,34 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
     hidden,
     handleResize,
     handleHidden,
-    handleFreeze,
     handleNewColumn,
     handleMove,
     handleRemoveColumn,
-    setHeaderTable,
-    setFilteredData,
+    products,
+    colHeaders,
+    total,
   } = useContext(productContext);
-  console.log("Renderizado");
 
   const [cols, setCols] = useState<any[]>([]);
+  const [isTableLocked, setIsTableLocked] = useState(false);
+  const [page, setPage] = useState<number>(1);
+
+  // Deverá ser removido
   const [currentCell, setCurrentCell] = useState<any>({});
-  const [columns, setColumns] = useState<any[]>(headerTable);
-  const [headers, setHeaders] = useState<string[]>(colHeaders ?? [""]);
+
+  // Deverá ser removido
+  const [columns, setColumns] = useState<any[]>([]);
+  const [headers, setHeaders] = useState<string[]>(colHeaders);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [dataProvider, setDataProvider] = useState<any[]>(temp ?? []);
+  const [dataProvider, setDataProvider] = useState<any[]>(products ?? []);
 
   const navigate = useNavigate();
 
   const handleMountColumns = () => {
     const columnsCustom: any[] = [];
-    columns.sort().forEach((column) => {
+    headerTable.sort().forEach((column) => {
       if (
         Object.keys(COMPONENT_CELL_PER_TYPE).includes(
           column.type?.toString()?.toUpperCase(),
@@ -99,8 +115,6 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
           type: column.type,
           options: column.options,
           isCustom: true,
-          readOnly: true,
-          bucket_url: column.bucket_url,
         });
         return;
       }
@@ -112,9 +126,11 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
         order: column.order,
         hidden: column.hidden,
         isCustom: false,
-        bucket_url: column.bucket_url,
+        // editor: Text,
+        type: "text",
       });
     });
+
     setCols(columnsCustom);
   };
 
@@ -176,7 +192,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
 
       const existent = TH.querySelector(".customHeader");
       if (existent) {
-        ReactDOM.createRoot(existent).unmount();
+        unmountComponentAtNode(existent);
         const myComponent = document.createElement("div");
         myComponent.className = "customHeader";
 
@@ -333,172 +349,150 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
       .list({ keyword, limit: 100 }, window.location.pathname.substring(10))
       .then((response) => {
         const productFields: any[] = [];
-        response?.products?.forEach((item: any) => {
-          const object: any = {};
-          item.fields.forEach((field: any) => {
-            const currentField = headerTable.find(
-              (e: any) => e.data == field.id,
-            );
 
-            if (currentField && field.value) {
-              const test = !COMPONENT_CELL_PER_TYPE[
-                currentField?.type?.toUpperCase()
-              ]
-                ? field?.value[0]
-                : field?.value;
+        const { data } = response;
+        if (data) {
+          data.products?.forEach((item: any) => {
+            const object: any = {};
+            item.fields.forEach((field: any) => {
+              const currentField = headerTable.find(
+                (e: any) => e.data == field.id,
+              );
 
-              object[field?.id] = test;
-            }
+              if (currentField && field.value) {
+                const test = !COMPONENT_CELL_PER_TYPE[
+                  currentField?.type?.toUpperCase()
+                ]
+                  ? field?.value[0]
+                  : field?.value;
+
+                object[field?.id] = test;
+              }
+            });
+            productFields.push({
+              ...object,
+              id: item.id,
+              created_at: item.created_at,
+            });
           });
-          productFields.push({
-            ...object,
-            id: item.id,
-            created_at: item.created_at,
-          });
-        });
 
-        if (!productFields.length && template) {
-          productFields.push({ [template[0]]: "" });
+          if (!productFields.length && template) {
+            productFields.push({ [template[0]]: "" });
+          }
+
+          setDataProvider(productFields);
+          setLoading(false);
+
+          const hotInstance = hotRef.current!?.hotInstance;
+          if (hotInstance) {
+            hotInstance.loadData(productFields);
+            const plugin = hotInstance?.getPlugin("search");
+            plugin.query(keyword);
+            hotInstance.render();
+          }
         }
-
-        setDataProvider(productFields);
-        setLoading(false);
-
-        hotRef.current?.hotInstance?.loadData(productFields);
-        const plugin = hotRef.current!.hotInstance?.getPlugin("search");
-        plugin?.query(keyword);
-        hotRef.current!?.hotInstance?.render();
       })
       .catch((errr: any) => {
+        console.log(errr);
         setLoading(false);
-        hotRef.current!?.hotInstance?.render();
+        const hotInstance = hotRef.current!?.hotInstance;
+        if (hotInstance) {
+          hotInstance.render();
+        }
         toast.error(errr.response.data.message);
       });
   };
 
   useEffect(() => {
-    console.log("Rendered by effect 1");
     // const toFreeze = headerTable.filter((item) => item?.frozen === true);
     // if (toFreeze.length > 0) {
     //   setFrozen(toFreeze.length);
     // }
 
+    setColumns(headerTable);
     handleMountColumns();
-  }, [dataProvider, headerTable]);
 
-  // useEffect(() => {
-  //   const handleKeyDown = (event: KeyboardEvent) => {
-  //     if (
-  //       (event.ctrlKey || event.metaKey) &&
-  //       event.key === "f" &&
-  //       hotRef.current!?.hotInstance?.getSelected() !== undefined
-  //     ) {
-  //       event.preventDefault();
-  //       const instance = hotRef.current!?.hotInstance;
+    setDataProvider(products);
+  }, [headerTable]);
 
-  //       // if (!instance?.isListening()) {
-  //       instance?.deselectCell();
-  //       // }
-  //     }
-  //   };
+  const getRowsInterval = (start: number, end: number): Array<number> => {
+    if (start > end) {
+      [start, end] = [end, start];
+    }
 
-  //   window.addEventListener("keydown", handleKeyDown);
+    const result: Array<number> = [];
+    for (let i: number = start; i <= end; i++) {
+      result.push(i);
+    }
 
-  //   return () => {
-  //     window.removeEventListener("keydown", handleKeyDown);
-  //   };
-  // }, []);
+    return result;
+  };
 
-  const handleSetNewValue = React.useCallback(
-    (props: any) => {
-      const { row, data, value } = props;
-
-      setDataProvider((prev) =>
-        prev.map((element, index) => {
-          if (index == row) {
-            return (element = value);
-          }
-
-          return element;
-        }),
-      );
+  const customRenderer = useCallback(
+    (
+      instance: Handsontable,
+      td: HTMLTableCellElement,
+      row: number,
+      col: number,
+      prop: string | number,
+      value: any,
+      cellProperties: Handsontable.CellProperties,
+    ) => {
+      const total = value ? value.length : 0;
+      td.innerHTML = `<div class="tagContent">${total} Items relacionados</div>`;
     },
-    [hotRef],
+    [],
+  );
+
+  const customRendererFile = useCallback(
+    (
+      instance: Handsontable,
+      td: HTMLTableCellElement,
+      row: number,
+      col: number,
+      prop: string | number,
+      value: any,
+      cellProperties: Handsontable.CellProperties,
+    ) => {
+      if (value?.length > 0) {
+        td.innerHTML = value
+          .map((url: string): string => {
+            const fileNameWithExtension = getFilenameFromUrl(url);
+            if (fileNameWithExtension) {
+              const lastDotIndex = fileNameWithExtension.lastIndexOf(".");
+              const fileName = fileNameWithExtension.substring(0, lastDotIndex);
+              const fileType = fileNameWithExtension.substring(
+                lastDotIndex + 1,
+              );
+              if (
+                !["jpg", "jpeg", "png", "thumb", "PNG", "JPG"].includes(
+                  fileType,
+                )
+              ) {
+                const icon = "https://prod-listme.s3.amazonaws.com/file.svg";
+                return `<div class="fileItem" title="${fileName}">
+                  <img src="${icon}" style="width:25px;height:25px;margin-right:4px;">
+                  <a href="${url}" download />
+                </div>`;
+              }
+
+              return `
+                  <img class="imgItem" title="${fileName}" src="${url}" style="width:25px;height:25px;margin-right:4px;" onerror="this.onerror=null;this.src='https://d1ptd3zs6hice0.cloudfront.net/users-data-homolog/IMG_IJ06ikQw9qqGOhPdTBpz.png';">
+                `;
+            }
+
+            return "";
+          })
+          .join("");
+      } else {
+        td.innerHTML = "";
+      }
+    },
+    [],
   );
 
   return (
     <>
-      <Content>
-        <Header>
-          <LeftContent>
-            <ArrowIcon
-              onClick={() => {
-                setDataProvider([]);
-                setHeaderTable([]);
-                setFilteredData([]);
-                // setColumns([]);
-                navigate(ROUTES.TEMPLATES);
-              }}
-            />
-            <IconTemplate>
-              <FlagIcon />
-            </IconTemplate>
-            <Title> {template?.name} </Title>
-            <EditIcon />
-          </LeftContent>
-          <RightContent>
-            <MoreOptions>
-              <EllipsisIcon />
-            </MoreOptions>
-            <Button height="52px" width="227px" isSecondary>
-              <DownloadIcon />
-              Importar produtos
-            </Button>
-            <Button
-              height="52px"
-              width="226px"
-              className="secondButton"
-              onClick={() => {
-                const { hotInstance } = hotRef.current!;
-                if (hotInstance) {
-                  if (hotInstance.isEmptyRow(0))
-                    return toast.warn("Preencha o produto atual");
-                }
-                setDataProvider((prev) => [{}, ...prev]);
-              }}
-            >
-              Adicionar produto
-              <PlusIcon />
-            </Button>
-          </RightContent>
-        </Header>
-        <Filters>
-          <Temp
-            options={headerTable}
-            handleSetFilter={(value: any) => {
-              // const filtersPlugin =
-              //   hotRef.current!.hotInstance?.getPlugin("filters");
-              // if (filtersPlugin !== undefined) {
-              //   if (!value.length) {
-              //     filtersPlugin.clearConditions();
-              //     filtersPlugin.filter();
-              //     return;
-              //   }
-              //   filtersPlugin.clearConditions();
-              //   filtersPlugin?.addCondition(0, "contains", [value]);
-              //   filtersPlugin?.filter();
-              // }
-            }}
-            handleSearch={handleGetProductFiltered}
-          />
-          <Contents>
-            <Item>
-              <HelpIcon />
-              Ajuda
-            </Item>
-          </Contents>
-        </Filters>
-      </Content>
       <Confirmation
         description="Ao excluir este produto, você perderá todas as informações, inclusive no catálogo em que está cadastrado."
         action="DELETE"
@@ -510,252 +504,451 @@ const CustomTable: React.FC<CustomTableProps> = ({ temp, colHeaders }) => {
           handleDeleteColumn(Number(currentCell.order));
         }}
       />
-      {loading ? (
-        <Loading />
-      ) : (
-        <HotTable
-          ref={hotRef}
-          colHeaders={headers}
-          data={dataProvider}
-          height="100%"
-          width="100%"
-          stretchH="all"
-          manualColumnResize
-          filters
-          autoRowSize={false}
-          autoColumnSize={false}
-          // beforeColumnMove={beforeColumnMove}
-          // manualColumnMove
-          // manualColumnFreeze
-          search
-          viewportRowRenderingOffset={200}
-          viewportColumnRenderingOffset={50}
-          renderAllRows={false}
-          rowHeaders
-          columnSorting={{ sortEmptyCells: false, headerAction: false }}
-          contextMenu={{
-            items: {
-              remove_row: {
-                name: "Excluir produto",
-                async callback(
-                  key: string,
-                  selection: any[],
-                  clickEvent: MouseEvent,
-                ) {
-                  if (dataProvider?.length == 1)
-                    return toast.warn(
-                      "O catálogo deve conter ao menos um produto",
-                    );
+      <>
+        <Content>
+          <Header>
+            <LeftContent>
+              <ArrowIcon
+                onClick={() => {
+                  navigate(ROUTES.TEMPLATES);
+                }}
+              />
+              <IconTemplate>
+                <FlagIcon />
+              </IconTemplate>
+              <Title> {template?.name} </Title>
+              <EditIcon />
+            </LeftContent>
+            <RightContent>
+              <MoreOptions>
+                <EllipsisIcon />
+              </MoreOptions>
+              <Button height="52px" width="227px" isSecondary>
+                <DownloadIcon />
+                Importar produtos
+              </Button>
+              <Button
+                height="52px"
+                width="226px"
+                className="secondButton"
+                onClick={() => {
+                  const { hotInstance } = hotRef.current!;
+                  if (hotInstance) {
+                    setDataProvider((prev) => [{}, ...prev]);
+                  }
+                }}
+              >
+                Adicionar produto
+                <PlusIcon />
+              </Button>
+            </RightContent>
+          </Header>
+          <Filters>
+            <Temp
+              options={headerTable}
+              handleSearch={handleGetProductFiltered}
+            />
+            <Contents>
+              <Item>
+                <HelpIcon />
+                Ajuda
+              </Item>
+            </Contents>
+          </Filters>
+        </Content>
+        <Container>
+          <HotTable
+            readOnly={isTableLocked}
+            ref={hotRef}
+            colHeaders={headers}
+            columns={cols}
+            data={dataProvider}
+            height="100%"
+            width="100%"
+            stretchH="all"
+            manualColumnResize
+            filters
+            autoRowSize={false}
+            autoColumnSize={false}
+            // beforeColumnMove={beforeColumnMove}
+            manualColumnMove
+            // manualColumnFreeze
+            search
+            renderAllRows={false}
+            viewportRowRenderingOffset={200}
+            viewportColumnRenderingOffset={100}
+            rowHeaders
+            columnSorting={{ sortEmptyCells: false, headerAction: false }}
+            contextMenu={{
+              items: {
+                remove_row: {
+                  name: "Excluir produto",
+                  async callback(
+                    key: string,
+                    selection: any[],
+                    clickEvent: MouseEvent,
+                  ) {
+                    if (dataProvider?.length == 1)
+                      return toast.warn(
+                        "O catálogo deve conter ao menos um produto",
+                      );
 
-                  if (dataProvider?.length) {
-                    const { hotInstance } = hotRef.current!;
-                    if (hotInstance) {
-                      if (hotInstance.isEmptyRow(0))
-                        return hotInstance?.alter(
+                    if (dataProvider?.length) {
+                      const { hotInstance } = hotRef.current!;
+                      if (hotInstance) {
+                        if (hotInstance.isEmptyRow(0))
+                          return hotInstance?.alter(
+                            "remove_row",
+                            selection[0].start.row,
+                          );
+
+                        await handleDelete(
+                          dataProvider[selection[0].start.row],
+                        );
+                        hotInstance?.alter(
                           "remove_row",
                           selection[0].start.row,
                         );
-
-                      await handleDelete(dataProvider[selection[0].start.row]);
-                      hotInstance?.alter("remove_row", selection[0].start.row);
+                      }
                     }
-                  }
+                  },
                 },
               },
-            },
-          }}
-          rowHeights="52px"
-          licenseKey="non-commercial-and-evaluation"
-          // beforeChange={(
-          //   changes: Array<CellChange | null>,
-          //   source: ChangeSource,
-          // ) => {
-          //   // const currentCellValue = changes[0][2];
-          //   // const newValue = changes[0][3];
-          //   // const row = changes[0][0];
-          //   // const col = cols.findIndex((col) => col?.data === changes[0][1]);
-          //   // const columnType = headerTable[col]?.type;
-          //   // if (columnType === "text" && newValue.length > 100) {
-          //   //   toast.warn("The text field cannot be longer than 100 characters");
-          //   //   return false;
-          //   // }
-          //   // if (columnType === "paragraph" && newValue.length > 255) {
-          //   //   toast.warn("O campo parágrafo deve conter até 200 caractéres");
-          //   //   return false;
-          //   // }
-          //   // return true;
-          // }}
-          afterChange={async (changes: Handsontable.CellChange[] | null) => {
-            if (changes !== null && changes?.length) {
-              const customChanges = changes as Handsontable.CellChange[];
-              if (
-                customChanges[0][2] !== customChanges[0][3] &&
-                dataProvider.length
-              ) {
-                const id = await handleSave(
-                  dataProvider[customChanges[0][0]],
-                ).catch((error) => toast.error(error));
-
-                if (id) {
-                  const updated = dataProvider;
-                  updated[customChanges[0][0]].id = id;
-                  setDataProvider(updated);
+            }}
+            rowHeights="52px"
+            licenseKey="non-commercial-and-evaluation"
+            // beforeChange={(
+            //   changes: Array<CellChange | null>,
+            //   source: ChangeSource,
+            // ) => {
+            //   // const currentCellValue = changes[0][2];
+            //   // const newValue = changes[0][3];
+            //   // const row = changes[0][0];
+            //   // const col = cols.findIndex((col) => col?.data === changes[0][1]);
+            //   // const columnType = headerTable[col]?.type;
+            //   // if (columnType === "text" && newValue.length > 100) {
+            //   //   toast.warn("The text field cannot be longer than 100 characters");
+            //   //   return false;
+            //   // }
+            //   // if (columnType === "paragraph" && newValue.length > 255) {
+            //   //   toast.warn("O campo parágrafo deve conter até 200 caractéres");
+            //   //   return false;
+            //   // }
+            //   // return true;
+            // }}
+            afterChange={async (changes: Handsontable.CellChange[] | null) => {
+              if (changes !== null && changes?.length && !isTableLocked) {
+                const isNew = !!dataProvider[changes[0][0]].id;
+                const customChanges = changes as Handsontable.CellChange[];
+                if (
+                  customChanges[0][2] !== customChanges[0][3] &&
+                  dataProvider.length
+                ) {
+                  try {
+                    if (!isNew) setIsTableLocked(true);
+                    const id = await handleSave(
+                      dataProvider[customChanges[0][0]],
+                      isNew,
+                      dataProvider[customChanges[0][0]]?.id,
+                    );
+                    if (
+                      id &&
+                      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(
+                        id.toString(),
+                      )
+                    ) {
+                      const updated = dataProvider;
+                      updated[customChanges[0][0]].id = id;
+                      setDataProvider(updated);
+                    }
+                  } finally {
+                    if (!isNew) setIsTableLocked(false);
+                  }
                 }
               }
-            }
-          }}
-          // beforeChange={(changes: (Handsontable.CellChange | null)[], source) => {
-          //   // if (changes.length) {
-          //   //   const customChanges = changes as Handsontable.CellChange[];
-          //   //   if (customChanges[0][2] != customChanges[0][3] && dataProvider) {
-          //   //     const { hotInstance } = hotRef.current!;
-          //   //     const requiredFields = template.fields.fields
-          //   //       .filter((field: any) => {
-          //   //         return field.required;
-          //   //       })
-          //   //       .map((filtered: any) => filtered.id);
-          //   //     const newDataProvider = dataProvider;
-          //   //     // eslint-disable-next-line prefer-destructuring
-          //   //     newDataProvider[customChanges[0][0]][customChanges[0][1]] =
-          //   //       customChanges[0][3];
-          //   //     const currentFields = Object.keys(
-          //   //       newDataProvider[customChanges[0][0]],
-          //   //     ).filter(
-          //   //       (key) => newDataProvider[customChanges[0][0]][key]?.length,
-          //   //     );
-          //   //     const allElementsExist = requiredFields.every((elem: any) =>
-          //   //       currentFields.includes(elem),
-          //   //     );
-          //   //     if (!allElementsExist && hotInstance) {
-          //   //       const metaExists = hotInstance
-          //   //         .getCellMetaAtRow(customChanges[0][0])
-          //   //         .find((e) => e.className == "invalid-cell");
-          //   //       if (metaExists) return true;
-          //   //       requiredFields.forEach((key: any, index: number) => {
-          //   //         const currentClassName = hotInstance.getCellMeta(
-          //   //           customChanges[0][0],
-          //   //           index,
-          //   //         ).className;
-          //   //         if (currentClassName !== "invalid-cell") {
-          //   //           hotInstance.setCellMeta(
-          //   //             customChanges[0][0],
-          //   //             index,
-          //   //             "className",
-          //   //             "invalid-cell",
-          //   //           );
-          //   //         }
-          //   //       });
-          //   //       return;
-          //   //     }
-          //   //     if (hotInstance && requiredFields.includes(customChanges[0][1])) {
-          //   //       requiredFields.forEach((key: any, index: number) => {
-          //   //         const currentClassName = hotInstance.getCellMeta(
-          //   //           customChanges[0][0],
-          //   //           index,
-          //   //         ).className;
-          //   //         if (currentClassName == "invalid-cell") {
-          //   //           hotInstance.setCellMeta(
-          //   //             customChanges[0][0],
-          //   //             index,
-          //   //             "className",
-          //   //             "",
-          //   //           );
-          //   //         }
-          //   //       });
-          //   //       setEnable();
-          //   //       return;
-          //   //     }
-          //   //   }
-          //   // }
-          // }}
-          // afterSelection={(
-          //   row: number,
-          //   column: number,
-          //   row2: number,
-          //   column2: number,
-          //   preventScrolling: { value: boolean },
-          //   selectionLayerLevel: number,
-          // ) => {
-          //   console.log();
-          // }}
-          afterRenderer={(TD, row, col, prop, value, cellProperties) => {
-            if (col + 1 === headers.length) {
-              TD.style.display = "none";
-            }
-          }}
-          fixedColumnsStart={1}
-          afterGetColHeader={renderHeaderComponent}
-          hiddenColumns={{ columns: hidden, indicators: true }}
-          afterColumnResize={async (
-            newSize: number,
-            column: number,
-            isDoubleClick: boolean,
-          ) => {
-            await handleResize(column, newSize, template);
-          }}
-          afterColumnMove={(
-            movedColumns: number[],
-            finalIndex: number,
-            dropIndex: number | undefined,
-            movePossible: boolean,
-            orderChanged: boolean,
-          ) => {
-            if (!orderChanged) return;
+            }}
+            afterPaste={async (data: CellValue[][], coords: RangeType[]) => {
+              if (data.length && !isTableLocked) {
+                const range = coords[0];
+                const fieldColumns = cols
+                  .slice(range.startCol, range.endCol + 1)
+                  .map((column) => {
+                    return { field: column.data, type: column.type };
+                  });
 
-            let newColumns = [...columns];
-            movedColumns.forEach((oldIndex) => {
-              const movedColumn = newColumns.splice(oldIndex, 1)[0];
-              newColumns.splice(finalIndex, 0, movedColumn);
-              finalIndex += 1;
-            });
+                const rangeOfRows: number = range.endRow - range.startRow + 1;
+                const rows: number[] = getRowsInterval(
+                  range.startRow,
+                  range.endRow,
+                );
 
-            newColumns = newColumns.map((item, index) => {
-              if (Object.keys(item).length) {
-                return {
-                  ...item,
-                  order: index.toString(),
-                };
+                const changesPromises: Array<any> = [];
+                for (let i = 0; rangeOfRows > i; i++) {
+                  const row: number = rows[i];
+                  const changes = dataProvider[row];
+
+                  fieldColumns.forEach((column: any, index: number): void => {
+                    const position: number = data.length > 1 ? i : 0;
+                    const value = Object.keys(COMPONENT_CELL_PER_TYPE).includes(
+                      column.type.toString().toUpperCase(),
+                    )
+                      ? [data[position][index]]
+                      : data[position][index];
+
+                    changes[column.field] = value;
+                  });
+                  changesPromises.push(
+                    handleSave(changes, !!changes?.id, changes?.id),
+                  );
+                }
+                await Promise.all(changesPromises);
+                const { hotInstance } = hotRef.current!;
+                if (hotInstance) {
+                  hotInstance.render();
+                }
               }
-              return item;
-            });
+            }}
+            afterRenderer={(TD, row, col, prop, value, cellProperties) => {
+              if (col + 1 === headers.length) {
+                TD.style.display = "none";
+              }
+            }}
+            afterScrollVertically={(): void => {
+              const { hotInstance } = hotRef.current!;
+              if (hotInstance) {
+                const holder =
+                  hotInstance.rootElement.querySelector(".wtHolder");
+                if (holder) {
+                  const scrollableHeight = holder.scrollHeight;
+                  const { scrollTop } = holder;
+                  const visibleHeight = holder.clientHeight;
 
-            setHeaders(newColumns.map((item) => item?.title ?? " "));
-            setColumns(newColumns);
-            handleMove(newColumns);
-          }}
-        >
-          {cols.map((col: any, index: number) => {
-            if (col.isCustom) {
+                  if (
+                    scrollTop + visibleHeight >= scrollableHeight &&
+                    total > dataProvider.length
+                  ) {
+                    setLoading(true);
+                    setIsTableLocked(true);
+                    productRequests
+                      .list(
+                        { page, limit: 100 },
+                        window.location.pathname.substring(10),
+                      )
+                      .then((response) => {
+                        const productFields: any[] = [];
+
+                        const { data } = response;
+                        if (data) {
+                          data.products?.forEach((item: any) => {
+                            const object: any = {};
+                            item.fields.forEach((field: any) => {
+                              const currentField = headerTable.find(
+                                (e: any) => e.data == field.id,
+                              );
+
+                              if (currentField && field.value) {
+                                const test = !COMPONENT_CELL_PER_TYPE[
+                                  currentField?.type?.toUpperCase()
+                                ]
+                                  ? field?.value[0]
+                                  : field?.value;
+
+                                object[field?.id] = test;
+                              }
+                            });
+                            productFields.push({
+                              ...object,
+                              id: item.id,
+                              created_at: item.created_at,
+                            });
+                          });
+
+                          if (!productFields.length && template) {
+                            productFields.push({ [template[0]]: "" });
+                          }
+
+                          setDataProvider((prev) => [
+                            ...prev,
+                            ...productFields,
+                          ]);
+
+                          setPage(page + 1);
+                          setLoading(false);
+                          setIsTableLocked(false);
+                        }
+                      })
+                      .catch((errr: any) => {
+                        setLoading(false);
+                        setIsTableLocked(false);
+
+                        const hotInstance = hotRef.current!?.hotInstance;
+                        if (hotInstance) {
+                          hotInstance.render();
+                        }
+                        toast.error(errr.response.data.message);
+                      });
+                  }
+                }
+              }
+            }}
+            fixedColumnsStart={1}
+            afterGetColHeader={renderHeaderComponent}
+            hiddenColumns={{ columns: hidden, indicators: true }}
+            afterColumnResize={async (
+              newSize: number,
+              column: number,
+              isDoubleClick: boolean,
+            ) => {
+              await handleResize(column, newSize, template);
+            }}
+            afterColumnMove={(
+              movedColumns: number[],
+              finalIndex: number,
+              dropIndex: number | undefined,
+              movePossible: boolean,
+              orderChanged: boolean,
+            ) => {
+              if (!orderChanged) return;
+
+              let newColumns = [...columns];
+              movedColumns.forEach((oldIndex) => {
+                const movedColumn = newColumns.splice(oldIndex, 1)[0];
+                newColumns.splice(finalIndex, 0, movedColumn);
+                finalIndex += 1;
+              });
+
+              newColumns = newColumns.map((item, index) => {
+                if (Object.keys(item).length) {
+                  return {
+                    ...item,
+                    order: index.toString(),
+                  };
+                }
+                return item;
+              });
+
+              setHeaders(newColumns.map((item) => item?.title ?? " "));
+              handleMove(newColumns);
+            }}
+            afterDocumentKeyDown={(event: KeyboardEvent): void => {
+              const { hotInstance } = hotRef.current!;
+              if (hotInstance) {
+                if (event.key === "ArrowRight" && event.ctrlKey) {
+                  const selected = hotInstance.getSelected();
+                  if (selected) {
+                    const [startRow, , endRow] = selected[0];
+
+                    let lastVisibleCol = hotInstance.countCols() - 2;
+                    while (
+                      hotInstance.getColWidth(lastVisibleCol) === 0 &&
+                      lastVisibleCol >= 0
+                    ) {
+                      lastVisibleCol--;
+                    }
+
+                    if (lastVisibleCol >= 0) {
+                      hotInstance.selectCell(
+                        startRow,
+                        lastVisibleCol,
+                        endRow,
+                        lastVisibleCol,
+                      );
+                    }
+                  }
+                  event.preventDefault();
+                }
+              }
+            }}
+          >
+            {cols.map((col: any, index: number) => {
+              if (col.isCustom && col.type === "list") {
+                return (
+                  <HotColumn
+                    width={col.width}
+                    _columnIndex={col.order}
+                    data={col.data}
+                    key={index}
+                  >
+                    <DropdownEditor
+                      hot-editor
+                      options={[...col.options, ""]}
+                      editorColumnScope={0}
+                    />
+                  </HotColumn>
+                );
+              }
+
+              if (col.isCustom && col.type === "radio") {
+                return (
+                  <HotColumn
+                    width={col.width}
+                    _columnIndex={col.order}
+                    data={col.data}
+                    key={index}
+                  >
+                    <RadioEditor
+                      hot-editor
+                      options={[...col.options, ""]}
+                      editorColumnScope={0}
+                    />
+                  </HotColumn>
+                );
+              }
+
+              if (col.isCustom && col.type === "file") {
+                return (
+                  <HotColumn
+                    width={col.width}
+                    _columnIndex={col.order}
+                    data={col.data}
+                    key={index}
+                    renderer={customRendererFile}
+                  >
+                    <FileEditor
+                      hot-editor
+                      editorColumnScope={0}
+                      templateId={template.id}
+                      dataProvider={dataProvider}
+                    />
+                  </HotColumn>
+                );
+              }
+
+              if (col.type === "relation") {
+                return (
+                  <HotColumn
+                    _columnIndex={col.order}
+                    data={col.data}
+                    width={col.width}
+                    key={index}
+                    // eslint-disable-next-line react/jsx-no-bind
+                    renderer={customRenderer}
+                  >
+                    <RelationEditor
+                      hot-editor
+                      editorColumnScope={0}
+                      templateId={col.options[0].templateId}
+                      column={col}
+                      dataProvider={dataProvider}
+                      field={col.options[0].field}
+                    />
+                  </HotColumn>
+                );
+              }
+
               return (
                 <HotColumn
+                  width={col.width}
                   _columnIndex={col.order}
                   data={col.data}
-                  width={col.width}
                   key={index}
-                  readOnly
-                >
-                  {/* <ToDelete hot-renderer /> */}
-                  <TableFieldMemo
-                    className="ok"
-                    column={col}
-                    instance={hotRef.current!?.hotInstance}
-                    prop={col.data}
-                    hot-renderer
-                    // value={dataProvider[index] ?? [""]}
-                    type={col.type}
-                    options={col.options}
-                    handleSetNewValue={handleSetNewValue}
-                    dataProvider={dataProvider}
-                    templateId={template.id}
-                  />
-                </HotColumn>
+                />
               );
-            }
-
-            return <HotColumn data={col.data} width={col.width} />;
-          })}
-        </HotTable>
-      )}
+            })}
+          </HotTable>
+        </Container>
+        {loading ? <LoadingFetch /> : <></>}
+      </>
     </>
   );
 };
