@@ -78,7 +78,8 @@ const RelationComponent: React.FC<PropsRelation> = ({
         let templateRel: any;
         const columnsTable = template.fields.fields
           .map((attribute: any, index: number) => {
-            if (column.data === attribute.id) setTemplateRelation(attribute);
+            if (column.options[0]?.field === attribute.id)
+              setTemplateRelation(attribute);
 
             templateRel = attribute;
             return {
@@ -229,7 +230,6 @@ const RelationComponent: React.FC<PropsRelation> = ({
           const props: any = {};
 
           const exceedLimit = product.fields.find((productField: any) => {
-            console.log(relTemplate.options);
             if (
               productField.id == column.data &&
               relTemplate?.options[0]?.limit <= productField.value.length &&

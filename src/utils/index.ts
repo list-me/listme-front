@@ -18,7 +18,7 @@ export const isEquivalent = (a: any, b: any) => {
   return true;
 };
 
-export const getFilenameFromUrl = (urlString: string): string | null => {
+export const getFilenameFromUrl = (urlString: string): string => {
   try {
     const regex = new RegExp(
       "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+",
@@ -31,10 +31,9 @@ export const getFilenameFromUrl = (urlString: string): string | null => {
       return parts[parts.length - 1];
     }
 
-    return null;
+    return "No name";
   } catch (error) {
-    console.error("Invalid URL:", urlString);
-    return null;
+    return "No name";
   }
 };
 

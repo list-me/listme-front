@@ -200,7 +200,7 @@ export const ProductContextProvider = ({ children }: any) => {
     templateId: string,
     templateFields: IHeaderTable[],
     page: number = 0,
-    limit: number = 500,
+    limit: number = 100,
   ) => {
     // if (total == prod.length) return;
     const { data } = await productRequests.list(
