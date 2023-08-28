@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 /* eslint-disable no-return-assign */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-param-reassign */
@@ -18,6 +19,10 @@ import { HotColumn, HotTable } from "@handsontable/react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { CellValue, RangeType } from "handsontable/common";
+
+import DocumentIcon from "../../assets/icons/document-icon.svg";
+import ImageErrorIcon from "../../assets/icons/image-error-icon.svg";
+
 import { ReactComponent as EllipsisIcon } from "../../assets/ellipsis.svg";
 import { ReactComponent as DownloadIcon } from "../../assets/download.svg";
 import { ReactComponent as PlusIcon } from "../../assets/add.svg";
@@ -84,10 +89,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
   const [isTableLocked, setIsTableLocked] = useState(false);
   const [page, setPage] = useState<number>(1);
 
-  // Deverá ser removido
   const [currentCell, setCurrentCell] = useState<any>({});
 
-  // Deverá ser removido
   const [columns, setColumns] = useState<any[]>([]);
   const [headers, setHeaders] = useState<string[]>(colHeaders);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -448,40 +451,44 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     (
       instance: Handsontable,
       td: HTMLTableCellElement,
-      row: number,
+      _: number,
       col: number,
       prop: string | number,
       value: any,
-      cellProperties: Handsontable.CellProperties,
-    ) => {
+    ): void => {
       if (value?.length > 0) {
         td.innerHTML = value
           .map((url: string): string => {
-            const fileNameWithExtension = getFilenameFromUrl(url);
-            if (fileNameWithExtension) {
-              const lastDotIndex = fileNameWithExtension.lastIndexOf(".");
-              const fileName = fileNameWithExtension.substring(0, lastDotIndex);
-              const fileType = fileNameWithExtension.substring(
-                lastDotIndex + 1,
-              );
-              if (
-                !["jpg", "jpeg", "png", "thumb", "PNG", "JPG"].includes(
-                  fileType,
-                )
-              ) {
-                const icon = "https://prod-listme.s3.amazonaws.com/file.svg";
-                return `<div class="fileItem" title="${fileName}">
-                  <img src="${icon}" style="width:25px;height:25px;margin-right:4px;">
-                  <a href="${url}" download />
-                </div>`;
-              }
+            let imageSource: string = url;
+            const fileNameWithExtension: string = getFilenameFromUrl(url);
+            const lastDotIndex: number = fileNameWithExtension.lastIndexOf(".");
+            const fileName: string = fileNameWithExtension.substring(
+              0,
+              lastDotIndex,
+            );
+            const fileType: string = fileNameWithExtension.substring(
+              lastDotIndex + 1,
+            );
 
-              return `
-                  <img class="imgItem" title="${fileName}" src="${url}" style="width:25px;height:25px;margin-right:4px;" onerror="this.onerror=null;this.src='https://d1ptd3zs6hice0.cloudfront.net/users-data-homolog/IMG_IJ06ikQw9qqGOhPdTBpz.png';">
-                `;
+            if (!["jpg", "jpeg", "png", "thumb", "svg"].includes(fileType)) {
+              imageSource = DocumentIcon;
             }
 
-            return "";
+            const placeholder: string = `<img class="imgItem" title="Placeholder" src="${ImageErrorIcon}" style="width:25px;height:25px;margin-right:4px;">`;
+
+            fetch(url, { method: "HEAD" })
+              .then((response: Response) => {
+                const contentLength: string | null =
+                  response.headers.get("Content-Length");
+                if (contentLength && parseInt(contentLength) <= 800 * 1024) {
+                  td.innerHTML = `<img class="imgItem" title="${fileName}" src="${imageSource}" style="width:25px;height:25px;margin-right:4px;">`;
+                }
+              })
+              .catch((error) => {
+                console.error("Erro ao verificar o tamanho da imagem:", error);
+              });
+
+            return placeholder;
           })
           .join("");
       } else {
@@ -576,7 +583,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             search
             renderAllRows={false}
             viewportRowRenderingOffset={200}
-            viewportColumnRenderingOffset={100}
+            viewportColumnRenderingOffset={30}
             rowHeaders
             columnSorting={{ sortEmptyCells: false, headerAction: false }}
             contextMenu={{
