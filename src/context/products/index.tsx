@@ -50,7 +50,7 @@ interface ITypeProductContext {
   headerTable: IHeaderTable[];
   setHeaderTable: Function;
   handleAdd: Function;
-  handleSave: (value: any, isNew: boolean, productId?: string) => Promise<any>;
+  handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>;
   editing: boolean;
   setEditing: Function;
   colHeaders: string[];
@@ -238,7 +238,6 @@ export const ProductContextProvider = ({ children }: any) => {
       productFields.push({ [template[0]]: "" });
     }
 
-    console.log({ data });
     setProducts(productFields);
     setTotal(data?.total);
     return { products, headerTable };
@@ -258,47 +257,33 @@ export const ProductContextProvider = ({ children }: any) => {
   };
 
   const handlePost = async (product: any) => {
-    return productRequests
-      .save(product)
-      .then((response) => response)
-      .catch((error) => {
-        throw error;
-      });
+    return productRequests.save(product);
   };
 
   const handleSave = async (
     value: any,
     isNew: boolean,
-    productId?: string,
+    productId: string,
   ): Promise<any> => {
     try {
       const fields = buildProduct(value);
 
-      console.log({ isNew });
       if (isNew) {
-        setTimeout(async () => {
-          await Promise.resolve(
-            productRequests.update({ id: productId, fields }),
-          ).catch((error) => {
-            throw error;
-          });
-        }, 2000);
+        await productRequests.update({ id: productId, fields });
+        toast.success("Produto atualizado com sucesso");
       } else {
         const newProduct = {
+          id: productId,
           product_template_id: window.location.pathname.substring(10),
           is_public: true,
           fields: fields,
         };
         let newItem;
 
-        await handlePost(newProduct)
-          .then((resolved) => {
-            newItem = resolved?.id;
-          })
-          .catch((error) => {
-            throw error;
-          });
+        const product = await handlePost(newProduct);
+        newItem = product.id;
 
+        toast.success("Produto cadastrado com sucesso");
         return newItem;
       }
     } catch (error: any) {
@@ -306,7 +291,8 @@ export const ProductContextProvider = ({ children }: any) => {
         typeof error?.response?.data?.message == "object"
           ? error?.response?.data?.message[0]
           : error?.response?.data?.message;
-      throw message;
+
+      toast.error(message);
     }
   };
 

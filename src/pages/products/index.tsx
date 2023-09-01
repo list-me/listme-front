@@ -48,7 +48,6 @@ export const Products = () => {
   } = useContext(productContext);
 
   useEffect(() => {
-    console.log("Renderizado Product");
     setIsLoading(true);
     handleRedirectAndGetProducts(window.location.pathname.substring(10)).then(
       () => {

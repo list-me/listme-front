@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable radix */
 /* eslint-disable no-return-assign */
 /* eslint-disable no-plusplus */
@@ -43,7 +45,7 @@ import RadioEditor from "./Editors/Radio";
 import DropdownEditor from "./Editors/Dropdown";
 import RelationEditor from "./Editors/Relation";
 import { FileEditor } from "./Editors/File";
-import { getFilenameFromUrl } from "../../utils";
+import { generateUUID, getFilenameFromUrl } from "../../utils";
 import {
   Content,
   Contents,
@@ -643,7 +645,12 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             //   // }
             //   // return true;
             // }}
-            afterChange={async (changes: Handsontable.CellChange[] | null) => {
+            afterChange={async (
+              changes: Handsontable.CellChange[] | null,
+              source: any,
+            ) => {
+              if (source === "CopyPaste.paste") return;
+
               if (changes !== null && changes?.length && !isTableLocked) {
                 const isNew = !!dataProvider[changes[0][0]].id;
                 const customChanges = changes as Handsontable.CellChange[];
@@ -676,6 +683,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             }}
             afterPaste={async (data: CellValue[][], coords: RangeType[]) => {
               if (data.length && !isTableLocked) {
+                setLoading(true);
                 const range = coords[0];
                 const fieldColumns = cols
                   .slice(range.startCol, range.endCol + 1)
@@ -704,12 +712,18 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
                     changes[column.field] = value;
                   });
-                  changesPromises.push(
-                    handleSave(changes, !!changes?.id, changes?.id),
-                  );
+
+                  changesPromises.push(changes);
                 }
-                await Promise.all(changesPromises);
-                const { hotInstance } = hotRef.current!;
+
+                for await (const item of changesPromises) {
+                  item.id = item?.id ?? generateUUID();
+
+                  await handleSave(item, !!item?.created_at, item.id);
+                }
+
+                setLoading(false);
+                const hotInstance = hotRef.current!?.hotInstance;
                 if (hotInstance) {
                   hotInstance.render();
                 }
@@ -788,7 +802,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                         setLoading(false);
                         setIsTableLocked(false);
 
-                        const hotInstance = hotRef.current!?.hotInstance;
                         if (hotInstance) {
                           hotInstance.render();
                         }
