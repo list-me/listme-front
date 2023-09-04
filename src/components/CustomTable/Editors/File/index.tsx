@@ -1,13 +1,25 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable import/prefer-default-export */
 import React, { ReactNode, createRef } from "react";
 import { BaseEditorComponent } from "@handsontable/react";
+import { toast } from "react-toastify";
 import { FileProps, FileState } from "./File.d";
 import Dropzone from "../../../Dropzone";
+import { productContext } from "../../../../context/products";
+import { isEquivalent } from "../../../../utils";
 
 export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
   rootRef = createRef<HTMLDivElement>();
 
+  loadingRef = createRef<HTMLDivElement>();
+
   containerStyle: any;
+
+  loadingStyle: any;
+
+  static contextType = productContext;
+
+  context!: React.ContextType<typeof productContext>;
 
   constructor(props: any) {
     super(props);
@@ -17,6 +29,7 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
       newValue: [""],
       currentIndex: 0,
       isOpen: false,
+      isLoading: false,
     };
 
     this.containerStyle = {
@@ -29,7 +42,7 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
   }
 
   getValue(): any {
-    return this.state.value;
+    return this.state.newValue;
   }
 
   onBeforeKeyDown = (event: KeyboardEvent): void => {
@@ -60,6 +73,24 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
     const productId = this.props.dataProvider[row][prop]
       ? this.props.dataProvider[row]?.id
       : undefined;
+
+    // const tagValues: Array<string> = JSON.parse(
+    //   td.getAttribute("data-new-value") || "[]",
+    // );
+
+    // let currentValue: string[] = [];
+    // if (tagValues?.length && originalValue?.length) {
+    //   currentValue = tagValues
+    //     .filter((item: any) => !originalValue.includes(item))
+    //     .concat(
+    //       originalValue?.filter((item1: any) => !tagValues.includes(item1)),
+    //     );
+    // }
+
+    // console.log("BF", { currentValue, tagValues, originalValue });
+    // if (!currentValue.length) currentValue = tagValues;
+
+    // console.log({ currentValue, tagValues, originalValue });
 
     this.setState({
       newValue: originalValue,
@@ -97,32 +128,38 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
 
   render(): ReactNode {
     return (
-      <div
-        ref={this.rootRef}
-        style={this.containerStyle}
-        id="editorElement"
-        onMouseDown={this.stopMousedownPropagation}
-      >
-        {this.rootRef.current!?.style?.display === "block" ? (
-          <Dropzone
-            templateId={this.props.templateId}
-            value={this.state.newValue}
-            field={this.state.field}
-            productId={this.state.productId}
-            onCancel={() => {
-              this.navigateToNextRightCell();
-              this.close();
-              this.finishEditing();
-            }}
-            onSuccess={(images: Array<string>) => {
-              this.setState({ newValue: images });
-              this.setValue(images);
-            }}
-          />
-        ) : (
-          <></>
-        )}
-      </div>
+      <>
+        <input type="file" multiple style={{ display: "none" }} />
+        <div
+          ref={this.rootRef}
+          style={this.containerStyle}
+          id="editorElement"
+          onMouseDown={this.stopMousedownPropagation}
+        >
+          {this.rootRef.current!?.style?.display === "block" ? (
+            <Dropzone
+              templateId={this.props.templateId}
+              value={this.state.newValue}
+              field={this.state.field}
+              productId={this.state.productId}
+              onCancel={() => {
+                this.finishEditing();
+                this.navigateToNextRightCell();
+              }}
+              onSuccess={(images: Array<string>) => {
+                this.setState({ newValue: images });
+                this.setValue(images);
+
+                this.TD.setAttribute("data-new-value", JSON.stringify(images));
+
+                console.log({ images });
+              }}
+            />
+          ) : (
+            <></>
+          )}
+        </div>
+      </>
     );
   }
 }

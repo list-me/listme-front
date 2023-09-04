@@ -311,6 +311,14 @@ export const Container = styled.div`
     td:has(> div) {
       padding: 0 !important;
     }
+
+    .drag-over {
+      border: 2px dashed #3818d9;
+    }
+
+    .drag-over::after {
+      content: "Solte aqui";
+    }
   }
 `;
 

@@ -1,11 +1,12 @@
 /* eslint-disable */
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 import { productRequests } from "../../services/apis/requests/product";
 import { templateRequests } from "../../services/apis/requests/template";
 import { ICustomCellType } from "./product.context";
 import { AxiosResponse } from "axios";
+import { fileRequests } from "../../services/apis/requests/file";
 
 export interface ICustomField {
   hidden?: boolean;
@@ -84,6 +85,10 @@ interface ITypeProductContext {
     key: string,
     templateId: string,
   ) => Promise<any[]>;
+  uploadImages: (
+    files: Array<File>,
+    bucketUrl: string,
+  ) => Promise<Array<string> | void>;
 }
 
 interface IField {
@@ -101,6 +106,11 @@ interface IField {
   width?: string;
   frozen?: boolean;
   bucket_url: string;
+}
+
+interface SignedUrlResponse {
+  url: string;
+  access_url: string;
 }
 
 export const productContext = createContext<ITypeProductContext>({
@@ -138,6 +148,7 @@ export const productContext = createContext<ITypeProductContext>({
     key: string,
     templateId: string,
   ): Promise<any[]> => [],
+  uploadImages: async (): Promise<void> => {},
 });
 
 export const ProductContextProvider = ({ children }: any) => {
@@ -171,6 +182,40 @@ export const ProductContextProvider = ({ children }: any) => {
 
     return data;
   }
+
+  const getSignedUrl = async (
+    fileName: string,
+    fileType: string,
+    templateId: string,
+  ): Promise<SignedUrlResponse> => {
+    return fileRequests.getSignedUrl(fileName, fileType, templateId);
+  };
+
+  const uploadImages = useCallback(
+    async (files: File[], bucketUrl: string): Promise<string[] | void> => {
+      try {
+        const filesNames: string[] = [];
+        const uploadPromises = files.map(async (file) => {
+          const [fileName, fileType] = file.name.split(".");
+
+          const signedUrl = await getSignedUrl(fileName, fileType, bucketUrl);
+          filesNames.push(signedUrl.access_url);
+          return fileRequests.uploadFile(file, signedUrl.url);
+        });
+
+        await Promise.all(uploadPromises);
+        return filesNames;
+      } catch (error) {
+        console.log({ error });
+        throw new Error("Ocorreu um erro ao realizar o upload dos arquivos");
+      }
+    },
+    [],
+  );
+
+  const handleActiveDrag = (): void => {
+    // setIsDragActive(true);
+  };
 
   const handleUpdateTemplate = (field: any) => {};
 
@@ -696,6 +741,7 @@ export const ProductContextProvider = ({ children }: any) => {
     handleGetProducts,
     handleGetProductsFiltered,
     handleGetTemplate,
+    uploadImages,
   };
 
   return (

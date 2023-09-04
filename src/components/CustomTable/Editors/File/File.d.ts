@@ -1,6 +1,7 @@
 type FileProps = {
   templateId: string;
   dataProvider: Array<any>;
+  changeLoading?: (isLoading: boolean, row?: number, column?: number) => void;
 };
 
 type FileState = {
@@ -10,6 +11,7 @@ type FileState = {
   productId: string | undefined;
   col: number;
   row: number;
+  isLoading: boolean;
 };
 
 export { FileState, FileProps };

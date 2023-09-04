@@ -43,7 +43,7 @@ import RadioEditor from "./Editors/Radio";
 import DropdownEditor from "./Editors/Dropdown";
 import RelationEditor from "./Editors/Relation";
 import { FileEditor } from "./Editors/File";
-import { getFilenameFromUrl } from "../../utils";
+import { getFilenameFromUrl, isEquivalent } from "../../utils";
 import {
   Content,
   Contents,
@@ -68,6 +68,7 @@ registerAllEditors();
 
 const CustomTable: React.FC<CustomTableProps> = () => {
   const hotRef = useRef<HotTable>(null);
+  const loadingRef = useRef<HTMLDivElement>(null);
   const {
     handleSave,
     handleDelete,
@@ -83,6 +84,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     products,
     colHeaders,
     total,
+    uploadImages,
   } = useContext(productContext);
 
   const [cols, setCols] = useState<any[]>([]);
@@ -94,7 +96,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
   const [columns, setColumns] = useState<any[]>([]);
   const [headers, setHeaders] = useState<string[]>(colHeaders);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const [dataProvider, setDataProvider] = useState<any[]>(products ?? []);
 
@@ -347,7 +348,9 @@ const CustomTable: React.FC<CustomTableProps> = () => {
   );
 
   const handleGetProductFiltered = (keyword: string): void => {
-    setLoading(true);
+    // setLoading(true);
+    loadingRef.current!.style.display = "block";
+
     productRequests
       .list({ keyword, limit: 100 }, window.location.pathname.substring(10))
       .then((response) => {
@@ -384,7 +387,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           }
 
           setDataProvider(productFields);
-          setLoading(false);
+          // setLoading(false);
+          loadingRef.current!.style.display = "false";
 
           const hotInstance = hotRef.current!?.hotInstance;
           if (hotInstance) {
@@ -397,13 +401,48 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       })
       .catch((errr: any) => {
         console.log(errr);
-        setLoading(false);
+        // setLoading(false);
+        loadingRef.current!.style.display = "none";
+
         const hotInstance = hotRef.current!?.hotInstance;
         if (hotInstance) {
           hotInstance.render();
         }
         toast.error(errr.response.data.message);
       });
+  };
+
+  const onDrop = async (event: DragEvent): Promise<void> => {
+    const target = event.target as HTMLElement;
+    const cellElement = target.closest(".handsontable .file-cell");
+    if (cellElement) {
+      const row: number = Number(cellElement.getAttribute("data-row"));
+      const column: number = Number(cellElement.getAttribute("data-col"));
+      try {
+        if (event.dataTransfer?.files.length) {
+          const { files } = event.dataTransfer;
+          const parsedFiles: Array<File> = Array.from(files);
+          const newFiles: Array<string> | void = await uploadImages(
+            parsedFiles,
+            template.id,
+          );
+          if (newFiles && newFiles.length) {
+            console.log(this);
+
+            // this.setState(
+            //   { newValue: [...this.state.newValue, ...newFiles] },
+            //   () => {
+            //     // this.finishEditing();
+            //   },
+            // );
+          }
+          //   },
+          // )
+        }
+      } catch (error) {
+        if (error instanceof Error) toast.error(error.message);
+      }
+    }
   };
 
   useEffect(() => {
@@ -416,6 +455,22 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     handleMountColumns();
 
     setDataProvider(products);
+
+    // const dropHandler = async (event: DragEvent): Promise<void> => {
+    //   const target = event.target as HTMLElement;
+    //   if (target && target.matches(".handsontable .fileCell")) {
+    //     event.preventDefault();
+    //     event.stopPropagation();
+
+    //     const { hotInstance } = hotRef.current!;
+    //     if (hotInstance && event.dataTransfer?.files.length) {
+    //       const { files } = event.dataTransfer;
+    //       // setDroppedFiles(Array.from(files));
+    //       // const { col, row } = hotInstance.getCoords(target);
+    //       // await onDrop(files, col, row);
+    //     }
+    //   }
+    // };
   }, [headerTable]);
 
   const getRowsInterval = (start: number, end: number): Array<number> => {
@@ -441,8 +496,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       value: any,
       cellProperties: Handsontable.CellProperties,
     ) => {
-      const total = value ? value.length : 0;
-      td.innerHTML = `<div class="tagContent">${total} Items relacionados</div>`;
+      const totalItems = value ? value.length : 0;
+      td.innerHTML = `<div class="tagContent">${totalItems} Items relacionados</div>`;
     },
     [],
   );
@@ -451,14 +506,130 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     (
       instance: Handsontable,
       td: HTMLTableCellElement,
-      _: number,
+      row: number,
       col: number,
       prop: string | number,
       value: any,
-    ): void => {
-      if (value?.length > 0) {
+    ) => {
+      td.className = "file-cell";
+
+      td.draggable = true;
+      td.ondragover = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      };
+
+      td.ondragleave = (event: DragEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+        td.classList.remove("drag-over");
+      };
+
+      td.ondragenter = (event: DragEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const target = event.target as HTMLElement;
+        if (target.tagName === "TD") {
+          td.classList.add("drag-over");
+        }
+      };
+
+      td.ondrop = async (event: DragEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const { hotInstance } = hotRef.current!;
+        const target = event.target as HTMLElement;
+        const cellElement = target.closest(".handsontable .file-cell");
+        if (cellElement && hotInstance) {
+          td.classList.remove("drag-over");
+          loadingRef.current!.style.display = "block";
+          try {
+            let currentValue: Array<string> = JSON.parse(
+              cellElement.getAttribute("data-new-value") || "[]",
+            );
+
+            if (value && typeof value === "object")
+              currentValue = currentValue
+                .filter((item: any) => !value.includes(item))
+                .concat(
+                  value?.filter((item1: any) => !currentValue.includes(item1)),
+                );
+
+            if (event.dataTransfer?.files.length) {
+              const { files } = event.dataTransfer;
+              const parsedFiles: Array<File> = Array.from(files);
+              const newFiles: Array<string> | void = await uploadImages(
+                parsedFiles,
+                template.id,
+              );
+
+              if (newFiles && newFiles.length) {
+                let newValue = [];
+                if (currentValue) {
+                  if (typeof currentValue === "object") {
+                    newValue = [...currentValue, ...newFiles];
+                  } else {
+                    newValue = [currentValue, ...newFiles];
+                  }
+                } else {
+                  newValue = [...newFiles];
+                }
+
+                const changes: any = hotInstance.getSourceDataAtRow(row);
+                changes[prop] = newValue;
+                // cellElement.setAttribute(
+                //   "data-new-value",
+                //   JSON.stringify(newValue),
+                // );
+                // await handleSave(changes, !!changes?.created_at, changes?.id);
+
+                // hotInstance.suspendRender();
+                hotInstance.setDataAtCell(row, col, newValue);
+
+                // td.innerHTML = newFiles
+                //   .map((item: string) => {
+                //     let imageSource: string = item;
+
+                //     const fileNameWithExtension: string =
+                //       getFilenameFromUrl(item);
+                //     const lastDotIndex: number =
+                //       fileNameWithExtension.lastIndexOf(".");
+                //     const fileName: string = fileNameWithExtension.substring(
+                //       0,
+                //       lastDotIndex,
+                //     );
+                //     const fileType: string = fileNameWithExtension.substring(
+                //       lastDotIndex + 1,
+                //     );
+
+                //     if (
+                //       !["jpg", "jpeg", "png", "thumb", "svg"].includes(fileType)
+                //     ) {
+                //       imageSource = DocumentIcon;
+                //     }
+                //     return `<img class="${fileName}" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px;margin-right:4px;">`;
+                //   })
+                //   .join("")
+                //   .concat(td.innerHTML);
+              }
+            }
+
+            hotInstance.selectCell(row, col + 1);
+
+            loadingRef.current!.style.display = "none";
+          } catch (error) {
+            loadingRef.current!.style.display = "none";
+
+            if (error instanceof Error) toast.error(error.message);
+          }
+        }
+      };
+
+      if (value?.length) {
         td.innerHTML = value
-          .map((url: string): string => {
+          .map((url: string) => {
             let imageSource: string = url;
             const fileNameWithExtension: string = getFilenameFromUrl(url);
             const lastDotIndex: number = fileNameWithExtension.lastIndexOf(".");
@@ -474,15 +645,18 @@ const CustomTable: React.FC<CustomTableProps> = () => {
               imageSource = DocumentIcon;
             }
 
-            const placeholder: string = `<img class="imgItem" title="Placeholder" src="${ImageErrorIcon}" style="width:25px;height:25px;margin-right:4px;">`;
+            const placeholder: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${ImageErrorIcon}" style="width:25px;height:25px;margin-right:4px;">`;
 
-            fetch(url, { method: "HEAD" })
+            fetch(url, { method: "HEAD", mode: "no-cors" })
               .then((response: Response) => {
                 const contentLength: string | null =
                   response.headers.get("Content-Length");
+
                 if (contentLength && parseInt(contentLength) <= 800 * 1024) {
                   td.innerHTML = `<img class="imgItem" title="${fileName}" src="${imageSource}" style="width:25px;height:25px;margin-right:4px;">`;
                 }
+
+                return "";
               })
               .catch((error) => {
                 console.error("Erro ao verificar o tamanho da imagem:", error);
@@ -541,6 +715,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 onClick={() => {
                   const { hotInstance } = hotRef.current!;
                   if (hotInstance) {
+                    // hotInstance.alter("insert_row", 0, 0);
                     setDataProvider((prev) => [{}, ...prev]);
                   }
                 }}
@@ -644,13 +819,53 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             //   // return true;
             // }}
             afterChange={async (changes: Handsontable.CellChange[] | null) => {
-              if (changes !== null && changes?.length && !isTableLocked) {
+              const hotInstance = hotRef.current?.hotInstance;
+              if (
+                changes !== null &&
+                changes?.length &&
+                !isTableLocked &&
+                hotInstance
+              ) {
+                const value = hotInstance.getSourceData(changes[0][0]);
+                console.log({ value, changes });
                 const isNew = !!dataProvider[changes[0][0]].id;
                 const customChanges = changes as Handsontable.CellChange[];
                 if (
+                  typeof customChanges[0][2] === "object" &&
+                  typeof customChanges[0][3] === "object" &&
+                  !isEquivalent(customChanges[0][2], customChanges[0][3])
+                ) {
+                  console.log("ON");
+                  try {
+                    if (!isNew) setIsTableLocked(true);
+                    const id = await handleSave(
+                      dataProvider[customChanges[0][0]],
+                      isNew,
+                      dataProvider[customChanges[0][0]]?.id,
+                    );
+                    if (
+                      id &&
+                      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(
+                        id.toString(),
+                      )
+                    ) {
+                      const updated = dataProvider;
+                      updated[customChanges[0][0]].id = id;
+                      setDataProvider(updated);
+                    }
+                  } finally {
+                    if (!isNew) setIsTableLocked(false);
+                    console.log("BF");
+                    return;
+                  }
+                }
+
+                if (
+                  typeof customChanges[0][2] !== "object" &&
                   customChanges[0][2] !== customChanges[0][3] &&
                   dataProvider.length
                 ) {
+                  console.log("Changes", { changes });
                   try {
                     if (!isNew) setIsTableLocked(true);
                     const id = await handleSave(
@@ -734,7 +949,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                     scrollTop + visibleHeight >= scrollableHeight &&
                     total > dataProvider.length
                   ) {
-                    setLoading(true);
+                    // setLoading(true);
+                    loadingRef.current!.style.display = "block";
                     setIsTableLocked(true);
                     productRequests
                       .list(
@@ -780,12 +996,16 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                           ]);
 
                           setPage(page + 1);
-                          setLoading(false);
+                          // setLoading(false);
+                          loadingRef.current!.style.display = "none";
+
                           setIsTableLocked(false);
                         }
                       })
                       .catch((errr: any) => {
-                        setLoading(false);
+                        // setLoading(false);
+                        loadingRef.current!.style.display = "none";
+
                         setIsTableLocked(false);
 
                         const hotInstance = hotRef.current!?.hotInstance;
@@ -954,7 +1174,9 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             })}
           </HotTable>
         </Container>
-        {loading ? <LoadingFetch /> : <></>}
+        <div ref={loadingRef} style={{ display: "none" }}>
+          <LoadingFetch />
+        </div>
       </>
     </>
   );

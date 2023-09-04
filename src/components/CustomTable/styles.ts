@@ -24,4 +24,26 @@ export const Container = styled.div`
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
     height: 72vh !important;
   }
+
+  .loader {
+    display: flex;
+    justify-content: center;
+
+    @keyframes spinner {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    .loading-spinner {
+      width: 10px;
+      height: 10px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #3818d9;
+      border-radius: 50%;
+      animation: spinner 1.5s linear infinite;
+    }
+  }
 `;
