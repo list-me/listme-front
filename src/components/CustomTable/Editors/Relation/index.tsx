@@ -74,14 +74,11 @@ class RelationEditor extends BaseEditorComponent<
     if (this.rootRef.current) this.rootRef.current.style.display = "block";
     document.addEventListener("keydown", this.onBeforeKeyDown, true);
 
-    // console.log("Dentro do open", this.state.value);
     this.setState({ isOpen: true });
   }
 
   close(): void {
     if (this.rootRef.current) this.rootRef.current.style.display = "none";
-    // document.removeEventListener("keydown", this.onBeforeKeyDown, true);
-
     this.setState({ isOpen: false });
   }
 
@@ -144,14 +141,12 @@ class RelationEditor extends BaseEditorComponent<
   }
 
   handleChange(value: any, action: NavigationFunction): void {
-    const { hotInstance } = this;
-    if (hotInstance) {
-      hotInstance.setDataAtCell(this.state.row, this.state.col, value);
+    this.setState({ newValue: value }, () => {
+      this.close();
       action();
-    }
 
-    this.close();
-    this.finishEditing();
+      this.finishEditing();
+    });
   }
 
   handleCancel(): void {
@@ -182,12 +177,15 @@ class RelationEditor extends BaseEditorComponent<
             templateId={this.props.templateId}
             field={this.props.field}
             dataProvider={this.props.dataProvider}
-            onChange={(newValue: Array<any>, action: NavigationAction): void =>
+            onChange={(
+              newValue: Array<any>,
+              action: NavigationAction,
+            ): void => {
               this.handleChange(
                 newValue?.filter(Boolean),
                 this.navigate[action],
-              )
-            }
+              );
+            }}
             onCancel={() => this.handleCancel()}
           />
         ) : (

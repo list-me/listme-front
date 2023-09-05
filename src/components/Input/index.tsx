@@ -69,30 +69,32 @@ export const Input: React.FC<IInputProps> = ({
           </span>
         </Label>
       ) : null}
-      <Form.Item
-        className="formInput"
-        name={name}
-        rules={[{ validator: validateExactWord }]}
-      >
-        <InputCustom
-          ref={inputRef}
-          style={{ height: height ?? "35px", width }}
-          placeholder={placeholder}
-          type={type}
+      <Form>
+        <Form.Item
+          className="formInput"
           name={name}
-          custom={{ background, bordered, padding }}
-          value={value ?? inputText}
-          autoComplete="off"
-          onChange={(e) => {
-            const newValue = e.target.value;
-            setInputText(newValue);
+          rules={[{ validator: validateExactWord }]}
+        >
+          <InputCustom
+            ref={inputRef}
+            style={{ height: height ?? "35px", width }}
+            placeholder={placeholder}
+            type={type}
+            name={name}
+            custom={{ background, bordered, padding }}
+            value={value ?? inputText}
+            autoComplete="off"
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setInputText(newValue);
 
-            if (handleCustomChange) handleCustomChange(newValue);
-          }}
-          autoFocus={autoFocus}
-          onPressEnter={() => onPressEnter()}
-        />
-      </Form.Item>
+              if (handleCustomChange) handleCustomChange(newValue);
+            }}
+            autoFocus={autoFocus}
+            onPressEnter={() => onPressEnter()}
+          />
+        </Form.Item>
+      </Form>
     </Container>
   );
 };

@@ -390,7 +390,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
           setDataProvider(productFields);
           // setLoading(false);
-          loadingRef.current!.style.display = "false";
+          loadingRef.current!.style.display = "none";
 
           const hotInstance = hotRef.current!?.hotInstance;
           if (hotInstance) {
@@ -835,7 +835,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 hotInstance
               ) {
                 const value = hotInstance.getSourceData(changes[0][0]);
-                console.log({ value, changes });
                 const isNew = !!dataProvider[changes[0][0]].id;
                 const customChanges = changes as Handsontable.CellChange[];
                 if (
@@ -867,7 +866,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                     return;
                   }
                 }
-
                 if (
                   typeof customChanges[0][2] !== "object" &&
                   customChanges[0][2] !== customChanges[0][3] &&
@@ -901,7 +899,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
               if (data.length && !isTableLocked) {
                 loadingRef.current!.style.display = "block";
 
-                // setLoading(true);
                 const range = coords[0];
                 const fieldColumns = cols
                   .slice(range.startCol, range.endCol + 1)
