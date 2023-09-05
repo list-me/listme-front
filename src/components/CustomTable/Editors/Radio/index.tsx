@@ -48,7 +48,7 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
     if (event.key === "Enter") {
       if (target) {
         this.handleChange(target.value);
-        this.finishEditing();
+        // this.finishEditing();
         this.close();
       }
 
@@ -58,13 +58,13 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
     }
 
     if (["Tab", " "].includes(event.key)) {
-      this.finishEditing();
+      // this.finishEditing();
       this.close();
       this.navigateToNextRightCell();
     }
 
     if (["Escape"].includes(event.key)) {
-      this.finishEditing();
+      // this.finishEditing();
       this.close();
     }
   };

@@ -57,11 +57,13 @@ export const Products = () => {
   }, []);
 
   return (
-    <Content>
-      <Container>
-        {isLoading ? <Loading /> : <Table data={products} />}
-      </Container>
-    </Content>
+    <>
+      <Content>
+        <Container>
+          {isLoading ? <Loading /> : <Table data={products} />}
+        </Container>
+      </Content>
+    </>
   );
 
   // return (

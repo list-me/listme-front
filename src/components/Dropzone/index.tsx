@@ -164,7 +164,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
             onCancel();
           }}
         >
-          Imagens
+          Arquivos
           <CloseModalIcon
             onClick={() => {
               if (loading) return;
