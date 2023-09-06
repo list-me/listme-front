@@ -2,7 +2,6 @@ import { ReactElement } from "react";
 
 interface ICellProps {
   label: string;
-  // icon: ReactElement;
   column: any;
   template: any;
   handleFrozen: Function;
@@ -10,8 +9,6 @@ interface ICellProps {
   handleHidden: Function;
   handleDeleteColumn: () => void;
   freeze: boolean;
-  // test: Function;
-  // test1: Function;
 }
 
 interface IOption {
@@ -20,4 +17,14 @@ interface IOption {
   action: string;
 }
 
-export type { ICellProps, IOption };
+enum IconType {
+  Text = "text",
+  Paragraph = "paragraph",
+  Checked = "checked",
+  List = "list",
+  File = "file",
+  Radio = "radio",
+  Relation = "relation",
+}
+
+export { ICellProps, IOption, IconType };
