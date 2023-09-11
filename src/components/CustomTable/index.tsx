@@ -1,10 +1,3 @@
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable radix */
-/* eslint-disable no-return-assign */
-/* eslint-disable no-plusplus */
-/* eslint-disable no-param-reassign */
-/* eslint-disable react/no-array-index-key */
 import ReactDOM from "react-dom/client";
 import { unmountComponentAtNode } from "react-dom";
 import React, {

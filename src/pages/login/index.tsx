@@ -23,7 +23,7 @@ import { ROUTES } from "../../constants/routes";
 import { STORAGE } from "../../constants/localStorage";
 import { Loading } from "../../components/Loading";
 
-export const Login = () => {
+export function Login(): JSX.Element {
   const [keepLoggedIn, setKeepLoggedIn] = useState<boolean>(false);
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -31,7 +31,7 @@ export const Login = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.MouseEvent): void => {
     setLoading(!loading);
     try {
       authRequests
@@ -137,4 +137,4 @@ export const Login = () => {
       </LoginContainer>
     </Background>
   );
-};
+}
