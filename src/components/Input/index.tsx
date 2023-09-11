@@ -1,16 +1,13 @@
 /* eslint-disable */
 
 import { Form } from "antd";
-import { ok } from "assert";
-import { debounce } from "lodash";
-import { useContext, useEffect, useRef, useState } from "react";
-import { productContext } from "../../context/products";
+import { useEffect, useRef, useState } from "react";
 
 import { IInputProps } from "./Input.d";
 import { Container, Label, InputCustom } from "./styles";
 
 interface InputRef extends HTMLInputElement {
-  input: any; // ou outro tipo específico
+  input: any;
 }
 
 export const Input: React.FC<IInputProps> = ({
@@ -30,7 +27,6 @@ export const Input: React.FC<IInputProps> = ({
   onPressEnter = () => {},
 }) => {
   const [inputText, setInputText] = useState<string>("");
-  const { handleFilter } = useContext(productContext);
   const inputRef = useRef<InputRef | null>(null);
 
   const validateExactWord = (rule: any, word: any) => {
@@ -53,6 +49,10 @@ export const Input: React.FC<IInputProps> = ({
     };
 
     window.addEventListener("keydown", handleKeyDown);
+
+    if (inputRef.current! && autoFocus) {
+      inputRef.current!.focus();
+    }
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);

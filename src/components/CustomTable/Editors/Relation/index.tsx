@@ -40,26 +40,7 @@ class RelationEditor extends BaseEditorComponent<
   }
 
   onBeforeKeyDown = (event: KeyboardEvent): void => {
-    const target = event.target as HTMLDivElement;
-    // if (target.tagName !== "TEXTAREA") {
-    //   console.log({ target });
-    //   event.stopImmediatePropagation();
-    //   event.preventDefault();
-    // }
-
-    if (event.key === "Escape") {
-      this.finishEditing();
-    }
-
-    // if (["Tab"].includes(event.key)) {
-    //   this.close();
-    //   this.finishEditing();
-    //   // this.navigateToNextRightCell();
-    // }
-    // if (["Escape"].includes(event.key)) {
-    //   this.close();
-    //   this.finishEditing();
-    // }
+    if (event.key === "Escape") this.finishEditing();
   };
 
   setValue(value: any): void {
@@ -79,6 +60,7 @@ class RelationEditor extends BaseEditorComponent<
 
   close(): void {
     if (this.rootRef.current) this.rootRef.current.style.display = "none";
+
     this.setState({ isOpen: false });
   }
 
