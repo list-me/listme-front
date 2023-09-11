@@ -265,14 +265,6 @@ export const Container = styled.div`
       text-align: start;
       padding-top: 16px;
 
-      /* div {
-        width: 100%;
-        height: 100%;
-
-        display: flex;
-        align-items: center;
-      } */
-
       .tagContent {
         background-color: #dee2e6 !important;
 

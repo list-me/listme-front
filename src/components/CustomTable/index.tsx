@@ -383,7 +383,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
           setDataProvider(productFields);
           // setLoading(false);
-          loadingRef.current!.style.display = "false";
+          loadingRef.current!.style.display = "none";
 
           const hotInstance = hotRef.current!?.hotInstance;
           if (hotInstance) {
@@ -491,6 +491,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       value: any,
       cellProperties: Handsontable.CellProperties,
     ) => {
+      if (typeof value === "string" && value.length) value = JSON.parse(value);
+
       const totalItems = value ? value.length : 0;
       td.innerHTML = `<div class="tagContent">${totalItems} Items relacionados</div>`;
     },
@@ -574,40 +576,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
                 const changes: any = hotInstance.getSourceDataAtRow(row);
                 changes[prop] = newValue;
-                // cellElement.setAttribute(
-                //   "data-new-value",
-                //   JSON.stringify(newValue),
-                // );
-                // await handleSave(changes, !!changes?.created_at, changes?.id);
-
-                // hotInstance.suspendRender();
                 hotInstance.setDataAtCell(row, col, newValue);
-
-                // td.innerHTML = newFiles
-                //   .map((item: string) => {
-                //     let imageSource: string = item;
-
-                //     const fileNameWithExtension: string =
-                //       getFilenameFromUrl(item);
-                //     const lastDotIndex: number =
-                //       fileNameWithExtension.lastIndexOf(".");
-                //     const fileName: string = fileNameWithExtension.substring(
-                //       0,
-                //       lastDotIndex,
-                //     );
-                //     const fileType: string = fileNameWithExtension.substring(
-                //       lastDotIndex + 1,
-                //     );
-
-                //     if (
-                //       !["jpg", "jpeg", "png", "thumb", "svg"].includes(fileType)
-                //     ) {
-                //       imageSource = DocumentIcon;
-                //     }
-                //     return `<img class="${fileName}" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px;margin-right:4px;">`;
-                //   })
-                //   .join("")
-                //   .concat(td.innerHTML);
               }
             }
 
@@ -621,6 +590,10 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           }
         }
       };
+
+      if (typeof value === "string" && value.length) {
+        value = JSON.parse(value);
+      }
 
       if (value?.length) {
         td.innerHTML = value
@@ -648,10 +621,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                   response.headers.get("Content-Length");
 
                 if (contentLength && parseInt(contentLength) <= 800 * 1024) {
-                  td.innerHTML = `<img class="imgItem" title="${fileName}" src="${imageSource}" style="width:25px;height:25px;margin-right:4px;">`;
+                  td.innerHTML = `<img class="imgItem" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px;margin-right:4px;">`;
                 }
-
-                return "";
               })
               .catch((error) => {
                 console.error("Erro ao verificar o tamanho da imagem:", error);
@@ -827,8 +798,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 !isTableLocked &&
                 hotInstance
               ) {
-                const value = hotInstance.getSourceData(changes[0][0]);
-                console.log({ value, changes });
                 const isNew = !!dataProvider[changes[0][0]].id;
                 const customChanges = changes as Handsontable.CellChange[];
                 if (
@@ -836,7 +805,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                   typeof customChanges[0][3] === "object" &&
                   !isEquivalent(customChanges[0][2], customChanges[0][3])
                 ) {
-                  console.log("ON");
                   try {
                     if (!isNew) setIsTableLocked(true);
                     const id = await handleSave(
@@ -860,7 +828,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                     return;
                   }
                 }
-
                 if (
                   typeof customChanges[0][2] !== "object" &&
                   customChanges[0][2] !== customChanges[0][3] &&
@@ -890,11 +857,41 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 }
               }
             }}
+            beforeCopy={(
+              data: CellValue[][],
+              coords: RangeType[],
+              copiedHeadersCount: { columnHeadersCount: number },
+            ) => {
+              for (let i = 0; i < coords.length; i++) {
+                const { startRow, startCol, endRow, endCol } = coords[i];
+                for (let row = startRow; row <= endRow; row++) {
+                  for (let col = startCol; col <= endCol; col++) {
+                    const cellData = hotRef.current!.hotInstance?.getDataAtCell(
+                      row,
+                      col,
+                    );
+                    const cell = hotRef.current!?.hotInstance?.getCellMeta(
+                      row,
+                      col,
+                    );
+
+                    const column = cols.find((col) => col.data === cell?.prop);
+                    if (
+                      cellData &&
+                      ["relation", "file", "checked"].includes(column.type)
+                    ) {
+                      data[row - startRow][col - startCol] =
+                        JSON.stringify(cellData);
+                    }
+                  }
+                }
+              }
+            }}
             afterPaste={async (data: CellValue[][], coords: RangeType[]) => {
-              if (data.length && !isTableLocked) {
+              const { hotInstance } = hotRef.current!;
+              if (data.length && !isTableLocked && hotInstance) {
                 loadingRef.current!.style.display = "block";
 
-                // setLoading(true);
                 const range = coords[0];
                 const fieldColumns = cols
                   .slice(range.startCol, range.endCol + 1)
@@ -915,28 +912,38 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
                   fieldColumns.forEach((column: any, index: number): void => {
                     const position: number = data.length > 1 ? i : 0;
-                    const value = Object.keys(COMPONENT_CELL_PER_TYPE).includes(
-                      column.type.toString().toUpperCase(),
-                    )
-                      ? [data[position][index]]
-                      : data[position][index];
 
-                    changes[column.field] = value;
+                    if (
+                      ["relation", "file", "checked"].includes(column.type) &&
+                      data[position][index]
+                    ) {
+                      changes[column.field] = JSON.parse(data[position][index]);
+                    } else {
+                      let value = Object.keys(COMPONENT_CELL_PER_TYPE).includes(
+                        column.type.toString().toUpperCase(),
+                      )
+                        ? [data[position][index]]
+                        : data[position][index];
+
+                      if (Array.isArray(value) && value[0] === "") {
+                        value = [];
+                      }
+                      changes[column.field] = value;
+                    }
                   });
 
                   changesPromises.push(changes);
                 }
 
                 for await (const item of changesPromises) {
-                  item.id = item?.id ?? generateUUID();
+                  const isNew: boolean = !!item?.id;
+                  if (!isNew) item.id = item?.id ?? generateUUID();
 
-                  await handleSave(item, !!item?.created_at, item.id);
+                  await handleSave(item, isNew, item.id);
                 }
 
-                // setLoading(false);
                 loadingRef.current!.style.display = "none";
 
-                const hotInstance = hotRef.current!?.hotInstance;
                 if (hotInstance) {
                   hotInstance.render();
                 }
