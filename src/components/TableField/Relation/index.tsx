@@ -193,11 +193,11 @@ const RelationComponent: React.FC<PropsRelation> = ({
   };
 
   const handleUpdateProduct = async () => {
-    setButtonLoading(true);
-    const newData = dataProvider;
-    newData[row][column.data] = currentProducts;
+    // setButtonLoading(true);
+    // const newData = dataProvider;
+    // newData[row][column.data] = currentProducts;
 
-    setButtonLoading(false);
+    // setButtonLoading(false);
     onChange(currentProducts, NavigationAction.RIGHT);
   };
 
@@ -368,6 +368,7 @@ const RelationComponent: React.FC<PropsRelation> = ({
                   ) : (
                     <Table
                       columns={columns}
+                      rowKey="id"
                       dataSource={data}
                       onRow={(record, rowIndex) => {
                         return {

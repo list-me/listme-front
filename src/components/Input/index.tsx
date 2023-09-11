@@ -1,16 +1,13 @@
 /* eslint-disable */
 
 import { Form } from "antd";
-import { ok } from "assert";
-import { debounce } from "lodash";
-import { useContext, useEffect, useRef, useState } from "react";
-import { productContext } from "../../context/products";
+import { useEffect, useRef, useState } from "react";
 
 import { IInputProps } from "./Input.d";
 import { Container, Label, InputCustom } from "./styles";
 
 interface InputRef extends HTMLInputElement {
-  input: any; // ou outro tipo específico
+  input: any;
 }
 
 export const Input: React.FC<IInputProps> = ({
@@ -30,7 +27,6 @@ export const Input: React.FC<IInputProps> = ({
   onPressEnter = () => {},
 }) => {
   const [inputText, setInputText] = useState<string>("");
-  const { handleFilter } = useContext(productContext);
   const inputRef = useRef<InputRef | null>(null);
 
   const validateExactWord = (rule: any, word: any) => {
@@ -73,29 +69,32 @@ export const Input: React.FC<IInputProps> = ({
           </span>
         </Label>
       ) : null}
-      <Form.Item
-        className="formInput"
-        name={name}
-        rules={[{ validator: validateExactWord }]}
-      >
-        <InputCustom
-          ref={inputRef}
-          style={{ height: height ?? "35px", width }}
-          placeholder={placeholder}
-          type={type}
+      <Form>
+        <Form.Item
+          className="formInput"
           name={name}
-          custom={{ background, bordered, padding }}
-          value={value ?? inputText}
-          autoComplete="off"
-          onChange={(e) => {
-            const newValue = e.target.value;
-            setInputText(newValue);
+          rules={[{ validator: validateExactWord }]}
+        >
+          <InputCustom
+            ref={inputRef}
+            style={{ height: height ?? "35px", width }}
+            placeholder={placeholder}
+            type={type}
+            name={name}
+            custom={{ background, bordered, padding }}
+            value={value ?? inputText}
+            autoComplete="off"
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setInputText(newValue);
 
-            if (handleCustomChange) handleCustomChange(newValue);
-          }}
-          onPressEnter={() => onPressEnter()}
-        />
-      </Form.Item>
+              if (handleCustomChange) handleCustomChange(newValue);
+            }}
+            autoFocus={autoFocus}
+            onPressEnter={() => onPressEnter()}
+          />
+        </Form.Item>
+      </Form>
     </Container>
   );
 };

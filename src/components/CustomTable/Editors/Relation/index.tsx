@@ -40,26 +40,7 @@ class RelationEditor extends BaseEditorComponent<
   }
 
   onBeforeKeyDown = (event: KeyboardEvent): void => {
-    const target = event.target as HTMLDivElement;
-    // if (target.tagName !== "TEXTAREA") {
-    //   console.log({ target });
-    //   event.stopImmediatePropagation();
-    //   event.preventDefault();
-    // }
-
-    if (event.key === "Escape") {
-      this.finishEditing();
-    }
-
-    // if (["Tab"].includes(event.key)) {
-    //   this.close();
-    //   this.finishEditing();
-    //   // this.navigateToNextRightCell();
-    // }
-    // if (["Escape"].includes(event.key)) {
-    //   this.close();
-    //   this.finishEditing();
-    // }
+    if (event.key === "Escape") this.finishEditing();
   };
 
   setValue(value: any): void {
@@ -142,14 +123,12 @@ class RelationEditor extends BaseEditorComponent<
   }
 
   handleChange(value: any, action: NavigationFunction): void {
-    const { hotInstance } = this;
-    if (hotInstance) {
-      hotInstance.setDataAtCell(this.state.row, this.state.col, value);
+    this.setState({ newValue: value }, () => {
+      this.close();
       action();
-    }
 
-    this.close();
-    this.finishEditing();
+      this.finishEditing();
+    });
   }
 
   handleCancel(): void {
@@ -180,12 +159,15 @@ class RelationEditor extends BaseEditorComponent<
             templateId={this.props.templateId}
             field={this.props.field}
             dataProvider={this.props.dataProvider}
-            onChange={(newValue: Array<any>, action: NavigationAction): void =>
+            onChange={(
+              newValue: Array<any>,
+              action: NavigationAction,
+            ): void => {
               this.handleChange(
                 newValue?.filter(Boolean),
                 this.navigate[action],
-              )
-            }
+              );
+            }}
             onCancel={() => this.handleCancel()}
           />
         ) : (
