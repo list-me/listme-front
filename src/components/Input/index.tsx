@@ -54,6 +54,10 @@ export const Input: React.FC<IInputProps> = ({
 
     window.addEventListener("keydown", handleKeyDown);
 
+    if (inputRef.current! && autoFocus) {
+      inputRef.current!.focus();
+    }
+
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
@@ -89,7 +93,6 @@ export const Input: React.FC<IInputProps> = ({
 
             if (handleCustomChange) handleCustomChange(newValue);
           }}
-          autoFocus={autoFocus}
           onPressEnter={() => onPressEnter()}
         />
       </Form.Item>

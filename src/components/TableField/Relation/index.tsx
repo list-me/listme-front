@@ -360,6 +360,7 @@ const RelationComponent: React.FC<PropsRelation> = ({
                     <SearchBar
                       handleChangeInput={(value: string) => setKeyword(value)}
                       onPressEnter={handleSearchProducts}
+                      onFocus
                     />
                   </HeaderTable>
                   {isLoading ? (
