@@ -74,13 +74,11 @@ class RelationEditor extends BaseEditorComponent<
     if (this.rootRef.current) this.rootRef.current.style.display = "block";
     document.addEventListener("keydown", this.onBeforeKeyDown, true);
 
-    // console.log("Dentro do open", this.state.value);
     this.setState({ isOpen: true });
   }
 
   close(): void {
     if (this.rootRef.current) this.rootRef.current.style.display = "none";
-    // document.removeEventListener("keydown", this.onBeforeKeyDown, true);
 
     this.setState({ isOpen: false });
   }

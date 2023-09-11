@@ -1,8 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import React, { useState } from "react";
-
-import { AnimatePresence, motion } from "framer-motion";
-import { ReactComponent as SearchIcon } from "../../assets/search.svg";
+import React from "react";
 
 import { ButtonCustom, Container } from "./styles";
 import { Input } from "../Input";
@@ -10,28 +7,17 @@ import { Input } from "../Input";
 interface ISearchBarProps {
   handleChangeInput: Function;
   onPressEnter: (e: any) => void;
+  onFocus: boolean;
 }
 
 export const SearchBar: React.FC<ISearchBarProps> = ({
   handleChangeInput,
   onPressEnter,
+  onFocus,
 }) => {
-  const [onSearch, setOnSearch] = useState<boolean>(false);
-
-  const variants = {
-    open: { x: 0, opacity: 1 },
-    closed: { x: -500, opacity: 0, transition: { duration: 1 } },
-  };
-
   return (
     <Container>
-      {/* <AnimatePresence> */}
-      {/* {onSearch ? ( */}
       <div
-        //   initial="closed"
-        //   animate="open"
-        //   exit="closed"
-        //   variants={variants}
         style={{
           display: "flex",
           alignItems: "center",
@@ -41,7 +27,7 @@ export const SearchBar: React.FC<ISearchBarProps> = ({
         <Input
           name="search"
           type="input"
-          autoFocus
+          autoFocus={onFocus}
           handleCustomChange={(value: string) => {
             handleChangeInput(value);
           }}
@@ -53,13 +39,6 @@ export const SearchBar: React.FC<ISearchBarProps> = ({
           Buscar
         </ButtonCustom>
       </div>
-      {/* ) : (
-        <span onClick={() => setOnSearch(!onSearch)}>Buscar</span>
-      )} */}
-      {/* </AnimatePresence> */}
-      {/* <div>
-        <SearchIcon onClick={() => setOnSearch(!onSearch)} />
-      </div> */}
     </Container>
   );
 };
