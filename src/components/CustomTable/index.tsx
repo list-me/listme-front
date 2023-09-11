@@ -583,40 +583,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
                 const changes: any = hotInstance.getSourceDataAtRow(row);
                 changes[prop] = newValue;
-                // cellElement.setAttribute(
-                //   "data-new-value",
-                //   JSON.stringify(newValue),
-                // );
-                // await handleSave(changes, !!changes?.created_at, changes?.id);
-
-                // hotInstance.suspendRender();
                 hotInstance.setDataAtCell(row, col, newValue);
-
-                // td.innerHTML = newFiles
-                //   .map((item: string) => {
-                //     let imageSource: string = item;
-
-                //     const fileNameWithExtension: string =
-                //       getFilenameFromUrl(item);
-                //     const lastDotIndex: number =
-                //       fileNameWithExtension.lastIndexOf(".");
-                //     const fileName: string = fileNameWithExtension.substring(
-                //       0,
-                //       lastDotIndex,
-                //     );
-                //     const fileType: string = fileNameWithExtension.substring(
-                //       lastDotIndex + 1,
-                //     );
-
-                //     if (
-                //       !["jpg", "jpeg", "png", "thumb", "svg"].includes(fileType)
-                //     ) {
-                //       imageSource = DocumentIcon;
-                //     }
-                //     return `<img class="${fileName}" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px;margin-right:4px;">`;
-                //   })
-                //   .join("")
-                //   .concat(td.innerHTML);
               }
             }
 
@@ -631,7 +598,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         }
       };
 
-      if (typeof value === "string") {
+      if (typeof value === "string" && value.length) {
         value = JSON.parse(value);
       }
 
@@ -976,9 +943,10 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 }
 
                 for await (const item of changesPromises) {
-                  item.id = item?.id ?? generateUUID();
+                  const isNew: boolean = !!item?.id;
+                  if (!isNew) item.id = item?.id ?? generateUUID();
 
-                  await handleSave(item, !!item?.created_at, item.id);
+                  await handleSave(item, isNew, item.id);
                 }
 
                 loadingRef.current!.style.display = "none";
