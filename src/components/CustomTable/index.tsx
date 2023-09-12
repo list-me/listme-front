@@ -608,10 +608,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             let imageSource: string = url;
             const fileNameWithExtension: string = getFilenameFromUrl(url);
             const lastDotIndex: number = fileNameWithExtension.lastIndexOf(".");
-            const fileName: string = fileNameWithExtension.substring(
-              0,
-              lastDotIndex,
-            );
             const fileType: string = fileNameWithExtension.substring(
               lastDotIndex + 1,
             );
@@ -622,25 +618,42 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
             const placeholder: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${ImageErrorIcon}" style="width:25px;height:25px;margin-right:4px;">`;
 
-            fetch(url, { method: "HEAD", cache: "no-cache" })
-              .then((response: Response) => {
-                const contentLength: string | null =
-                  response.headers.get("Content-Length");
-                if (contentLength && parseInt(contentLength) <= 1000 * 1024) {
-                  const imgTag: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px;margin-right:4px;"> `;
-                  td.innerHTML =
-                    value.length > 1
-                      ? imgTag.concat(`+ ${value.length - 1}`)
-                      : imgTag;
-                }
-              })
-              .catch((error) => {
-                console.error("Erro ao verificar o tamanho da imagem:", error);
-              });
-
             return placeholder;
           })
           .join("");
+
+        const imgUrl: string = value[value.length - 1];
+        fetch(imgUrl, { method: "HEAD", cache: "no-cache" })
+          .then((response: Response) => {
+            const contentLength: string | null =
+              response.headers.get("Content-Length");
+
+            if (contentLength && parseInt(contentLength) <= 1000 * 1024) {
+              let imageSource: string = imgUrl;
+              const fileNameWithExtension: string = getFilenameFromUrl(imgUrl);
+              const lastDotIndex: number =
+                fileNameWithExtension.lastIndexOf(".");
+              const fileType: string = fileNameWithExtension.substring(
+                lastDotIndex + 1,
+              );
+
+              if (!["jpg", "jpeg", "png", "thumb", "svg"].includes(fileType)) {
+                imageSource = DocumentIcon;
+              }
+
+              const imgTag: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px; margin-right:4px;">`;
+              td.innerHTML =
+                value.length > 1
+                  ? `<div style="display:flex; align-items: center;">
+                      ${imgTag.concat(
+                        `<div class="itens-amount"> +${value.length - 1}</div>`,
+                      )} </div>`
+                  : imgTag;
+            }
+          })
+          .catch((error) => {
+            console.error("Erro ao verificar o tamanho da imagem:", error);
+          });
       } else {
         td.innerHTML = "";
       }
