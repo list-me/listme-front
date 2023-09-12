@@ -967,7 +967,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 const holder =
                   hotInstance.rootElement.querySelector(".wtHolder");
                 if (holder) {
-                  const scrollableHeight = holder.scrollHeight;
+                  const scrollableHeight = holder.scrollHeight * 0.75;
                   const { scrollTop } = holder;
                   const visibleHeight = holder.clientHeight;
 
