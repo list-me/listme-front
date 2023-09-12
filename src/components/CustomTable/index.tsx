@@ -622,13 +622,16 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
             const placeholder: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${ImageErrorIcon}" style="width:25px;height:25px;margin-right:4px;">`;
 
-            fetch(url, { method: "HEAD", mode: "no-cors" })
+            fetch(url, { method: "HEAD", cache: "no-cache" })
               .then((response: Response) => {
                 const contentLength: string | null =
                   response.headers.get("Content-Length");
-
-                if (contentLength && parseInt(contentLength) <= 800 * 1024) {
-                  td.innerHTML = `<img class="imgItem" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px;margin-right:4px;">`;
+                if (contentLength && parseInt(contentLength) <= 1000 * 1024) {
+                  const imgTag: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px;margin-right:4px;"> `;
+                  td.innerHTML =
+                    value.length > 1
+                      ? imgTag.concat(`+ ${value.length - 1}`)
+                      : imgTag;
                 }
               })
               .catch((error) => {
