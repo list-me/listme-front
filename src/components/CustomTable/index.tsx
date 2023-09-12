@@ -349,10 +349,11 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     [headers, template, headerTable, columns, hidden],
   );
 
+  const [currentKeyword, setCurrentKeyword] = useState("");
   const handleGetProductFiltered = (keyword: string): void => {
     // setLoading(true);
     loadingRef.current!.style.display = "block";
-
+    setCurrentKeyword(() => keyword);
     productRequests
       .list({ keyword, limit: 100 }, window.location.pathname.substring(10))
       .then((response) => {
@@ -980,7 +981,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                     setIsTableLocked(true);
                     productRequests
                       .list(
-                        { page, limit: 100 },
+                        { keyword: currentKeyword, page, limit: 100 },
                         window.location.pathname.substring(10),
                       )
                       .then((response) => {
