@@ -12,18 +12,11 @@ import Handsontable from "handsontable";
 import { registerAllEditors, registerAllModules } from "handsontable/registry";
 import { HotColumn, HotTable } from "@handsontable/react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import { CellValue, RangeType } from "handsontable/common";
 
 import DocumentIcon from "../../assets/icons/document-icon.svg";
 import ImageErrorIcon from "../../assets/icons/image-error-icon.svg";
 
-import { ReactComponent as EllipsisIcon } from "../../assets/ellipsis.svg";
-import { ReactComponent as DownloadIcon } from "../../assets/download.svg";
-import { ReactComponent as PlusIcon } from "../../assets/add.svg";
-import { ReactComponent as ArrowIcon } from "../../assets/arrow-left.svg";
-import { ReactComponent as FlagIcon } from "../../assets/icons/flag.svg";
-import { ReactComponent as EditIcon } from "../../assets/x-edit.svg";
 import { ReactComponent as HelpIcon } from "../../assets/help.svg";
 
 import "handsontable/dist/handsontable.full.min.css";
@@ -39,24 +32,14 @@ import DropdownEditor from "./Editors/Dropdown";
 import RelationEditor from "./Editors/Relation";
 import { FileEditor } from "./Editors/File";
 import { getFilenameFromUrl, isEquivalent, generateUUID } from "../../utils";
-import {
-  Content,
-  Contents,
-  Filters,
-  Header,
-  IconTemplate,
-  Item,
-  LeftContent,
-  MoreOptions,
-  RightContent,
-  Title,
-} from "../../pages/products/styles";
-import { ROUTES } from "../../constants/routes";
-import Button from "../Button";
+import { Content, Contents, Filters, Item } from "../../pages/products/styles";
 import { Temp } from "../Temp";
 import { productRequests } from "../../services/apis/requests/product";
 import { Container } from "./styles";
 import { LoadingFetch } from "./LoadingFetch";
+import HeaderTable from "./HeaderTable";
+import FiltersComponent from "./Filters";
+import handleDeleteColumn from "./utils/handleDeleteColumn";
 
 registerAllModules();
 registerAllEditors();
@@ -94,9 +77,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
   const [dataProvider, setDataProvider] = useState<any[]>(products ?? []);
 
-  const navigate = useNavigate();
-
-  const handleMountColumns = () => {
+  const handleMountColumns = (): void => {
     const columnsCustom: any[] = [];
     headerTable.sort().forEach((column) => {
       if (
@@ -131,55 +112,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     });
 
     setCols(columnsCustom);
-  };
-
-  const handleDeleteColumn = (column: number): void => {
-    setIsOpen(!isOpen);
-    try {
-      const fields = template.fields.fields?.filter((item: any) => {
-        if (item?.id != currentCell?.id) {
-          return item;
-        }
-      });
-
-      const newColumns = [...columns];
-      newColumns.splice(currentCell.order, 1);
-
-      const newCols = [...cols];
-      newCols.splice(Number(column), 1);
-      setCols(newCols);
-
-      const contentHeaders = newColumns
-        .filter((element) => {
-          const ids = fields.map((item: any) => item?.id) as any[];
-          if (ids.includes(element?.data)) {
-            return element;
-          }
-        })
-        .map((item) => item.title);
-
-      contentHeaders.push(" ");
-      setHeaders(contentHeaders);
-
-      // console.log(fields, newColumns, contentHeaders, column);
-      handleRemoveColumn(
-        Number(currentCell?.order),
-        fields,
-        newColumns,
-        currentCell?.id,
-      );
-
-      // const { hotInstance } = hotRef.current!;
-      // hotInstance?.alter("remove_col", column);
-
-      window.location.reload();
-      toast.success("Coluna deletada com sucesso");
-    } catch (error) {
-      console.error(error);
-      toast.error(
-        "Ocorreu um erro ao excluir a coluna, porfavor tente novamente",
-      );
-    }
   };
 
   const renderHeaderComponent = useCallback(
@@ -648,61 +580,30 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         handleChangeVisible={() => setIsOpen(!isOpen)}
         isOpen={isOpen}
         handleConfirmation={() => {
-          handleDeleteColumn(Number(currentCell.order));
+          handleDeleteColumn(
+            Number(currentCell.order),
+            setIsOpen,
+            template,
+            currentCell,
+            columns,
+            cols,
+            setCols,
+            setHeaders,
+            handleRemoveColumn,
+          );
         }}
       />
       <>
         <Content>
-          <Header>
-            <LeftContent>
-              <ArrowIcon
-                onClick={() => {
-                  navigate(ROUTES.TEMPLATES);
-                }}
-              />
-              <IconTemplate>
-                <FlagIcon />
-              </IconTemplate>
-              <Title> {template?.name} </Title>
-              <EditIcon />
-            </LeftContent>
-            <RightContent>
-              <MoreOptions>
-                <EllipsisIcon />
-              </MoreOptions>
-              <Button height="52px" width="227px" isSecondary>
-                <DownloadIcon />
-                Importar produtos
-              </Button>
-              <Button
-                height="52px"
-                width="226px"
-                className="secondButton"
-                onClick={() => {
-                  const { hotInstance } = hotRef.current!;
-                  if (hotInstance) {
-                    // hotInstance.alter("insert_row", 0, 0);
-                    setDataProvider((prev) => [{}, ...prev]);
-                  }
-                }}
-              >
-                Adicionar produto
-                <PlusIcon />
-              </Button>
-            </RightContent>
-          </Header>
-          <Filters>
-            <Temp
-              options={headerTable}
-              handleSearch={handleGetProductFiltered}
-            />
-            <Contents>
-              <Item>
-                <HelpIcon />
-                Ajuda
-              </Item>
-            </Contents>
-          </Filters>
+          <HeaderTable
+            hotRef={hotRef}
+            setDataProvider={setDataProvider}
+            template={template}
+          />
+          <FiltersComponent
+            headerTable={headerTable}
+            handleGetProductFiltered={handleGetProductFiltered}
+          />
         </Content>
         <Container>
           <HotTable
