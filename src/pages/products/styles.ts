@@ -271,22 +271,11 @@ export const Container = styled.div`
         width: 140px !important;
         height: 27px !important;
 
-        margin-top: 11px;
-        margin-left: 8px;
-
         display: flex;
         align-items: center;
 
         padding-left: 8px;
         border-radius: 7px;
-
-        &:hover {
-          cursor: pointer;
-        }
-      }
-
-      .fileItem {
-        margin-top: 16px;
 
         &:hover {
           cursor: pointer;
@@ -300,8 +289,20 @@ export const Container = styled.div`
       }
     }
 
-    td:has(> div) {
-      padding: 0 !important;
+    .itens-amount {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 25px !important;
+      height: 25px !important;
+
+      border-radius: 2px;
+      background-color: #e2e0ff;
+
+      font-family: ${({ theme }) => theme.fonts.family.default};
+      font-size: ${({ theme }) => theme.fonts.sizes.xsmall};
+      color: #3818d9;
     }
 
     .drag-over {
