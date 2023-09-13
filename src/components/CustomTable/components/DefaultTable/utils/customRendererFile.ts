@@ -91,7 +91,7 @@ function customRendererFile(
           }
         }
 
-        hotInstance.selectCell(row, col + 1);
+        hotInstance.selectCell(row, col);
 
         loadingRef.current!.style.display = "none";
       } catch (error) {
