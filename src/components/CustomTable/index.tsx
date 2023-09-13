@@ -9,14 +9,9 @@ import ReactDOM from "react-dom/client";
 import { unmountComponentAtNode } from "react-dom";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import Handsontable from "handsontable";
 import { registerAllEditors, registerAllModules } from "handsontable/registry";
-import { HotColumn, HotTable } from "@handsontable/react";
+import { HotTable } from "@handsontable/react";
 import { toast } from "react-toastify";
-import { CellValue, RangeType } from "handsontable/common";
-
-import DocumentIcon from "../../assets/icons/document-icon.svg";
-import ImageErrorIcon from "../../assets/icons/image-error-icon.svg";
 
 import "handsontable/dist/handsontable.full.min.css";
 
@@ -26,16 +21,12 @@ import { Cell } from "../Cell/index";
 import { NewColumn } from "../NewColumn";
 import { Confirmation } from "../Confirmation";
 
-import RadioEditor from "./Editors/Radio";
-import DropdownEditor from "./Editors/Dropdown";
-import RelationEditor from "./Editors/Relation";
-import { FileEditor } from "./Editors/File";
-import { getFilenameFromUrl, isEquivalent, generateUUID } from "../../utils";
 import { Content } from "../../pages/products/styles";
 import { productRequests } from "../../services/apis/requests/product";
 import { Container } from "./styles";
 import { LoadingFetch } from "./LoadingFetch";
 import HeaderFilters from "./components/HeaderFilters";
+import DefaultTable from "./components/DefaultTable";
 
 registerAllModules();
 registerAllEditors();
@@ -63,7 +54,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
   } = useProductContext();
 
   const [cols, setCols] = useState<any[]>([]);
-  const [isTableLocked, setIsTableLocked] = useState(false);
+  console.log("🚀 ~ file: index.tsx:57 ~ cols:", cols);
 
   const [currentCell, setCurrentCell] = useState<any>({});
 
@@ -131,17 +122,12 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       contentHeaders.push(" ");
       setHeaders(contentHeaders);
 
-      // console.log(fields, newColumns, contentHeaders, column);
       handleRemoveColumn(
         Number(currentCell?.order),
         fields,
         newColumns,
         currentCell?.id,
       );
-
-      // const { hotInstance } = hotRef.current!;
-      // hotInstance?.alter("remove_col", column);
-
       window.location.reload();
       toast.success("Coluna deletada com sucesso");
     } catch (error) {
@@ -215,11 +201,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
                 if (freezePlugins) {
                   freezePlugins?.freezeColumn(1);
-                  // setFrozen(column + 1);
                   hotRef.current!.hotInstance?.render();
                 }
-                // handleFreeze(col, true);
-                // }
                 return true;
               }}
               freeze={!!headerTable[column]?.frozen}
@@ -255,7 +238,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
   const [currentKeyword, setCurrentKeyword] = useState("");
   const handleGetProductFiltered = (keyword: string): void => {
-    // setLoading(true);
     loadingRef.current!.style.display = "block";
     setCurrentKeyword(() => keyword);
     productRequests
@@ -294,7 +276,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           }
 
           setDataProvider(productFields);
-          // setLoading(false);
           loadingRef.current!.style.display = "none";
 
           const hotInstance = hotRef.current!?.hotInstance;
@@ -308,7 +289,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       })
       .catch((errr: any) => {
         console.log(errr);
-        // setLoading(false);
         loadingRef.current!.style.display = "none";
 
         const hotInstance = hotRef.current!?.hotInstance;
@@ -322,171 +302,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
   useEffect(() => {
     handleMountColumns();
   }, [handleMountColumns]);
-
-  const getRowsInterval = (start: number, end: number): Array<number> => {
-    if (start > end) {
-      [start, end] = [end, start];
-    }
-
-    const result: Array<number> = [];
-    for (let i: number = start; i <= end; i++) {
-      result.push(i);
-    }
-
-    return result;
-  };
-
-  const customRenderer = useCallback(
-    (
-      instance: Handsontable,
-      td: HTMLTableCellElement,
-      row: number,
-      col: number,
-      prop: string | number,
-      value: any,
-    ) => {
-      if (typeof value === "string" && value.length) value = JSON.parse(value);
-
-      const totalItems = value ? value.length : 0;
-      td.innerHTML = `<div class="tagContent">${totalItems} Items relacionados</div>`;
-    },
-    [],
-  );
-
-  const customRendererFile = useCallback(
-    (
-      instance: Handsontable,
-      td: HTMLTableCellElement,
-      row: number,
-      col: number,
-      prop: string | number,
-      value: any,
-    ) => {
-      td.className = "file-cell";
-
-      td.draggable = true;
-      td.ondragover = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      };
-
-      td.ondragleave = (event: DragEvent) => {
-        event.preventDefault();
-        event.stopPropagation();
-        td.classList.remove("drag-over");
-      };
-
-      td.ondragenter = (event: DragEvent) => {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const target = event.target as HTMLElement;
-        if (target.tagName === "TD") {
-          td.classList.add("drag-over");
-        }
-      };
-
-      td.ondrop = async (event: DragEvent) => {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const { hotInstance } = hotRef.current!;
-        const target = event.target as HTMLElement;
-        const cellElement = target.closest(".handsontable .file-cell");
-        if (cellElement && hotInstance) {
-          td.classList.remove("drag-over");
-          loadingRef.current!.style.display = "block";
-          try {
-            let currentValue: Array<string> = JSON.parse(
-              cellElement.getAttribute("data-new-value") || "[]",
-            );
-
-            if (value && typeof value === "object")
-              currentValue = currentValue
-                .filter((item: any) => !value.includes(item))
-                .concat(
-                  value?.filter((item1: any) => !currentValue.includes(item1)),
-                );
-
-            if (event.dataTransfer?.files.length) {
-              const { files } = event.dataTransfer;
-              const parsedFiles: Array<File> = Array.from(files);
-              const newFiles: Array<string> | void = await uploadImages(
-                parsedFiles,
-                template.id,
-              );
-
-              if (newFiles && newFiles.length) {
-                let newValue = [];
-                if (currentValue) {
-                  if (typeof currentValue === "object") {
-                    newValue = [...currentValue, ...newFiles];
-                  } else {
-                    newValue = [currentValue, ...newFiles];
-                  }
-                } else {
-                  newValue = [...newFiles];
-                }
-
-                const changes: any = hotInstance.getSourceDataAtRow(row);
-                changes[prop] = newValue;
-                hotInstance.setDataAtCell(row, col, newValue);
-              }
-            }
-
-            hotInstance.selectCell(row, col + 1);
-
-            loadingRef.current!.style.display = "none";
-          } catch (error) {
-            loadingRef.current!.style.display = "none";
-
-            if (error instanceof Error) toast.error(error.message);
-          }
-        }
-      };
-
-      if (typeof value === "string" && value.length) {
-        value = JSON.parse(value);
-      }
-
-      if (value?.length) {
-        td.innerHTML = value
-          .map((url: string) => {
-            let imageSource: string = url;
-            const fileNameWithExtension: string = getFilenameFromUrl(url);
-            const lastDotIndex: number = fileNameWithExtension.lastIndexOf(".");
-            const fileType: string = fileNameWithExtension.substring(
-              lastDotIndex + 1,
-            );
-
-            if (!["jpg", "jpeg", "png", "thumb", "svg"].includes(fileType)) {
-              imageSource = DocumentIcon;
-            }
-
-            const placeholder: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${ImageErrorIcon}" style="width:25px;height:25px;margin-right:4px;">`;
-
-            fetch(url, { method: "HEAD", mode: "no-cors" })
-              .then((response: Response) => {
-                const contentLength: string | null =
-                  response.headers.get("Content-Length");
-
-                if (contentLength && parseInt(contentLength) <= 800 * 1024) {
-                  td.innerHTML = `<img class="imgItem" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px;margin-right:4px;">`;
-                }
-              })
-              .catch((error) => {
-                console.error("Erro ao verificar o tamanho da imagem:", error);
-              });
-
-            return placeholder;
-          })
-          .join("");
-      } else {
-        td.innerHTML = "";
-      }
-    },
-    [],
-  );
 
   return (
     <>
@@ -511,485 +326,28 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           />
         </Content>
         <Container>
-          <HotTable
-            readOnly={isTableLocked}
-            ref={hotRef}
-            colHeaders={headers}
-            columns={cols}
-            data={dataProvider}
-            height="100%"
-            width="100%"
-            stretchH="all"
-            manualColumnResize
-            filters
-            autoRowSize={false}
-            autoColumnSize={false}
-            // beforeColumnMove={beforeColumnMove}
-            manualColumnMove
-            // manualColumnFreeze
-            search
-            renderAllRows={false}
-            viewportRowRenderingOffset={200}
-            viewportColumnRenderingOffset={30}
-            rowHeaders
-            columnSorting={{ sortEmptyCells: false, headerAction: false }}
-            contextMenu={{
-              items: {
-                remove_row: {
-                  name: "Excluir produto",
-                  async callback(
-                    key: string,
-                    selection: any[],
-                    clickEvent: MouseEvent,
-                  ) {
-                    if (dataProvider?.length == 1)
-                      return toast.warn(
-                        "O catálogo deve conter ao menos um produto",
-                      );
-
-                    if (dataProvider?.length) {
-                      const { hotInstance } = hotRef.current!;
-                      if (hotInstance) {
-                        if (hotInstance.isEmptyRow(0))
-                          return hotInstance?.alter(
-                            "remove_row",
-                            selection[0].start.row,
-                          );
-
-                        await handleDelete(
-                          dataProvider[selection[0].start.row],
-                        );
-                        hotInstance?.alter(
-                          "remove_row",
-                          selection[0].start.row,
-                        );
-                      }
-                    }
-                  },
-                },
-              },
-            }}
-            rowHeights="52px"
-            licenseKey="non-commercial-and-evaluation"
-            // beforeChange={(
-            //   changes: Array<CellChange | null>,
-            //   source: ChangeSource,
-            // ) => {
-            //   // const currentCellValue = changes[0][2];
-            //   // const newValue = changes[0][3];
-            //   // const row = changes[0][0];
-            //   // const col = cols.findIndex((col) => col?.data === changes[0][1]);
-            //   // const columnType = headerTable[col]?.type;
-            //   // if (columnType === "text" && newValue.length > 100) {
-            //   //   toast.warn("The text field cannot be longer than 100 characters");
-            //   //   return false;
-            //   // }
-            //   // if (columnType === "paragraph" && newValue.length > 255) {
-            //   //   toast.warn("O campo parágrafo deve conter até 200 caractéres");
-            //   //   return false;
-            //   // }
-            //   // return true;
-
-            // }}
-            afterChange={async (
-              changes: Handsontable.CellChange[] | null,
-              source: any,
-            ) => {
-              if (source === "CopyPaste.paste") return;
-
-              const hotInstance = hotRef.current?.hotInstance;
-              if (
-                changes !== null &&
-                changes?.length &&
-                !isTableLocked &&
-                hotInstance
-              ) {
-                const isNew = !!dataProvider[changes[0][0]].id;
-                const customChanges = changes as Handsontable.CellChange[];
-                if (
-                  typeof customChanges[0][2] === "object" &&
-                  typeof customChanges[0][3] === "object" &&
-                  !isEquivalent(customChanges[0][2], customChanges[0][3])
-                ) {
-                  try {
-                    if (!isNew) setIsTableLocked(true);
-                    const id = await handleSave(
-                      dataProvider[customChanges[0][0]],
-                      isNew,
-                      dataProvider[customChanges[0][0]]?.id,
-                    );
-                    if (
-                      id &&
-                      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(
-                        id.toString(),
-                      )
-                    ) {
-                      const updated = dataProvider;
-                      updated[customChanges[0][0]].id = id;
-                      setDataProvider(updated);
-                    }
-                  } finally {
-                    if (!isNew) setIsTableLocked(false);
-                    console.log("BF");
-                    return;
-                  }
-                }
-                if (
-                  typeof customChanges[0][2] !== "object" &&
-                  customChanges[0][2] !== customChanges[0][3] &&
-                  dataProvider.length
-                ) {
-                  console.log("Changes", { changes });
-                  try {
-                    if (!isNew) setIsTableLocked(true);
-                    const id = await handleSave(
-                      dataProvider[customChanges[0][0]],
-                      isNew,
-                      dataProvider[customChanges[0][0]]?.id,
-                    );
-                    if (
-                      id &&
-                      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(
-                        id.toString(),
-                      )
-                    ) {
-                      const updated = dataProvider;
-                      updated[customChanges[0][0]].id = id;
-                      setDataProvider(updated);
-                    }
-                  } finally {
-                    if (!isNew) setIsTableLocked(false);
-                  }
-                }
-              }
-            }}
-            beforeCopy={(data: CellValue[][], coords: RangeType[]) => {
-              for (let i = 0; i < coords.length; i++) {
-                const { startRow, startCol, endRow, endCol } = coords[i];
-                for (let row = startRow; row <= endRow; row++) {
-                  for (let col = startCol; col <= endCol; col++) {
-                    const cellData = hotRef.current!.hotInstance?.getDataAtCell(
-                      row,
-                      col,
-                    );
-                    const cell = hotRef.current!?.hotInstance?.getCellMeta(
-                      row,
-                      col,
-                    );
-
-                    const column = cols.find((col) => col.data === cell?.prop);
-                    if (
-                      cellData &&
-                      ["relation", "file", "checked"].includes(column.type)
-                    ) {
-                      data[row - startRow][col - startCol] =
-                        JSON.stringify(cellData);
-                    }
-                  }
-                }
-              }
-            }}
-            afterPaste={async (data: CellValue[][], coords: RangeType[]) => {
-              const { hotInstance } = hotRef.current!;
-              if (data.length && !isTableLocked && hotInstance) {
-                loadingRef.current!.style.display = "block";
-
-                const range = coords[0];
-                const fieldColumns = cols
-                  .slice(range.startCol, range.endCol + 1)
-                  .map((column) => {
-                    return { field: column.data, type: column.type };
-                  });
-
-                const rangeOfRows: number = range.endRow - range.startRow + 1;
-                const rows: number[] = getRowsInterval(
-                  range.startRow,
-                  range.endRow,
-                );
-
-                const changesPromises: Array<any> = [];
-                for (let i = 0; rangeOfRows > i; i++) {
-                  const row: number = rows[i];
-                  const changes = dataProvider[row];
-
-                  fieldColumns.forEach((column: any, index: number): void => {
-                    const position: number = data.length > 1 ? i : 0;
-
-                    if (
-                      ["relation", "file", "checked"].includes(column.type) &&
-                      data[position][index]
-                    ) {
-                      changes[column.field] = JSON.parse(data[position][index]);
-                    } else {
-                      let value = Object.keys(COMPONENT_CELL_PER_TYPE).includes(
-                        column.type.toString().toUpperCase(),
-                      )
-                        ? [data[position][index]]
-                        : data[position][index];
-
-                      if (Array.isArray(value) && value[0] === "") {
-                        value = [];
-                      }
-                      changes[column.field] = value;
-                    }
-                  });
-
-                  changesPromises.push(changes);
-                }
-
-                for await (const item of changesPromises) {
-                  const isNew: boolean = !!item?.id;
-                  if (!isNew) item.id = item?.id ?? generateUUID();
-
-                  await handleSave(item, isNew, item.id);
-                }
-
-                loadingRef.current!.style.display = "none";
-
-                if (hotInstance) {
-                  hotInstance.render();
-                }
-              }
-            }}
-            afterRenderer={(TD, row, col) => {
-              if (col + 1 === headers.length) {
-                TD.style.display = "none";
-              }
-            }}
-            afterScrollVertically={(): void => {
-              const { hotInstance } = hotRef.current!;
-              if (hotInstance) {
-                const holder =
-                  hotInstance.rootElement.querySelector(".wtHolder");
-                if (holder) {
-                  const scrollableHeight = holder.scrollHeight * 0.75;
-                  const { scrollTop } = holder;
-                  const visibleHeight = holder.clientHeight;
-
-                  if (
-                    scrollTop + visibleHeight >= scrollableHeight &&
-                    total > dataProvider.length
-                  ) {
-                    // setLoading(true);
-                    loadingRef.current!.style.display = "block";
-                    setIsTableLocked(true);
-                    handleGetProductsFiltered(currentKeyword, template.id);
-                    // productRequests
-                    //   .list(
-                    //     { keyword: currentKeyword, page, limit: 100 },
-                    //     window.location.pathname.substring(10),
-                    //   )
-                    //   .then((response) => {
-                    //     const productFields: any[] = [];
-
-                    //     const { data } = response;
-                    //     if (data) {
-                    //       data.products?.forEach((item: any) => {
-                    //         const object: any = {};
-                    //         item.fields.forEach((field: any) => {
-                    //           const currentField = headerTable.find(
-                    //             (e: any) => e.data == field.id,
-                    //           );
-
-                    //           if (currentField && field.value) {
-                    //             const test = !COMPONENT_CELL_PER_TYPE[
-                    //               currentField?.type?.toUpperCase()
-                    //             ]
-                    //               ? field?.value[0]
-                    //               : field?.value;
-
-                    //             object[field?.id] = test;
-                    //           }
-                    //         });
-                    //         productFields.push({
-                    //           ...object,
-                    //           id: item.id,
-                    //           created_at: item.created_at,
-                    //         });
-                    //       });
-
-                    //       if (!productFields.length && template) {
-                    //         productFields.push({ [template[0]]: "" });
-                    //       }
-
-                    //       setDataProvider((prev) => [
-                    //         ...prev,
-                    //         ...productFields,
-                    //       ]);
-
-                    //       setPage(page + 1);
-                    //       // setLoading(false);
-                    //       loadingRef.current!.style.display = "none";
-
-                    //       setIsTableLocked(false);
-                    //     }
-                    //   })
-                    //   .catch((errr: any) => {
-                    //     // setLoading(false);
-                    //     loadingRef.current!.style.display = "none";
-
-                    //     setIsTableLocked(false);
-
-                    //     if (hotInstance) {
-                    //       hotInstance.render();
-                    //     }
-                    //     toast.error(errr.response.data.message);
-                    //   });
-                  }
-                }
-              }
-            }}
-            fixedColumnsStart={1}
-            afterGetColHeader={renderHeaderComponent}
-            hiddenColumns={{ columns: hidden, indicators: true }}
-            afterColumnResize={async (newSize: number, column: number) => {
-              await handleResize(column, newSize, template);
-            }}
-            afterColumnMove={(
-              movedColumns: number[],
-              finalIndex: number,
-              dropIndex: number | undefined,
-              movePossible: boolean,
-              orderChanged: boolean,
-            ) => {
-              if (!orderChanged) return;
-
-              let newColumns = [...columns];
-              movedColumns.forEach((oldIndex) => {
-                const movedColumn = newColumns.splice(oldIndex, 1)[0];
-                newColumns.splice(finalIndex, 0, movedColumn);
-                finalIndex += 1;
-              });
-
-              newColumns = newColumns.map((item, index) => {
-                if (Object.keys(item).length) {
-                  return {
-                    ...item,
-                    order: index.toString(),
-                  };
-                }
-                return item;
-              });
-
-              setHeaders(newColumns.map((item) => item?.title ?? " "));
-              handleMove(newColumns);
-            }}
-            afterDocumentKeyDown={(event: KeyboardEvent): void => {
-              const { hotInstance } = hotRef.current!;
-              if (hotInstance) {
-                if (event.key === "ArrowRight" && event.ctrlKey) {
-                  const selected = hotInstance.getSelected();
-                  if (selected) {
-                    const [startRow, , endRow] = selected[0];
-
-                    let lastVisibleCol = hotInstance.countCols() - 2;
-                    while (
-                      hotInstance.getColWidth(lastVisibleCol) === 0 &&
-                      lastVisibleCol >= 0
-                    ) {
-                      lastVisibleCol--;
-                    }
-
-                    if (lastVisibleCol >= 0) {
-                      hotInstance.selectCell(
-                        startRow,
-                        lastVisibleCol,
-                        endRow,
-                        lastVisibleCol,
-                      );
-                    }
-                  }
-                  event.preventDefault();
-                }
-              }
-            }}
-          >
-            {cols.map((col: any, index: number) => {
-              if (col.isCustom && col.type === "list") {
-                return (
-                  <HotColumn
-                    width={col.width}
-                    _columnIndex={col.order}
-                    data={col.data}
-                    key={index}
-                  >
-                    <DropdownEditor
-                      hot-editor
-                      options={[...col.options, ""]}
-                      editorColumnScope={0}
-                    />
-                  </HotColumn>
-                );
-              }
-
-              if (col.isCustom && col.type === "radio") {
-                return (
-                  <HotColumn
-                    width={col.width}
-                    _columnIndex={col.order}
-                    data={col.data}
-                    key={index}
-                  >
-                    <RadioEditor
-                      hot-editor
-                      options={[...col.options, ""]}
-                      editorColumnScope={0}
-                    />
-                  </HotColumn>
-                );
-              }
-
-              if (col.isCustom && col.type === "file") {
-                return (
-                  <HotColumn
-                    width={col.width}
-                    _columnIndex={col.order}
-                    data={col.data}
-                    key={index}
-                    renderer={customRendererFile}
-                  >
-                    <FileEditor
-                      hot-editor
-                      editorColumnScope={0}
-                      templateId={template.id}
-                      dataProvider={dataProvider}
-                    />
-                  </HotColumn>
-                );
-              }
-
-              if (col.type === "relation") {
-                return (
-                  <HotColumn
-                    _columnIndex={col.order}
-                    data={col.data}
-                    width={col.width}
-                    key={index}
-                    // eslint-disable-next-line react/jsx-no-bind
-                    renderer={customRenderer}
-                  >
-                    <RelationEditor
-                      hot-editor
-                      editorColumnScope={0}
-                      templateId={col.options[0].templateId}
-                      column={col}
-                      dataProvider={dataProvider}
-                      field={col.options[0].field}
-                    />
-                  </HotColumn>
-                );
-              }
-
-              return (
-                <HotColumn
-                  width={col.width}
-                  _columnIndex={col.order}
-                  data={col.data}
-                  key={index}
-                />
-              );
-            })}
-          </HotTable>
+          <DefaultTable
+            hotRef={hotRef}
+            headers={headers}
+            setHeaders={setHeaders}
+            cols={cols}
+            dataProvider={dataProvider}
+            setDataProvider={setDataProvider}
+            handleDelete={handleDelete}
+            handleSave={handleSave}
+            loadingRef={loadingRef}
+            componentCellPerType={COMPONENT_CELL_PER_TYPE}
+            total={total}
+            handleGetProductsFiltered={handleGetProductsFiltered}
+            currentKeyword={currentKeyword}
+            template={template}
+            renderHeaderComponent={renderHeaderComponent}
+            hidden={hidden}
+            handleResize={handleResize}
+            columns={columns}
+            handleMove={handleMove}
+            uploadImages={uploadImages}
+          />
         </Container>
         <div ref={loadingRef} style={{ display: "none" }}>
           <LoadingFetch />
