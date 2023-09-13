@@ -9,6 +9,8 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-array-index-key */
 import ReactDOM from "react-dom/client";
+import { renderToString } from "react-dom/server";
+
 import { unmountComponentAtNode } from "react-dom";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
