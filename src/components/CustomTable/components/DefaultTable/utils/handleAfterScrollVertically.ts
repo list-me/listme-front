@@ -28,8 +28,10 @@ const handleAfterScrollVertically = (
       const { scrollTop } = holder;
       const visibleHeight = holder.clientHeight;
 
+      const triggerPosition = scrollableHeight * 0.75;
+
       if (
-        scrollTop + visibleHeight >= scrollableHeight &&
+        scrollTop + visibleHeight >= triggerPosition &&
         total > dataProvider.length
       ) {
         loadingRef.current!.style.display = "block";

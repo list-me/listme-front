@@ -145,7 +145,7 @@ function customRendererFile(
             imageSource = DocumentIcon;
           }
 
-          const imgTag: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px; margin-right:4px;">`;
+          const imgTag: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px; margin-right:4px;" loading="lazy">`;
           td.innerHTML =
             value.length > 1
               ? `<div style="display:flex; align-items: center; margin-top: 16px; margin-left: 8px;">
