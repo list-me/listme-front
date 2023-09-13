@@ -223,8 +223,8 @@ function DefaultTable({
       manualColumnMove
       search
       renderAllRows={false}
-      viewportRowRenderingOffset={200}
-      viewportColumnRenderingOffset={30}
+      viewportRowRenderingOffset={100}
+      viewportColumnRenderingOffset={cols.length}
       rowHeaders
       columnSorting={{ sortEmptyCells: false, headerAction: false }}
       rowHeights="52px"

@@ -25,9 +25,11 @@ const handleAfterScrollVertically = (
         scrollTop + visibleHeight >= scrollableHeight &&
         total > dataProvider.length
       ) {
+        // eslint-disable-next-line no-param-reassign
         loadingRef.current!.style.display = "block";
         setIsTableLocked(true);
         handleGetProductsFiltered(currentKeyword, template.id);
+        console.log("ta vindo aqui");
       }
     }
   }

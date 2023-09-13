@@ -54,7 +54,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
   } = useProductContext();
 
   const [cols, setCols] = useState<any[]>([]);
-  console.log("🚀 ~ file: index.tsx:57 ~ cols:", cols);
 
   const [currentCell, setCurrentCell] = useState<any>({});
 
