@@ -7,36 +7,21 @@
 /* eslint-disable react/no-array-index-key */
 import ReactDOM from "react-dom/client";
 import { unmountComponentAtNode } from "react-dom";
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import Handsontable from "handsontable";
 import { registerAllEditors, registerAllModules } from "handsontable/registry";
 import { HotColumn, HotTable } from "@handsontable/react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import { CellValue, RangeType } from "handsontable/common";
 
 import DocumentIcon from "../../assets/icons/document-icon.svg";
 import ImageErrorIcon from "../../assets/icons/image-error-icon.svg";
 
-import { ReactComponent as EllipsisIcon } from "../../assets/ellipsis.svg";
-import { ReactComponent as DownloadIcon } from "../../assets/download.svg";
-import { ReactComponent as PlusIcon } from "../../assets/add.svg";
-import { ReactComponent as ArrowIcon } from "../../assets/arrow-left.svg";
-import { ReactComponent as FlagIcon } from "../../assets/icons/flag.svg";
-import { ReactComponent as EditIcon } from "../../assets/x-edit.svg";
-import { ReactComponent as HelpIcon } from "../../assets/help.svg";
-
 import "handsontable/dist/handsontable.full.min.css";
 
 import { CustomTableProps } from "./CustomTable.d";
-import { productContext } from "../../context/products";
+import { useProductContext } from "../../context/products";
 import { Cell } from "../Cell/index";
 import { NewColumn } from "../NewColumn";
 import { Confirmation } from "../Confirmation";
@@ -46,24 +31,11 @@ import DropdownEditor from "./Editors/Dropdown";
 import RelationEditor from "./Editors/Relation";
 import { FileEditor } from "./Editors/File";
 import { getFilenameFromUrl, isEquivalent, generateUUID } from "../../utils";
-import {
-  Content,
-  Contents,
-  Filters,
-  Header,
-  IconTemplate,
-  Item,
-  LeftContent,
-  MoreOptions,
-  RightContent,
-  Title,
-} from "../../pages/products/styles";
-import { ROUTES } from "../../constants/routes";
-import Button from "../Button";
-import { Temp } from "../Temp";
+import { Content } from "../../pages/products/styles";
 import { productRequests } from "../../services/apis/requests/product";
 import { Container } from "./styles";
 import { LoadingFetch } from "./LoadingFetch";
+import HeaderFilters from "./components/HeaderFilters";
 
 registerAllModules();
 registerAllEditors();
@@ -87,58 +59,49 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     colHeaders,
     total,
     uploadImages,
-  } = useContext(productContext);
+    handleGetProductsFiltered,
+  } = useProductContext();
 
   const [cols, setCols] = useState<any[]>([]);
   const [isTableLocked, setIsTableLocked] = useState(false);
-  const [page, setPage] = useState<number>(1);
 
   const [currentCell, setCurrentCell] = useState<any>({});
 
-  const [columns, setColumns] = useState<any[]>([]);
+  const [columns, setColumns] = useState<any[]>(headerTable);
   const [headers, setHeaders] = useState<string[]>(colHeaders);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const [dataProvider, setDataProvider] = useState<any[]>(products ?? []);
 
-  const navigate = useNavigate();
+  function handleAddProductClick(): void {
+    const { hotInstance } = hotRef.current!;
+    if (hotInstance) {
+      setDataProvider((prev) => [{}, ...prev]);
+    }
+  }
 
-  const handleMountColumns = () => {
-    const columnsCustom: any[] = [];
-    headerTable.sort().forEach((column) => {
+  const handleMountColumns = useCallback(() => {
+    const columnsCustom = headerTable.sort().map((column) => {
       if (
         Object.keys(COMPONENT_CELL_PER_TYPE).includes(
           column.type?.toString()?.toUpperCase(),
         )
       ) {
-        columnsCustom.push({
-          data: column.data,
-          className: column.className,
-          order: column.order,
-          width: column.width,
-          frozen: column.frozen,
-          hidden: column.hidden,
-          type: column.type,
-          options: column.options,
+        return {
+          ...column,
           isCustom: true,
-        });
-        return;
+        };
       }
-      columnsCustom.push({
-        data: column.data,
-        className: column.className,
+      return {
+        ...column,
         width: column?.order == undefined ? "193" : column.width,
-        frozen: column.frozen,
-        order: column.order,
-        hidden: column.hidden,
         isCustom: false,
-        // editor: Text,
         type: "text",
-      });
+      };
     });
 
     setCols(columnsCustom);
-  };
+  }, [COMPONENT_CELL_PER_TYPE, headerTable]);
 
   const handleDeleteColumn = (column: number): void => {
     setIsOpen(!isOpen);
@@ -214,9 +177,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
               template={template}
               newColumn={template}
               setNewColumn={(newColumn: any, templateUpdated: any) => {
-                // const fields = template;
-                // fields.fields.fields = templateUpdated;
-                // setCurrentTemplate(fields);
                 newColumn = {
                   ...newColumn,
                   className: "htLeft htMiddle",
@@ -249,65 +209,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
               handleHidden={() => {
                 return handleHidden(column, template, true);
               }}
-              handleFrozen={(e: any, operation: any) => {
-                // if (operation == "unfreeze") {
-                //   setFrozen(0);
-                //   handleFreeze(column, false, "unfreeze");
-
-                //   setColumns((prev) => {
-                //     return prev.map((item) => {
-                //       return {
-                //         ...item,
-                //         frozen: false,
-                //       };
-                //     });
-                //   });
-
-                //   return true;
-                // }
-                // // if (col?.order == e) {
-                // const colWidth = headerTable
-                //   .filter((item) => {
-                //     if (Number(item?.order) <= Number(col?.order)) return item;
-                //   })
-                //   .map((element) => {
-                //     if (element.width)
-                //       return Number(element.width.replace("px", ""));
-                //   });
-
-                // // if (colWidth).reduce((before, after) => before + after);
-
-                // // const tableWidth = hotRef.current!?.__hotInstance.rootElement.clientWidth
-                // // if (colWidth && tableWidth && colWidth > tableWidth * 0.65) {
-                // //     toast.warn("A coluna selecionada excede o limite de visualização da tela")
-                // //     return false;
-                // // }
-
-                // const test = columns.map((item, index) => {
-                //   if (index == column) {
-                //     return {
-                //       ...item,
-                //       frozen: true,
-                //     };
-                //   }
-                //   return item;
-                // });
-
-                // col.frozen = true;
-                // setColumns((prev) => {
-                //   return prev.map((item, index) => {
-                //     if (index == column) {
-                //       return {
-                //         ...item,
-                //         frozen: true,
-                //       };
-                //     }
-                //     return item;
-                //   });
-                // });
-
-                // setFrozen(column + 1);
-
+              handleFrozen={() => {
                 const freezePlugins =
                   hotRef.current!.hotInstance?.getPlugin("manualColumnFreeze");
 
@@ -321,13 +223,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 return true;
               }}
               freeze={!!headerTable[column]?.frozen}
-              handleSort={(e: any, operation: any) => {
-                //   // setData(data.sort((a, b) => {
-                //   //     if (a[col?.data] == b[col?.data]) return 0;
-                //   //     if (a[col?.data] < b[col?.data]) return 1
-                //   //     return -1;
-                //   // }))
-              }}
+              handleSort={() => {}}
               handleDeleteColumn={() => {
                 col.order = column.toString();
                 setCurrentCell(col);
@@ -346,7 +242,15 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
       TH.replaceChildren(myComponent);
     },
-    [headers, template, headerTable, columns, hidden],
+    [
+      columns,
+      handleHidden,
+      handleNewColumn,
+      headerTable,
+      headers,
+      isOpen,
+      template,
+    ],
   );
 
   const [currentKeyword, setCurrentKeyword] = useState("");
@@ -415,66 +319,9 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       });
   };
 
-  const onDrop = async (event: DragEvent): Promise<void> => {
-    const target = event.target as HTMLElement;
-    const cellElement = target.closest(".handsontable .file-cell");
-    if (cellElement) {
-      const row: number = Number(cellElement.getAttribute("data-row"));
-      const column: number = Number(cellElement.getAttribute("data-col"));
-      try {
-        if (event.dataTransfer?.files.length) {
-          const { files } = event.dataTransfer;
-          const parsedFiles: Array<File> = Array.from(files);
-          const newFiles: Array<string> | void = await uploadImages(
-            parsedFiles,
-            template.id,
-          );
-          if (newFiles && newFiles.length) {
-            console.log(this);
-
-            // this.setState(
-            //   { newValue: [...this.state.newValue, ...newFiles] },
-            //   () => {
-            //     // this.finishEditing();
-            //   },
-            // );
-          }
-          //   },
-          // )
-        }
-      } catch (error) {
-        if (error instanceof Error) toast.error(error.message);
-      }
-    }
-  };
-
   useEffect(() => {
-    // const toFreeze = headerTable.filter((item) => item?.frozen === true);
-    // if (toFreeze.length > 0) {
-    //   setFrozen(toFreeze.length);
-    // }
-
-    setColumns(headerTable);
     handleMountColumns();
-
-    setDataProvider(products);
-
-    // const dropHandler = async (event: DragEvent): Promise<void> => {
-    //   const target = event.target as HTMLElement;
-    //   if (target && target.matches(".handsontable .fileCell")) {
-    //     event.preventDefault();
-    //     event.stopPropagation();
-
-    //     const { hotInstance } = hotRef.current!;
-    //     if (hotInstance && event.dataTransfer?.files.length) {
-    //       const { files } = event.dataTransfer;
-    //       // setDroppedFiles(Array.from(files));
-    //       // const { col, row } = hotInstance.getCoords(target);
-    //       // await onDrop(files, col, row);
-    //     }
-    //   }
-    // };
-  }, [headerTable]);
+  }, [handleMountColumns]);
 
   const getRowsInterval = (start: number, end: number): Array<number> => {
     if (start > end) {
@@ -497,7 +344,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       col: number,
       prop: string | number,
       value: any,
-      cellProperties: Handsontable.CellProperties,
     ) => {
       if (typeof value === "string" && value.length) value = JSON.parse(value);
 
@@ -609,10 +455,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             let imageSource: string = url;
             const fileNameWithExtension: string = getFilenameFromUrl(url);
             const lastDotIndex: number = fileNameWithExtension.lastIndexOf(".");
-            const fileName: string = fileNameWithExtension.substring(
-              0,
-              lastDotIndex,
-            );
             const fileType: string = fileNameWithExtension.substring(
               lastDotIndex + 1,
             );
@@ -661,56 +503,12 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       />
       <>
         <Content>
-          <Header>
-            <LeftContent>
-              <ArrowIcon
-                onClick={() => {
-                  navigate(ROUTES.TEMPLATES);
-                }}
-              />
-              <IconTemplate>
-                <FlagIcon />
-              </IconTemplate>
-              <Title> {template?.name} </Title>
-              <EditIcon />
-            </LeftContent>
-            <RightContent>
-              <MoreOptions>
-                <EllipsisIcon />
-              </MoreOptions>
-              <Button height="52px" width="227px" isSecondary>
-                <DownloadIcon />
-                Importar produtos
-              </Button>
-              <Button
-                height="52px"
-                width="226px"
-                className="secondButton"
-                onClick={() => {
-                  const { hotInstance } = hotRef.current!;
-                  if (hotInstance) {
-                    // hotInstance.alter("insert_row", 0, 0);
-                    setDataProvider((prev) => [{}, ...prev]);
-                  }
-                }}
-              >
-                Adicionar produto
-                <PlusIcon />
-              </Button>
-            </RightContent>
-          </Header>
-          <Filters>
-            <Temp
-              options={headerTable}
-              handleSearch={handleGetProductFiltered}
-            />
-            <Contents>
-              <Item>
-                <HelpIcon />
-                Ajuda
-              </Item>
-            </Contents>
-          </Filters>
+          <HeaderFilters
+            template={template}
+            headerTable={headerTable}
+            handleGetProductFiltered={handleGetProductFiltered}
+            handleAddProductClick={() => handleAddProductClick()}
+          />
         </Content>
         <Container>
           <HotTable
@@ -865,11 +663,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 }
               }
             }}
-            beforeCopy={(
-              data: CellValue[][],
-              coords: RangeType[],
-              copiedHeadersCount: { columnHeadersCount: number },
-            ) => {
+            beforeCopy={(data: CellValue[][], coords: RangeType[]) => {
               for (let i = 0; i < coords.length; i++) {
                 const { startRow, startCol, endRow, endCol } = coords[i];
                 for (let row = startRow; row <= endRow; row++) {
@@ -957,7 +751,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 }
               }
             }}
-            afterRenderer={(TD, row, col, prop, value, cellProperties) => {
+            afterRenderer={(TD, row, col) => {
               if (col + 1 === headers.length) {
                 TD.style.display = "none";
               }
@@ -979,67 +773,68 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                     // setLoading(true);
                     loadingRef.current!.style.display = "block";
                     setIsTableLocked(true);
-                    productRequests
-                      .list(
-                        { keyword: currentKeyword, page, limit: 100 },
-                        window.location.pathname.substring(10),
-                      )
-                      .then((response) => {
-                        const productFields: any[] = [];
+                    handleGetProductsFiltered(currentKeyword, template.id);
+                    // productRequests
+                    //   .list(
+                    //     { keyword: currentKeyword, page, limit: 100 },
+                    //     window.location.pathname.substring(10),
+                    //   )
+                    //   .then((response) => {
+                    //     const productFields: any[] = [];
 
-                        const { data } = response;
-                        if (data) {
-                          data.products?.forEach((item: any) => {
-                            const object: any = {};
-                            item.fields.forEach((field: any) => {
-                              const currentField = headerTable.find(
-                                (e: any) => e.data == field.id,
-                              );
+                    //     const { data } = response;
+                    //     if (data) {
+                    //       data.products?.forEach((item: any) => {
+                    //         const object: any = {};
+                    //         item.fields.forEach((field: any) => {
+                    //           const currentField = headerTable.find(
+                    //             (e: any) => e.data == field.id,
+                    //           );
 
-                              if (currentField && field.value) {
-                                const test = !COMPONENT_CELL_PER_TYPE[
-                                  currentField?.type?.toUpperCase()
-                                ]
-                                  ? field?.value[0]
-                                  : field?.value;
+                    //           if (currentField && field.value) {
+                    //             const test = !COMPONENT_CELL_PER_TYPE[
+                    //               currentField?.type?.toUpperCase()
+                    //             ]
+                    //               ? field?.value[0]
+                    //               : field?.value;
 
-                                object[field?.id] = test;
-                              }
-                            });
-                            productFields.push({
-                              ...object,
-                              id: item.id,
-                              created_at: item.created_at,
-                            });
-                          });
+                    //             object[field?.id] = test;
+                    //           }
+                    //         });
+                    //         productFields.push({
+                    //           ...object,
+                    //           id: item.id,
+                    //           created_at: item.created_at,
+                    //         });
+                    //       });
 
-                          if (!productFields.length && template) {
-                            productFields.push({ [template[0]]: "" });
-                          }
+                    //       if (!productFields.length && template) {
+                    //         productFields.push({ [template[0]]: "" });
+                    //       }
 
-                          setDataProvider((prev) => [
-                            ...prev,
-                            ...productFields,
-                          ]);
+                    //       setDataProvider((prev) => [
+                    //         ...prev,
+                    //         ...productFields,
+                    //       ]);
 
-                          setPage(page + 1);
-                          // setLoading(false);
-                          loadingRef.current!.style.display = "none";
+                    //       setPage(page + 1);
+                    //       // setLoading(false);
+                    //       loadingRef.current!.style.display = "none";
 
-                          setIsTableLocked(false);
-                        }
-                      })
-                      .catch((errr: any) => {
-                        // setLoading(false);
-                        loadingRef.current!.style.display = "none";
+                    //       setIsTableLocked(false);
+                    //     }
+                    //   })
+                    //   .catch((errr: any) => {
+                    //     // setLoading(false);
+                    //     loadingRef.current!.style.display = "none";
 
-                        setIsTableLocked(false);
+                    //     setIsTableLocked(false);
 
-                        if (hotInstance) {
-                          hotInstance.render();
-                        }
-                        toast.error(errr.response.data.message);
-                      });
+                    //     if (hotInstance) {
+                    //       hotInstance.render();
+                    //     }
+                    //     toast.error(errr.response.data.message);
+                    //   });
                   }
                 }
               }
@@ -1047,11 +842,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             fixedColumnsStart={1}
             afterGetColHeader={renderHeaderComponent}
             hiddenColumns={{ columns: hidden, indicators: true }}
-            afterColumnResize={async (
-              newSize: number,
-              column: number,
-              isDoubleClick: boolean,
-            ) => {
+            afterColumnResize={async (newSize: number, column: number) => {
               await handleResize(column, newSize, template);
             }}
             afterColumnMove={(
