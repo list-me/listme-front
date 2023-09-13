@@ -90,6 +90,7 @@ interface ITypeProductContext {
   handleGetProductsFiltered: (
     key: string,
     templateId: string,
+    page: number,
   ) => Promise<any[]>;
   uploadImages: (
     files: Array<File>,
@@ -180,9 +181,10 @@ export const ProductContextProvider = ({ children }: any) => {
   async function handleGetProductsFiltered(
     key: string,
     templateId: string,
+    page: number,
   ): Promise<any[]> {
     const { data } = await productRequests.list(
-      { keyword: key, limit: 100 },
+      { keyword: key, limit: 100, page },
       templateId,
     );
 

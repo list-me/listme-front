@@ -1,3 +1,6 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable consistent-return */
+/* eslint-disable eqeqeq */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable radix */
@@ -50,10 +53,10 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     colHeaders,
     total,
     uploadImages,
-    handleGetProductsFiltered,
   } = useProductContext();
 
   const [cols, setCols] = useState<any[]>([]);
+  const [page, setPage] = useState<number>(1);
 
   const [currentCell, setCurrentCell] = useState<any>({});
 
@@ -337,8 +340,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             loadingRef={loadingRef}
             componentCellPerType={COMPONENT_CELL_PER_TYPE}
             total={total}
-            handleGetProductsFiltered={handleGetProductsFiltered}
-            currentKeyword={currentKeyword}
             template={template}
             renderHeaderComponent={renderHeaderComponent}
             hidden={hidden}
@@ -346,6 +347,10 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             columns={columns}
             handleMove={handleMove}
             uploadImages={uploadImages}
+            page={page}
+            setPage={setPage}
+            headerTable={headerTable}
+            currentKeyword={currentKeyword}
           />
         </Container>
         <div ref={loadingRef} style={{ display: "none" }}>

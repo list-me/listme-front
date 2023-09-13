@@ -37,8 +37,6 @@ function DefaultTable({
   loadingRef,
   componentCellPerType,
   total,
-  handleGetProductsFiltered,
-  currentKeyword,
   template,
   renderHeaderComponent,
   hidden,
@@ -46,6 +44,10 @@ function DefaultTable({
   columns,
   handleMove,
   uploadImages,
+  page,
+  setPage,
+  headerTable,
+  currentKeyword,
 }: IDefaultTable): JSX.Element {
   if (hotRef.current)
     document.addEventListener("keydown", (event) => {
@@ -99,11 +101,15 @@ function DefaultTable({
       hotRef,
       total,
       dataProvider,
+      setDataProvider,
       loadingRef,
       setIsTableLocked,
-      handleGetProductsFiltered,
-      currentKeyword,
       template,
+      page,
+      setPage,
+      headerTable,
+      componentCellPerType,
+      currentKeyword,
     );
   };
 

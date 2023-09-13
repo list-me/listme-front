@@ -1,3 +1,4 @@
+import { IHeaderTable } from "../../../../context/products";
 import { ICustomCellType } from "../../../../context/products/product.context";
 
 export interface IDefaultTable {
@@ -12,11 +13,6 @@ export interface IDefaultTable {
   loadingRef: React.RefObject<HTMLDivElement>;
   componentCellPerType: ICustomCellType;
   total: number;
-  handleGetProductsFiltered: (
-    key: string,
-    templateId: string,
-  ) => Promise<any[]>;
-  currentKeyword: string;
   template: any;
   renderHeaderComponent: (
     column: number,
@@ -27,4 +23,8 @@ export interface IDefaultTable {
   columns: any[];
   handleMove: Function;
   uploadImages: (files: File[], bucketUrl: string) => Promise<void | string[]>;
+  page: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  headerTable: IHeaderTable[];
+  currentKeyword: string;
 }
