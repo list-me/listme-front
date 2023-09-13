@@ -1,6 +1,6 @@
 import { Container, Icon, Label } from "./styles";
 // @ts-ignore
-import { ReactComponent as DropdownIcon } from "../../assets/drop-down.svg";
+import { ReactComponent as DropdownIcon } from "../../assets/icons/editors/chevron-down.svg";
 
 export function Profile() {
   return (
