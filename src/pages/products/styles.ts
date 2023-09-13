@@ -259,13 +259,10 @@ export const Container = styled.div`
       font-weight: 400;
       line-height: 150%;
 
-      align-self: center !important;
-
-      justify-content: center;
-      text-align: start;
       padding-top: 16px;
+      align-content: center;
 
-      .tagContent {
+      .tag-content {
         background-color: #dee2e6 !important;
 
         width: 140px !important;
@@ -276,6 +273,8 @@ export const Container = styled.div`
 
         padding-left: 8px;
         border-radius: 7px;
+
+        margin: 16px 0 0 8px;
 
         &:hover {
           cursor: pointer;
@@ -303,6 +302,58 @@ export const Container = styled.div`
       font-family: ${({ theme }) => theme.fonts.family.default};
       font-size: ${({ theme }) => theme.fonts.sizes.xsmall};
       color: #3818d9;
+    }
+
+    td:has(div) {
+      padding: 0 !important;
+    }
+
+    .radio-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 45px;
+      width: fit-content;
+      height: 30px;
+
+      border: 1px solid #dee2e6;
+      border-radius: 24px;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 50px;
+      width: fit-content;
+      height: 30px;
+
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
     }
 
     .drag-over {

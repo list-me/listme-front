@@ -6,6 +6,8 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/no-array-index-key */
 import ReactDOM from "react-dom/client";
+import { renderToString } from "react-dom/server";
+
 import { unmountComponentAtNode } from "react-dom";
 import React, {
   useCallback,
@@ -24,6 +26,7 @@ import { CellValue, RangeType } from "handsontable/common";
 
 import DocumentIcon from "../../assets/icons/document-icon.svg";
 import ImageErrorIcon from "../../assets/icons/image-error-icon.svg";
+import { ReactComponent as DropDownIcon } from "../../assets/icons/editors/chevron-down.svg";
 
 import { ReactComponent as EllipsisIcon } from "../../assets/ellipsis.svg";
 import { ReactComponent as DownloadIcon } from "../../assets/download.svg";
@@ -488,7 +491,45 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     return result;
   };
 
-  const customRenderer = useCallback(
+  const customRendererRadio = useCallback(
+    (
+      _instance: Handsontable,
+      td: HTMLTableCellElement,
+      _row: number,
+      _col: number,
+      _prop: string | number,
+      value: string | null,
+    ): void => {
+      const svgString: string = renderToString(<DropDownIcon />);
+
+      td.innerHTML = `<div class="radio-item">
+        ${value ?? ""}
+        ${svgString}
+      </div>`;
+    },
+    [],
+  );
+
+  const customRendererDropdown = useCallback(
+    (
+      _instance: Handsontable,
+      td: HTMLTableCellElement,
+      _row: number,
+      _col: number,
+      _prop: string | number,
+      value: string | null,
+    ): void => {
+      const svgString: string = renderToString(<DropDownIcon />);
+
+      td.innerHTML = `<div class="dropdown-item">
+        ${value ?? ""}
+        ${svgString}
+      </div>`;
+    },
+    [],
+  );
+
+  const customRendererRelation = useCallback(
     (
       instance: Handsontable,
       td: HTMLTableCellElement,
@@ -497,18 +538,18 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       prop: string | number,
       value: any,
       cellProperties: Handsontable.CellProperties,
-    ) => {
+    ): void => {
       if (typeof value === "string" && value.length) value = JSON.parse(value);
 
       const totalItems = value ? value.length : 0;
-      td.innerHTML = `<div class="tagContent">${totalItems} Items relacionados</div>`;
+      td.innerHTML = `<div class="tag-content">${totalItems} Items relacionados</div>`;
     },
     [],
   );
 
   const customRendererFile = useCallback(
     (
-      instance: Handsontable,
+      _instance: Handsontable,
       td: HTMLTableCellElement,
       row: number,
       col: number,
@@ -644,7 +685,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
               const imgTag: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px; margin-right:4px;">`;
               td.innerHTML =
                 value.length > 1
-                  ? `<div style="display:flex; align-items: center;">
+                  ? `<div style="display:flex; align-items: center; margin-top: 16px; margin-left: 8px;">
                       ${imgTag.concat(
                         `<div class="itens-amount"> +${value.length - 1}</div>`,
                       )} </div>`
@@ -788,26 +829,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             }}
             rowHeights="52px"
             licenseKey="non-commercial-and-evaluation"
-            // beforeChange={(
-            //   changes: Array<CellChange | null>,
-            //   source: ChangeSource,
-            // ) => {
-            //   // const currentCellValue = changes[0][2];
-            //   // const newValue = changes[0][3];
-            //   // const row = changes[0][0];
-            //   // const col = cols.findIndex((col) => col?.data === changes[0][1]);
-            //   // const columnType = headerTable[col]?.type;
-            //   // if (columnType === "text" && newValue.length > 100) {
-            //   //   toast.warn("The text field cannot be longer than 100 characters");
-            //   //   return false;
-            //   // }
-            //   // if (columnType === "paragraph" && newValue.length > 255) {
-            //   //   toast.warn("O campo parágrafo deve conter até 200 caractéres");
-            //   //   return false;
-            //   // }
-            //   // return true;
-
-            // }}
             afterChange={async (
               changes: Handsontable.CellChange[] | null,
               source: any,
@@ -856,7 +877,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                   customChanges[0][2] !== customChanges[0][3] &&
                   dataProvider.length
                 ) {
-                  console.log("Changes", { changes });
                   try {
                     if (!isNew) setIsTableLocked(true);
                     const id = await handleSave(
@@ -1136,6 +1156,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                     _columnIndex={col.order}
                     data={col.data}
                     key={index}
+                    renderer={customRendererDropdown}
                   >
                     <DropdownEditor
                       hot-editor
@@ -1153,6 +1174,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                     _columnIndex={col.order}
                     data={col.data}
                     key={index}
+                    renderer={customRendererRadio}
                   >
                     <RadioEditor
                       hot-editor
@@ -1190,7 +1212,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                     width={col.width}
                     key={index}
                     // eslint-disable-next-line react/jsx-no-bind
-                    renderer={customRenderer}
+                    renderer={customRendererRelation}
                   >
                     <RelationEditor
                       hot-editor
