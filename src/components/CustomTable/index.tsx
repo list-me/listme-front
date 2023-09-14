@@ -54,6 +54,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     products,
     colHeaders,
     total,
+    setTotal,
     uploadImages,
   } = useProductContext();
 
@@ -342,6 +343,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             loadingRef={loadingRef}
             componentCellPerType={COMPONENT_CELL_PER_TYPE}
             total={total}
+            setTotal={setTotal}
             template={template}
             renderHeaderComponent={renderHeaderComponent}
             hidden={hidden}

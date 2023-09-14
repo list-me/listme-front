@@ -1,9 +1,10 @@
+/* eslint-disable consistent-return */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-plusplus */
 /* eslint-disable radix */
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { HotTable, HotColumn } from "@handsontable/react";
 import { toast } from "react-toastify";
 import Handsontable from "handsontable";
@@ -37,6 +38,7 @@ function DefaultTable({
   loadingRef,
   componentCellPerType,
   total,
+  setTotal,
   template,
   renderHeaderComponent,
   hidden,
@@ -49,10 +51,19 @@ function DefaultTable({
   headerTable,
   currentKeyword,
 }: IDefaultTable): JSX.Element {
-  if (hotRef.current)
-    document.addEventListener("keydown", (event) => {
-      handleDocumentKeyDown(event, hotRef);
-    });
+  useEffect(() => {
+    if (hotRef.current) {
+      const handleKeyDown = (event: KeyboardEvent) => {
+        handleDocumentKeyDown(event, hotRef);
+      };
+
+      document.addEventListener("keydown", handleKeyDown);
+
+      return () => {
+        document.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [hotRef]);
   const [isTableLocked, setIsTableLocked] = useState(false);
 
   const afterChangeCallback = async (
@@ -100,6 +111,7 @@ function DefaultTable({
     handleAfterScrollVertically(
       hotRef,
       total,
+      setTotal,
       dataProvider,
       setDataProvider,
       loadingRef,

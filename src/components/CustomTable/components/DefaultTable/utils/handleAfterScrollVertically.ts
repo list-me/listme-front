@@ -9,6 +9,7 @@ import { productRequests } from "../../../../../services/apis/requests/product";
 const handleAfterScrollVertically = (
   hotRef: React.RefObject<HotTable>,
   total: number,
+  setTotal: React.Dispatch<React.SetStateAction<number>>,
   dataProvider: any[],
   setDataProvider: React.Dispatch<React.SetStateAction<any[]>>,
   loadingRef: React.RefObject<HTMLDivElement>,
@@ -75,7 +76,7 @@ const handleAfterScrollVertically = (
               }
 
               setDataProvider((prev) => [...prev, ...productFields]);
-
+              setTotal(data.total);
               setPage(page + 1);
               // setLoading(false);
               loadingRef.current!.style.display = "none";

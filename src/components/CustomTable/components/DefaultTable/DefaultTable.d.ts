@@ -13,6 +13,7 @@ export interface IDefaultTable {
   loadingRef: React.RefObject<HTMLDivElement>;
   componentCellPerType: ICustomCellType;
   total: number;
+  setTotal: React.Dispatch<React.SetStateAction<number>>;
   template: any;
   renderHeaderComponent: (
     column: number,

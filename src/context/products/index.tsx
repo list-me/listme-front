@@ -87,6 +87,7 @@ interface ITypeProductContext {
 
   handleGetTemplate: (templateId: string) => Promise<void>;
   total: number;
+  setTotal: React.Dispatch<React.SetStateAction<number>>;
   handleGetProductsFiltered: (
     key: string,
     templateId: string,
@@ -151,6 +152,7 @@ export const productContext = createContext<ITypeProductContext>({
   handleGetProducts: async (): Promise<any> => {},
   handleGetTemplate: async (): Promise<void> => {},
   total: 0,
+  setTotal: () => {},
   handleGetProductsFiltered: async (
     key: string,
     templateId: string,
@@ -733,6 +735,7 @@ export const ProductContextProvider = ({ children }: any) => {
     handleGetProductsFiltered,
     handleGetTemplate,
     uploadImages,
+    setTotal,
   };
 
   return (
