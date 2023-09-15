@@ -418,16 +418,14 @@ export const ProductContextProvider = ({ children }: any) => {
       const columnKeys = headerTable.map((column) => column?.data);
       Object.keys(fields).forEach((field: any) => {
         if (
-          fields[field] &&
           !["id", "created_at"].includes(field) &&
           columnKeys.includes(field)
         ) {
+          const newValue =
+            typeof fields[field] == "object" ? fields[field] : [fields[field]];
           obj.push({
             id: field,
-            value:
-              typeof fields[field] == "object"
-                ? fields[field]
-                : [fields[field]],
+            value: newValue ? newValue : [""],
           });
         }
       });

@@ -45,7 +45,6 @@ const handleCellChange: any = async (
       customChanges[0][2] !== customChanges[0][3] &&
       dataProvider.length
     ) {
-      console.log("Changes", { changes });
       try {
         if (!isNew) setIsTableLocked(true);
         const id = await handleSave(
