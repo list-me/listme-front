@@ -35,6 +35,7 @@ const handleAfterScrollVertically = async (
 
       if (
         scrollTop + visibleHeight >= triggerPosition &&
+        scrollTop + visibleHeight < triggerPosition + 500 &&
         total > dataProvider.length
       ) {
         isFetchingNextPage = true;
