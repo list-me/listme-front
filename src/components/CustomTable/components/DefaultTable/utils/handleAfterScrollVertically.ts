@@ -6,7 +6,9 @@ import { IHeaderTable } from "../../../../../context/products";
 import { ICustomCellType } from "../../../../../context/products/product.context";
 import { productRequests } from "../../../../../services/apis/requests/product";
 
-const handleAfterScrollVertically = (
+let isFetchingNextPage = false;
+
+const handleAfterScrollVertically = async (
   hotRef: React.RefObject<HotTable>,
   total: number,
   setTotal: React.Dispatch<React.SetStateAction<number>>,
@@ -20,81 +22,82 @@ const handleAfterScrollVertically = (
   headerTable: IHeaderTable[],
   componentCellPerType: ICustomCellType,
   currentKeyword: string,
-): void => {
+): Promise<void> => {
   const { hotInstance } = hotRef.current!;
-  if (hotInstance) {
+  if (hotInstance && !isFetchingNextPage) {
     const holder = hotInstance.rootElement.querySelector(".wtHolder");
     if (holder) {
       const scrollableHeight = holder.scrollHeight;
       const { scrollTop } = holder;
       const visibleHeight = holder.clientHeight;
 
-      const triggerPosition = scrollableHeight * 0.75;
+      const triggerPosition = scrollableHeight * 0.8;
 
       if (
         scrollTop + visibleHeight >= triggerPosition &&
+        scrollTop + visibleHeight < triggerPosition + 500 &&
         total > dataProvider.length
       ) {
+        isFetchingNextPage = true;
         loadingRef.current!.style.display = "block";
         setIsTableLocked(true);
-        productRequests
-          .list(
+
+        try {
+          const response = await productRequests.list(
             { keyword: currentKeyword, page, limit: 100 },
             window.location.pathname.substring(10),
-          )
-          .then((response: any) => {
-            const productFields: any[] = [];
+          );
 
-            const { data } = response;
-            if (data) {
-              data.products?.forEach((item: any) => {
-                const object: any = {};
-                item.fields.forEach((field: any) => {
-                  const currentField = headerTable.find(
-                    (e: any) => e.data == field.id,
-                  );
+          const productFields: any[] = [];
 
-                  if (currentField && field.value) {
-                    const test = !componentCellPerType[
-                      currentField?.type?.toUpperCase()
-                    ]
-                      ? field?.value[0]
-                      : field?.value;
+          const { data } = response;
+          if (data) {
+            data.products?.forEach((item: any) => {
+              const object: any = {};
+              item.fields.forEach((field: any) => {
+                const currentField = headerTable.find(
+                  (e: any) => e.data == field.id,
+                );
 
-                    object[field?.id] = test;
-                  }
-                });
-                productFields.push({
-                  ...object,
-                  id: item.id,
-                  created_at: item.created_at,
-                });
+                if (currentField && field.value) {
+                  const test = !componentCellPerType[
+                    currentField?.type?.toUpperCase()
+                  ]
+                    ? field?.value[0]
+                    : field?.value;
+
+                  object[field?.id] = test;
+                }
               });
+              productFields.push({
+                ...object,
+                id: item.id,
+                created_at: item.created_at,
+              });
+            });
 
-              if (!productFields.length && template) {
-                productFields.push({ [template[0]]: "" });
-              }
-
-              setDataProvider((prev) => [...prev, ...productFields]);
-              setTotal(data.total);
-              setPage(page + 1);
-              // setLoading(false);
-              loadingRef.current!.style.display = "none";
-
-              setIsTableLocked(false);
+            if (!productFields.length && template) {
+              productFields.push({ [template[0]]: "" });
             }
-          })
-          .catch((errr: any) => {
-            // setLoading(false);
+
+            setDataProvider((prev) => [...prev, ...productFields]);
+            setTotal(data.total);
+            setPage(page + 1);
             loadingRef.current!.style.display = "none";
-
             setIsTableLocked(false);
+          }
+        } catch (error) {
+          loadingRef.current!.style.display = "none";
+          setIsTableLocked(false);
 
-            if (hotInstance) {
-              hotInstance.render();
-            }
-            toast.error(errr.response.data.message);
-          });
+          if (hotInstance) {
+            hotInstance.render();
+          }
+          // @ts-ignore
+          toast.error(error?.response?.data?.message || "An error occurred");
+        } finally {
+          isFetchingNextPage = false;
+        }
       }
     }
   }
