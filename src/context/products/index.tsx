@@ -358,7 +358,6 @@ export const ProductContextProvider = ({ children }: any) => {
   const handleRedirectAndGetProducts = useCallback(
     async (id: string) => {
       try {
-        await handleGetTemplate(id);
         const template: IHeaderTable[] = await handleGetTemplate(id);
         const product = await handleGetProducts(id, template);
         return product;

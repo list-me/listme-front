@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { AxiosResponse } from "axios";
 import { api } from "../api";
 import { STORAGE } from "../../../constants/localStorage";
@@ -8,9 +9,9 @@ interface IPagination {
   keyword?: string;
 }
 
-export const productRequests = {
+const productRequests = {
   list: async (
-    { page = 0, limit = 200, keyword }: IPagination,
+    { page = 0, limit = 100, keyword = "" }: IPagination,
     templateId?: string,
   ): Promise<AxiosResponse> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
@@ -70,3 +71,5 @@ export const productRequests = {
     return response.data;
   },
 };
+
+export { productRequests };

@@ -57,6 +57,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     setTotal,
     uploadImages,
   } = useProductContext();
+  console.log("🚀 ~ file: index.tsx:60 ~ products:", products);
 
   const [cols, setCols] = useState<any[]>([]);
   const [page, setPage] = useState<number>(1);

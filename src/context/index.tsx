@@ -1,8 +1,13 @@
 /* eslint-disable import/prefer-default-export */
-import { ProductContextProvider } from "./products";
+import { TesteContextProvider } from "./Teste";
 import { combineContexts } from "./combineContexts";
 import { ImageContextProvider } from "./images";
+import { ProductContextProvider } from "./products";
 
-const providers = [ProductContextProvider, ImageContextProvider];
+const providers = [
+  ProductContextProvider,
+  TesteContextProvider,
+  ImageContextProvider,
+];
 
 export const AppContextProvider = combineContexts(...providers);

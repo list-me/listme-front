@@ -21,7 +21,8 @@
     "./src/**/*.ts",
     "./src/**/*.tsx",
     "./src/**/*.js",
-    "src/context/products/backup",
-    "src/context/products/backup"
+    "src/context/products/index.tsx",
+    "src/context/products/index.tsx",
+    "src/context/products/index.tsx"
   ]
 }

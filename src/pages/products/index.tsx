@@ -1,32 +1,25 @@
 /* eslint-disable import/prefer-default-export */
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { Container, Content } from "./styles";
-import Table from "../../components/CustomTable";
-import { productContext } from "../../context/products";
 import { Loading } from "../../components/Loading";
+// import TableTest from "../../components/TableTest";
+import { useTesteContext } from "../../context/Teste";
 
 export const Products: React.FC = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const { handleRedirectAndGetProducts, products } = useContext(productContext);
+  const { handleRedirectAndGetTestes, loading } = useTesteContext();
 
   useEffect(() => {
-    setIsLoading(true);
     const id = window.location.pathname.substring(10);
     if (id) {
-      handleRedirectAndGetProducts(id).then(() => {
-        setIsLoading(false);
-      });
+      handleRedirectAndGetTestes(id);
     }
-  }, [handleRedirectAndGetProducts]);
+  }, [handleRedirectAndGetTestes]);
 
   return (
     <>
       <Content>
-        <Container>
-          {isLoading ? <Loading /> : <Table data={products} />}
-        </Container>
+        <Container>{loading ? <Loading /> : <></>}</Container>
       </Content>
     </>
   );
