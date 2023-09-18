@@ -1,9 +1,17 @@
-import React, { createContext, useCallback, useContext, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import { toast } from "react-toastify";
-import { STORAGE } from "../../constants/localStorage";
 import {
+  IBuildProductFields,
   ICustomFields,
   IField,
+  IFields,
+  IHandlePost,
   IHeader,
   IProductsData,
   ITemplate,
@@ -11,6 +19,7 @@ import {
 import { templateRequests } from "../../services/apis/requests/template";
 import { productRequests } from "../../services/apis/requests/product";
 import { ICustomCellType } from "../products/product.context";
+import { ICustom } from "../products";
 
 const COMPONENT_CELL_PER_TYPE: ICustomCellType = {
   RADIO: "radio",
@@ -27,6 +36,28 @@ interface TesteContextProps {
     headers: IHeader[];
   } | null>;
   template: ITemplate;
+  products: Object[] | undefined;
+  colHeaders: string[];
+  setColHeaders: React.Dispatch<React.SetStateAction<string[]>>;
+  headerTable: IHeader[];
+  COMPONENT_CELL_PER_TYPE: ICustomCellType;
+  hidden: number[];
+  handleSave: (
+    value: IBuildProductFields,
+    isNew: boolean,
+    productId: string,
+  ) => Promise<void>;
+  handleResize: (col: number, newSize: number) => void;
+  handleNewColumn: (col: any, fields: any) => void;
+  handleHidden: (
+    col: number,
+    templateHidden: ITemplate,
+    able: boolean,
+  ) => number[];
+  handleMove: (col: ICustomFields[]) => void;
+  total: number;
+  setTotal: React.Dispatch<React.SetStateAction<number>>;
+  handleDelete: (product: any) => void;
 }
 
 const TesteContext = createContext<TesteContextProps | undefined>(undefined);
@@ -56,7 +87,7 @@ function TesteContextProvider({
   const [customFields, setCustomFields] = useState<ICustomFields[]>();
   const [filter, setFilter] = useState(undefined);
   const [products, setProducts] = useState<Object[]>();
-  const [total, setTotal] = useState<number>();
+  const [total, setTotal] = useState<number>(0);
 
   async function handleGetProducts(
     templateId: string,
@@ -211,11 +242,263 @@ function TesteContextProvider({
     [handleGetTemplate],
   );
 
-  const value: TesteContextProps = {
-    loading,
-    handleRedirectAndGetTestes,
-    template,
+  const buildProduct = useCallback(
+    (fields: IBuildProductFields) => {
+      const obj: { id: string; value: string | string[] }[] = [];
+      if (Object.keys(fields).length) {
+        const columnKeys = headerTable.map((column) => column?.data);
+        Object.keys(fields).forEach((field) => {
+          if (
+            fields[field] &&
+            !["id", "created_at"].includes(field) &&
+            columnKeys.includes(field)
+          ) {
+            obj.push({
+              id: field,
+              value:
+                typeof fields[field] === "object"
+                  ? fields[field]
+                  : [fields[field]],
+            });
+          }
+        });
+      }
+
+      return obj;
+    },
+    [headerTable],
+  );
+
+  const handlePost = async (product: IHandlePost): Promise<any> => {
+    return productRequests.save(product);
   };
+
+  const handleSave = useCallback(
+    async (
+      valuetoSave: IBuildProductFields,
+      isNew: boolean,
+      productId: string,
+    ) => {
+      try {
+        const fields = buildProduct(valuetoSave);
+
+        if (isNew) {
+          await productRequests.update({ id: productId, fields });
+          toast.success("Produto atualizado com sucesso");
+          return null;
+        }
+        const newProduct: IHandlePost = {
+          id: productId,
+          product_template_id: window.location.pathname.substring(10),
+          is_public: true,
+          fields,
+        };
+
+        const product = await handlePost(newProduct);
+        const newItem = product.id;
+
+        toast.success("Produto cadastrado com sucesso");
+        return newItem;
+      } catch (error: any) {
+        const message =
+          typeof error?.response?.data?.message === "object"
+            ? error?.response?.data?.message[0]
+            : error?.response?.data?.message;
+
+        toast.error(message);
+      }
+      return null;
+    },
+    [buildProduct],
+  );
+
+  const handleResize = useCallback(
+    (col: number, newSize: number) => {
+      if (customFields) {
+        const customs = customFields.map((item, index) => {
+          if (item && item?.order == col.toString()) {
+            return {
+              ...item,
+              width: newSize.toString(),
+              order: index.toString(),
+            };
+          }
+          return item;
+        });
+        setCustomFields(customs);
+        templateRequests
+          .customView(template.id, { fields: customs })
+          .catch(() =>
+            toast.error("Ocorreu um erro ao alterar o tamanho do campo"),
+          );
+      }
+    },
+    [customFields, template.id],
+  );
+
+  const handleNewColumn = useCallback((col: any, fields: any) => {
+    setTemplate((prevTemplate) => {
+      const newTemplate = { ...prevTemplate };
+      newTemplate.fields.fields = fields;
+      return newTemplate;
+    });
+
+    setCustomFields((prev) => [
+      ...(prev || []),
+      {
+        order: col?.order,
+        hidden: col?.hidden,
+        width: col?.width,
+        frozen: col?.frozen,
+        id: col?.data,
+      },
+    ]);
+
+    setHeaderTable((prevHeaderTable) => {
+      const newPosition = [...prevHeaderTable, col];
+      newPosition.splice(newPosition.length - 2, 1);
+      newPosition.push({});
+      return newPosition;
+    });
+  }, []);
+
+  const buildCustomFields = useCallback(
+    (
+      fields: IField[],
+      { order, show, width, frozen }: ICustom,
+      col: number,
+    ): ICustomFields[] => {
+      const updatedCustomFields = (customFields || []).map((custom) => {
+        if (+custom?.order === col) {
+          return {
+            id: custom?.id,
+            order: order ? order.toString() : custom?.order,
+            hidden: show !== undefined ? show : custom?.hidden,
+            width: width || custom?.width,
+            frozen: frozen || custom?.frozen,
+          };
+        }
+        return custom;
+      });
+      return updatedCustomFields;
+    },
+    [customFields],
+  );
+
+  const handleHidden = useCallback(
+    (col: number, templateHidden: ITemplate, able: boolean): number[] => {
+      setCustomFields((prev) => {
+        const updatedCustomFields = (prev || []).map((item) => {
+          if (item?.order === col.toString()) {
+            return {
+              ...item,
+              hidden: able,
+            };
+          }
+          return item;
+        });
+        return updatedCustomFields;
+      });
+
+      const content = hidden;
+      const newValue = content.includes(col)
+        ? content.filter((element) => element !== col)
+        : [...content, col];
+      setHidden(newValue);
+
+      const custom = buildCustomFields(
+        templateHidden?.fields?.fields,
+        { show: able },
+        col,
+      );
+      templateRequests
+        .customView(window.location.pathname.substring(10), { fields: custom })
+        .catch(() =>
+          toast.error("Ocorreu um erro ao alterar a visibilidade do campo"),
+        );
+
+      return newValue;
+    },
+    [buildCustomFields, hidden],
+  );
+
+  const handleMove = (col: ICustomFields[]): void => {
+    const fields = col
+      .filter((item) => {
+        if (Object.keys(item).length > 0) return item;
+      })
+      .map((element) => {
+        return {
+          order: element?.order,
+          hidden: element?.hidden,
+          width: element?.width,
+          frozen: element?.frozen,
+          id: element?.data,
+        };
+      });
+
+    templateRequests
+      .customView(window.location.pathname.substring(10), { fields })
+      .catch(() =>
+        toast.error("Ocorreu um erro ao alterar a posição da coluna"),
+      );
+  };
+
+  const handleDelete = (product: any): void => {
+    try {
+      productRequests
+        .delete(product.id)
+        .then(() => {
+          toast.success("Produto excluído com sucesso");
+        })
+        .catch((error) => {
+          throw error;
+        });
+    } catch (error) {
+      console.error(error);
+      toast.error("Ocorreu um erro na tentativa de deletar este produto");
+    }
+  };
+
+  const value = useMemo(
+    () => ({
+      loading,
+      handleRedirectAndGetTestes,
+      template,
+      products,
+      colHeaders,
+      setColHeaders,
+      headerTable,
+      COMPONENT_CELL_PER_TYPE,
+      hidden,
+      handleSave,
+      handleResize,
+      handleNewColumn,
+      handleHidden,
+      handleMove,
+      total,
+      setTotal,
+      handleDelete,
+    }),
+    [
+      loading,
+      handleRedirectAndGetTestes,
+      template,
+      products,
+      colHeaders,
+      setColHeaders,
+      headerTable,
+      hidden,
+      handleSave,
+      handleResize,
+      handleNewColumn,
+      handleHidden,
+      handleMove,
+      total,
+      setTotal,
+      handleDelete,
+    ],
+  );
 
   return (
     <TesteContext.Provider value={value}>{children}</TesteContext.Provider>

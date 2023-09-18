@@ -52,6 +52,7 @@ interface ICustomFields {
   width: string;
   frozen: boolean;
   id: string;
+  data?: any;
 }
 
 interface IProductsField {
@@ -77,6 +78,19 @@ interface IProductsData {
   total: number;
 }
 
+interface IBuildProductFields {
+  [key: string]: string;
+  created_at: string;
+  id: string;
+}
+
+interface IHandlePost {
+  id: string;
+  product_template_id: string;
+  is_public: boolean;
+  fields: { id: string; value: string | string[] }[];
+}
+
 export {
   ITemplate,
   IField,
@@ -86,4 +100,6 @@ export {
   IProductsData,
   IProducts,
   IProductsField,
+  IBuildProductFields,
+  IHandlePost,
 };

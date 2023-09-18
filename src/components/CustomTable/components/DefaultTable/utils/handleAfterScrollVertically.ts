@@ -5,16 +5,17 @@ import { toast } from "react-toastify";
 import { IHeaderTable } from "../../../../../context/products";
 import { ICustomCellType } from "../../../../../context/products/product.context";
 import { productRequests } from "../../../../../services/apis/requests/product";
+import { ITemplate } from "../../../../../context/Teste/test.context";
 
 const handleAfterScrollVertically = (
   hotRef: React.RefObject<HotTable>,
   total: number,
   setTotal: React.Dispatch<React.SetStateAction<number>>,
-  dataProvider: any[],
-  setDataProvider: React.Dispatch<React.SetStateAction<any[]>>,
+  dataProvider: Object[],
+  setDataProvider: React.Dispatch<React.SetStateAction<Object[]>>,
   loadingRef: React.RefObject<HTMLDivElement>,
   setIsTableLocked: React.Dispatch<React.SetStateAction<boolean>>,
-  template: any,
+  template: ITemplate,
   page: number,
   setPage: React.Dispatch<React.SetStateAction<number>>,
   headerTable: IHeaderTable[],
@@ -72,6 +73,7 @@ const handleAfterScrollVertically = (
               });
 
               if (!productFields.length && template) {
+                // @ts-ignore
                 productFields.push({ [template[0]]: "" });
               }
 

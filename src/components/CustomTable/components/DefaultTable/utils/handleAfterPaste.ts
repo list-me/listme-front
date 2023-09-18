@@ -7,6 +7,8 @@ import { CellValue, RangeType } from "handsontable/common";
 import { HotTable } from "@handsontable/react";
 import { ICustomCellType } from "../../../../../context/products/product.context";
 import { generateUUID } from "../../../../../utils";
+import { IColumnsCustom } from "../../../../TableTest/TableTest";
+import { IBuildProductFields } from "../../../../../context/Teste/test.context";
 
 const getRowsInterval = (start: number, end: number): Array<number> => {
   if (start > end) {
@@ -27,13 +29,17 @@ const handleAfterPaste: any = async (
   hotRef: React.RefObject<HotTable>,
   isTableLocked: boolean,
   loadingRef: React.RefObject<HTMLDivElement>,
-  cols: any[],
-  dataProvider: any[],
+  cols: IColumnsCustom | undefined,
+  dataProvider: Object[],
   componentCellPerType: ICustomCellType,
-  handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>,
+  handleSave: (
+    value: IBuildProductFields,
+    isNew: boolean,
+    productId: string,
+  ) => Promise<void>,
 ) => {
   const { hotInstance } = hotRef.current!;
-  if (data.length && !isTableLocked && hotInstance) {
+  if (cols && data.length && !isTableLocked && hotInstance) {
     loadingRef.current!.style.display = "block";
 
     const range = coords[0];
@@ -46,12 +52,14 @@ const handleAfterPaste: any = async (
     const rangeOfRows: number = range.endRow - range.startRow + 1;
     const rows: number[] = getRowsInterval(range.startRow, range.endRow);
 
-    const changesPromises: Array<any> = [];
+    const changesPromises = [];
     for (let i = 0; rangeOfRows > i; i++) {
       const row: number = rows[i];
-      const changes = dataProvider[row];
+      const changes: { [key: string]: string } = dataProvider[row] as {
+        [key: string]: string;
+      };
 
-      fieldColumns.forEach((column: any, index: number): void => {
+      fieldColumns.forEach((column, index: number): void => {
         const position: number = data.length > 1 ? i : 0;
 
         if (
@@ -80,7 +88,7 @@ const handleAfterPaste: any = async (
       const isNew: boolean = !!item?.id;
       if (!isNew) item.id = item?.id ?? generateUUID();
 
-      await handleSave(item, isNew, item.id);
+      await handleSave(item as IBuildProductFields, isNew, item.id);
     }
 
     loadingRef.current!.style.display = "none";

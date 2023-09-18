@@ -3,11 +3,11 @@ import React, { useEffect } from "react";
 
 import { Container, Content } from "./styles";
 import { Loading } from "../../components/Loading";
-// import TableTest from "../../components/TableTest";
+import TableTest from "../../components/TableTest";
 import { useTesteContext } from "../../context/Teste";
 
 export const Products: React.FC = () => {
-  const { handleRedirectAndGetTestes, loading } = useTesteContext();
+  const { handleRedirectAndGetTestes, loading, products } = useTesteContext();
 
   useEffect(() => {
     const id = window.location.pathname.substring(10);
@@ -19,7 +19,9 @@ export const Products: React.FC = () => {
   return (
     <>
       <Content>
-        <Container>{loading ? <Loading /> : <></>}</Container>
+        <Container>
+          {loading ? <Loading /> : products && <TableTest />}
+        </Container>
       </Content>
     </>
   );
