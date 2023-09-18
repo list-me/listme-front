@@ -5,6 +5,7 @@ import { CellValue, RangeType } from "handsontable/common";
 import { unmountComponentAtNode } from "react-dom";
 import ReactDOM from "react-dom/client";
 import { toast } from "react-toastify";
+import { renderToString } from "react-dom/server";
 import { IField, IHeader } from "../../context/Teste/test.context";
 import { IColumnsCustom } from "./TableTest";
 import RelationEditor from "../CustomTable/Editors/Relation";
@@ -19,6 +20,11 @@ import handleAfterScrollVertically from "../CustomTable/components/DefaultTable/
 import hasAtLeastOneProduct from "../CustomTable/components/DefaultTable/utils/hasAtLeastOneProduct";
 import handleRemoveRow from "../CustomTable/components/DefaultTable/utils/handleRemoveRow";
 import { useTesteContext } from "../../context/Teste";
+import DropdownEditor from "../CustomTable/Editors/Dropdown";
+import { ReactComponent as DropDownIcon } from "../../assets/chevron-down.svg";
+import RadioEditor from "../CustomTable/Editors/Radio";
+import { FileEditor } from "../CustomTable/Editors/File";
+import customRendererFile from "../CustomTable/components/DefaultTable/utils/customRendererFile";
 
 function TableTest(): JSX.Element | null {
   const {
@@ -37,6 +43,7 @@ function TableTest(): JSX.Element | null {
     total,
     setTotal,
     handleDelete,
+    uploadImages,
   } = useTesteContext();
 
   const hotRef = useRef<HotTable>(null);
@@ -279,6 +286,69 @@ function TableTest(): JSX.Element | null {
     );
   };
 
+  const customRendererDropdown = useCallback(
+    (
+      _instance: Handsontable,
+      td: HTMLTableCellElement,
+      _row: number,
+      _col: number,
+      _prop: string | number,
+      value: string | null,
+    ): void => {
+      const svgString: string = renderToString(<DropDownIcon />);
+
+      td.innerHTML = `<div class="dropdown-item">
+        ${value ?? ""}
+        ${svgString}
+      </div>`;
+    },
+    [],
+  );
+
+  const customRendererRadio = useCallback(
+    (
+      _instance: Handsontable,
+      td: HTMLTableCellElement,
+      _row: number,
+      _col: number,
+      _prop: string | number,
+      value: string | null,
+    ): void => {
+      const svgString: string = renderToString(<DropDownIcon />);
+
+      td.innerHTML = `<div class="radio-item">
+        ${value ?? ""}
+        ${svgString}
+      </div>`;
+    },
+    [],
+  );
+
+  const customRendererFileCallBack = useCallback(
+    (
+      _instance: Handsontable,
+      td: HTMLTableCellElement,
+      row: number,
+      col: number,
+      prop: string | number,
+      value: any,
+    ) => {
+      customRendererFile(
+        _instance,
+        td,
+        row,
+        col,
+        prop,
+        value,
+        hotRef,
+        loadingRef,
+        uploadImages,
+        template,
+      );
+    },
+    [],
+  );
+
   if (cols && dataProvider)
     return (
       <>
@@ -360,6 +430,59 @@ function TableTest(): JSX.Element | null {
                       column={col}
                       dataProvider={dataProvider}
                       field=""
+                    />
+                  </HotColumn>
+                );
+              }
+              if (col.isCustom && col.type === "list") {
+                return (
+                  <HotColumn
+                    width={col.width}
+                    _columnIndex={+col.order}
+                    data={col.data}
+                    key={col.order + col.data}
+                    renderer={customRendererDropdown}
+                  >
+                    <DropdownEditor
+                      hot-editor
+                      options={[...col.options, ""]}
+                      editorColumnScope={0}
+                    />
+                  </HotColumn>
+                );
+              }
+              if (col.isCustom && col.type === "radio") {
+                return (
+                  <HotColumn
+                    width={col.width}
+                    _columnIndex={+col.order}
+                    data={col.data}
+                    key={col.order + col.data}
+                    renderer={customRendererRadio}
+                  >
+                    <RadioEditor
+                      hot-editor
+                      options={[...col.options, ""]}
+                      editorColumnScope={0}
+                    />
+                  </HotColumn>
+                );
+              }
+
+              if (col.isCustom && col.type === "file") {
+                return (
+                  <HotColumn
+                    width={col.width}
+                    _columnIndex={+col.order}
+                    data={col.data}
+                    key={col.order + col.data}
+                    renderer={customRendererFileCallBack}
+                  >
+                    <FileEditor
+                      hot-editor
+                      editorColumnScope={0}
+                      templateId={template.id}
+                      dataProvider={dataProvider}
                     />
                   </HotColumn>
                 );

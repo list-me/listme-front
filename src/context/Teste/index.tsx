@@ -20,6 +20,8 @@ import { templateRequests } from "../../services/apis/requests/template";
 import { productRequests } from "../../services/apis/requests/product";
 import { ICustomCellType } from "../products/product.context";
 import { ICustom } from "../products";
+import { SignedUrlResponse } from "../images/image.context";
+import { fileRequests } from "../../services/apis/requests/file";
 
 const COMPONENT_CELL_PER_TYPE: ICustomCellType = {
   RADIO: "radio",
@@ -58,6 +60,7 @@ interface TesteContextProps {
   total: number;
   setTotal: React.Dispatch<React.SetStateAction<number>>;
   handleDelete: (product: any) => void;
+  uploadImages: (files: File[], bucketUrl: string) => Promise<string[] | void>;
 }
 
 const TesteContext = createContext<TesteContextProps | undefined>(undefined);
@@ -460,6 +463,36 @@ function TesteContextProvider({
     }
   };
 
+  const getSignedUrl = async (
+    fileName: string,
+    fileType: string,
+    templateId: string,
+  ): Promise<SignedUrlResponse> => {
+    return fileRequests.getSignedUrl(fileName, fileType, templateId);
+  };
+
+  const uploadImages = useCallback(
+    async (files: File[], bucketUrl: string): Promise<string[] | void> => {
+      try {
+        const filesNames: string[] = [];
+        const uploadPromises = files.map(async (file) => {
+          const [fileName, fileType] = file.name.split(".");
+
+          const signedUrl = await getSignedUrl(fileName, fileType, bucketUrl);
+          filesNames.push(signedUrl.access_url);
+          return fileRequests.uploadFile(file, signedUrl.url);
+        });
+
+        await Promise.all(uploadPromises);
+        return filesNames;
+      } catch (error) {
+        console.log({ error });
+        throw new Error("Ocorreu um erro ao realizar o upload dos arquivos");
+      }
+    },
+    [],
+  );
+
   const value = useMemo(
     () => ({
       loading,
@@ -479,6 +512,7 @@ function TesteContextProvider({
       total,
       setTotal,
       handleDelete,
+      uploadImages,
     }),
     [
       loading,
@@ -486,17 +520,14 @@ function TesteContextProvider({
       template,
       products,
       colHeaders,
-      setColHeaders,
       headerTable,
       hidden,
       handleSave,
       handleResize,
       handleNewColumn,
       handleHidden,
-      handleMove,
       total,
-      setTotal,
-      handleDelete,
+      uploadImages,
     ],
   );
 
