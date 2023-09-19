@@ -19,7 +19,6 @@ import { IDefaultTable } from "./DefaultTable";
 import handleCellChange from "./utils/handleCellChange";
 import handleBeforeCopy from "./utils/handleBeforeCopy";
 import handleAfterPaste from "./utils/handleAfterPaste";
-import handleAfterScrollVertically from "./utils/handleAfterScrollVertically";
 import handleAfterColumnMove from "./utils/handleAfterColumnMove";
 import handleRemoveRow from "./utils/handleRemoveRow";
 import hasAtLeastOneProduct from "./utils/hasAtLeastOneProduct";
@@ -37,8 +36,6 @@ function DefaultTable({
   handleSave,
   loadingRef,
   componentCellPerType,
-  total,
-  setTotal,
   template,
   renderHeaderComponent,
   hidden,
@@ -46,10 +43,6 @@ function DefaultTable({
   columns,
   handleMove,
   uploadImages,
-  page,
-  setPage,
-  headerTable,
-  currentKeyword,
 }: IDefaultTable): JSX.Element {
   useEffect(() => {
     if (hotRef.current) {
@@ -107,24 +100,6 @@ function DefaultTable({
     );
   };
 
-  const afterScrollVerticallyCallback = (): void => {
-    handleAfterScrollVertically(
-      hotRef,
-      total,
-      setTotal,
-      dataProvider,
-      setDataProvider,
-      loadingRef,
-      setIsTableLocked,
-      template,
-      page,
-      setPage,
-      headerTable,
-      componentCellPerType,
-      currentKeyword,
-    );
-  };
-
   const afterColumnMoveCallback = (
     movedColumns: number[],
     finalIndex: number,
@@ -143,6 +118,26 @@ function DefaultTable({
       handleMove,
     );
   };
+  const svgStringDropDown: string = renderToString(<DropDownIcon />);
+
+  const customRendererDropdown = useCallback(
+    (
+      _instance: Handsontable,
+      td: HTMLTableCellElement,
+      _row: number,
+      _col: number,
+      _prop: string | number,
+      value: string | null,
+    ): void => {
+      td.innerHTML = `
+        <div class="dropdown-item">
+          ${value ?? ""}
+          ${svgStringDropDown}
+        </div>
+      `;
+    },
+    [svgStringDropDown],
+  );
 
   const customRendererRadio = useCallback(
     (
@@ -153,14 +148,12 @@ function DefaultTable({
       _prop: string | number,
       value: string | null,
     ): void => {
-      const svgString: string = renderToString(<DropDownIcon />);
-
       td.innerHTML = `<div class="radio-item">
         ${value ?? ""}
-        ${svgString}
+        ${svgStringDropDown}
       </div>`;
     },
-    [],
+    [svgStringDropDown],
   );
 
   const customRendererFileCallBack = useCallback(
@@ -188,25 +181,6 @@ function DefaultTable({
     [],
   );
 
-  const customRendererDropdown = useCallback(
-    (
-      _instance: Handsontable,
-      td: HTMLTableCellElement,
-      _row: number,
-      _col: number,
-      _prop: string | number,
-      value: string | null,
-    ): void => {
-      const svgString: string = renderToString(<DropDownIcon />);
-
-      td.innerHTML = `<div class="dropdown-item">
-        ${value ?? ""}
-        ${svgString}
-      </div>`;
-    },
-    [],
-  );
-
   const customRendererRelation = useCallback(
     (
       instance: Handsontable,
@@ -216,13 +190,33 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
-      if (typeof value === "string" && value.length) value = JSON.parse(value);
+      if (typeof value === "string") {
+        try {
+          value = JSON.parse(value);
+        } catch (e) {
+          console.error("Failed to parse JSON:", e);
+          value = [];
+        }
+      }
 
-      const totalItems = value ? value.length : 0;
+      const totalItems = Array.isArray(value) ? value.length : 0;
+
       td.innerHTML = `<div class="tag-content">${totalItems} Items relacionados</div>`;
     },
     [],
   );
+
+  const [widthTable, setWidthTable] = useState(0);
+  const elements = document.querySelectorAll(".wtHider");
+  useEffect(() => {
+    if (elements.length) {
+      const sizes = Array.from(elements).map(
+        (item: Element) => item.clientWidth,
+      );
+      const maxWidth = Math.max(...sizes);
+      setWidthTable(maxWidth);
+    }
+  }, [elements]);
 
   return (
     <HotTable
@@ -231,8 +225,8 @@ function DefaultTable({
       colHeaders={headers}
       columns={cols}
       data={dataProvider}
-      height="100%"
-      width="100%"
+      height="auto"
+      width={widthTable}
       stretchH="all"
       manualColumnResize
       filters
@@ -241,7 +235,7 @@ function DefaultTable({
       manualColumnMove
       search
       renderAllRows={false}
-      viewportRowRenderingOffset={100}
+      viewportRowRenderingOffset={dataProvider.length}
       viewportColumnRenderingOffset={cols.length}
       rowHeaders
       columnSorting={{ sortEmptyCells: false, headerAction: false }}
@@ -252,7 +246,6 @@ function DefaultTable({
       afterPaste={afterPasteCallback}
       afterGetColHeader={renderHeaderComponent}
       hiddenColumns={{ columns: hidden, indicators: true }}
-      afterScrollVertically={afterScrollVerticallyCallback}
       fixedColumnsStart={1}
       contextMenu={{
         items: {
@@ -349,7 +342,6 @@ function DefaultTable({
               data={col.data}
               width={col.width}
               key={`${index}${col.data}`}
-              // eslint-disable-next-line react/jsx-no-bind
               renderer={customRendererRelation}
             >
               <RelationEditor
