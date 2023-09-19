@@ -381,7 +381,10 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       if (containerRef.current) {
         const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
 
-        if (scrollTop + clientHeight >= scrollHeight * 0.8) {
+        if (
+          scrollTop + clientHeight >= scrollHeight * 0.8 &&
+          total > dataProvider.length
+        ) {
           fetchMoreData();
         }
       }
