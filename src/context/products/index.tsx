@@ -1,5 +1,11 @@
 /* eslint-disable */
-import React, { createContext, useCallback, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { toast } from "react-toastify";
 
 import { productRequests } from "../../services/apis/requests/product";
@@ -81,9 +87,11 @@ interface ITypeProductContext {
 
   handleGetTemplate: (templateId: string) => Promise<void>;
   total: number;
+  setTotal: React.Dispatch<React.SetStateAction<number>>;
   handleGetProductsFiltered: (
     key: string,
     templateId: string,
+    page: number,
   ) => Promise<any[]>;
   uploadImages: (
     files: Array<File>,
@@ -144,6 +152,7 @@ export const productContext = createContext<ITypeProductContext>({
   handleGetProducts: async (): Promise<any> => {},
   handleGetTemplate: async (): Promise<void> => {},
   total: 0,
+  setTotal: () => {},
   handleGetProductsFiltered: async (
     key: string,
     templateId: string,
@@ -174,9 +183,10 @@ export const ProductContextProvider = ({ children }: any) => {
   async function handleGetProductsFiltered(
     key: string,
     templateId: string,
+    page: number,
   ): Promise<any[]> {
     const { data } = await productRequests.list(
-      { keyword: key, limit: 100 },
+      { keyword: key, limit: 100, page },
       templateId,
     );
 
@@ -288,18 +298,79 @@ export const ProductContextProvider = ({ children }: any) => {
     return { products, headerTable };
   };
 
-  const handleRedirectAndGetProducts = async (id: string) => {
+  const handleGetTemplate = useCallback(async (templateId: string) => {
     try {
-      const template: IHeaderTable[] = await handleGetTemplate(id);
-      const product = await handleGetProducts(id, template);
-      return product;
+      const response = await templateRequests.get(templateId);
+      setTemplate(response);
+
+      const fields = response?.fields;
+      let headersCell: any[] = [];
+      let headers = fields?.fields?.map((item: IField, index: number) => {
+        headersCell.push(item.title);
+        return {
+          title: item.title,
+          data: item.id,
+          className: "htLeft htMiddle",
+          type: item.type,
+          required: item.required,
+          options: item.options,
+          order: item.order !== undefined ? item.order : index.toString(),
+          hidden: item.hidden ? item.hidden : false,
+          width: item.width ? item.width : "300px",
+          frozen: item.frozen ? item.frozen : false,
+          bucket_url: response?.bucket_url,
+        };
+      });
+
+      const sortedHeaders = headers.sort((a: any, b: any) => {
+        return Number(a.order) - Number(b.order);
+      });
+
+      const headerTitles = sortedHeaders.map((item: any) => {
+        return item?.title;
+      });
+
+      headersCell = [...headerTitles, " "];
+      headers = [...sortedHeaders, {}];
+      setColHeaders(headersCell);
+      setHeaderTable(headers);
+      setHidden(
+        sortedHeaders
+          .filter((item: any) => item.hidden)
+          .map((element: any) => Number(element.order)),
+      );
+      setCustomFields(
+        sortedHeaders
+          .filter((element: any) => Object.keys(element).length)
+          .map((item: any) => {
+            const { order, hidden, width, frozen, data } = item;
+            return { order, hidden, width, frozen, id: data };
+          }),
+      );
+      setFilter(undefined);
+      return headers;
     } catch (error) {
       console.error(error);
-      toast.error(
-        "Ocorreu um erro com sua solicitação de produtos, tente novamente",
-      );
+      toast.error("Não foi possível carregar o template, tente novamente!");
     }
-  };
+  }, []);
+
+  const handleRedirectAndGetProducts = useCallback(
+    async (id: string) => {
+      try {
+        await handleGetTemplate(id);
+        const template: IHeaderTable[] = await handleGetTemplate(id);
+        const product = await handleGetProducts(id, template);
+        return product;
+      } catch (error) {
+        console.error(error);
+        toast.error(
+          "Ocorreu um erro com sua solicitação de produtos, tente novamente",
+        );
+      }
+    },
+    [handleGetTemplate],
+  );
 
   const handlePost = async (product: any) => {
     return productRequests.save(product);
@@ -347,16 +418,14 @@ export const ProductContextProvider = ({ children }: any) => {
       const columnKeys = headerTable.map((column) => column?.data);
       Object.keys(fields).forEach((field: any) => {
         if (
-          fields[field] &&
           !["id", "created_at"].includes(field) &&
           columnKeys.includes(field)
         ) {
+          const newValue =
+            typeof fields[field] == "object" ? fields[field] : [fields[field]];
           obj.push({
             id: field,
-            value:
-              typeof fields[field] == "object"
-                ? fields[field]
-                : [fields[field]],
+            value: newValue ? newValue : [""],
           });
         }
       });
@@ -372,68 +441,6 @@ export const ProductContextProvider = ({ children }: any) => {
     }
 
     setProducts((old) => [{}, ...old]);
-  };
-
-  const handleGetTemplate = async (templateId: string) => {
-    return templateRequests
-      .get(templateId)
-      .then((response) => {
-        setTemplate(response);
-        const fields = response?.fields;
-        let headersCell: any[] = [];
-        var headers = fields?.fields?.map((item: IField, index: any) => {
-          headersCell.push(item.title);
-          return {
-            title: item.title,
-            data: item.id,
-            className: "htLeft htMiddle",
-            type: item.type,
-            required: item.required,
-            options: item.options,
-            order: item.order !== undefined ? item.order : index.toString(),
-            hidden: item.hidden ? item.hidden : false,
-            width: item.width ? item.width : "300px",
-            frozen: item.frozen ? item.frozen : false,
-            bucket_url: response?.bucket_url,
-          };
-        });
-
-        const test = headers.sort((a: any, b: any) => {
-          return Number(a.order) - Number(b.order);
-        });
-
-        const test1 = headers.map((item: any) => {
-          return item?.title;
-        });
-
-        headersCell = [...test1, " "];
-        headers = [...test, {}];
-        setColHeaders(headersCell);
-        setHeaderTable(headers);
-        setHidden(
-          headers
-            .filter((item: any) => item.hidden)
-            .map((element: any) => Number(element.order)),
-        );
-        setCustomFields(
-          headers
-            .filter((element: any) => {
-              if (Object.keys(element).length) {
-                return element;
-              }
-            })
-            .map((item: any) => {
-              const { order, hidden, width, frozen, data } = item;
-              return { order, hidden, width, frozen, id: data };
-            }),
-        );
-        setFilter(undefined);
-        return headers;
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("Não foi possível carregar o template, tente novamente!");
-      });
   };
 
   const handleResize = (col: number, newSize: number, template: any) => {
@@ -597,8 +604,6 @@ export const ProductContextProvider = ({ children }: any) => {
         };
       });
 
-    // setHeaderTable(col);
-    // setCustomFields(fields);
     templateRequests
       .customView(window.location.pathname.substring(10), { fields })
       .catch((error) =>
@@ -728,9 +733,20 @@ export const ProductContextProvider = ({ children }: any) => {
     handleGetProductsFiltered,
     handleGetTemplate,
     uploadImages,
+    setTotal,
   };
 
   return (
     <productContext.Provider value={value}>{children}</productContext.Provider>
   );
 };
+
+export function useProductContext(): ITypeProductContext {
+  const context = useContext(productContext);
+  if (!context) {
+    throw new Error(
+      "useProductContext deve ser usado dentro de um ProductContextProvider",
+    );
+  }
+  return context;
+}

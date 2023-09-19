@@ -259,20 +259,14 @@ export const Container = styled.div`
       font-weight: 400;
       line-height: 150%;
 
-      align-self: center !important;
-
-      justify-content: center;
-      text-align: start;
       padding-top: 16px;
+      align-content: center;
 
-      .tagContent {
+      .tag-content {
         background-color: #dee2e6 !important;
 
         width: 140px !important;
         height: 27px !important;
-
-        margin-top: 11px;
-        margin-left: 8px;
 
         display: flex;
         align-items: center;
@@ -280,13 +274,7 @@ export const Container = styled.div`
         padding-left: 8px;
         border-radius: 7px;
 
-        &:hover {
-          cursor: pointer;
-        }
-      }
-
-      .fileItem {
-        margin-top: 16px;
+        margin: 16px 0 0 8px;
 
         &:hover {
           cursor: pointer;
@@ -300,8 +288,72 @@ export const Container = styled.div`
       }
     }
 
-    td:has(> div) {
+    .itens-amount {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 25px !important;
+      height: 25px !important;
+
+      border-radius: 2px;
+      background-color: #e2e0ff;
+
+      font-family: ${({ theme }) => theme.fonts.family.default};
+      font-size: ${({ theme }) => theme.fonts.sizes.xsmall};
+      color: #3818d9;
+    }
+
+    td:has(div) {
       padding: 0 !important;
+    }
+
+    .radio-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 45px;
+      width: fit-content;
+      height: 30px;
+
+      border: 1px solid #dee2e6;
+      border-radius: 24px;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 50px;
+      width: fit-content;
+      height: 30px;
+
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
     }
 
     .drag-over {

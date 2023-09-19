@@ -17,5 +17,11 @@
     "jsx": "react-jsx",
     "typeRoots": ["./src/@types", "./node_modules/@types"]
   },
-  "include": ["./src/**/*.ts", "./src/**/*.tsx", "./src/**/*.js"]
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
+    "./src/**/*.js",
+    "src/context/products/backup",
+    "src/context/products/backup"
+  ]
 }
