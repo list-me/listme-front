@@ -15,6 +15,7 @@ import {
   IField,
   IHeader,
   IHeaderTable,
+  IProductToTable,
   IProductsRequest,
   ITemplate,
 } from "./product.context";
@@ -28,13 +29,13 @@ export interface ICustom {
 }
 
 interface ITypeProductContext {
-  products: any[];
+  products: IProductToTable[];
   filteredData: any[];
   filter: string | undefined;
-  setProducts: Function;
+  setProducts: React.Dispatch<React.SetStateAction<IProductToTable[]>>;
   setFilteredData: Function;
   handleRedirectAndGetProducts: (template: any) => Promise<any>;
-  headerTable: ({} | IHeader)[];
+  headerTable: IHeader[];
   setHeaderTable: Function;
   handleAdd: Function;
   handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>;
@@ -49,7 +50,7 @@ interface ITypeProductContext {
   handleHidden: Function;
   setHidden: Function;
   handleResize: Function;
-  setColHeaders: Function;
+  setColHeaders: React.Dispatch<React.SetStateAction<string[]>>;
   handleFreeze: Function;
   handleMove: Function;
   handleNewColumn: Function;
@@ -93,10 +94,10 @@ export const ProductContextProvider = ({
 }: {
   children: React.ReactNode;
 }): JSX.Element => {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<IProductToTable[]>([]);
   const [template, setTemplate] = useState<ITemplate>();
-  const [headerTable, setHeaderTable] = useState<(IHeader | {})[]>([]);
-  const [colHeaders, setColHeaders] = useState<any[]>([]);
+  const [headerTable, setHeaderTable] = useState<IHeader[]>([]);
+  const [colHeaders, setColHeaders] = useState<string[]>([]);
   const [editing, setEditing] = useState<boolean>(false);
   const [hidden, setHidden] = useState<any[]>([]);
   const [customFields, setCustomFields] = useState<ICustomField[]>([]);
@@ -274,7 +275,7 @@ export const ProductContextProvider = ({
 
       headersCell = [...headerTitles, " "];
       setColHeaders(headersCell);
-      const toHeaderTable = [...sortedHeaders, {}];
+      const toHeaderTable = [...sortedHeaders, {} as IHeader];
       setHeaderTable(toHeaderTable);
       setHidden(
         sortedHeaders
@@ -396,7 +397,7 @@ export const ProductContextProvider = ({
       return;
     }
 
-    setProducts((old) => [{}, ...old]);
+    setProducts((old) => [{} as IProductToTable, ...old]);
   };
 
   const handleResize = (col: number, newSize: number, template: any) => {

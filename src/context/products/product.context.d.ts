@@ -89,6 +89,12 @@ interface IProduct {
   fields: IProductFields[];
 }
 
+interface IProductToTable {
+  [key: string]: string | string[];
+  id: string;
+  created_at: string;
+}
+
 interface IProductsRequest {
   limit: number;
   page: number;
@@ -106,4 +112,5 @@ export type {
   IProductsRequest,
   IProduct,
   IProductFields,
+  IProductToTable,
 };

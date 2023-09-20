@@ -1,10 +1,4 @@
-/* eslint-disable consistent-return */
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable no-plusplus */
-/* eslint-disable radix */
-/* eslint-disable no-param-reassign */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { HotTable, HotColumn } from "@handsontable/react";
 import { toast } from "react-toastify";
 import Handsontable from "handsontable";
@@ -28,11 +22,11 @@ import customRendererFile from "./utils/customRendererFile";
 
 function DefaultTable({
   hotRef,
-  headers,
-  setHeaders,
+  colHeaders,
+  setColHeaders,
   cols,
-  dataProvider,
-  setDataProvider,
+  products,
+  setProducts,
   handleDelete,
   handleSave,
   loadingRef,
@@ -51,6 +45,7 @@ function DefaultTable({
   headerTable,
   currentKeyword,
 }: IDefaultTable): JSX.Element {
+  console.log("🚀 ~ file: index.tsx:48 ~ products:", products);
   useEffect(() => {
     if (hotRef.current) {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -68,8 +63,8 @@ function DefaultTable({
 
   const afterChangeCallback = async (
     changes: Handsontable.CellChange[] | null,
-    source: any,
-  ) => {
+    source: string,
+  ): Promise<void> => {
     if (source === "CopyPaste.paste") return;
 
     if (hotRef.current) {
@@ -80,20 +75,23 @@ function DefaultTable({
         isTableLocked,
         setIsTableLocked,
         handleSave,
-        dataProvider,
-        setDataProvider,
+        products,
+        setProducts,
       );
     }
   };
 
-  const beforeCopyCallback = (data: CellValue[][], coords: RangeType[]) => {
+  const beforeCopyCallback = (
+    data: CellValue[][],
+    coords: RangeType[],
+  ): void => {
     handleBeforeCopy(data, coords, hotRef, cols);
   };
 
   const afterPasteCallback = async (
     data: CellValue[][],
     coords: RangeType[],
-  ) => {
+  ): Promise<void> => {
     await handleAfterPaste(
       data,
       coords,
@@ -101,7 +99,7 @@ function DefaultTable({
       isTableLocked,
       loadingRef,
       cols,
-      dataProvider,
+      products,
       componentCellPerType,
       handleSave,
     );
@@ -112,8 +110,8 @@ function DefaultTable({
       hotRef,
       total,
       setTotal,
-      dataProvider,
-      setDataProvider,
+      products,
+      setProducts,
       loadingRef,
       setIsTableLocked,
       template,
@@ -139,7 +137,7 @@ function DefaultTable({
       movePossible,
       orderChanged,
       columns,
-      setHeaders,
+      setColHeaders,
       handleMove,
     );
   };
@@ -155,6 +153,7 @@ function DefaultTable({
     ): void => {
       const svgString: string = renderToString(<DropDownIcon />);
 
+      // eslint-disable-next-line no-param-reassign
       td.innerHTML = `<div class="radio-item">
         ${value ?? ""}
         ${svgString}
@@ -199,6 +198,7 @@ function DefaultTable({
     ): void => {
       const svgString: string = renderToString(<DropDownIcon />);
 
+      // eslint-disable-next-line no-param-reassign
       td.innerHTML = `<div class="dropdown-item">
         ${value ?? ""}
         ${svgString}
@@ -228,45 +228,43 @@ function DefaultTable({
     <HotTable
       readOnly={isTableLocked}
       ref={hotRef}
-      colHeaders={headers}
+      colHeaders={colHeaders}
       columns={cols}
-      data={dataProvider}
-      height="100%"
-      width="100%"
-      stretchH="all"
+      data={products}
       manualColumnResize
-      filters
-      autoRowSize={false}
-      autoColumnSize={false}
       manualColumnMove
-      search
-      renderAllRows={false}
-      viewportRowRenderingOffset={100}
-      viewportColumnRenderingOffset={cols.length}
       rowHeaders
-      columnSorting={{ sortEmptyCells: false, headerAction: false }}
       rowHeights="52px"
       licenseKey="non-commercial-and-evaluation"
-      afterChange={afterChangeCallback}
+      fixedColumnsStart={1}
+      afterScrollVertically={afterScrollVerticallyCallback}
       beforeCopy={beforeCopyCallback}
       afterPaste={afterPasteCallback}
-      afterGetColHeader={renderHeaderComponent}
-      hiddenColumns={{ columns: hidden, indicators: true }}
-      afterScrollVertically={afterScrollVerticallyCallback}
-      fixedColumnsStart={1}
+      afterColumnMove={afterColumnMoveCallback}
+      // afterGetColHeader={renderHeaderComponent} gargalo
+      // viewportRowRenderingOffset={100} gargalo
+      afterColumnResize={async (newSize: number, column: number) => {
+        await handleResize(column, newSize, template);
+      }}
+      afterRenderer={(TD, row, col) => {
+        if (col + 1 === colHeaders.length) {
+          // eslint-disable-next-line no-param-reassign
+          TD.style.display = "none";
+        }
+      }}
       contextMenu={{
         items: {
           remove_row: {
             name: "Excluir produto",
             async callback(key: string, selection: any[]) {
               const { hotInstance } = hotRef.current!;
-              if (hasAtLeastOneProduct(dataProvider)) {
+              if (hasAtLeastOneProduct(products)) {
                 if (hotInstance) {
                   handleRemoveRow(
                     hotInstance,
                     selection,
                     handleDelete,
-                    dataProvider,
+                    products,
                   );
                 }
               } else {
@@ -276,24 +274,27 @@ function DefaultTable({
           },
         },
       }}
-      afterRenderer={(TD, row, col) => {
-        if (col + 1 === headers.length) {
-          TD.style.display = "none";
-        }
-      }}
-      afterColumnResize={async (newSize: number, column: number) => {
-        await handleResize(column, newSize, template);
-      }}
-      afterColumnMove={afterColumnMoveCallback}
+      afterChange={afterChangeCallback}
+
+      // hiddenColumns={{ columns: hidden, indicators: true }}
+      // columnSorting={{ sortEmptyCells: false, headerAction: false }}
+      // search
+      // renderAllRows={false}
+      // autoColumnSize={false}
+      // autoRowSize={false}
+      // height="100%"
+      // width="100%"
+      // stretchH="all"
+      // filters
     >
-      {cols.map((col: any, index: number) => {
+      {cols.map((col, index: number) => {
         if (col.isCustom && col.type === "list") {
           return (
             <HotColumn
               width={col.width}
-              _columnIndex={col.order}
+              _columnIndex={+col.order}
               data={col.data}
-              key={`${index}${col.data}`}
+              key={col.order + col.data}
               renderer={customRendererDropdown}
             >
               <DropdownEditor
@@ -309,9 +310,9 @@ function DefaultTable({
           return (
             <HotColumn
               width={col.width}
-              _columnIndex={col.order}
+              _columnIndex={+col.order}
               data={col.data}
-              key={`${index}${col.data}`}
+              key={col.order + col.data}
               renderer={customRendererRadio}
             >
               <RadioEditor
@@ -327,16 +328,16 @@ function DefaultTable({
           return (
             <HotColumn
               width={col.width}
-              _columnIndex={col.order}
+              _columnIndex={+col.order}
               data={col.data}
-              key={`${index}${col.data}`}
+              key={col.order + col.data}
               renderer={customRendererFileCallBack}
             >
               <FileEditor
                 hot-editor
                 editorColumnScope={0}
                 templateId={template.id}
-                dataProvider={dataProvider}
+                dataProvider={products}
               />
             </HotColumn>
           );
@@ -345,19 +346,21 @@ function DefaultTable({
         if (col.type === "relation") {
           return (
             <HotColumn
-              _columnIndex={col.order}
+              _columnIndex={+col.order}
               data={col.data}
               width={col.width}
-              key={`${index}${col.data}`}
+              key={col.order + col.data}
               // eslint-disable-next-line react/jsx-no-bind
               renderer={customRendererRelation}
             >
               <RelationEditor
                 hot-editor
                 editorColumnScope={0}
+                // @ts-ignore
                 templateId={col.options[0].templateId}
                 column={col}
-                dataProvider={dataProvider}
+                dataProvider={products}
+                // @ts-ignore
                 field={col.options[0].field}
               />
             </HotColumn>
@@ -367,9 +370,9 @@ function DefaultTable({
         return (
           <HotColumn
             width={col.width}
-            _columnIndex={col.order}
+            _columnIndex={+col.order}
             data={col.data}
-            key={`${index}${col.data}`}
+            key={col.order + col.data}
           />
         );
       })}

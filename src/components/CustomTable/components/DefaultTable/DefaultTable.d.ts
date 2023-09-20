@@ -1,13 +1,17 @@
 import { IHeaderTable } from "../../../../context/products";
-import { ICustomCellType } from "../../../../context/products/product.context";
+import {
+  ICustomCellType,
+  IProductToTable,
+} from "../../../../context/products/product.context";
+import { ICol } from "../../CustomTable";
 
 export interface IDefaultTable {
   hotRef: React.RefObject<HotTable>;
-  headers: string[];
-  setHeaders: React.Dispatch<React.SetStateAction<string[]>>;
-  cols: any[];
-  dataProvider: any[];
-  setDataProvider: React.Dispatch<React.SetStateAction<any[]>>;
+  colHeaders: string[];
+  setColHeaders: React.Dispatch<React.SetStateAction<string[]>>;
+  cols: ICol[];
+  products: IProductToTable[];
+  setProducts: React.Dispatch<React.SetStateAction<IProductToTable[]>>;
   handleDelete: Function;
   handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>;
   loadingRef: React.RefObject<HTMLDivElement>;
