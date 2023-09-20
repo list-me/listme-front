@@ -81,6 +81,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     const columnsCustom = headerTable.sort().map((column) => {
       if (
         Object.keys(COMPONENT_CELL_PER_TYPE).includes(
+          // @ts-ignore
           column.type?.toString()?.toUpperCase(),
         )
       ) {
@@ -91,6 +92,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       }
       return {
         ...column,
+        // @ts-ignore
         width: column?.order == undefined ? "193" : column.width,
         isCustom: false,
         type: "text",
@@ -211,6 +213,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 }
                 return true;
               }}
+              // @ts-ignore
               freeze={!!headerTable[column]?.frozen}
               handleSort={() => {}}
               handleDeleteColumn={() => {
@@ -262,6 +265,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
               if (currentField && field.value) {
                 const test = !COMPONENT_CELL_PER_TYPE[
+                  // @ts-ignore
                   currentField?.type?.toUpperCase()
                 ]
                   ? field?.value[0]
@@ -416,6 +420,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         <Content>
           <HeaderFilters
             template={template}
+            // @ts-ignore
             headerTable={headerTable}
             handleGetProductFiltered={handleGetProductFiltered}
             handleAddProductClick={() => handleAddProductClick()}

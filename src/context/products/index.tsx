@@ -1,47 +1,27 @@
-/* eslint-disable */
 import React, {
   createContext,
   useCallback,
   useContext,
-  useEffect,
+  useMemo,
   useState,
 } from "react";
 import { toast } from "react-toastify";
 
 import { productRequests } from "../../services/apis/requests/product";
 import { templateRequests } from "../../services/apis/requests/template";
-import { ICustomCellType } from "./product.context";
-import { AxiosResponse } from "axios";
+import {
+  ICustomCellType,
+  ICustomField,
+  IField,
+  IHeader,
+  IHeaderTable,
+  IProductsRequest,
+  ITemplate,
+} from "./product.context";
 import { fileRequests } from "../../services/apis/requests/file";
-
-export interface ICustomField {
-  hidden?: boolean;
-  width?: string;
-  frozen?: boolean;
-  order?: string;
-}
 
 export interface ICustom {
   show?: boolean;
-  width?: string;
-  frozen?: boolean;
-  order?: string;
-}
-
-interface IRelation {
-  agreementType: string;
-  field: string;
-  mappingType: string;
-  owner: string;
-  templateId: string;
-}
-export interface IHeaderTable {
-  title?: string;
-  type: string;
-  data: string;
-  className: string;
-  options: string[] | IRelation[];
-  hidden?: boolean;
   width?: string;
   frozen?: boolean;
   order?: string;
@@ -54,7 +34,7 @@ interface ITypeProductContext {
   setProducts: Function;
   setFilteredData: Function;
   handleRedirectAndGetProducts: (template: any) => Promise<any>;
-  headerTable: IHeaderTable[];
+  headerTable: ({} | IHeader)[];
   setHeaderTable: Function;
   handleAdd: Function;
   handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>;
@@ -85,7 +65,7 @@ interface ITypeProductContext {
     templateFields: IHeaderTable[],
   ) => Promise<any>;
 
-  handleGetTemplate: (templateId: string) => Promise<void>;
+  handleGetTemplate: (templateId: string) => Promise<IHeader[] | null>;
   total: number;
   setTotal: React.Dispatch<React.SetStateAction<number>>;
   handleGetProductsFiltered: (
@@ -99,86 +79,41 @@ interface ITypeProductContext {
   ) => Promise<Array<string> | void>;
 }
 
-interface IField {
-  id: string;
-  type: string;
-  group: string;
-  title: string;
-  options: string[];
-  required: boolean;
-  help_text: string;
-  is_public: string;
-  description: string;
-  order?: string;
-  hidden?: boolean;
-  width?: string;
-  frozen?: boolean;
-  bucket_url: string;
-}
-
 interface SignedUrlResponse {
   url: string;
   access_url: string;
 }
 
-export const productContext = createContext<ITypeProductContext>({
-  products: [],
-  filteredData: [],
-  filter: "",
-  setProducts: () => {},
-  setFilteredData: () => {},
-  handleRedirectAndGetProducts: async (): Promise<any> => {},
-  headerTable: [],
-  setHeaderTable: () => {},
-  handleAdd: () => {},
-  handleSave: async (): Promise<any> => {},
-  editing: false,
-  setEditing: () => {},
-  colHeaders: [],
-  handleDelete: () => {},
-  COMPONENT_CELL_PER_TYPE: {},
-  handleUpdateTemplate: () => {},
-  template: {},
-  hidden: [],
-  handleHidden: () => {},
-  setHidden: () => {},
-  handleResize: () => {},
-  setColHeaders: () => {},
-  handleFreeze: () => {},
-  handleMove: () => {},
-  handleNewColumn: () => {},
-  handleFilter: () => {},
-  handleRemoveColumn: () => {},
-  handleGetProducts: async (): Promise<any> => {},
-  handleGetTemplate: async (): Promise<void> => {},
-  total: 0,
-  setTotal: () => {},
-  handleGetProductsFiltered: async (
-    key: string,
-    templateId: string,
-  ): Promise<any[]> => [],
-  uploadImages: async (): Promise<void> => {},
-});
+export const productContext = createContext<ITypeProductContext>(
+  {} as ITypeProductContext,
+);
 
-export const ProductContextProvider = ({ children }: any) => {
+export const ProductContextProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}): JSX.Element => {
   const [products, setProducts] = useState<any[]>([]);
-  const [template, setTemplate] = useState<any>();
-  const [headerTable, setHeaderTable] = useState<IHeaderTable[]>([]);
+  const [template, setTemplate] = useState<ITemplate>();
+  const [headerTable, setHeaderTable] = useState<(IHeader | {})[]>([]);
   const [colHeaders, setColHeaders] = useState<any[]>([]);
   const [editing, setEditing] = useState<boolean>(false);
   const [hidden, setHidden] = useState<any[]>([]);
-  const [customFields, setCustomFields] = useState<any[]>([]);
+  const [customFields, setCustomFields] = useState<ICustomField[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [filter, setFilter] = useState<string | undefined>(undefined);
   const [total, setTotal] = useState<number>(0);
 
-  const COMPONENT_CELL_PER_TYPE: ICustomCellType = {
-    RADIO: "radio",
-    LIST: "select",
-    CHECKED: "checkbox",
-    FILE: "file",
-    RELATION: "relation",
-  };
+  const COMPONENT_CELL_PER_TYPE: ICustomCellType = useMemo(
+    () => ({
+      RADIO: "radio",
+      LIST: "select",
+      CHECKED: "checkbox",
+      FILE: "file",
+      RELATION: "relation",
+    }),
+    [],
+  );
 
   async function handleGetProductsFiltered(
     key: string,
@@ -251,78 +186,85 @@ export const ProductContextProvider = ({ children }: any) => {
     }
   };
 
-  const handleGetProducts = async (
-    templateId: string,
-    templateFields: IHeaderTable[],
-    page: number = 0,
-    limit: number = 50,
-  ) => {
-    // if (total == prod.length) return;
-    const { data } = await productRequests.list(
-      { page: page, limit },
-      templateId,
-    );
+  const handleGetProducts = useCallback(
+    async (
+      templateId: string,
+      templateFields: IHeaderTable[],
+      page: number = 0,
+      limit: number = 100,
+      keyword: string = "",
+    ) => {
+      console.log("oi");
+      const { data }: { data: IProductsRequest } = await productRequests.list(
+        { page, limit, keyword },
+        templateId,
+      );
 
-    const productFields: any = [];
-    data?.products?.forEach((item: any) => {
-      let object: any = {};
-      item.fields.forEach((field: any) => {
-        const currentField = templateFields.find(
-          (e: any) => e.data == field.id,
-        );
+      const productFields: {
+        [key: string]: string | string[];
+        id: string;
+        created_at: string;
+      }[] = [];
+      data?.products?.forEach((item) => {
+        const object: { [key: string]: string | string[] } = {};
+        item.fields.forEach((field) => {
+          const currentField = templateFields.find((e) => e.data === field.id);
 
-        if (currentField && field.value) {
-          const test = !COMPONENT_CELL_PER_TYPE[
-            currentField?.type?.toUpperCase()
-          ]
-            ? field?.value[0]
-            : field?.value;
+          if (currentField && field.value) {
+            const test = !COMPONENT_CELL_PER_TYPE[
+              currentField?.type?.toUpperCase()
+            ]
+              ? field?.value[0]
+              : field?.value;
 
-          object[field?.id] = test;
-        }
+            object[field?.id] = test;
+          }
+        });
+
+        const toProductFields = {
+          ...object,
+          id: item.id,
+          created_at: item.created_at,
+        };
+
+        productFields.push(toProductFields);
       });
 
-      productFields.push({
-        ...object,
-        id: item.id,
-        created_at: item.created_at,
-      });
-    });
-
-    if (!productFields.length && template) {
-      productFields.push({ [template[0]]: "" });
-    }
-
-    setProducts(productFields);
-    setTotal(data?.total);
-    return { products, headerTable };
-  };
+      setProducts(productFields);
+      setTotal(data?.total);
+      return { productFields, headerTable };
+    },
+    [COMPONENT_CELL_PER_TYPE],
+  );
 
   const handleGetTemplate = useCallback(async (templateId: string) => {
     try {
-      const response = await templateRequests.get(templateId);
+      const response: ITemplate = await templateRequests.get(templateId);
+
       setTemplate(response);
 
       const fields = response?.fields;
-      let headersCell: any[] = [];
-      let headers = fields?.fields?.map((item: IField, index: number) => {
-        headersCell.push(item.title);
-        return {
-          title: item.title,
-          data: item.id,
-          className: "htLeft htMiddle",
-          type: item.type,
-          required: item.required,
-          options: item.options,
-          order: item.order !== undefined ? item.order : index.toString(),
-          hidden: item.hidden ? item.hidden : false,
-          width: item.width ? item.width : "300px",
-          frozen: item.frozen ? item.frozen : false,
-          bucket_url: response?.bucket_url,
-        };
-      });
+      let headersCell = [];
+      const headers: IHeader[] = fields?.fields?.map(
+        (item: IField, index: number) => {
+          headersCell.push(item.title);
+          return {
+            title: item.title,
+            data: item.id,
+            className: "htLeft htMiddle",
+            type: item.type,
+            required: item.required,
+            options: item.options,
+            order: item.order !== undefined ? item.order : index.toString(),
+            hidden: item.hidden ? item.hidden : false,
+            width: item.width ? item.width : "300px",
+            frozen: item.frozen ? item.frozen : false,
+            bucket_url: response?.bucket_url,
+          };
+        },
+      );
 
-      const sortedHeaders = headers.sort((a: any, b: any) => {
+      const sortedHeaders: IHeader[] = headers.sort((a, b) => {
         return Number(a.order) - Number(b.order);
       });
 
@@ -331,48 +273,61 @@ export const ProductContextProvider = ({ children }: any) => {
       });
 
       headersCell = [...headerTitles, " "];
-      headers = [...sortedHeaders, {}];
       setColHeaders(headersCell);
-      setHeaderTable(headers);
+      const toHeaderTable = [...sortedHeaders, {}];
+      setHeaderTable(toHeaderTable);
       setHidden(
         sortedHeaders
-          .filter((item: any) => item.hidden)
-          .map((element: any) => Number(element.order)),
+          .filter((item) => item.hidden)
+          .map((element) => Number(element.order)),
       );
-      setCustomFields(
-        sortedHeaders
-          .filter((element: any) => Object.keys(element).length)
-          .map((item: any) => {
-            const { order, hidden, width, frozen, data } = item;
-            return { order, hidden, width, frozen, id: data };
-          }),
-      );
+
+      const toCustomFields = sortedHeaders
+        .filter((element) => Object.keys(element).length)
+        .map((item) => {
+          const result = item;
+          return {
+            order: result.order,
+            hidden: result.hidden,
+            width: result.width,
+            frozen: result.frozen,
+            id: result.data,
+          };
+        });
+      setCustomFields(toCustomFields);
       setFilter(undefined);
       return headers;
     } catch (error) {
       console.error(error);
       toast.error("Não foi possível carregar o template, tente novamente!");
+      return null;
     }
   }, []);
 
   const handleRedirectAndGetProducts = useCallback(
     async (id: string) => {
       try {
-        await handleGetTemplate(id);
-        const template: IHeaderTable[] = await handleGetTemplate(id);
-        const product = await handleGetProducts(id, template);
-        return product;
+        const headerTableToGetProducts = (await handleGetTemplate(
+          id,
+        )) as IHeaderTable[];
+
+        if (headerTableToGetProducts) {
+          const product = await handleGetProducts(id, headerTableToGetProducts);
+          return product;
+        }
+        return null;
       } catch (error) {
         console.error(error);
         toast.error(
           "Ocorreu um erro com sua solicitação de produtos, tente novamente",
         );
+        return null;
       }
     },
-    [handleGetTemplate],
+    [handleGetProducts, handleGetTemplate],
   );
 
-  const handlePost = async (product: any) => {
+  const handlePost = async (product: any): Promise<any> => {
     return productRequests.save(product);
   };
 
@@ -392,7 +347,7 @@ export const ProductContextProvider = ({ children }: any) => {
           id: productId,
           product_template_id: window.location.pathname.substring(10),
           is_public: true,
-          fields: fields,
+          fields,
         };
         let newItem;
 
@@ -404,7 +359,7 @@ export const ProductContextProvider = ({ children }: any) => {
       }
     } catch (error: any) {
       const message =
-        typeof error?.response?.data?.message == "object"
+        typeof error?.response?.data?.message === "object"
           ? error?.response?.data?.message[0]
           : error?.response?.data?.message;
 
@@ -415,6 +370,7 @@ export const ProductContextProvider = ({ children }: any) => {
   const buildProduct = (fields: any) => {
     const obj: any[] = [];
     if (Object.keys(fields).length) {
+      // @ts-ignore
       const columnKeys = headerTable.map((column) => column?.data);
       Object.keys(fields).forEach((field: any) => {
         if (
@@ -422,10 +378,10 @@ export const ProductContextProvider = ({ children }: any) => {
           columnKeys.includes(field)
         ) {
           const newValue =
-            typeof fields[field] == "object" ? fields[field] : [fields[field]];
+            typeof fields[field] === "object" ? fields[field] : [fields[field]];
           obj.push({
             id: field,
-            value: newValue ? newValue : [""],
+            value: newValue || [""],
           });
         }
       });
@@ -444,21 +400,6 @@ export const ProductContextProvider = ({ children }: any) => {
   };
 
   const handleResize = (col: number, newSize: number, template: any) => {
-    const columnKeys = headerTable.map((column) => column?.data);
-
-    // setCustomFields(prev => {
-    //     return prev.map((item) => {
-    //         if (item?.order == col.toString()) {
-    //             return {
-    //                 ...item,
-    //                 width: newSize.toString(),
-    //             }
-    //         }
-
-    //         return item;
-    //     })
-    // });
-
     const customs = customFields.map((item: any, index: any) => {
       if (item && item?.order == col.toString()) {
         return {
@@ -475,7 +416,7 @@ export const ProductContextProvider = ({ children }: any) => {
 
     templateRequests
       .customView(template.id, { fields: customs })
-      .catch((error) =>
+      .catch(() =>
         toast.error("Ocorreu um erro ao alterar o tamanho do campo"),
       );
     // return custom;
@@ -534,8 +475,8 @@ export const ProductContextProvider = ({ children }: any) => {
           id: custom?.id,
           order: order ? order.toString() : custom?.order,
           hidden: show !== undefined ? show : custom?.hidden,
-          width: width ? width : custom?.width,
-          frozen: frozen ? frozen : custom?.frozen,
+          width: width || custom?.width,
+          frozen: frozen || custom?.frozen,
         };
       }
       return custom;
@@ -579,8 +520,8 @@ export const ProductContextProvider = ({ children }: any) => {
         };
       });
     });
-
     templateRequests
+      // @ts-ignore
       .customView(template.id, { fields: changeState })
       .catch((error) =>
         toast.error("Ocorreu um erro ao definir o freeze da coluna"),
@@ -613,6 +554,7 @@ export const ProductContextProvider = ({ children }: any) => {
 
   const handleNewColumn = (col: any, fields: any[]) => {
     const newTemplate = template;
+    // @ts-ignore
     newTemplate.fields.fields = fields;
     setTemplate(newTemplate);
 
@@ -635,7 +577,7 @@ export const ProductContextProvider = ({ children }: any) => {
 
   const handleFilter = (word: string): any[] => {
     const filtered = products.filter((row) => {
-      let multiOptions: string[] = [];
+      const multiOptions: string[] = [];
       let values = Object.values(row).filter((element: any) => {
         if (typeof element === "object") {
           return Object.values(element).forEach((option: any) =>
@@ -667,6 +609,7 @@ export const ProductContextProvider = ({ children }: any) => {
     fieldId: string,
   ) => {
     const newTemplate = template;
+    // @ts-ignore
     newTemplate.fields.fields = fields;
     setTemplate(newTemplate);
 
@@ -690,6 +633,7 @@ export const ProductContextProvider = ({ children }: any) => {
       .removeColumn(window.location.pathname.substring(10), { column: fieldId })
       .then((resolved) => {
         templateRequests
+          // @ts-ignore
           .customView(template.id, { fields: customs })
           .catch((error) =>
             toast.error("Ocorreu um ao alterar os campos customizados"),

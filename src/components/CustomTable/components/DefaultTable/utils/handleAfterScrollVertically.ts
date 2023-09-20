@@ -2,8 +2,10 @@
 /* eslint-disable no-param-reassign */
 import { HotTable } from "@handsontable/react";
 import { toast } from "react-toastify";
-import { IHeaderTable } from "../../../../../context/products";
-import { ICustomCellType } from "../../../../../context/products/product.context";
+import {
+  ICustomCellType,
+  IHeaderTable,
+} from "../../../../../context/products/product.context";
 import { productRequests } from "../../../../../services/apis/requests/product";
 
 let isFetchingNextPage = false;
