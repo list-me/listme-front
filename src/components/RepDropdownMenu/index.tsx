@@ -37,11 +37,14 @@ const DropdownMenu: React.FC<IDropdownMenuProps> = ({
     setFilteredItems(
       headerTable
         ?.filter((item) =>
+          // @ts-ignore
           item?.title?.toLowerCase().includes(inputValue.toLowerCase()),
         )
         .map((element) => {
           return {
+            // @ts-ignore
             title: element?.title,
+            // @ts-ignore
             order: element?.order,
           };
         }),
