@@ -45,7 +45,6 @@ function DefaultTable({
   headerTable,
   currentKeyword,
 }: IDefaultTable): JSX.Element {
-  console.log("🚀 ~ file: index.tsx:48 ~ products:", products);
   useEffect(() => {
     if (hotRef.current) {
       const handleKeyDown = (event: KeyboardEvent) => {

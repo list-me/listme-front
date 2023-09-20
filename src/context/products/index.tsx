@@ -195,7 +195,6 @@ export const ProductContextProvider = ({
       limit: number = 100,
       keyword: string = "",
     ) => {
-      console.log("oi");
       const { data }: { data: IProductsRequest } = await productRequests.list(
         { page, limit, keyword },
         templateId,
