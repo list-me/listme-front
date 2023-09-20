@@ -24,9 +24,7 @@ export const Products: React.FC = () => {
   return (
     <>
       <Content>
-        <Container>
-          {isLoading ? <Loading /> : <Table data={products} />}
-        </Container>
+        <Container>{isLoading ? <Loading /> : products && <Table />}</Container>
       </Content>
     </>
   );
