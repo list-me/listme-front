@@ -19,6 +19,8 @@ import handleRemoveRow from "./utils/handleRemoveRow";
 import hasAtLeastOneProduct from "./utils/hasAtLeastOneProduct";
 import handleDocumentKeyDown from "./utils/handleDocumentKeyDown";
 import customRendererFile from "./utils/customRendererFile";
+import HeaderDropDown from "../HeaderDropDown";
+import { IDropDownStatus } from "../HeaderDropDown/HeaderDropDown";
 
 function DefaultTable({
   hotRef,
@@ -34,16 +36,17 @@ function DefaultTable({
   total,
   setTotal,
   template,
-  renderHeaderComponent,
-  hidden,
   handleResize,
   columns,
+  setColumns,
   handleMove,
   uploadImages,
   page,
   setPage,
   headerTable,
   currentKeyword,
+  handleNewColumn,
+  handleHidden,
 }: IDefaultTable): JSX.Element {
   useEffect(() => {
     if (hotRef.current) {
@@ -268,159 +271,199 @@ function DefaultTable({
     TH.innerHTML = content;
   };
 
+  const [dropDownStatus, setDropDownStatus] = useState<IDropDownStatus>({
+    type: "none",
+    coordX: 0,
+    coordY: 0,
+    col: 0,
+  });
+
   return (
-    <HotTable
-      readOnly={isTableLocked}
-      ref={hotRef}
-      colHeaders={colHeaders}
-      columns={cols}
-      data={products}
-      manualColumnResize
-      manualColumnMove
-      rowHeaders
-      rowHeights="52px"
-      licenseKey="non-commercial-and-evaluation"
-      fixedColumnsStart={1}
-      afterScrollVertically={afterScrollVerticallyCallback}
-      beforeCopy={beforeCopyCallback}
-      afterPaste={afterPasteCallback}
-      afterColumnMove={afterColumnMoveCallback}
-      // afterGetColHeader={renderHeaderComponent}
-      afterGetColHeader={styledHeader}
-      afterColumnResize={async (newSize: number, column: number) => {
-        await handleResize(column, newSize, template);
-      }}
-      afterRenderer={(TD, row, col) => {
-        if (col + 1 === colHeaders.length) {
-          // eslint-disable-next-line no-param-reassign
-          TD.style.display = "none";
-        }
-      }}
-      contextMenu={{
-        items: {
-          remove_row: {
-            name: "Excluir produto",
-            async callback(key: string, selection: any[]) {
-              const { hotInstance } = hotRef.current!;
-              if (hasAtLeastOneProduct(products)) {
-                if (hotInstance) {
-                  handleRemoveRow(
-                    hotInstance,
-                    selection,
-                    handleDelete,
-                    products,
-                  );
-                }
+    <>
+      <HotTable
+        readOnly={isTableLocked}
+        ref={hotRef}
+        colHeaders={colHeaders}
+        columns={cols}
+        data={products}
+        manualColumnResize
+        manualColumnMove
+        rowHeaders
+        rowHeights="52px"
+        licenseKey="non-commercial-and-evaluation"
+        fixedColumnsStart={1}
+        afterScrollVertically={afterScrollVerticallyCallback}
+        beforeCopy={beforeCopyCallback}
+        afterPaste={afterPasteCallback}
+        afterColumnMove={afterColumnMoveCallback}
+        // afterGetColHeader={renderHeaderComponent}
+        afterGetColHeader={styledHeader}
+        afterColumnResize={async (newSize: number, column: number) => {
+          await handleResize(column, newSize, template);
+        }}
+        afterOnCellMouseDown={(event, coords, TD) => {
+          if (coords.row === -1 && coords.col >= 0) {
+            setTimeout(() => {
+              if (colHeaders.length - 1 === coords.col) {
+                setDropDownStatus({
+                  type: "new",
+                  coordX: event.clientX,
+                  coordY: event.clientY,
+                  col: coords.col,
+                });
               } else {
-                toast.warn("O catálogo deve conter ao menos um produto");
+                setDropDownStatus({
+                  type: "cell",
+                  coordX: event.clientX,
+                  coordY: event.clientY,
+                  col: coords.col,
+                });
               }
+            }, 0);
+          } else {
+            setDropDownStatus({
+              type: "none",
+              coordX: 0,
+              coordY: 0,
+              col: 0,
+            });
+          }
+        }}
+        afterRenderer={(TD, row, col) => {
+          if (col + 1 === colHeaders.length) {
+            // eslint-disable-next-line no-param-reassign
+            TD.style.display = "none";
+          }
+        }}
+        contextMenu={{
+          items: {
+            remove_row: {
+              name: "Excluir produto",
+              async callback(key: string, selection: any[]) {
+                const { hotInstance } = hotRef.current!;
+                if (hasAtLeastOneProduct(products)) {
+                  if (hotInstance) {
+                    handleRemoveRow(
+                      hotInstance,
+                      selection,
+                      handleDelete,
+                      products,
+                    );
+                  }
+                } else {
+                  toast.warn("O catálogo deve conter ao menos um produto");
+                }
+              },
             },
           },
-        },
-      }}
-      afterChange={afterChangeCallback}
+        }}
+        afterChange={afterChangeCallback}
+      >
+        {cols.map((col, index: number) => {
+          if (col.isCustom && col.type === "list") {
+            return (
+              <HotColumn
+                width={col.width}
+                _columnIndex={+col.order}
+                data={col.data}
+                key={col.order + col.data}
+                renderer={customRendererDropdown}
+              >
+                <DropdownEditor
+                  hot-editor
+                  options={[...col.options, ""]}
+                  editorColumnScope={0}
+                />
+              </HotColumn>
+            );
+          }
 
-      // hiddenColumns={{ columns: hidden, indicators: true }}
-      // columnSorting={{ sortEmptyCells: false, headerAction: false }}
-      // search
-      // renderAllRows={false}
-      // autoColumnSize={false}
-      // autoRowSize={false}
-      // height="100%"
-      // width="100%"
-      // stretchH="all"
-      // filters
-    >
-      {cols.map((col, index: number) => {
-        if (col.isCustom && col.type === "list") {
+          if (col.isCustom && col.type === "radio") {
+            return (
+              <HotColumn
+                width={col.width}
+                _columnIndex={+col.order}
+                data={col.data}
+                key={col.order + col.data}
+                renderer={customRendererRadio}
+              >
+                <RadioEditor
+                  hot-editor
+                  options={[...col.options, ""]}
+                  editorColumnScope={0}
+                />
+              </HotColumn>
+            );
+          }
+
+          if (col.isCustom && col.type === "file") {
+            return (
+              <HotColumn
+                width={col.width}
+                _columnIndex={+col.order}
+                data={col.data}
+                key={col.order + col.data}
+                renderer={customRendererFileCallBack}
+              >
+                <FileEditor
+                  hot-editor
+                  editorColumnScope={0}
+                  templateId={template.id}
+                  dataProvider={products}
+                />
+              </HotColumn>
+            );
+          }
+
+          if (col.type === "relation") {
+            return (
+              <HotColumn
+                _columnIndex={+col.order}
+                data={col.data}
+                width={col.width}
+                key={col.order + col.data}
+                // eslint-disable-next-line react/jsx-no-bind
+                renderer={customRendererRelation}
+              >
+                <RelationEditor
+                  hot-editor
+                  editorColumnScope={0}
+                  // @ts-ignore
+                  templateId={col.options[0].templateId}
+                  column={col}
+                  dataProvider={products}
+                  // @ts-ignore
+                  field={col.options[0].field}
+                />
+              </HotColumn>
+            );
+          }
+
           return (
             <HotColumn
               width={col.width}
               _columnIndex={+col.order}
               data={col.data}
               key={col.order + col.data}
-              renderer={customRendererDropdown}
-            >
-              <DropdownEditor
-                hot-editor
-                options={[...col.options, ""]}
-                editorColumnScope={0}
-              />
-            </HotColumn>
+            />
           );
-        }
+        })}
+      </HotTable>
 
-        if (col.isCustom && col.type === "radio") {
-          return (
-            <HotColumn
-              width={col.width}
-              _columnIndex={+col.order}
-              data={col.data}
-              key={col.order + col.data}
-              renderer={customRendererRadio}
-            >
-              <RadioEditor
-                hot-editor
-                options={[...col.options, ""]}
-                editorColumnScope={0}
-              />
-            </HotColumn>
-          );
-        }
-
-        if (col.isCustom && col.type === "file") {
-          return (
-            <HotColumn
-              width={col.width}
-              _columnIndex={+col.order}
-              data={col.data}
-              key={col.order + col.data}
-              renderer={customRendererFileCallBack}
-            >
-              <FileEditor
-                hot-editor
-                editorColumnScope={0}
-                templateId={template.id}
-                dataProvider={products}
-              />
-            </HotColumn>
-          );
-        }
-
-        if (col.type === "relation") {
-          return (
-            <HotColumn
-              _columnIndex={+col.order}
-              data={col.data}
-              width={col.width}
-              key={col.order + col.data}
-              // eslint-disable-next-line react/jsx-no-bind
-              renderer={customRendererRelation}
-            >
-              <RelationEditor
-                hot-editor
-                editorColumnScope={0}
-                // @ts-ignore
-                templateId={col.options[0].templateId}
-                column={col}
-                dataProvider={products}
-                // @ts-ignore
-                field={col.options[0].field}
-              />
-            </HotColumn>
-          );
-        }
-
-        return (
-          <HotColumn
-            width={col.width}
-            _columnIndex={+col.order}
-            data={col.data}
-            key={col.order + col.data}
-          />
-        );
-      })}
-    </HotTable>
+      <HeaderDropDown
+        dropDownStatus={dropDownStatus}
+        setDropDownStatus={setDropDownStatus}
+        template={template}
+        columns={columns}
+        setColumns={setColumns}
+        colHeaders={colHeaders}
+        setColHeaders={setColHeaders}
+        handleNewColumn={handleNewColumn}
+        hotRef={hotRef}
+        handleHidden={handleHidden}
+        headerTable={headerTable}
+      />
+    </>
   );
 }
 

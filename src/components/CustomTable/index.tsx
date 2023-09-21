@@ -69,7 +69,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
   const [currentCell, setCurrentCell] = useState<any>({});
 
-  const [columns, setColumns] = useState<any[]>(headerTable);
+  const [columns, setColumns] = useState<IHeader[]>(headerTable);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   function handleAddProductClick(): void {
@@ -356,12 +356,15 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             hidden={hidden}
             handleResize={handleResize}
             columns={columns}
+            setColumns={setColumns}
             handleMove={handleMove}
             uploadImages={uploadImages}
             page={page}
             setPage={setPage}
             headerTable={headerTable}
             currentKeyword={currentKeyword}
+            handleNewColumn={handleNewColumn}
+            handleHidden={handleHidden}
           />
         </Container>
         <div ref={loadingRef} style={{ display: "none" }}>

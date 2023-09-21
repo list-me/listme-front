@@ -25,11 +25,14 @@ export interface IDefaultTable {
   ) => void;
   hidden: number[];
   handleResize: Function;
-  columns: any[];
+  columns: IHeader[];
+  setColumns: React.Dispatch<React.SetStateAction<IHeader[]>>;
   handleMove: Function;
   uploadImages: (files: File[], bucketUrl: string) => Promise<void | string[]>;
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   headerTable: IHeaderTable[];
   currentKeyword: string;
+  handleNewColumn: Function;
+  handleHidden: Function;
 }
