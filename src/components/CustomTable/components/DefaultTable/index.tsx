@@ -223,6 +223,51 @@ function DefaultTable({
     [],
   );
 
+  const styledHeader = (
+    column: number,
+    TH: HTMLTableHeaderCellElement,
+  ): void => {
+    const colData = template?.fields?.fields.find(
+      (item: any) => item.id === headerTable[column]?.data,
+    );
+    const { required: isRequired } = colData || {};
+    const columnHeaderValue = hotRef.current?.hotInstance?.getColHeader(column);
+    const valueToVisible = columnHeaderValue !== " " ? columnHeaderValue : "+";
+
+    const baseStyles = `
+      display: flex;
+      align-items: center;
+      justify-content: ${isRequired ? "space-between" : "center"};
+      height: 51px;
+      ${isRequired ? "padding: 0 1.5rem;" : ""}
+    `;
+
+    const textStyle = `
+      font-size: 14px;
+      color: rgb(134, 142, 150);
+      margin: 0;
+      text-align: center;
+    `;
+
+    const requiredStyle = `
+      border: 1px solid rgb(255, 0, 0);
+      border-radius: 20px;
+      color: rgb(255, 0, 0);
+      padding-inline: 7px;
+      font-size: 12px;
+      margin: 0;
+    `;
+
+    const content = `
+      <div style="${baseStyles}">
+        <p style="${textStyle}">${valueToVisible}</p>
+        ${isRequired ? `<p style="${requiredStyle}">Obrigatório</p>` : ""}
+      </div>
+    `;
+
+    TH.innerHTML = content;
+  };
+
   return (
     <HotTable
       readOnly={isTableLocked}
@@ -240,8 +285,8 @@ function DefaultTable({
       beforeCopy={beforeCopyCallback}
       afterPaste={afterPasteCallback}
       afterColumnMove={afterColumnMoveCallback}
-      // afterGetColHeader={renderHeaderComponent} gargalo
-      // viewportRowRenderingOffset={100} gargalo
+      // afterGetColHeader={renderHeaderComponent}
+      afterGetColHeader={styledHeader}
       afterColumnResize={async (newSize: number, column: number) => {
         await handleResize(column, newSize, template);
       }}
