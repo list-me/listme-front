@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect, useState } from "react";
 import { HotTable, HotColumn } from "@handsontable/react";
 import { toast } from "react-toastify";
 import Handsontable from "handsontable";
@@ -9,6 +9,14 @@ import DropdownEditor from "../../Editors/Dropdown";
 import RadioEditor from "../../Editors/Radio";
 import RelationEditor from "../../Editors/Relation";
 import { ReactComponent as DropDownIcon } from "../../../../assets/chevron-down.svg";
+import { ReactComponent as DropDownIconSmall } from "../../../../assets/chevron-down-small.svg";
+import { ReactComponent as TextIcon } from "../../../../assets/icons/headers/text-icon.svg";
+import { ReactComponent as ParagraphIcon } from "../../../../assets/icons/headers/textarea-icon.svg";
+import { ReactComponent as CheckedIcon } from "../../../../assets/icons/headers/checked-icon.svg";
+import { ReactComponent as DropdownIcon } from "../../../../assets/icons/headers/dropdown-icon.svg";
+import { ReactComponent as FileIcon } from "../../../../assets/icons/headers/file-icon.svg";
+import { ReactComponent as RadioIcon } from "../../../../assets/icons/headers/radio-icon.svg";
+import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers/relation-icon.svg";
 import { IDefaultTable } from "./DefaultTable";
 import handleCellChange from "./utils/handleCellChange";
 import handleBeforeCopy from "./utils/handleBeforeCopy";
@@ -21,6 +29,8 @@ import handleDocumentKeyDown from "./utils/handleDocumentKeyDown";
 import customRendererFile from "./utils/customRendererFile";
 import HeaderDropDown from "../HeaderDropDown";
 import { IDropDownStatus } from "../HeaderDropDown/HeaderDropDown";
+import { IconType } from "../HeaderDropDown/components/Cell/Cell.d";
+import getStyledContent from "./utils/getStyledContent";
 
 function DefaultTable({
   hotRef,
@@ -48,6 +58,8 @@ function DefaultTable({
   handleNewColumn,
   handleHidden,
 }: IDefaultTable): JSX.Element {
+  const svgStringDropDown: string = renderToString(<DropDownIcon />);
+  const svgStringDropDownSmall: string = renderToString(<DropDownIconSmall />);
   useEffect(() => {
     if (hotRef.current) {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -153,12 +165,10 @@ function DefaultTable({
       _prop: string | number,
       value: string | null,
     ): void => {
-      const svgString: string = renderToString(<DropDownIcon />);
-
       // eslint-disable-next-line no-param-reassign
       td.innerHTML = `<div class="radio-item">
         ${value ?? ""}
-        ${svgString}
+        ${svgStringDropDown}
       </div>`;
     },
     [],
@@ -198,12 +208,10 @@ function DefaultTable({
       _prop: string | number,
       value: string | null,
     ): void => {
-      const svgString: string = renderToString(<DropDownIcon />);
-
       // eslint-disable-next-line no-param-reassign
       td.innerHTML = `<div class="dropdown-item">
         ${value ?? ""}
-        ${svgString}
+        ${svgStringDropDown}
       </div>`;
     },
     [],
@@ -226,6 +234,18 @@ function DefaultTable({
     [],
   );
 
+  const ICON_HEADER: Record<IconType, ReactElement> = {
+    [IconType.Text]: <TextIcon />,
+    [IconType.Paragraph]: <ParagraphIcon />,
+    [IconType.Checked]: <CheckedIcon />,
+    [IconType.List]: <DropdownIcon />,
+    [IconType.File]: <FileIcon />,
+    [IconType.Radio]: <RadioIcon />,
+    [IconType.Relation]: <RelationIcon />,
+  };
+  const getIconByType = (type: IconType): ReactElement => {
+    return ICON_HEADER[type];
+  };
   const styledHeader = (
     column: number,
     TH: HTMLTableHeaderCellElement,
@@ -236,39 +256,9 @@ function DefaultTable({
     const { required: isRequired } = colData || {};
     const columnHeaderValue = hotRef.current?.hotInstance?.getColHeader(column);
     const valueToVisible = columnHeaderValue !== " " ? columnHeaderValue : "+";
+    const iconType = getIconByType(colData?.type);
 
-    const baseStyles = `
-      display: flex;
-      align-items: center;
-      justify-content: ${isRequired ? "space-between" : "center"};
-      height: 51px;
-      ${isRequired ? "padding: 0 1.5rem;" : ""}
-    `;
-
-    const textStyle = `
-      font-size: 14px;
-      color: rgb(134, 142, 150);
-      margin: 0;
-      text-align: center;
-    `;
-
-    const requiredStyle = `
-      border: 1px solid rgb(255, 0, 0);
-      border-radius: 20px;
-      color: rgb(255, 0, 0);
-      padding-inline: 7px;
-      font-size: 12px;
-      margin: 0;
-    `;
-
-    const content = `
-      <div style="${baseStyles}">
-        <p style="${textStyle}">${valueToVisible}</p>
-        ${isRequired ? `<p style="${requiredStyle}">Obrigatório</p>` : ""}
-      </div>
-    `;
-
-    TH.innerHTML = content;
+    TH.innerHTML = getStyledContent(iconType, valueToVisible, isRequired);
   };
 
   const [dropDownStatus, setDropDownStatus] = useState<IDropDownStatus>({
@@ -296,13 +286,15 @@ function DefaultTable({
         beforeCopy={beforeCopyCallback}
         afterPaste={afterPasteCallback}
         afterColumnMove={afterColumnMoveCallback}
-        // afterGetColHeader={renderHeaderComponent}
         afterGetColHeader={styledHeader}
         afterColumnResize={async (newSize: number, column: number) => {
           await handleResize(column, newSize, template);
         }}
-        afterOnCellMouseDown={(event, coords, TD) => {
-          if (coords.row === -1 && coords.col >= 0) {
+        afterOnCellMouseUp={(event: any, coords, TD) => {
+          const clickedElementClassList = event.target.classList;
+          const correctElement = clickedElementClassList.contains("dropDown");
+
+          if (correctElement && coords.row === -1 && coords.col >= 0) {
             setTimeout(() => {
               if (colHeaders.length - 1 === coords.col) {
                 setDropDownStatus({
