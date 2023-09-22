@@ -9,26 +9,29 @@ const BASE_STYLES = `
   justify-content: space-between;
   height: 51px;
   padding: 0 1.5rem;
-`;
+  font-family: 'Satoshi Regular';
+
+  `;
 
 const TEXT_STYLE = `
   font-size: 14px;
   color: rgb(134, 142, 150);
   margin: 0;
   text-align: center;
-`;
+  `;
 
 const REQUIRED_STYLE = `
   border: 1px solid rgb(255, 0, 0);
   border-radius: 20px;
   color: rgb(255, 0, 0);
   padding-inline: 7px;
-  font-size: 12px;
   margin: 0;
+  font-size: 12px;
 `;
 
 const FLEX_GAP_STYLE = `
   display: flex;
+  align-items: center;
   gap: 10px;
 `;
 
