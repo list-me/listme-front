@@ -121,9 +121,10 @@ function customRendererFile(
           imageSource = DocumentIcon;
         }
 
-        const placeholder: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${
-          imageSource || ImageErrorIcon
-        }" style="width:25px;height:25px;margin-right:4px;">`;
+        const placeholder: string = `<img class="imgItem" title="${fileNameWithExtension}" loading='lazy' src="${ImageErrorIcon}" style="width:25px;height:25px;margin-right:4px;">`;
+        // const placeholder: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${
+        //   imageSource || ImageErrorIcon
+        // }" style="width:25px;height:25px;margin-right:4px;">`;
 
         return placeholder;
       })
