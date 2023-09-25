@@ -127,7 +127,7 @@ function customRendererFile(
       .join("");
 
     const imgUrl: string = value[value.length - 1];
-    fetch(imgUrl, { method: "HEAD", cache: "default" })
+    fetch(imgUrl, { method: "HEAD", cache: "no-cache" })
       .then((response: Response) => {
         const contentLength: string | null =
           response.headers.get("Content-Length");
