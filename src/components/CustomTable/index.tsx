@@ -20,7 +20,7 @@ import { toast } from "react-toastify";
 
 import "handsontable/dist/handsontable.full.min.css";
 
-import { CustomTableProps } from "./CustomTable.d";
+import { CustomTableProps, ICol } from "./CustomTable.d";
 import { useProductContext } from "../../context/products";
 import { Cell } from "../Cell/index";
 import { NewColumn } from "../NewColumn";
@@ -32,6 +32,10 @@ import { Container } from "./styles";
 import { LoadingFetch } from "./LoadingFetch";
 import HeaderFilters from "./components/HeaderFilters";
 import DefaultTable from "./components/DefaultTable";
+import {
+  IHeader,
+  IProductToTable,
+} from "../../context/products/product.context";
 
 registerAllModules();
 registerAllEditors();
@@ -52,27 +56,26 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     handleMove,
     handleRemoveColumn,
     products,
+    setProducts,
     colHeaders,
+    setColHeaders,
     total,
     setTotal,
     uploadImages,
   } = useProductContext();
 
-  const [cols, setCols] = useState<any[]>([]);
+  const [cols, setCols] = useState<ICol[]>([]);
   const [page, setPage] = useState<number>(1);
 
   const [currentCell, setCurrentCell] = useState<any>({});
 
-  const [columns, setColumns] = useState<any[]>(headerTable);
-  const [headers, setHeaders] = useState<string[]>(colHeaders);
+  const [columns, setColumns] = useState<IHeader[]>(headerTable);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  const [dataProvider, setDataProvider] = useState<any[]>(products ?? []);
 
   function handleAddProductClick(): void {
     const { hotInstance } = hotRef.current!;
     if (hotInstance) {
-      setDataProvider((prev) => [{}, ...prev]);
+      setProducts((prev) => [{} as IProductToTable, ...prev]);
     }
   }
 
@@ -125,7 +128,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         .map((item) => item.title);
 
       contentHeaders.push(" ");
-      setHeaders(contentHeaders);
+      setColHeaders(contentHeaders);
 
       handleRemoveColumn(
         Number(currentCell?.order),
@@ -162,7 +165,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           }
         });
 
-        if (headers[column] === " ") {
+        if (colHeaders[column] === " ") {
           ReactDOM.createRoot(myComponent).render(
             <NewColumn
               template={template}
@@ -186,7 +189,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 contentHeaders.splice(columns.length - 1, 1);
                 contentHeaders.push(newColumn?.title);
                 contentHeaders.push(" ");
-                setHeaders(contentHeaders);
+                setColHeaders(contentHeaders);
                 handleNewColumn(newColumn, templateUpdated);
               }}
             />,
@@ -194,7 +197,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         } else {
           ReactDOM.createRoot(myComponent).render(
             <Cell
-              label={headers[column]}
+              label={colHeaders[column]}
               column={col}
               template={template}
               handleHidden={() => {
@@ -210,6 +213,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                 }
                 return true;
               }}
+              // @ts-ignore
               freeze={!!headerTable[column]?.frozen}
               handleSort={() => {}}
               handleDeleteColumn={() => {
@@ -231,12 +235,13 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       TH.replaceChildren(myComponent);
     },
     [
+      colHeaders,
       columns,
       handleHidden,
       handleNewColumn,
       headerTable,
-      headers,
       isOpen,
+      setColHeaders,
       template,
     ],
   );
@@ -261,6 +266,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
               if (currentField && field.value) {
                 const test = !COMPONENT_CELL_PER_TYPE[
+                  // @ts-ignore
                   currentField?.type?.toUpperCase()
                 ]
                   ? field?.value[0]
@@ -280,7 +286,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             productFields.push({ [template[0]]: "" });
           }
 
-          setDataProvider(productFields);
+          setProducts(productFields);
           loadingRef.current!.style.display = "none";
 
           const hotInstance = hotRef.current!?.hotInstance;
@@ -325,6 +331,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         <Content>
           <HeaderFilters
             template={template}
+            // @ts-ignore
             headerTable={headerTable}
             handleGetProductFiltered={handleGetProductFiltered}
             handleAddProductClick={() => handleAddProductClick()}
@@ -333,11 +340,11 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         <Container>
           <DefaultTable
             hotRef={hotRef}
-            headers={headers}
-            setHeaders={setHeaders}
+            colHeaders={colHeaders}
+            setColHeaders={setColHeaders}
             cols={cols}
-            dataProvider={dataProvider}
-            setDataProvider={setDataProvider}
+            products={products}
+            setProducts={setProducts}
             handleDelete={handleDelete}
             handleSave={handleSave}
             loadingRef={loadingRef}
@@ -349,12 +356,15 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             hidden={hidden}
             handleResize={handleResize}
             columns={columns}
+            setColumns={setColumns}
             handleMove={handleMove}
             uploadImages={uploadImages}
             page={page}
             setPage={setPage}
             headerTable={headerTable}
             currentKeyword={currentKeyword}
+            handleNewColumn={handleNewColumn}
+            handleHidden={handleHidden}
           />
         </Container>
         <div ref={loadingRef} style={{ display: "none" }}>

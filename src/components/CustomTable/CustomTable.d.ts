@@ -34,4 +34,25 @@ type CustomEditors = {
   radio: ReactElement;
 };
 
-export type { CustomTableProps, ICustomColumns, ColumnTypes, CustomEditors };
+interface ICol {
+  isCustom: boolean;
+  title: string;
+  data: string;
+  className: string;
+  type: string;
+  required: boolean;
+  options: string[];
+  order: string | number;
+  hidden: boolean;
+  width: string;
+  frozen: boolean;
+  bucket_url: string;
+}
+
+export type {
+  CustomTableProps,
+  ICustomColumns,
+  ColumnTypes,
+  CustomEditors,
+  ICol,
+};

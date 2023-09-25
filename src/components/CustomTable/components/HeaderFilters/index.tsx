@@ -21,7 +21,7 @@ import { ReactComponent as HelpIcon } from "../../../../assets/help.svg";
 import { ROUTES } from "../../../../constants/routes";
 import Button from "../../../Button";
 import { Temp } from "../../../Temp";
-import { IHeaderTable } from "../../../../context/products";
+import { IHeaderTable } from "../../../../context/products/product.context";
 
 function HeaderFilters({
   template,
