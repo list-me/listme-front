@@ -1,13 +1,17 @@
 import { IHeaderTable } from "../../../../context/products";
-import { ICustomCellType } from "../../../../context/products/product.context";
+import {
+  ICustomCellType,
+  IProductToTable,
+} from "../../../../context/products/product.context";
+import { ICol } from "../../CustomTable";
 
 export interface IDefaultTable {
   hotRef: React.RefObject<HotTable>;
-  headers: string[];
-  setHeaders: React.Dispatch<React.SetStateAction<string[]>>;
-  cols: any[];
-  dataProvider: any[];
-  setDataProvider: React.Dispatch<React.SetStateAction<any[]>>;
+  colHeaders: string[];
+  setColHeaders: React.Dispatch<React.SetStateAction<string[]>>;
+  cols: ICol[];
+  products: IProductToTable[];
+  setProducts: React.Dispatch<React.SetStateAction<IProductToTable[]>>;
   handleDelete: Function;
   handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>;
   loadingRef: React.RefObject<HTMLDivElement>;
@@ -21,11 +25,14 @@ export interface IDefaultTable {
   ) => void;
   hidden: number[];
   handleResize: Function;
-  columns: any[];
+  columns: IHeader[];
+  setColumns: React.Dispatch<React.SetStateAction<IHeader[]>>;
   handleMove: Function;
   uploadImages: (files: File[], bucketUrl: string) => Promise<void | string[]>;
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   headerTable: IHeaderTable[];
   currentKeyword: string;
+  handleNewColumn: Function;
+  handleHidden: Function;
 }

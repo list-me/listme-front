@@ -49,7 +49,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
     <>
       {isOpen ? (
         <SuspenseMenu left={left} ref={modalRef}>
-          {options.map((item) => {
+          {options?.map((item) => {
             if (variable.length === 2) {
               variable.pop();
               return (
