@@ -59,7 +59,7 @@ function DefaultTable({
   handleHidden,
 }: IDefaultTable): JSX.Element {
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
-  const svgStringDropDownSmall: string = renderToString(<DropDownIconSmall />);
+
   useEffect(() => {
     if (hotRef.current) {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -293,32 +293,27 @@ function DefaultTable({
         afterOnCellMouseUp={(event: any, coords, TD) => {
           const clickedElementClassList = event.target.classList;
           const correctElement = clickedElementClassList.contains("dropDown");
-
+          if (colHeaders.length - 1 === coords.col) {
+            setTimeout(() => {
+              setDropDownStatus({
+                type: "new",
+                coordX: event.clientX,
+                coordY: event.clientY,
+                col: coords.col,
+              });
+            });
+            return null;
+          }
           if (correctElement && coords.row === -1 && coords.col >= 0) {
             setTimeout(() => {
-              if (colHeaders.length - 1 === coords.col) {
-                setDropDownStatus({
-                  type: "new",
-                  coordX: event.clientX,
-                  coordY: event.clientY,
-                  col: coords.col,
-                });
-              } else {
-                setDropDownStatus({
-                  type: "cell",
-                  coordX: event.clientX,
-                  coordY: event.clientY,
-                  col: coords.col,
-                });
-              }
+              setDropDownStatus({
+                type: "cell",
+                coordX: event.clientX,
+                coordY: event.clientY,
+                col: coords.col,
+              });
             }, 0);
-          } else {
-            setDropDownStatus({
-              type: "none",
-              coordX: 0,
-              coordY: 0,
-              col: 0,
-            });
+            return null;
           }
         }}
         afterRenderer={(TD, row, col) => {
