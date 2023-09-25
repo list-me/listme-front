@@ -21,6 +21,7 @@ import { IDefaultTable } from "./DefaultTable";
 import handleCellChange from "./utils/handleCellChange";
 import handleBeforeCopy from "./utils/handleBeforeCopy";
 import handleAfterPaste from "./utils/handleAfterPaste";
+import handleAfterScrollVertically from "./utils/handleAfterScrollVertically";
 import handleAfterColumnMove from "./utils/handleAfterColumnMove";
 import handleRemoveRow from "./utils/handleRemoveRow";
 import hasAtLeastOneProduct from "./utils/hasAtLeastOneProduct";
@@ -42,6 +43,8 @@ function DefaultTable({
   handleSave,
   loadingRef,
   componentCellPerType,
+  total,
+  setTotal,
   template,
   handleResize,
   columns,
@@ -152,26 +155,6 @@ function DefaultTable({
       handleMove,
     );
   };
-  const svgStringDropDown: string = renderToString(<DropDownIcon />);
-
-  const customRendererDropdown = useCallback(
-    (
-      _instance: Handsontable,
-      td: HTMLTableCellElement,
-      _row: number,
-      _col: number,
-      _prop: string | number,
-      value: string | null,
-    ): void => {
-      td.innerHTML = `
-        <div class="dropdown-item">
-          ${value ?? ""}
-          ${svgStringDropDown}
-        </div>
-      `;
-    },
-    [svgStringDropDown],
-  );
 
   const customRendererRadio = useCallback(
     (
@@ -188,7 +171,7 @@ function DefaultTable({
         ${svgStringDropDown}
       </div>`;
     },
-    [svgStringDropDown],
+    [],
   );
 
   const customRendererFileCallBack = useCallback(
@@ -243,17 +226,9 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
-      if (typeof value === "string") {
-        try {
-          value = JSON.parse(value);
-        } catch (e) {
-          console.error("Failed to parse JSON:", e);
-          value = [];
-        }
-      }
+      if (typeof value === "string" && value.length) value = JSON.parse(value);
 
-      const totalItems = Array.isArray(value) ? value.length : 0;
-
+      const totalItems = value ? value.length : 0;
       td.innerHTML = `<div class="tag-content">${totalItems} Items relacionados</div>`;
     },
     [],

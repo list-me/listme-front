@@ -18,19 +18,8 @@ export const AddColumn = styled.div`
 `;
 
 export const Container = styled.div`
-  /* overflow: hidden; */
-  overflow: visible;
-  display: flex;
+  overflow: hidden;
   height: 79vh !important;
-  > div {
-    width: 100%;
-    height: 79vh;
-    overflow: scroll;
-
-    .handsontable .wtHolder {
-      overflow: hidden !important;
-    }
-  }
 
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
     height: 72vh !important;

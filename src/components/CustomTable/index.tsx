@@ -32,7 +32,6 @@ import { Container } from "./styles";
 import { LoadingFetch } from "./LoadingFetch";
 import HeaderFilters from "./components/HeaderFilters";
 import DefaultTable from "./components/DefaultTable";
-import debounceFunction from "../../utils/debounceFunction";
 import {
   IHeader,
   IProductToTable,
@@ -314,96 +313,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
   useEffect(() => {
     handleMountColumns();
   }, [handleMountColumns]);
-
-  const [isLoadingFetch, setIsLoadingFetch] = useState(false);
-
-  const fetchMoreData = useCallback(async (): Promise<void> => {
-    if (isLoadingFetch) return;
-    try {
-      loadingRef.current!.style.display = "block";
-      setIsLoadingFetch(() => true);
-      const response = await productRequests.list(
-        { keyword: currentKeyword, page, limit: 50 },
-        window.location.pathname.substring(10),
-      );
-
-      const productFields: any[] = [];
-
-      const { data } = response;
-      if (data) {
-        data.products?.forEach((item: any) => {
-          const object: any = {};
-          item.fields.forEach((field: any) => {
-            const currentField = headerTable.find(
-              (e: any) => e.data == field.id,
-            );
-
-            if (currentField && field.value) {
-              const test = !COMPONENT_CELL_PER_TYPE[
-                currentField?.type?.toUpperCase()
-              ]
-                ? field?.value[0]
-                : field?.value;
-
-              object[field?.id] = test;
-            }
-          });
-          productFields.push({
-            ...object,
-            id: item.id,
-            created_at: item.created_at,
-          });
-        });
-
-        if (!productFields.length && template) {
-          productFields.push({ [template[0]]: "" });
-        }
-
-        setDataProvider((prev) => [...prev, ...productFields]);
-        setTotal(() => data.total);
-      }
-    } catch (error) {
-      // @ts-ignore
-      toast.error(error?.response?.data?.message || "An error occurred");
-    } finally {
-      setPage((prevPage) => prevPage + 1);
-      loadingRef.current!.style.display = "none";
-      setIsLoadingFetch(() => false);
-    }
-  }, [
-    COMPONENT_CELL_PER_TYPE,
-    currentKeyword,
-    headerTable,
-    isLoadingFetch,
-    page,
-    setTotal,
-    template,
-  ]);
-
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const debouncedHandleScroll = debounceFunction(() => {
-      if (containerRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-
-        if (
-          scrollTop + clientHeight >= scrollHeight * 0.8 &&
-          total > dataProvider.length
-        ) {
-          fetchMoreData();
-        }
-      }
-    }, 300);
-
-    containerRef?.current?.addEventListener("scroll", debouncedHandleScroll);
-    return () => {
-      containerRef?.current?.removeEventListener(
-        "scroll",
-        debouncedHandleScroll,
-      );
-    };
-  }, [fetchMoreData]);
 
   return (
     <>
