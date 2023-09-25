@@ -33,7 +33,7 @@ const handleAfterScrollVertically = async (
       const { scrollTop } = holder;
       const visibleHeight = holder.clientHeight;
 
-      const triggerPosition = scrollableHeight * 0.8;
+      const triggerPosition = scrollableHeight * 0.95;
 
       if (
         scrollTop + visibleHeight >= triggerPosition &&
