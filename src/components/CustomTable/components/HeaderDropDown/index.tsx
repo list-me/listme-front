@@ -22,6 +22,8 @@ function HeaderDropDown({
   hotRef,
   handleHidden,
   headerTable,
+  setCurrentCell,
+  setIsOpen,
 }: {
   dropDownStatus: IDropDownStatus;
   setDropDownStatus: React.Dispatch<React.SetStateAction<IDropDownStatus>>;
@@ -34,6 +36,8 @@ function HeaderDropDown({
   hotRef: React.RefObject<HotTable>;
   handleHidden: Function;
   headerTable: IHeaderTable[];
+  setCurrentCell: React.Dispatch<any>;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element | null {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -111,6 +115,9 @@ function HeaderDropDown({
             handleSort={() => {}}
             handleDeleteColumn={() => {
               col!.order = +dropDownStatus.col.toString();
+              console.log(col!.order);
+              setCurrentCell(() => col);
+              setIsOpen((prev) => !prev);
             }}
           />
         </BoxDropDown>

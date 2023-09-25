@@ -57,6 +57,8 @@ function DefaultTable({
   currentKeyword,
   handleNewColumn,
   handleHidden,
+  setCurrentCell,
+  setIsOpen,
 }: IDefaultTable): JSX.Element {
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
 
@@ -449,6 +451,8 @@ function DefaultTable({
         hotRef={hotRef}
         handleHidden={handleHidden}
         headerTable={headerTable}
+        setCurrentCell={setCurrentCell}
+        setIsOpen={setIsOpen}
       />
     </>
   );

@@ -602,7 +602,7 @@ export const ProductContextProvider = ({
     return filtered;
   };
 
-  const handleRemoveColumn = (
+  const handleRemoveColumn = async (
     column: number,
     fields: any[],
     newColumns: any[],
@@ -629,7 +629,7 @@ export const ProductContextProvider = ({
 
     setCustomFields(customs);
     setHeaderTable(newColumns);
-    templateRequests
+    await templateRequests
       .removeColumn(window.location.pathname.substring(10), { column: fieldId })
       .then((resolved) => {
         templateRequests
