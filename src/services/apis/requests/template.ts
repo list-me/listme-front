@@ -6,6 +6,7 @@ interface IPagination {
   limit?: number;
 }
 
+// eslint-disable-next-line import/prefer-default-export
 export const templateRequests = {
   list: async ({ page = 0, limit = 20 }: IPagination): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);

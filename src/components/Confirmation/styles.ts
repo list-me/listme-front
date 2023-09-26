@@ -108,6 +108,9 @@ export const Button = styled.button<{
 
     margin-right: 10px;
   }
+  :disabled {
+    opacity: 0.3;
+  }
 
   /* @media screen
   and (min-device-width: 1200px)

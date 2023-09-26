@@ -62,6 +62,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     total,
     setTotal,
     uploadImages,
+    handleFreeze,
   } = useProductContext();
 
   const [cols, setCols] = useState<ICol[]>([]);
@@ -136,8 +137,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         newColumns,
         currentCell?.id,
       );
-      window.location.reload();
       toast.success("Coluna deletada com sucesso");
+      window.location.reload();
     } catch (error) {
       console.error(error);
       toast.error(
@@ -365,6 +366,9 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             currentKeyword={currentKeyword}
             handleNewColumn={handleNewColumn}
             handleHidden={handleHidden}
+            setCurrentCell={setCurrentCell}
+            setIsOpen={setIsOpen}
+            handleFreeze={handleFreeze}
           />
         </Container>
         <div ref={loadingRef} style={{ display: "none" }}>

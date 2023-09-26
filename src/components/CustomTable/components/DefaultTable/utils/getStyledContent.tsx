@@ -10,11 +10,24 @@ const BASE_STYLES = `
   height: 51px;
   padding: 0 1.5rem;
   font-family: 'Satoshi Regular';
-
+  `;
+const PLUS_BASE_STYLES = `
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 51px;
+  padding: 0 1.5rem;
+  font-family: 'Satoshi Regular';
   `;
 
 const TEXT_STYLE = `
   font-size: 14px;
+  color: rgb(134, 142, 150);
+  margin: 0;
+  text-align: center;
+  `;
+const PLUS_STYLE = `
+  font-size: 30px;
   color: rgb(134, 142, 150);
   margin: 0;
   text-align: center;
@@ -53,10 +66,12 @@ const getStyledContent = (
   isRequired: boolean,
 ) => {
   return `
-    <div style="${BASE_STYLES}">
+    <div style="${valueToVisible !== "+" ? BASE_STYLES : PLUS_BASE_STYLES}">
       <div style="${FLEX_GAP_STYLE}">
         ${renderToString(iconType)}
-        <p style="${TEXT_STYLE}">${valueToVisible}</p>
+        <p style="${
+          valueToVisible !== "+" ? TEXT_STYLE : PLUS_STYLE
+        }">${valueToVisible}</p>
       </div>
       <div style="${FLEX_GAP_STYLE}">
         ${isRequired ? `<p style="${REQUIRED_STYLE}">Obrigatório</p>` : ""}

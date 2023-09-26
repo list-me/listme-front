@@ -22,6 +22,9 @@ function HeaderDropDown({
   hotRef,
   handleHidden,
   headerTable,
+  setCurrentCell,
+  setIsOpen,
+  handleFreeze,
 }: {
   dropDownStatus: IDropDownStatus;
   setDropDownStatus: React.Dispatch<React.SetStateAction<IDropDownStatus>>;
@@ -34,6 +37,9 @@ function HeaderDropDown({
   hotRef: React.RefObject<HotTable>;
   handleHidden: Function;
   headerTable: IHeaderTable[];
+  setCurrentCell: React.Dispatch<any>;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  handleFreeze: any;
 }): JSX.Element | null {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -65,6 +71,7 @@ function HeaderDropDown({
           coordX: 0,
           coordY: 0,
           col: 0,
+          invert: false,
         });
       }
     }
@@ -89,28 +96,22 @@ function HeaderDropDown({
           top={dropDownStatus.coordY}
           left={dropDownStatus.coordX}
           ref={dropdownRef}
+          invert={dropDownStatus.invert}
         >
           <Cell
             label={colHeaders[dropDownStatus.col]}
             column={col}
             template={template}
             handleHidden={() => {
-              return handleHidden(dropDownStatus.col, template, true);
+              handleHidden(dropDownStatus.col, template, true);
             }}
-            handleFrozen={() => {
-              const freezePlugins =
-                hotRef.current!.hotInstance?.getPlugin("manualColumnFreeze");
-
-              if (freezePlugins) {
-                freezePlugins?.freezeColumn(1);
-                hotRef.current!.hotInstance?.render();
-              }
-              return true;
-            }}
+            handleFrozen={handleFreeze}
             freeze={!!headerTable[dropDownStatus.col]?.frozen}
             handleSort={() => {}}
             handleDeleteColumn={() => {
               col!.order = +dropDownStatus.col.toString();
+              setCurrentCell(() => col);
+              setIsOpen((prev) => !prev);
             }}
           />
         </BoxDropDown>
@@ -123,6 +124,7 @@ function HeaderDropDown({
           top={dropDownStatus.coordY}
           left={dropDownStatus.coordX}
           ref={dropdownRef}
+          invert={dropDownStatus.invert}
         >
           <NewColumn
             template={template}

@@ -152,7 +152,6 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
 
                 this.TD.setAttribute("data-new-value", JSON.stringify(images));
 
-                console.log({ images });
               }}
             />
           ) : (
