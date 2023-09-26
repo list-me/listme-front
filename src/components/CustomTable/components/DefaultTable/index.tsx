@@ -59,6 +59,7 @@ function DefaultTable({
   handleHidden,
   setCurrentCell,
   setIsOpen,
+  hidden,
 }: IDefaultTable): JSX.Element {
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
 
@@ -278,6 +279,7 @@ function DefaultTable({
         colHeaders={colHeaders}
         columns={cols}
         data={products}
+        hiddenColumns={{ columns: hidden }}
         manualColumnResize
         manualColumnMove
         rowHeaders

@@ -163,7 +163,7 @@ export const ProductContextProvider = ({
     // setIsDragActive(true);
   };
 
-  const handleUpdateTemplate = (field: any) => {};
+  const handleUpdateTemplate = (_field: any) => {};
 
   const handleDelete = (product: any) => {
     try {
@@ -175,7 +175,7 @@ export const ProductContextProvider = ({
 
       productRequests
         .delete(product.id)
-        .then((response: any) => {
+        .then((_response: any) => {
           toast.success("Produto excluído com sucesso");
         })
         .catch((error) => {
@@ -422,55 +422,16 @@ export const ProductContextProvider = ({
     // return custom;
   };
 
-  const handleHidden = (
-    col: number,
-    template: any,
-    able: boolean,
-  ): number[] => {
-    const content = hidden;
-    let newValue;
-    if (content.includes(col)) {
-      newValue = content.filter((element) => element != col);
-    } else {
-      newValue = [...content, col];
-    }
-
-    setHidden(newValue);
-    setCustomFields((prev) => {
-      return prev.map((item) => {
-        if (item?.order == col.toString()) {
-          return {
-            ...item,
-            hidden: able,
-          };
-        }
-
-        return item;
-      });
-    });
-
-    const custom = buildCustomFields(
-      template?.fields?.fields,
-      { show: able },
-      col,
-    );
-    templateRequests
-      .customView(window.location.pathname.substring(10), { fields: custom })
-      .catch((error) =>
-        toast.error("Ocorreu um erro ao alterar a visibilidade do campo"),
-      );
-
-    return newValue;
-  };
-
   const buildCustomFields = (
-    fields: any,
+    _fields: any,
     { order, show, width, frozen }: ICustom,
     col: number,
-  ) => {
-    const testing = [...customFields];
-    return testing?.map((custom) => {
-      if (custom?.order == col) {
+    newfields: any,
+  ): ICustomField[] => {
+    const toBuild = [...newfields];
+
+    const builded = toBuild?.map((custom) => {
+      if (custom?.order === col) {
         return {
           id: custom?.id,
           order: order ? order.toString() : custom?.order,
@@ -481,9 +442,56 @@ export const ProductContextProvider = ({
       }
       return custom;
     });
+    return builded;
   };
 
-  const handleFreeze = (col: any, state: boolean, operation?: string) => {
+  const handleHidden = async (
+    col: number,
+    temp: any,
+    able: boolean,
+  ): Promise<number[]> => {
+    const content = hidden;
+    let newValue;
+    if (content.includes(col)) {
+      newValue = content.filter((element) => element !== col);
+    } else {
+      newValue = [...content, col];
+    }
+
+    setHidden(newValue);
+    const newfields = customFields.map((item) => {
+      if (item?.order === col.toString()) {
+        return {
+          ...item,
+          hidden: able,
+        };
+      }
+
+      return item;
+    });
+
+    setCustomFields(newfields);
+
+    const custom = buildCustomFields(
+      temp?.fields?.fields,
+      { show: able },
+      col,
+      newfields,
+    );
+
+    try {
+      await templateRequests.customView(
+        window.location.pathname.substring(10),
+        { fields: custom },
+      );
+    } catch (e) {
+      toast.error("Ocorreu um erro ao alterar a visibilidade do campo");
+    }
+
+    return newValue;
+  };
+
+  const handleFreeze = (col: any, _state: boolean, operation?: string) => {
     let changeState: any[];
     if (operation && operation == "unfreeze") {
       changeState = customFields.map((customs) => {
@@ -523,7 +531,7 @@ export const ProductContextProvider = ({
     templateRequests
       // @ts-ignore
       .customView(template.id, { fields: changeState })
-      .catch((error) =>
+      .catch((_error) =>
         toast.error("Ocorreu um erro ao definir o freeze da coluna"),
       );
 
@@ -547,7 +555,7 @@ export const ProductContextProvider = ({
 
     templateRequests
       .customView(window.location.pathname.substring(10), { fields })
-      .catch((error) =>
+      .catch((_error) =>
         toast.error("Ocorreu um erro ao alterar a posição da coluna"),
       );
   };
@@ -603,7 +611,7 @@ export const ProductContextProvider = ({
   };
 
   const handleRemoveColumn = async (
-    column: number,
+    _column: number,
     fields: any[],
     newColumns: any[],
     fieldId: string,
@@ -631,15 +639,15 @@ export const ProductContextProvider = ({
     setHeaderTable(newColumns);
     await templateRequests
       .removeColumn(window.location.pathname.substring(10), { column: fieldId })
-      .then((resolved) => {
+      .then((_resolved) => {
         templateRequests
           // @ts-ignore
           .customView(template.id, { fields: customs })
-          .catch((error) =>
+          .catch((_error) =>
             toast.error("Ocorreu um ao alterar os campos customizados"),
           );
       })
-      .catch((error) =>
+      .catch((_error) =>
         toast.error("Ocorreu um erro ao excluir a coluna do template"),
       );
   };

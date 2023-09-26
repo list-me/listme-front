@@ -99,7 +99,7 @@ function HeaderDropDown({
             column={col}
             template={template}
             handleHidden={() => {
-              return handleHidden(dropDownStatus.col, template, true);
+              handleHidden(dropDownStatus.col, template, true);
             }}
             handleFrozen={() => {
               const freezePlugins =
@@ -115,7 +115,6 @@ function HeaderDropDown({
             handleSort={() => {}}
             handleDeleteColumn={() => {
               col!.order = +dropDownStatus.col.toString();
-              console.log(col!.order);
               setCurrentCell(() => col);
               setIsOpen((prev) => !prev);
             }}
