@@ -7,9 +7,14 @@ export const ContainerHeaderDropDown = styled.div`
   top: 0;
   z-index: 10;
 `;
-export const BoxDropDown = styled.div<{ top: number; left: number }>`
+export const BoxDropDown = styled.div<{
+  top: number;
+  left: number;
+  invert: boolean;
+}>`
   position: absolute;
   top: ${(props) => props.top}px;
-  left: ${(props) => props.left}px;
+  left: ${(props) =>
+    props.invert ? `calc(${props.left}px - 210px)` : `${props.left}px`};
   background: blue;
 `;

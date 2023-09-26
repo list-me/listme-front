@@ -71,6 +71,7 @@ function HeaderDropDown({
           coordX: 0,
           coordY: 0,
           col: 0,
+          invert: false,
         });
       }
     }
@@ -95,6 +96,7 @@ function HeaderDropDown({
           top={dropDownStatus.coordY}
           left={dropDownStatus.coordX}
           ref={dropdownRef}
+          invert={dropDownStatus.invert}
         >
           <Cell
             label={colHeaders[dropDownStatus.col]}
@@ -132,6 +134,7 @@ function HeaderDropDown({
           top={dropDownStatus.coordY}
           left={dropDownStatus.coordX}
           ref={dropdownRef}
+          invert={dropDownStatus.invert}
         >
           <NewColumn
             template={template}

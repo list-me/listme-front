@@ -271,6 +271,7 @@ function DefaultTable({
     coordX: 0,
     coordY: 0,
     col: 0,
+    invert: false,
   });
 
   function getMaxOrderForFrozen(arr: ICol[]): number {
@@ -306,6 +307,10 @@ function DefaultTable({
           await handleResize(column, newSize, template);
         }}
         afterOnCellMouseUp={(event: any, coords, TD) => {
+          const limitWidth = window.innerWidth - 350;
+
+          const invert = event.clientX > limitWidth;
+
           const clickedElementClassList = event.target.classList;
           const correctElement = clickedElementClassList.contains("dropDown");
           if (colHeaders.length - 1 === coords.col) {
@@ -315,6 +320,7 @@ function DefaultTable({
                 coordX: event.clientX,
                 coordY: event.clientY,
                 col: coords.col,
+                invert,
               });
             });
             return null;
@@ -326,6 +332,7 @@ function DefaultTable({
                 coordX: event.clientX,
                 coordY: event.clientY,
                 col: coords.col,
+                invert,
               });
             }, 0);
             return null;
