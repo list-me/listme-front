@@ -24,6 +24,7 @@ function HeaderDropDown({
   headerTable,
   setCurrentCell,
   setIsOpen,
+  handleFreeze,
 }: {
   dropDownStatus: IDropDownStatus;
   setDropDownStatus: React.Dispatch<React.SetStateAction<IDropDownStatus>>;
@@ -38,6 +39,7 @@ function HeaderDropDown({
   headerTable: IHeaderTable[];
   setCurrentCell: React.Dispatch<any>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  handleFreeze: any;
 }): JSX.Element | null {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -101,16 +103,17 @@ function HeaderDropDown({
             handleHidden={() => {
               handleHidden(dropDownStatus.col, template, true);
             }}
-            handleFrozen={() => {
-              const freezePlugins =
-                hotRef.current!.hotInstance?.getPlugin("manualColumnFreeze");
+            handleFrozen={handleFreeze}
+            // handleFrozen={() => {
+            //   const freezePlugins =
+            //     hotRef.current!.hotInstance?.getPlugin("manualColumnFreeze");
 
-              if (freezePlugins) {
-                freezePlugins?.freezeColumn(1);
-                hotRef.current!.hotInstance?.render();
-              }
-              return true;
-            }}
+            //   if (freezePlugins) {
+            //     freezePlugins?.freezeColumn(1);
+            //     hotRef.current!.hotInstance?.render();
+            //   }
+            //   return true;
+            // }}
             freeze={!!headerTable[dropDownStatus.col]?.frozen}
             handleSort={() => {}}
             handleDeleteColumn={() => {

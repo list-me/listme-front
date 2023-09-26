@@ -491,50 +491,37 @@ export const ProductContextProvider = ({
     return newValue;
   };
 
-  const handleFreeze = (col: any, _state: boolean, operation?: string) => {
-    let changeState: any[];
-    if (operation && operation == "unfreeze") {
-      changeState = customFields.map((customs) => {
+  const handleFreeze = (col: any, operation?: string) => {
+    const paramOrder = +col.order;
+
+    const newCustomFields = customFields.map((item) => {
+      if (operation === "unfreeze" && +item.order >= paramOrder) {
         return {
-          ...customs,
+          ...item,
           frozen: false,
         };
-      });
-
-      setCustomFields(changeState);
-    } else {
-      changeState = customFields.map((customs) => {
-        if (Number(customs?.order) <= col?.order) {
-          return {
-            ...customs,
-            frozen: true,
-          };
-        }
-
-        return customs;
-      });
-
-      setCustomFields(customFields);
-    }
-
+      }
+      if (+item.order <= paramOrder) {
+        return {
+          ...item,
+          frozen: true,
+        };
+      }
+      return item;
+    });
     setHeaderTable((prev) => {
       return prev.map((item, index) => {
         return {
           ...item,
-          width: changeState[index]?.width,
-          order: changeState[index]?.order,
-          frozen: changeState[index]?.frozen,
-          hidden: changeState[index]?.hidden,
+          frozen: newCustomFields[index]?.frozen,
         };
       });
     });
     templateRequests
-      // @ts-ignore
-      .customView(template.id, { fields: changeState })
+      .customView(template!.id, { fields: newCustomFields })
       .catch((_error) =>
         toast.error("Ocorreu um erro ao definir o freeze da coluna"),
       );
-
     return customFields;
   };
 
@@ -610,12 +597,12 @@ export const ProductContextProvider = ({
     return filtered;
   };
 
-  const handleRemoveColumn = async (
+  const handleRemoveColumn = (
     _column: number,
     fields: any[],
     newColumns: any[],
     fieldId: string,
-  ) => {
+  ): void => {
     const newTemplate = template;
     // @ts-ignore
     newTemplate.fields.fields = fields;
@@ -637,7 +624,7 @@ export const ProductContextProvider = ({
 
     setCustomFields(customs);
     setHeaderTable(newColumns);
-    await templateRequests
+    templateRequests
       .removeColumn(window.location.pathname.substring(10), { column: fieldId })
       .then((_resolved) => {
         templateRequests

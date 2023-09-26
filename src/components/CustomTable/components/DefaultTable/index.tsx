@@ -31,6 +31,7 @@ import HeaderDropDown from "../HeaderDropDown";
 import { IDropDownStatus } from "../HeaderDropDown/HeaderDropDown";
 import { IconType } from "../HeaderDropDown/components/Cell/Cell.d";
 import getStyledContent from "./utils/getStyledContent";
+import { ICol } from "../../CustomTable";
 
 function DefaultTable({
   hotRef,
@@ -60,6 +61,7 @@ function DefaultTable({
   setCurrentCell,
   setIsOpen,
   hidden,
+  handleFreeze,
 }: IDefaultTable): JSX.Element {
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
 
@@ -174,7 +176,7 @@ function DefaultTable({
         ${svgStringDropDown}
       </div>`;
     },
-    [],
+    [svgStringDropDown],
   );
 
   const customRendererFileCallBack = useCallback(
@@ -199,7 +201,7 @@ function DefaultTable({
         template,
       );
     },
-    [],
+    [hotRef, loadingRef, template, uploadImages],
   );
 
   const customRendererDropdown = useCallback(
@@ -217,7 +219,7 @@ function DefaultTable({
         ${svgStringDropDown}
       </div>`;
     },
-    [],
+    [svgStringDropDown],
   );
 
   const customRendererRelation = useCallback(
@@ -271,6 +273,15 @@ function DefaultTable({
     col: 0,
   });
 
+  function getMaxOrderForFrozen(arr: ICol[]): number {
+    return arr.reduce((maxOrder: number, current) => {
+      if (current.frozen && +current.order > maxOrder) {
+        return +current.order;
+      }
+      return maxOrder;
+    }, 0);
+  }
+
   return (
     <>
       <HotTable
@@ -285,7 +296,7 @@ function DefaultTable({
         rowHeaders
         rowHeights="52px"
         licenseKey="non-commercial-and-evaluation"
-        fixedColumnsStart={1}
+        fixedColumnsLeft={getMaxOrderForFrozen(cols) + 1}
         afterScrollVertically={afterScrollVerticallyCallback}
         beforeCopy={beforeCopyCallback}
         afterPaste={afterPasteCallback}
@@ -455,6 +466,7 @@ function DefaultTable({
         headerTable={headerTable}
         setCurrentCell={setCurrentCell}
         setIsOpen={setIsOpen}
+        handleFreeze={handleFreeze}
       />
     </>
   );

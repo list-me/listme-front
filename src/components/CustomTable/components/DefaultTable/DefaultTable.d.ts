@@ -37,4 +37,5 @@ export interface IDefaultTable {
   handleHidden: Function;
   setCurrentCell: React.Dispatch<any>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  handleFreeze: any;
 }

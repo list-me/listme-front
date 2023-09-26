@@ -62,6 +62,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     total,
     setTotal,
     uploadImages,
+    handleFreeze,
   } = useProductContext();
 
   const [cols, setCols] = useState<ICol[]>([]);
@@ -367,6 +368,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             handleHidden={handleHidden}
             setCurrentCell={setCurrentCell}
             setIsOpen={setIsOpen}
+            handleFreeze={handleFreeze}
           />
         </Container>
         <div ref={loadingRef} style={{ display: "none" }}>
