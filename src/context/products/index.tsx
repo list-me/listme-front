@@ -412,14 +412,12 @@ export const ProductContextProvider = ({
       return item;
     });
     setCustomFields(customs);
-    // const custom = buildCustomFields(template.fields.fields, {width: `${newSize.toString()}`}, col);
 
     templateRequests
       .customView(template.id, { fields: customs })
       .catch(() =>
         toast.error("Ocorreu um erro ao alterar o tamanho do campo"),
       );
-    // return custom;
   };
 
   const buildCustomFields = (

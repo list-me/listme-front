@@ -106,16 +106,6 @@ function HeaderDropDown({
               handleHidden(dropDownStatus.col, template, true);
             }}
             handleFrozen={handleFreeze}
-            // handleFrozen={() => {
-            //   const freezePlugins =
-            //     hotRef.current!.hotInstance?.getPlugin("manualColumnFreeze");
-
-            //   if (freezePlugins) {
-            //     freezePlugins?.freezeColumn(1);
-            //     hotRef.current!.hotInstance?.render();
-            //   }
-            //   return true;
-            // }}
             freeze={!!headerTable[dropDownStatus.col]?.frozen}
             handleSort={() => {}}
             handleDeleteColumn={() => {
