@@ -46,6 +46,7 @@ interface ITypeProductContext {
   COMPONENT_CELL_PER_TYPE: ICustomCellType;
   handleUpdateTemplate: Function;
   template: any;
+  setTemplate: React.Dispatch<React.SetStateAction<any>>;
   hidden: number[];
   handleHidden: Function;
   setHidden: Function;
@@ -595,12 +596,12 @@ export const ProductContextProvider = ({
     return filtered;
   };
 
-  const handleRemoveColumn = (
+  const handleRemoveColumn = async (
     _column: number,
     fields: any[],
     newColumns: any[],
     fieldId: string,
-  ): void => {
+  ): Promise<void> => {
     const newTemplate = template;
     // @ts-ignore
     newTemplate.fields.fields = fields;
@@ -635,6 +636,12 @@ export const ProductContextProvider = ({
       .catch((_error) =>
         toast.error("Ocorreu um erro ao excluir a coluna do template"),
       );
+    const id = window.location.pathname.substring(10);
+    if (id) {
+      setTimeout(() => {
+        handleRedirectAndGetProducts(id).then(() => {});
+      }, 0);
+    }
   };
 
   const value: ITypeProductContext = {
@@ -655,6 +662,7 @@ export const ProductContextProvider = ({
     COMPONENT_CELL_PER_TYPE,
     handleUpdateTemplate,
     template,
+    setTemplate,
     hidden,
     total,
     handleHidden,

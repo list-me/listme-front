@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 import { HotTable, HotColumn } from "@handsontable/react";
 import { toast } from "react-toastify";
 import Handsontable from "handsontable";
@@ -238,32 +238,40 @@ function DefaultTable({
     [],
   );
 
-  const ICON_HEADER: Record<IconType, ReactElement> = {
-    [IconType.Text]: <TextIcon />,
-    [IconType.Paragraph]: <ParagraphIcon />,
-    [IconType.Checked]: <CheckedIcon />,
-    [IconType.List]: <DropdownIcon />,
-    [IconType.File]: <FileIcon />,
-    [IconType.Radio]: <RadioIcon />,
-    [IconType.Relation]: <RelationIcon />,
-  };
-  const getIconByType = (type: IconType): ReactElement => {
-    return ICON_HEADER[type];
-  };
-  const styledHeader = (
-    column: number,
-    TH: HTMLTableHeaderCellElement,
-  ): void => {
-    const colData = template?.fields?.fields.find(
-      (item: any) => item.id === headerTable[column]?.data,
-    );
-    const { required: isRequired } = colData || {};
-    const columnHeaderValue = hotRef.current?.hotInstance?.getColHeader(column);
-    const valueToVisible = columnHeaderValue !== " " ? columnHeaderValue : "+";
-    const iconType = getIconByType(colData?.type);
+  const ICON_HEADER = useMemo(
+    () => ({
+      [IconType.Text]: <TextIcon />,
+      [IconType.Paragraph]: <ParagraphIcon />,
+      [IconType.Checked]: <CheckedIcon />,
+      [IconType.List]: <DropdownIcon />,
+      [IconType.File]: <FileIcon />,
+      [IconType.Radio]: <RadioIcon />,
+      [IconType.Relation]: <RelationIcon />,
+    }),
+    [],
+  );
+  const getIconByType = useCallback(
+    (type: IconType): ReactElement => {
+      return ICON_HEADER[type];
+    },
+    [ICON_HEADER],
+  );
+  const styledHeader = useCallback(
+    (column: number, TH: HTMLTableHeaderCellElement): void => {
+      const colData = template?.fields?.fields.find(
+        (item: any) => item.id === headerTable[column]?.data,
+      );
+      const { required: isRequired } = colData || {};
+      const columnHeaderValue =
+        hotRef.current?.hotInstance?.getColHeader(column);
+      const valueToVisible =
+        columnHeaderValue !== " " ? columnHeaderValue : "+";
+      const iconType = getIconByType(colData?.type);
 
-    TH.innerHTML = getStyledContent(iconType, valueToVisible, isRequired);
-  };
+      TH.innerHTML = getStyledContent(iconType, valueToVisible, isRequired);
+    },
+    [getIconByType, headerTable, hotRef, template?.fields?.fields],
+  );
 
   const [dropDownStatus, setDropDownStatus] = useState<IDropDownStatus>({
     type: "none",
