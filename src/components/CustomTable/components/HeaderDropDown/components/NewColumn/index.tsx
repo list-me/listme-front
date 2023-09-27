@@ -82,7 +82,9 @@ export const NewColumn: React.FC<NewColumnProps> = ({
         onClickModal={() => setIsOpenModal(false)}
         data={data}
         template={template}
-        onUpdate={(e: any, fields: any) => setNewColumn(e, fields)}
+        onUpdate={(e: any, fields: any) => {
+          return setNewColumn(e, fields);
+        }}
       />
       <DropdownMenu
         changeOpen={() => setIsOpen(!isOpen)}

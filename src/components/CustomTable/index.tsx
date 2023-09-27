@@ -103,7 +103,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     setCols(columnsCustom);
   }, [COMPONENT_CELL_PER_TYPE, headerTable]);
 
-  const handleDeleteColumn = (column: number): void => {
+  const handleDeleteColumn = (columnIndex: number): void => {
     setIsOpen(!isOpen);
     try {
       const fields = template.fields.fields?.filter((item: any) => {
@@ -113,23 +113,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       });
 
       const newColumns = [...columns];
+
       newColumns.splice(currentCell.order, 1);
-
-      const newCols = [...cols];
-      newCols.splice(Number(column), 1);
-      setCols(newCols);
-
-      const contentHeaders = newColumns
-        .filter((element) => {
-          const ids = fields.map((item: any) => item?.id) as any[];
-          if (ids.includes(element?.data)) {
-            return element;
-          }
-        })
-        .map((item) => item.title);
-
-      contentHeaders.push(" ");
-      setColHeaders(contentHeaders);
 
       handleRemoveColumn(
         Number(currentCell?.order),
@@ -138,7 +123,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         currentCell?.id,
       );
       toast.success("Coluna deletada com sucesso");
-      window.location.reload();
     } catch (error) {
       console.error(error);
       toast.error(
@@ -146,6 +130,13 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       );
     }
   };
+
+  const [rerenderKey, setRerenderKey] = useState(0);
+  useEffect(() => {
+    if (cols) {
+      setRerenderKey((prevKey) => prevKey + 1);
+    }
+  }, [cols]);
 
   const renderHeaderComponent = useCallback(
     (column: number, TH: HTMLTableHeaderCellElement) => {
@@ -338,7 +329,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             handleAddProductClick={() => handleAddProductClick()}
           />
         </Content>
-        <Container>
+        <Container key={rerenderKey}>
           <DefaultTable
             hotRef={hotRef}
             colHeaders={colHeaders}

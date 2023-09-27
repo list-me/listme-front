@@ -1,3 +1,5 @@
+import { IHeader } from "../../../../../context/products/product.context";
+
 /* eslint-disable no-param-reassign */
 const handleAfterColumnMove = (
   movedColumns: number[],
@@ -5,8 +7,7 @@ const handleAfterColumnMove = (
   dropIndex: number | undefined,
   movePossible: boolean,
   orderChanged: boolean,
-  columns: any,
-  setHeaders: React.Dispatch<React.SetStateAction<string[]>>,
+  columns: IHeader[],
   handleMove: Function,
 ): void => {
   if (!orderChanged) return;
@@ -17,7 +18,6 @@ const handleAfterColumnMove = (
     newColumns.splice(finalIndex, 0, movedColumn);
     finalIndex += 1;
   });
-
   newColumns = newColumns.map((item, index) => {
     if (Object.keys(item).length) {
       return {
@@ -28,7 +28,6 @@ const handleAfterColumnMove = (
     return item;
   });
 
-  setHeaders(newColumns.map((item) => item?.title ?? " "));
   handleMove(newColumns);
 };
 
