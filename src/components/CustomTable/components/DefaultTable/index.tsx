@@ -156,7 +156,6 @@ function DefaultTable({
       movePossible,
       orderChanged,
       columns,
-      setColHeaders,
       handleMove,
     );
   };
