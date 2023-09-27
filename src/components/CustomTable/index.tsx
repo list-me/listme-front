@@ -117,30 +117,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
       newColumns.splice(currentCell.order, 1);
 
-      // const newCols = [...cols];
-      // newCols.splice(Number(columnIndex), 1);
-      // const colsToState = newCols.map((item, index) => {
-      //   return { ...item, order: `${index}` };
-      // });
-
-      // const contentHeaders = newColumns
-      //   .filter((element) => {
-      //     const ids = fields.map((item: any) => item?.id) as any[];
-      //     if (ids.includes(element?.data)) {
-      //       return element;
-      //     }
-      //   })
-      //   .map((item) => item.title);
-
-      // contentHeaders.push(" ");
-      // setCols(newCols);
-      // setColHeaders(contentHeaders);
-      // setColumns(newCols);
-
-      // if (hotRef.current && hotRef.current.hotInstance) {
-      //   hotRef.current.hotInstance.render();
-      // }
-
       handleRemoveColumn(
         Number(currentCell?.order),
         fields,
