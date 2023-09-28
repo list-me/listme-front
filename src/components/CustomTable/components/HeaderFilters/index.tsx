@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Contents,
@@ -9,7 +9,6 @@ import {
   LeftContent,
   MoreOptions,
   RightContent,
-  Title,
 } from "../../../../pages/products/styles";
 import { ReactComponent as ArrowIcon } from "../../../../assets/arrow-left.svg";
 import { ReactComponent as EllipsisIcon } from "../../../../assets/ellipsis.svg";
@@ -22,6 +21,7 @@ import { ROUTES } from "../../../../constants/routes";
 import Button from "../../../Button";
 import { Temp } from "../../../Temp";
 import { IHeaderTable } from "../../../../context/products/product.context";
+import EditableText from "../../../EditableText";
 
 function HeaderFilters({
   template,
@@ -36,6 +36,8 @@ function HeaderFilters({
 }): JSX.Element {
   const navigate = useNavigate();
 
+  const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
+
   return (
     <>
       <Header>
@@ -48,8 +50,12 @@ function HeaderFilters({
           <IconTemplate>
             <FlagIcon />
           </IconTemplate>
-          <Title> {template?.name} </Title>
-          <EditIcon />
+          <EditableText
+            initialContent={template?.name}
+            isEditing={isEditingTitle}
+            setIsEditing={setIsEditingTitle}
+          />
+          <EditIcon onClick={() => setIsEditingTitle(true)} />
         </LeftContent>
         <RightContent>
           <MoreOptions>
