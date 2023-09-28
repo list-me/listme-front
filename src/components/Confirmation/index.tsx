@@ -46,7 +46,6 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
   };
 
   const handleClose = (): void => {
-    console.log("oi");
     handleChangeVisible();
     form.resetFields();
   };
