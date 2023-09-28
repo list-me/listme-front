@@ -38,7 +38,7 @@ export const templateRequests = {
       },
     });
 
-    return response.data[0];
+    return response.data;
   },
   update: async (id: string, template: any): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
