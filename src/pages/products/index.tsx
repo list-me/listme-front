@@ -9,7 +9,8 @@ import { Loading } from "../../components/Loading";
 export const Products: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { handleRedirectAndGetProducts, products } = useContext(productContext);
+  const { handleRedirectAndGetProducts, products, colHeaders } =
+    useContext(productContext);
 
   useEffect(() => {
     setIsLoading(true);
@@ -24,7 +25,9 @@ export const Products: React.FC = () => {
   return (
     <>
       <Content>
-        <Container>{isLoading ? <Loading /> : products && <Table />}</Container>
+        <Container>
+          {isLoading ? <Loading /> : products && colHeaders && <Table />}
+        </Container>
       </Content>
     </>
   );
