@@ -131,13 +131,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     }
   };
 
-  const [rerenderKey, setRerenderKey] = useState(0);
-  useEffect(() => {
-    if (cols) {
-      setRerenderKey((prevKey) => prevKey + 1);
-    }
-  }, [cols]);
-
   const renderHeaderComponent = useCallback(
     (column: number, TH: HTMLTableHeaderCellElement) => {
       if (TH.querySelector(".customHeader") && column === -1) {
@@ -329,8 +322,9 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             handleAddProductClick={() => handleAddProductClick()}
           />
         </Content>
-        <Container key={rerenderKey}>
+        <Container>
           <DefaultTable
+            key={colHeaders.join()}
             hotRef={hotRef}
             colHeaders={colHeaders}
             setColHeaders={setColHeaders}
