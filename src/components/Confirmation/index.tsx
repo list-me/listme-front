@@ -37,6 +37,7 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
 
     form.resetFields();
     handleConfirmation();
+    setInputText("");
   };
 
   const handleChangeValue = (value: string) => {
@@ -47,6 +48,12 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
   const handleClose = (): void => {
     handleChangeVisible();
     form.resetFields();
+  };
+
+  const handleKeyDown = () => {
+    if (!disabled) {
+      handleSubmit();
+    }
   };
 
   return (
@@ -60,7 +67,7 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
           <Description>
             <b>Atenção!</b> {description}{" "}
           </Description>
-          <Form form={form} onFinish={handleSubmit}>
+          <Form form={form} onSubmitCapture={(e) => e.preventDefault()}>
             <Input
               bordered
               label="Para confirmar digite a palavra"
@@ -72,6 +79,7 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
               background={false}
               validation={{ matchWord: pass }}
               padding="20px"
+              onPressEnter={handleKeyDown}
               handleCustomChange={handleChangeValue}
             />
             <ButtonCotainer>
@@ -86,8 +94,8 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
               <Button
                 backgroundColor="#FA5252"
                 color="#FFFF"
-                type="submit"
                 disabled={disabled}
+                onClick={handleSubmit}
               >
                 <TrashIcon />
                 Excluir

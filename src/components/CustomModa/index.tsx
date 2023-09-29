@@ -332,9 +332,6 @@ export const PersonalModal = ({
                 type: data?.type,
               }}
               onFinish={(fields) => {
-                // e.preventDefault();
-                // console.log(fields);
-
                 if (!fields.type) fields.type = type;
 
                 if (

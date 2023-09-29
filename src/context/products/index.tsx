@@ -79,6 +79,7 @@ interface ITypeProductContext {
     files: Array<File>,
     bucketUrl: string,
   ) => Promise<Array<string> | void>;
+  customFields: ICustomField[];
 }
 
 interface SignedUrlResponse {
@@ -401,17 +402,24 @@ export const ProductContextProvider = ({
   };
 
   const handleResize = (col: number, newSize: number, template: any) => {
+    let saveSize = newSize;
+
+    if (newSize < 210) {
+      saveSize = 210;
+    }
+
     const customs = customFields.map((item: any, index: any) => {
       if (item && item?.order == col.toString()) {
         return {
           ...item,
-          width: newSize.toString(),
+          width: saveSize.toString(),
           order: index.toString(),
         };
       }
 
       return item;
     });
+
     setCustomFields(customs);
 
     templateRequests
@@ -419,6 +427,13 @@ export const ProductContextProvider = ({
       .catch(() =>
         toast.error("Ocorreu um erro ao alterar o tamanho do campo"),
       );
+
+    const id = window.location.pathname.substring(10);
+    if (id && saveSize === 210) {
+      setTimeout(() => {
+        handleRedirectAndGetProducts(id).then(() => {});
+      }, 0);
+    }
   };
 
   const buildCustomFields = (
@@ -679,6 +694,7 @@ export const ProductContextProvider = ({
     handleGetTemplate,
     uploadImages,
     setTotal,
+    customFields,
   };
 
   return (
