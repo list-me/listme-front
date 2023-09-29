@@ -4,21 +4,21 @@ import { IHeader } from "../../../../../context/products/product.context";
 const handleAfterColumnMove = (
   movedColumns: number[],
   finalIndex: number,
-  dropIndex: number | undefined,
-  movePossible: boolean,
+  _dropIndex: number | undefined,
+  _movePossible: boolean,
   orderChanged: boolean,
   columns: IHeader[],
   handleMove: Function,
 ): void => {
   if (!orderChanged) return;
 
-  let newColumns = [...columns];
   movedColumns.forEach((oldIndex) => {
-    const movedColumn = newColumns.splice(oldIndex, 1)[0];
-    newColumns.splice(finalIndex, 0, movedColumn);
+    const movedColumn = columns.splice(oldIndex, 1)[0];
+    columns.splice(finalIndex, 0, movedColumn);
     finalIndex += 1;
   });
-  newColumns = newColumns.map((item, index) => {
+
+  const newColumns = columns.map((item, index) => {
     if (Object.keys(item).length) {
       return {
         ...item,

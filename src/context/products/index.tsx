@@ -2,6 +2,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -36,7 +37,7 @@ interface ITypeProductContext {
   setFilteredData: Function;
   handleRedirectAndGetProducts: (template: any) => Promise<any>;
   headerTable: IHeader[];
-  setHeaderTable: Function;
+  setHeaderTable: React.Dispatch<React.SetStateAction<IHeader[]>>;
   handleAdd: Function;
   handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>;
   editing: boolean;
@@ -492,6 +493,18 @@ export const ProductContextProvider = ({
       col,
       newfields,
     );
+
+    setHeaderTable((prev) => {
+      return prev.map((item, index) => {
+        if (+index === +col) {
+          return {
+            ...item,
+            hidden: able,
+          };
+        }
+        return { ...item };
+      });
+    });
 
     try {
       await templateRequests.customView(
