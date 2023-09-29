@@ -42,9 +42,9 @@ function EditableText({
     }
   }, [isEditing]);
 
-  function updateTitle(): void {
+  async function updateTitle(): Promise<void> {
     try {
-      templateRequests.update(template.id, { name: text });
+      await templateRequests.update(template.id, { name: text });
       toast.success("Template atualizado com sucesso");
     } catch (error) {
       toast.error("Erro ao atualizar template");

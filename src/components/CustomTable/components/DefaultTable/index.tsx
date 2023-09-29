@@ -287,7 +287,7 @@ function DefaultTable({
         return +current.order;
       }
       return maxOrder;
-    }, 0);
+    }, -Infinity);
   }
 
   return (
