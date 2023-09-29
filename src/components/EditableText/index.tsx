@@ -45,9 +45,9 @@ function EditableText({
   function updateTitle(): void {
     try {
       templateRequests.update(template.id, { name: text });
-      toast.success("Produto atualizado com sucesso");
-    } catch {
-      toast.success("Produto cadastrado com sucesso");
+      toast.success("Template atualizado com sucesso");
+    } catch (error) {
+      toast.error("Erro ao atualizar template");
     }
   }
 
