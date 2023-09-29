@@ -347,7 +347,7 @@ export const ProductContextProvider = ({
       } else {
         const newProduct = {
           id: productId,
-          product_template_id: window.location.pathname.substring(10),
+          templateId: window.location.pathname.substring(10),
           is_public: true,
           fields,
         };
