@@ -553,7 +553,6 @@ export const ProductContextProvider = ({
   };
 
   const handleMove = (col: any[]) => {
-    console.log("🚀 ~ file: index.tsx:556 ~ handleMove ~ col:", col);
     const fields = col
       .filter((item) => {
         if (Object.keys(item).length > 0) return item;
