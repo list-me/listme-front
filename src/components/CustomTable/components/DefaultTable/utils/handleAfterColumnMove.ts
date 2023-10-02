@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 import { IHeader } from "../../../../../context/products/product.context";
 
 /* eslint-disable no-param-reassign */
@@ -27,6 +28,26 @@ const handleAfterColumnMove = (
     }
     return item;
   });
+
+  const indexFirst = newColumns.findIndex((column) => column.frozen === false);
+
+  if (
+    indexFirst !== -1 &&
+    newColumns[indexFirst + 1] &&
+    newColumns[indexFirst + 1].frozen === true
+  ) {
+    newColumns[indexFirst].frozen = true;
+
+    let lastIndex = -1;
+
+    for (let i = newColumns.length - 1; i >= 0; i--) {
+      if (newColumns[i].frozen === true) {
+        lastIndex = i;
+        break;
+      }
+    }
+    newColumns[lastIndex].frozen = false;
+  }
 
   handleMove(newColumns);
 };
