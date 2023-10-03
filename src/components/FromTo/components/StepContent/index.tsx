@@ -1,34 +1,23 @@
-import React, { useState } from "react";
 import InitialStep from "../InitialStep";
 import ImportFile from "../ImportFile";
 import { StepContentContainer } from "./styles";
 import LoadingSpinner from "../LoadingSpinner";
 import ImportConfiguration from "../ImportConfiguration";
+import { useFromToContext } from "../../../../context/FromToContext";
 
-interface CSVRow {
-  [key: string]: string;
-}
+function StepContent(): JSX.Element {
+  const { currentStep } = useFromToContext();
 
-function StepContent({
-  currentStep,
-  setCurrentStep,
-}: {
-  currentStep: number;
-  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
-}): JSX.Element {
-  const [data, setData] = useState<CSVRow[]>([]);
   return (
     <StepContentContainer>
-      {currentStep === 0 && <InitialStep setCurrentStep={setCurrentStep} />}
-      {currentStep === 1 && (
-        <ImportFile setCurrentStep={setCurrentStep} setData={setData} />
-      )}
+      {currentStep === 0 && <InitialStep />}
+      {currentStep === 1 && <ImportFile />}
       {currentStep === 2 && (
         // <LoadingSpinner
         //   text="Carregando tabela..."
         //   subText="Quase lá... Estamos organizando seus arquivos"
         // />
-        <ImportConfiguration data={data} />
+        <ImportConfiguration />
       )}
     </StepContentContainer>
   );

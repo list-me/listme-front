@@ -9,12 +9,11 @@ import {
 import guitar from "../../../../assets/images/guitar.png";
 // @ts-ignore
 import cloud from "../../../../assets/images/cloud.png";
+import { useFromToContext } from "../../../../context/FromToContext";
 
-function InitialStep({
-  setCurrentStep,
-}: {
-  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
-}): JSX.Element {
+function InitialStep(): JSX.Element {
+  const { setCurrentStep } = useFromToContext();
+
   return (
     <ContainerInitialStep>
       <p>

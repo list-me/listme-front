@@ -1,10 +1,9 @@
 import { HotTable } from "@handsontable/react";
 import { ContainerImportConfiguration } from "./styles";
+import { useFromToContext } from "../../../../context/FromToContext";
 
-interface CSVRow {
-  [key: string]: string;
-}
-function ImportConfiguration({ data }: { data: CSVRow[] }): JSX.Element {
+function ImportConfiguration(): JSX.Element {
+  const { data } = useFromToContext();
   return data.length > 0 ? (
     <ContainerImportConfiguration>
       <HotTable

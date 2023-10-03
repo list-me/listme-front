@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useCallback, useState } from "react";
+import { useCallback } from "react";
 import {
   useDropzone,
   DropzoneOptions,
@@ -18,29 +18,28 @@ import {
 import { ReactComponent as Download } from "../../../../assets/download.svg";
 import { ReactComponent as FileIcon } from "../../../../assets/csv-file.svg";
 import { ReactComponent as CloseIcon } from "../../../../assets/close-gray.svg";
+import { useFromToContext } from "../../../../context/FromToContext";
 
 interface CSVRow {
   [key: string]: string;
 }
 
-const MyDropzone = ({
-  fileName,
-  setFileName,
-  setData,
-}: {
-  fileName: string;
-  setFileName: React.Dispatch<React.SetStateAction<string>>;
-  setData: React.Dispatch<React.SetStateAction<CSVRow[]>>;
-}): JSX.Element => {
-  const parseCSV = (file: File): void => {
-    Papa.parse<CSVRow>(file, {
-      header: true,
-      complete: (result) => {
-        console.log("Parsed Result:", result);
-        setData(result.data.slice(0, 10));
-      },
-    });
-  };
+const MyDropzone = (): JSX.Element => {
+  const { setData, fileName, setFileName } = useFromToContext();
+
+  const parseCSV = useCallback(
+    (file: File): void => {
+      Papa.parse<CSVRow>(file, {
+        header: true,
+        complete: (result) => {
+          console.log("Parsed Result:", result);
+          setData(result.data.slice(0, 10));
+        },
+      });
+    },
+    [setData],
+  );
+
   const onDrop = useCallback(
     (acceptedFiles: File[], fileRejections: File[]) => {
       if (fileRejections.length > 0) {
@@ -78,7 +77,7 @@ const MyDropzone = ({
       parseCSV(file);
       reader.readAsArrayBuffer(file);
     },
-    [setFileName],
+    [parseCSV, setFileName],
   );
 
   const { getRootProps, getInputProps } = useDropzone({

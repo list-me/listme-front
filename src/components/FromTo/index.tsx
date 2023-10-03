@@ -12,10 +12,10 @@ import {
 } from "./styles";
 import { ReactComponent as CloseIcon } from "../../assets/close-gray.svg";
 import StepContent from "./components/StepContent";
+import { useFromToContext } from "../../context/FromToContext";
 
 function FromTo(): JSX.Element {
-  const [currentStep, setCurrentStep] = useState(0);
-
+  const { currentStep, setCurrentStep } = useFromToContext();
   const stepsArray = [
     { title: "Importar arquivo de produtos", stepTitle: "Importar arquivo" },
     { title: "Importar arquivo de produtos", stepTitle: "Config. de import." },
@@ -56,10 +56,7 @@ function FromTo(): JSX.Element {
             ))}
           </StepsContainer>
         )}
-        <StepContent
-          currentStep={currentStep}
-          setCurrentStep={setCurrentStep}
-        />
+        <StepContent />
       </BoxFromTo>
     </ContainerFromTo>
   );

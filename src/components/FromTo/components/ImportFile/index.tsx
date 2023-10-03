@@ -2,26 +2,14 @@ import React, { useState } from "react";
 import MyDropzone from "../DropZone";
 import { NavigationButton } from "../NavigationButton/styles";
 import { BoxButtons, ContainerImportFile } from "./styles";
+import { useFromToContext } from "../../../../context/FromToContext";
 
-interface CSVRow {
-  [key: string]: string;
-}
+function ImportFile(): JSX.Element {
+  const { setCurrentStep, fileName } = useFromToContext();
 
-function ImportFile({
-  setCurrentStep,
-  setData,
-}: {
-  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
-  setData: React.Dispatch<React.SetStateAction<CSVRow[]>>;
-}): JSX.Element {
-  const [fileName, setFileName] = useState<string>("");
   return (
     <ContainerImportFile>
-      <MyDropzone
-        fileName={fileName}
-        setFileName={setFileName}
-        setData={setData}
-      />
+      <MyDropzone />
       <BoxButtons>
         <NavigationButton abort>Cancelar</NavigationButton>
         {fileName && (
