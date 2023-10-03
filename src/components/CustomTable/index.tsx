@@ -246,10 +246,10 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             const object: any = {};
             item.fields.forEach((field: any) => {
               const currentField = headerTable.find(
-                (e: any) => e.data == field.id,
+                (e: any) => e?.data == field?.id,
               );
 
-              if (currentField && field.value) {
+              if (currentField && field?.value) {
                 const test = !COMPONENT_CELL_PER_TYPE[
                   // @ts-ignore
                   currentField?.type?.toUpperCase()
