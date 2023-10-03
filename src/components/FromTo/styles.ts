@@ -14,6 +14,7 @@ export const ContainerFromTo = styled.div`
 export const BoxFromTo = styled.div<{ large?: boolean }>`
   width: ${(props) => (props.large ? "1038px" : "600px")};
   min-height: 350px;
+  max-height: 900px;
   background: ${({ theme }) => theme.colors.background.primary};
   border-radius: 8px;
   padding: 40px;
@@ -50,6 +51,9 @@ export const StepsContainer = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
+  width: 520px;
+  margin: 0 auto;
+  margin-bottom: 50px;
 `;
 
 export const StepItem = styled.div`

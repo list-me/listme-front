@@ -5,7 +5,6 @@ export const ContainerLoadingSpinner = styled.div`
   width: 287px;
   height: 261px;
   margin: 0 auto;
-  margin-top: 50px;
   display: flex;
   flex-direction: column;
   align-items: center;

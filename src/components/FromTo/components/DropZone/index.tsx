@@ -1,11 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import {
   useDropzone,
   DropzoneOptions,
   DropzoneRootProps,
   DropzoneInputProps,
 } from "react-dropzone";
+import { toast } from "react-toastify";
+import Papa from "papaparse";
 import {
   CloseButton,
   ContainerDropZone,
@@ -17,15 +19,53 @@ import { ReactComponent as Download } from "../../../../assets/download.svg";
 import { ReactComponent as FileIcon } from "../../../../assets/csv-file.svg";
 import { ReactComponent as CloseIcon } from "../../../../assets/close-gray.svg";
 
+interface CSVRow {
+  [key: string]: string;
+}
+
 const MyDropzone = ({
   fileName,
   setFileName,
+  setData,
 }: {
   fileName: string;
   setFileName: React.Dispatch<React.SetStateAction<string>>;
+  setData: React.Dispatch<React.SetStateAction<CSVRow[]>>;
 }): JSX.Element => {
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    acceptedFiles.forEach((file) => {
+  const parseCSV = (file: File): void => {
+    Papa.parse<CSVRow>(file, {
+      header: true,
+      complete: (result) => {
+        console.log("Parsed Result:", result);
+        setData(result.data.slice(0, 10));
+      },
+    });
+  };
+  const onDrop = useCallback(
+    (acceptedFiles: File[], fileRejections: File[]) => {
+      if (fileRejections.length > 0) {
+        toast.error(
+          "Arquivo Rejeitado: a extensão do arquivo não é permitida.",
+        );
+        return;
+      }
+
+      if (acceptedFiles.length === 0) {
+        toast.error("Nenhum arquivo válido fornecido.");
+        return;
+      }
+
+      const file = acceptedFiles[0];
+      // @ts-ignore
+      const ext = file.name.split(".").pop().toLowerCase();
+
+      if (!["csv", "xls", "xlsx"].includes(ext)) {
+        toast.error(
+          "Arquivo Rejeitado: a extensão do arquivo não é permitida.",
+        );
+        return;
+      }
+
       const reader = new FileReader();
 
       reader.onabort = () => console.log("Leitura de arquivo abortada.");
@@ -35,13 +75,16 @@ const MyDropzone = ({
       };
 
       setFileName(file.name);
+      parseCSV(file);
       reader.readAsArrayBuffer(file);
-    });
-  }, []);
+    },
+    [setFileName],
+  );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: ".csv, .xls, .xlsx",
+    maxFiles: 1,
   } as unknown as DropzoneOptions);
 
   if (fileName) {
@@ -51,7 +94,7 @@ const MyDropzone = ({
           <FileIcon />
         </IconContainer>
         <TitleFile>{fileName}</TitleFile>
-        <CloseButton>
+        <CloseButton onClick={() => setFileName("")}>
           <CloseIcon />
         </CloseButton>
       </ContainerPreview>

@@ -25,7 +25,7 @@ function FromTo(): JSX.Element {
 
   return (
     <ContainerFromTo>
-      <BoxFromTo>
+      <BoxFromTo large={currentStep === 2}>
         <HeaderModal>
           <TitleModal>
             {currentStep === 0
