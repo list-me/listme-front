@@ -17,7 +17,12 @@ function StepContent({
     <StepContentContainer>
       {currentStep === 0 && <InitialStep setCurrentStep={setCurrentStep} />}
       {currentStep === 1 && <ImportFile setCurrentStep={setCurrentStep} />}
-      {currentStep === 2 && <LoadingSpinner />}
+      {currentStep === 2 && (
+        <LoadingSpinner
+          text="Carregando tabela..."
+          subText="Quase lá... Estamos organizando seus arquivos"
+        />
+      )}
     </StepContentContainer>
   );
 }

@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import {
   useDropzone,
   DropzoneOptions,
