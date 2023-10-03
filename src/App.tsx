@@ -5,6 +5,7 @@ import theme from "./styles/theme";
 import GlobalStyles from "./styles/globalStyles";
 import { Toast } from "./components/Toast";
 import { AppContextProvider } from "./context";
+import FromTo from "./components/FromTo";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Toast />
         <GlobalStyles />
         <Router />
+        <FromTo />
       </ThemeProvider>
     </AppContextProvider>
   );

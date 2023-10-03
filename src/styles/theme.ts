@@ -35,6 +35,7 @@ const theme: ITheme = {
       ninth: "#F1F3F5",
       tenth: "#F3F4F6",
       eleventh: "#F8F9FA",
+      twelfth: "#ADB5BD",
     },
 
     background: {
