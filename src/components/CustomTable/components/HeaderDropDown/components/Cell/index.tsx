@@ -1,17 +1,7 @@
-import React, { ReactElement, useEffect, useRef, useState } from "react";
-import { Tag } from "antd";
-import { Container, Content, Options } from "./styles";
-import { ICellProps, IOption, IconType } from "./Cell.d";
+import React, { useEffect, useRef, useState } from "react";
+import { Content } from "./styles";
+import { ICellProps, IOption } from "./Cell.d";
 
-import { ReactComponent as TextIcon } from "../../../../../../assets/icons/headers/text-icon.svg";
-import { ReactComponent as ParagraphIcon } from "../../../../../../assets/icons/headers/textarea-icon.svg";
-import { ReactComponent as CheckedIcon } from "../../../../../../assets/icons/headers/checked-icon.svg";
-import { ReactComponent as DropdownIcon } from "../../../../../../assets/icons/headers/dropdown-icon.svg";
-import { ReactComponent as FileIcon } from "../../../../../../assets/icons/headers/file-icon.svg";
-import { ReactComponent as RadioIcon } from "../../../../../../assets/icons/headers/radio-icon.svg";
-import { ReactComponent as RelationIcon } from "../../../../../../assets/icons/headers/relation-icon.svg";
-
-import { ReactComponent as ChevronDownIcon } from "../../../../../../assets/chevron-down-small.svg";
 import { ReactComponent as PencilIcon } from "../../../../../../assets/pencei-icon.svg";
 import { ReactComponent as CopyIcon } from "../../../../../../assets/copy-icon.svg";
 import { ReactComponent as EyeOffIcon } from "../../../../../../assets/eye-off.svg";
@@ -39,20 +29,6 @@ export const HeaderCell: React.FC<ICellProps> = ({
   const [titleHeader, setTitleHeader] = useState<string>(label);
   const [posicaoPai, setPosicaoPai] = useState<number | null>(null);
   const [options, setOptions] = useState<any[]>();
-
-  const ICON_HEADER: Record<IconType, ReactElement> = {
-    [IconType.Text]: <TextIcon />,
-    [IconType.Paragraph]: <ParagraphIcon />,
-    [IconType.Checked]: <CheckedIcon />,
-    [IconType.List]: <DropdownIcon />,
-    [IconType.File]: <FileIcon />,
-    [IconType.Radio]: <RadioIcon />,
-    [IconType.Relation]: <RelationIcon />,
-  };
-
-  const getIconByType = (type: IconType): ReactElement => {
-    return ICON_HEADER[type];
-  };
 
   useEffect(() => {
     const customOptions: IOption[] = [
@@ -120,7 +96,7 @@ export const HeaderCell: React.FC<ICellProps> = ({
             handleSort(option, option.action);
           } else if (option?.label.includes("Ocultar")) {
             setIsOpen(!isOpen);
-            handleHidden(option, column?.hidden);
+            handleHidden();
             return;
           } else if (option.action === "freeze") {
             if (!freeze) {

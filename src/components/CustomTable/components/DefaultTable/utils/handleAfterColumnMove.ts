@@ -1,24 +1,25 @@
+/* eslint-disable no-plusplus */
+import { IHeader } from "../../../../../context/products/product.context";
+
 /* eslint-disable no-param-reassign */
 const handleAfterColumnMove = (
   movedColumns: number[],
   finalIndex: number,
-  dropIndex: number | undefined,
-  movePossible: boolean,
+  _dropIndex: number | undefined,
+  _movePossible: boolean,
   orderChanged: boolean,
-  columns: any,
-  setHeaders: React.Dispatch<React.SetStateAction<string[]>>,
+  columns: IHeader[],
   handleMove: Function,
 ): void => {
   if (!orderChanged) return;
 
-  let newColumns = [...columns];
   movedColumns.forEach((oldIndex) => {
-    const movedColumn = newColumns.splice(oldIndex, 1)[0];
-    newColumns.splice(finalIndex, 0, movedColumn);
+    const movedColumn = columns.splice(oldIndex, 1)[0];
+    columns.splice(finalIndex, 0, movedColumn);
     finalIndex += 1;
   });
 
-  newColumns = newColumns.map((item, index) => {
+  const newColumns = columns.map((item, index) => {
     if (Object.keys(item).length) {
       return {
         ...item,
@@ -28,7 +29,26 @@ const handleAfterColumnMove = (
     return item;
   });
 
-  setHeaders(newColumns.map((item) => item?.title ?? " "));
+  const indexFirst = newColumns.findIndex((column) => column.frozen === false);
+
+  if (
+    indexFirst !== -1 &&
+    newColumns[indexFirst + 1] &&
+    newColumns[indexFirst + 1].frozen === true
+  ) {
+    newColumns[indexFirst].frozen = true;
+
+    let lastIndex = -1;
+
+    for (let i = newColumns.length - 1; i >= 0; i--) {
+      if (newColumns[i].frozen === true) {
+        lastIndex = i;
+        break;
+      }
+    }
+    newColumns[lastIndex].frozen = false;
+  }
+
   handleMove(newColumns);
 };
 

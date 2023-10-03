@@ -3,6 +3,7 @@ interface IDropDownStatus {
   coordX: number;
   coordY: number;
   col: number;
+  invert: boolean;
 }
 
 // eslint-disable-next-line import/prefer-default-export

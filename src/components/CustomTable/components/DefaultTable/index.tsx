@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 import { HotTable, HotColumn } from "@handsontable/react";
 import { toast } from "react-toastify";
 import Handsontable from "handsontable";
@@ -31,6 +31,7 @@ import HeaderDropDown from "../HeaderDropDown";
 import { IDropDownStatus } from "../HeaderDropDown/HeaderDropDown";
 import { IconType } from "../HeaderDropDown/components/Cell/Cell.d";
 import getStyledContent from "./utils/getStyledContent";
+import { ICol } from "../../CustomTable";
 
 function DefaultTable({
   hotRef,
@@ -57,9 +58,13 @@ function DefaultTable({
   currentKeyword,
   handleNewColumn,
   handleHidden,
+  setCurrentCell,
+  setIsOpen,
+  hidden,
+  handleFreeze,
 }: IDefaultTable): JSX.Element {
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
-  const svgStringDropDownSmall: string = renderToString(<DropDownIconSmall />);
+
   useEffect(() => {
     if (hotRef.current) {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -151,7 +156,6 @@ function DefaultTable({
       movePossible,
       orderChanged,
       columns,
-      setColHeaders,
       handleMove,
     );
   };
@@ -171,7 +175,7 @@ function DefaultTable({
         ${svgStringDropDown}
       </div>`;
     },
-    [],
+    [svgStringDropDown],
   );
 
   const customRendererFileCallBack = useCallback(
@@ -196,7 +200,7 @@ function DefaultTable({
         template,
       );
     },
-    [],
+    [hotRef, loadingRef, template, uploadImages],
   );
 
   const customRendererDropdown = useCallback(
@@ -214,7 +218,7 @@ function DefaultTable({
         ${svgStringDropDown}
       </div>`;
     },
-    [],
+    [svgStringDropDown],
   );
 
   const customRendererRelation = useCallback(
@@ -234,39 +238,57 @@ function DefaultTable({
     [],
   );
 
-  const ICON_HEADER: Record<IconType, ReactElement> = {
-    [IconType.Text]: <TextIcon />,
-    [IconType.Paragraph]: <ParagraphIcon />,
-    [IconType.Checked]: <CheckedIcon />,
-    [IconType.List]: <DropdownIcon />,
-    [IconType.File]: <FileIcon />,
-    [IconType.Radio]: <RadioIcon />,
-    [IconType.Relation]: <RelationIcon />,
-  };
-  const getIconByType = (type: IconType): ReactElement => {
-    return ICON_HEADER[type];
-  };
-  const styledHeader = (
-    column: number,
-    TH: HTMLTableHeaderCellElement,
-  ): void => {
-    const colData = template?.fields?.fields.find(
-      (item: any) => item.id === headerTable[column]?.data,
-    );
-    const { required: isRequired } = colData || {};
-    const columnHeaderValue = hotRef.current?.hotInstance?.getColHeader(column);
-    const valueToVisible = columnHeaderValue !== " " ? columnHeaderValue : "+";
-    const iconType = getIconByType(colData?.type);
+  const ICON_HEADER = useMemo(
+    () => ({
+      [IconType.Text]: <TextIcon />,
+      [IconType.Paragraph]: <ParagraphIcon />,
+      [IconType.Checked]: <CheckedIcon />,
+      [IconType.List]: <DropdownIcon />,
+      [IconType.File]: <FileIcon />,
+      [IconType.Radio]: <RadioIcon />,
+      [IconType.Relation]: <RelationIcon />,
+    }),
+    [],
+  );
+  const getIconByType = useCallback(
+    (type: IconType): ReactElement => {
+      return ICON_HEADER[type];
+    },
+    [ICON_HEADER],
+  );
+  const styledHeader = useCallback(
+    (column: number, TH: HTMLTableHeaderCellElement): void => {
+      const colData = template?.fields?.fields.find(
+        (item: any) => item.id === headerTable[column]?.data,
+      );
+      const { required: isRequired } = colData || {};
+      const columnHeaderValue =
+        hotRef.current?.hotInstance?.getColHeader(column);
+      const valueToVisible =
+        columnHeaderValue !== " " ? columnHeaderValue : "+";
+      const iconType = getIconByType(colData?.type);
 
-    TH.innerHTML = getStyledContent(iconType, valueToVisible, isRequired);
-  };
+      TH.innerHTML = getStyledContent(iconType, valueToVisible, isRequired);
+    },
+    [getIconByType, headerTable, hotRef, template?.fields?.fields],
+  );
 
   const [dropDownStatus, setDropDownStatus] = useState<IDropDownStatus>({
     type: "none",
     coordX: 0,
     coordY: 0,
     col: 0,
+    invert: false,
   });
+
+  function getMaxOrderForFrozen(arr: ICol[]): number {
+    return arr.reduce((maxOrder: number, current) => {
+      if (current.frozen && +current.order > maxOrder) {
+        return +current.order;
+      }
+      return maxOrder;
+    }, -Infinity);
+  }
 
   return (
     <>
@@ -276,12 +298,13 @@ function DefaultTable({
         colHeaders={colHeaders}
         columns={cols}
         data={products}
+        hiddenColumns={{ columns: hidden }}
         manualColumnResize
         manualColumnMove
         rowHeaders
         rowHeights="52px"
         licenseKey="non-commercial-and-evaluation"
-        fixedColumnsStart={1}
+        fixedColumnsLeft={getMaxOrderForFrozen(cols) + 1}
         afterScrollVertically={afterScrollVerticallyCallback}
         beforeCopy={beforeCopyCallback}
         afterPaste={afterPasteCallback}
@@ -291,34 +314,35 @@ function DefaultTable({
           await handleResize(column, newSize, template);
         }}
         afterOnCellMouseUp={(event: any, coords, TD) => {
+          const limitWidth = window.innerWidth - 350;
+
+          const invert = event.clientX > limitWidth;
+
           const clickedElementClassList = event.target.classList;
           const correctElement = clickedElementClassList.contains("dropDown");
-
+          if (colHeaders.length - 1 === coords.col) {
+            setTimeout(() => {
+              setDropDownStatus({
+                type: "new",
+                coordX: event.clientX,
+                coordY: event.clientY,
+                col: coords.col,
+                invert,
+              });
+            });
+            return null;
+          }
           if (correctElement && coords.row === -1 && coords.col >= 0) {
             setTimeout(() => {
-              if (colHeaders.length - 1 === coords.col) {
-                setDropDownStatus({
-                  type: "new",
-                  coordX: event.clientX,
-                  coordY: event.clientY,
-                  col: coords.col,
-                });
-              } else {
-                setDropDownStatus({
-                  type: "cell",
-                  coordX: event.clientX,
-                  coordY: event.clientY,
-                  col: coords.col,
-                });
-              }
+              setDropDownStatus({
+                type: "cell",
+                coordX: event.clientX,
+                coordY: event.clientY,
+                col: coords.col,
+                invert,
+              });
             }, 0);
-          } else {
-            setDropDownStatus({
-              type: "none",
-              coordX: 0,
-              coordY: 0,
-              col: 0,
-            });
+            return null;
           }
         }}
         afterRenderer={(TD, row, col) => {
@@ -454,6 +478,9 @@ function DefaultTable({
         hotRef={hotRef}
         handleHidden={handleHidden}
         headerTable={headerTable}
+        setCurrentCell={setCurrentCell}
+        setIsOpen={setIsOpen}
+        handleFreeze={handleFreeze}
       />
     </>
   );

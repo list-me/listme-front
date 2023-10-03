@@ -32,15 +32,6 @@ export const IconTemplate = styled.span`
   padding: 16px;
 `;
 
-export const Title = styled.h3`
-  font-family: ${({ theme }) => theme.fonts.family.bold};
-  font-size: ${({ theme }) => theme.fonts.sizes.xlarge};
-  font-weight: 700;
-  line-height: 150%;
-
-  margin: 0;
-`;
-
 export const RightContent = styled.div`
   display: flex;
   align-items: center;

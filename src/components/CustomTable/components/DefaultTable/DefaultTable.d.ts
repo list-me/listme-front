@@ -35,4 +35,7 @@ export interface IDefaultTable {
   currentKeyword: string;
   handleNewColumn: Function;
   handleHidden: Function;
+  setCurrentCell: React.Dispatch<any>;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  handleFreeze: any;
 }

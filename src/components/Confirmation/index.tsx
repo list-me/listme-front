@@ -17,7 +17,6 @@ import {
   Description,
   Title,
 } from "./styles";
-import { CustomForm } from "../Form";
 
 export const Confirmation: React.FC<IPropsConfirmation> = ({
   pass,
@@ -30,21 +29,31 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
 }) => {
   const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(true);
+  const [inputText, setInputText] = useState("");
 
-  const handleSubmit = (value: any) => {
-    if (value && value[pass].trim() !== pass) return false;
+  const handleSubmit = () => {
+    if (inputText !== pass) return false;
     handleChangeVisible();
 
     form.resetFields();
     handleConfirmation();
+    setInputText("");
   };
 
-  const handleChangeValue = (value: string) =>
-    (value && value.trim() === pass) ?? setDisabled(false);
+  const handleChangeValue = (value: string) => {
+    value === pass && setDisabled(false);
+    if (value === pass) setInputText(value);
+  };
 
   const handleClose = (): void => {
     handleChangeVisible();
     form.resetFields();
+  };
+
+  const handleKeyDown = () => {
+    if (!disabled) {
+      handleSubmit();
+    }
   };
 
   return (
@@ -56,13 +65,12 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
         </Title>
         <Container>
           <Description>
-            {" "}
             <b>Atenção!</b> {description}{" "}
           </Description>
-          <Form form={form} onFinish={handleSubmit}>
+          <Form form={form} onSubmitCapture={(e) => e.preventDefault()}>
             <Input
               bordered
-              label={`Para confirmar digite a palavra  `}
+              label="Para confirmar digite a palavra"
               name={pass}
               type="text"
               width="482px"
@@ -71,7 +79,8 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
               background={false}
               validation={{ matchWord: pass }}
               padding="20px"
-              // handleCustomChange={handleChangeValue}
+              onPressEnter={handleKeyDown}
+              handleCustomChange={handleChangeValue}
             />
             <ButtonCotainer>
               <Button
@@ -80,13 +89,13 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
                 type="button"
                 onClick={handleClose}
               >
-                {" "}
                 Cancel
               </Button>
               <Button
                 backgroundColor="#FA5252"
                 color="#FFFF"
-                // type="submit"
+                disabled={disabled}
+                onClick={handleSubmit}
               >
                 <TrashIcon />
                 Excluir

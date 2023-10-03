@@ -74,24 +74,6 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
       ? this.props.dataProvider[row]?.id
       : undefined;
 
-    // const tagValues: Array<string> = JSON.parse(
-    //   td.getAttribute("data-new-value") || "[]",
-    // );
-
-    // let currentValue: string[] = [];
-    // if (tagValues?.length && originalValue?.length) {
-    //   currentValue = tagValues
-    //     .filter((item: any) => !originalValue.includes(item))
-    //     .concat(
-    //       originalValue?.filter((item1: any) => !tagValues.includes(item1)),
-    //     );
-    // }
-
-    // console.log("BF", { currentValue, tagValues, originalValue });
-    // if (!currentValue.length) currentValue = tagValues;
-
-    // console.log({ currentValue, tagValues, originalValue });
-
     this.setState({
       newValue: originalValue,
       field: prop,
@@ -151,8 +133,6 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
                 this.setValue(images);
 
                 this.TD.setAttribute("data-new-value", JSON.stringify(images));
-
-                console.log({ images });
               }}
             />
           ) : (

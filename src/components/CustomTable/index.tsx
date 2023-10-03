@@ -49,6 +49,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     template,
     COMPONENT_CELL_PER_TYPE,
     headerTable,
+    setHeaderTable,
     hidden,
     handleResize,
     handleHidden,
@@ -62,6 +63,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     total,
     setTotal,
     uploadImages,
+    handleFreeze,
   } = useProductContext();
 
   const [cols, setCols] = useState<ICol[]>([]);
@@ -69,7 +71,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
   const [currentCell, setCurrentCell] = useState<any>({});
 
-  const [columns, setColumns] = useState<IHeader[]>(headerTable);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   function handleAddProductClick(): void {
@@ -102,7 +103,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     setCols(columnsCustom);
   }, [COMPONENT_CELL_PER_TYPE, headerTable]);
 
-  const handleDeleteColumn = (column: number): void => {
+  const handleDeleteColumn = (columnIndex: number): void => {
     setIsOpen(!isOpen);
     try {
       const fields = template.fields.fields?.filter((item: any) => {
@@ -111,24 +112,9 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         }
       });
 
-      const newColumns = [...columns];
+      const newColumns = [...headerTable];
+
       newColumns.splice(currentCell.order, 1);
-
-      const newCols = [...cols];
-      newCols.splice(Number(column), 1);
-      setCols(newCols);
-
-      const contentHeaders = newColumns
-        .filter((element) => {
-          const ids = fields.map((item: any) => item?.id) as any[];
-          if (ids.includes(element?.data)) {
-            return element;
-          }
-        })
-        .map((item) => item.title);
-
-      contentHeaders.push(" ");
-      setColHeaders(contentHeaders);
 
       handleRemoveColumn(
         Number(currentCell?.order),
@@ -136,7 +122,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         newColumns,
         currentCell?.id,
       );
-      window.location.reload();
       toast.success("Coluna deletada com sucesso");
     } catch (error) {
       console.error(error);
@@ -160,7 +145,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         myComponent.className = "customHeader";
 
         const col = template?.fields?.fields.find((item: any) => {
-          if (item.id === columns[column]?.data) {
+          if (item.id === headerTable[column]?.data) {
             return item;
           }
         });
@@ -176,17 +161,17 @@ const CustomTable: React.FC<CustomTableProps> = () => {
                   className: "htLeft htMiddle",
                   frozen: false,
                   hidden: false,
-                  order: String(columns.length + 1),
+                  order: String(headerTable.length + 1),
                   width: "300",
                 };
 
-                const newPosition = [...columns, newColumn];
+                const newPosition = [...headerTable, newColumn];
                 newPosition.splice(newPosition.length - 2, 1);
                 newPosition.push({});
-                setColumns(newPosition);
+                setHeaderTable(newPosition);
 
-                const contentHeaders = columns.map((item) => item?.title);
-                contentHeaders.splice(columns.length - 1, 1);
+                const contentHeaders = headerTable.map((item) => item?.title);
+                contentHeaders.splice(headerTable.length - 1, 1);
                 contentHeaders.push(newColumn?.title);
                 contentHeaders.push(" ");
                 setColHeaders(contentHeaders);
@@ -235,8 +220,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       TH.replaceChildren(myComponent);
     },
     [
+      headerTable,
       colHeaders,
-      columns,
       handleHidden,
       handleNewColumn,
       headerTable,
@@ -339,6 +324,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         </Content>
         <Container>
           <DefaultTable
+            key={colHeaders.join()}
             hotRef={hotRef}
             colHeaders={colHeaders}
             setColHeaders={setColHeaders}
@@ -355,8 +341,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             renderHeaderComponent={renderHeaderComponent}
             hidden={hidden}
             handleResize={handleResize}
-            columns={columns}
-            setColumns={setColumns}
+            columns={headerTable}
+            setColumns={setHeaderTable}
             handleMove={handleMove}
             uploadImages={uploadImages}
             page={page}
@@ -365,6 +351,9 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             currentKeyword={currentKeyword}
             handleNewColumn={handleNewColumn}
             handleHidden={handleHidden}
+            setCurrentCell={setCurrentCell}
+            setIsOpen={setIsOpen}
+            handleFreeze={handleFreeze}
           />
         </Container>
         <div ref={loadingRef} style={{ display: "none" }}>
