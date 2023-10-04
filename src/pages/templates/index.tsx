@@ -18,7 +18,6 @@ import { ReactComponent as TrashIcon } from "../../assets/trash-icon.svg";
 import { CustomTable } from "../../components/Table/index";
 import { templateRequests } from "../../services/apis/requests/template";
 import { TemplateDefault } from "../../components/TemplateDefault";
-import Select from "../../components/Select";
 
 interface IPaginationTemplate {
   page?: number;

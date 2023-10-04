@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MyDropzone from "../DropZone";
-import { NavigationButton } from "../NavigationButton/styles";
-import { BoxButtons, ContainerImportFile } from "./styles";
+import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
+import { ContainerImportFile } from "./styles";
 import { useFromToContext } from "../../../../context/FromToContext";
 
 function ImportFile(): JSX.Element {

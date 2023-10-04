@@ -1,7 +1,19 @@
 import styled from "styled-components";
 
-// eslint-disable-next-line import/prefer-default-export
 export const ContainerImportConfiguration = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+export const AlertText = styled.p`
+  margin-top: 12px;
+  margin-bottom: 24px;
+  color: ${({ theme }) => theme.colors.tertiary};
+  font-family: ${({ theme }) => theme.fonts.family.default};
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
+`;
+
+export const BoxHotTable = styled.div`
   overflow: auto;
   .htCore td,
   .htCore th {

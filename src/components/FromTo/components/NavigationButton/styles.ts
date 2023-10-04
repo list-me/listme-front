@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-// eslint-disable-next-line import/prefer-default-export
 export const NavigationButton = styled.button<{ abort?: boolean }>`
   background: ${(props) =>
     props.abort
@@ -21,4 +20,9 @@ export const NavigationButton = styled.button<{ abort?: boolean }>`
     filter: ${(props) =>
       props.abort ? "brightness(0.98)" : "brightness(0.88)"};
   }
+`;
+
+export const BoxButtons = styled.div`
+  display: flex;
+  gap: 24px;
 `;
