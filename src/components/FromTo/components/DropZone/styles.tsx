@@ -1,7 +1,11 @@
 import styled from "styled-components";
 
-export const ContainerDropZone = styled.div`
-  border: 2px dashed ${({ theme }) => theme.colors.grayscale.eighth};
+export const ContainerDropZone = styled.div<{ isDragActive: boolean }>`
+  border: 2px dashed
+    ${(props) =>
+      props.isDragActive
+        ? props.theme.colors.primary
+        : props.theme.colors.grayscale.eighth};
   border-radius: 8px;
   height: 172px;
   display: flex;
@@ -30,7 +34,10 @@ export const ContainerDropZone = styled.div`
   svg {
     width: 24px;
     height: 24px;
-    stroke: ${({ theme }) => theme.colors.grayscale.seventh};
+    stroke: ${(props) =>
+      props.isDragActive
+        ? props.theme.colors.primary
+        : props.theme.colors.grayscale.seventh};
   }
 `;
 export const ContainerPreview = styled.div`

@@ -80,7 +80,7 @@ const MyDropzone = (): JSX.Element => {
     [parseCSV, setFileName],
   );
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: ".csv, .xls, .xlsx",
     maxFiles: 1,
@@ -101,12 +101,19 @@ const MyDropzone = (): JSX.Element => {
   }
 
   return (
-    <ContainerDropZone {...(getRootProps() as DropzoneRootProps)}>
+    <ContainerDropZone
+      {...(getRootProps() as DropzoneRootProps)}
+      isDragActive={isDragActive}
+    >
       <input {...(getInputProps() as DropzoneInputProps)} />
       <span>
         <Download />
       </span>
-      <p>Clique para selecionar arquivo ou arraste até aqui</p>
+      <p>
+        {isDragActive
+          ? "Solte o arquivo aqui!"
+          : "Clique para selecionar arquivo ou arraste até aqui"}
+      </p>
       <span>Arquivos permitidos: csv, xls e xlsx</span>
     </ContainerDropZone>
   );
