@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   BoxFromTo,
   CloseButton,
@@ -15,7 +14,7 @@ import StepContent from "./components/StepContent";
 import { useFromToContext } from "../../context/FromToContext";
 
 function FromTo(): JSX.Element {
-  const { currentStep, setCurrentStep } = useFromToContext();
+  const { currentStep } = useFromToContext();
   const stepsArray = [
     { title: "Importar arquivo de produtos", stepTitle: "Importar arquivo" },
     { title: "Importar arquivo de produtos", stepTitle: "Config. de import." },

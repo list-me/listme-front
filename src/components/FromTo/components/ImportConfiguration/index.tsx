@@ -13,11 +13,11 @@ function ImportConfiguration(): JSX.Element {
         licenseKey="non-commercial-and-evaluation"
         manualColumnResize
         rowHeights={56}
-        colWidths={300}
         viewportColumnRenderingOffset={Object.keys(data[0]).length + 1}
         viewportRowRenderingOffset={11}
         height={435}
         width={958}
+        autoColumnSize
       />
     </ContainerImportConfiguration>
   ) : (
