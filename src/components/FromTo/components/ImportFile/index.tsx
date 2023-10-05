@@ -5,13 +5,15 @@ import { ContainerImportFile } from "./styles";
 import { useFromToContext } from "../../../../context/FromToContext";
 
 function ImportFile(): JSX.Element {
-  const { setCurrentStep, fileName } = useFromToContext();
+  const { setCurrentStep, fileName, setFromToIsOpened } = useFromToContext();
 
   return (
     <ContainerImportFile>
       <MyDropzone />
       <BoxButtons>
-        <NavigationButton abort>Cancelar</NavigationButton>
+        <NavigationButton abort onClick={() => setFromToIsOpened(false)}>
+          Cancelar
+        </NavigationButton>
         {fileName && (
           <NavigationButton onClick={() => setCurrentStep((prev) => prev + 1)}>
             Continuar

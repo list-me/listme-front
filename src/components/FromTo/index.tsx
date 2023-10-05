@@ -13,15 +13,15 @@ import { ReactComponent as CloseIcon } from "../../assets/close-gray.svg";
 import StepContent from "./components/StepContent";
 import { useFromToContext } from "../../context/FromToContext";
 
-function FromTo(): JSX.Element {
-  const { currentStep } = useFromToContext();
+function FromTo(): JSX.Element | null {
+  const { currentStep, fromToIsOpened, setFromToIsOpened } = useFromToContext();
   const stepsArray = [
     { title: "Importar arquivo de produtos", stepTitle: "Importar arquivo" },
     { title: "Importar arquivo de produtos", stepTitle: "Config. de import." },
     { title: "Importar arquivo de produtos", stepTitle: "Opç. de import." },
     { title: "Importar arquivo de produtos", stepTitle: "Vincular campos" },
   ];
-
+  if (!fromToIsOpened) return null;
   return (
     <ContainerFromTo>
       <BoxFromTo large={currentStep === 2}>
@@ -31,7 +31,7 @@ function FromTo(): JSX.Element {
               ? "Importar produtos"
               : stepsArray[currentStep - 1].title}
           </TitleModal>
-          <CloseButton>
+          <CloseButton onClick={() => setFromToIsOpened(false)}>
             <CloseIcon />
           </CloseButton>
         </HeaderModal>

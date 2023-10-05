@@ -4,6 +4,8 @@ import { StepContentContainer } from "./styles";
 import LoadingSpinner from "../LoadingSpinner";
 import ImportConfiguration from "../ImportConfiguration";
 import { useFromToContext } from "../../../../context/FromToContext";
+import ImportOptions from "../ImportOptions";
+import LinkFields from "../LinkFields";
 
 function StepContent(): JSX.Element {
   const { currentStep } = useFromToContext();
@@ -19,6 +21,8 @@ function StepContent(): JSX.Element {
         // />
         <ImportConfiguration />
       )}
+      {currentStep === 3 && <ImportOptions />}
+      {currentStep === 4 && <LinkFields />}
     </StepContentContainer>
   );
 }

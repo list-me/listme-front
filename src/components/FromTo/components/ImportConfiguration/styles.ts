@@ -15,6 +15,23 @@ export const AlertText = styled.p`
 
 export const BoxHotTable = styled.div`
   overflow: auto;
+  .handsontable .wtHolder {
+    ::-webkit-scrollbar {
+      width: 15px !important;
+      height: 15px !important;
+    }
+    ::-webkit-scrollbar-track {
+      background: ${({ theme }) => theme.colors.grayscale.ninth} !important;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #cccccc !important;
+      border-radius: 8px !important;
+      border: 2px solid transparent;
+    }
+  }
+  .htCore {
+    width: 100%;
+  }
   .htCore td,
   .htCore th {
     border-left: none !important;

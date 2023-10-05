@@ -26,7 +26,12 @@ function ImportConfiguration(): JSX.Element {
         Mostrando os 10 primeiros itens encontrados neste arquivo
       </AlertText>
       <BoxButtons>
-        <NavigationButton abort>Voltar</NavigationButton>
+        <NavigationButton
+          abort
+          onClick={() => setCurrentStep((prev) => prev - 1)}
+        >
+          Voltar
+        </NavigationButton>
         <NavigationButton onClick={() => setCurrentStep((prev) => prev + 1)}>
           Continuar
         </NavigationButton>

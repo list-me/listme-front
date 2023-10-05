@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface FromToContextType {
   currentStep: number;
@@ -7,6 +7,8 @@ interface FromToContextType {
   setData: React.Dispatch<React.SetStateAction<CSVRow[]>>;
   fileName: string;
   setFileName: React.Dispatch<React.SetStateAction<string>>;
+  fromToIsOpened: boolean;
+  setFromToIsOpened: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface CSVRow {
@@ -23,6 +25,15 @@ export function FromToContextProvider({
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<CSVRow[]>([]);
   const [fileName, setFileName] = useState<string>("");
+  const [fromToIsOpened, setFromToIsOpened] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!fromToIsOpened) {
+      setCurrentStep(0);
+      setData([]);
+      setFileName("");
+    }
+  }, [fromToIsOpened]);
 
   const value = {
     currentStep,
@@ -31,6 +42,8 @@ export function FromToContextProvider({
     setData,
     fileName,
     setFileName,
+    fromToIsOpened,
+    setFromToIsOpened,
   };
 
   return (

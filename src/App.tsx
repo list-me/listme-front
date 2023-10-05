@@ -5,16 +5,14 @@ import theme from "./styles/theme";
 import GlobalStyles from "./styles/globalStyles";
 import { Toast } from "./components/Toast";
 import { AppContextProvider } from "./context";
-import FromTo from "./components/FromTo";
 
-function App() {
+function App(): JSX.Element {
   return (
     <AppContextProvider>
       <ThemeProvider theme={theme}>
         <Toast />
         <GlobalStyles />
         <Router />
-        <FromTo />
       </ThemeProvider>
     </AppContextProvider>
   );

@@ -10,6 +10,7 @@ export const ContainerFromTo = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 10;
 `;
 export const BoxFromTo = styled.div<{ large?: boolean }>`
   width: ${(props) => (props.large ? "1038px" : "600px")};

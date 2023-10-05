@@ -1,29 +1,29 @@
-const Select = ({
+import Select from "react-select";
+import { ContainerSelect, LabelSelect, customStyles } from "./styles";
+
+const SelectComponent = ({
   select,
   setSelect,
   options,
   labelText,
-  disabledOption,
+  placeHolder,
+  small,
 }: ISelect): JSX.Element => {
   return (
-    <>
-      {labelText && <label htmlFor={labelText}>{labelText}</label>}
-      <select
-        id={labelText}
+    <ContainerSelect>
+      {labelText && <LabelSelect htmlFor={labelText}>{labelText}</LabelSelect>}
+      <Select
+        isSearchable={false}
         value={select}
-        onChange={({ target }) => setSelect(target.value)}
-      >
-        <option value="" disabled>
-          {disabledOption}
-        </option>
-        {options.map((item) => (
-          <option key={item.value} value={item.value}>
-            {item.label}
-          </option>
-        ))}
-      </select>
-    </>
+        onChange={(selectedOption) => setSelect(selectedOption as string)}
+        options={options}
+        styles={customStyles({ small }) as any}
+        placeholder={placeHolder}
+        // menuPortalTarget={document.body}
+        menuPosition="fixed"
+      />
+    </ContainerSelect>
   );
 };
 
-export default Select;
+export default SelectComponent;
