@@ -58,7 +58,7 @@ function ImportConfiguration(): JSX.Element {
             viewportColumnRenderingOffset={Object.keys(data[0]).length + 1}
             viewportRowRenderingOffset={11}
             height={435}
-            width={958}
+            width={943}
             autoColumnSize
           />
         )}

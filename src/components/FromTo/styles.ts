@@ -14,11 +14,28 @@ export const ContainerFromTo = styled.div`
 `;
 export const BoxFromTo = styled.div<{ large?: boolean }>`
   width: ${(props) => (props.large ? "1038px" : "600px")};
-  min-height: 350px;
+  min-height: ${(props) => (props.large ? "890px" : "350px")};
   max-height: 900px;
   background: ${({ theme }) => theme.colors.background.primary};
   border-radius: 8px;
   padding: 40px;
+  @media (max-height: 950px) {
+    min-height: ${(props) => props.large && "initial"};
+    height: ${(props) => props.large && "90vh"};
+    overflow: ${(props) => props.large && "auto"};
+    ::-webkit-scrollbar {
+      width: 15px;
+      height: 15px;
+    }
+    ::-webkit-scrollbar-track {
+      background: ${({ theme }) => theme.colors.grayscale.ninth};
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #cccccc;
+      border-radius: 8px;
+      border: 2px solid transparent;
+    }
+  }
 `;
 
 export const HeaderModal = styled.div`
@@ -68,6 +85,7 @@ export const StepItem = styled.div`
       display: none;
     }
   }
+  position: relative;
 `;
 export const StepNumber = styled.p<{ active: boolean }>`
   color: ${(props) =>
@@ -88,7 +106,6 @@ export const StepNumber = styled.p<{ active: boolean }>`
   height: 24px;
   border-radius: 50%;
   margin: 0;
-  position: relative;
   ::after,
   ::before {
     content: "";
@@ -106,7 +123,7 @@ export const StepNumber = styled.p<{ active: boolean }>`
 `;
 export const StepSubtitle = styled.p<{ active: boolean }>`
   position: absolute;
-  transform: translateX(-40%);
+  transform: translateX(-30%);
   color: ${(props) =>
     props.active
       ? props.theme.colors.primary
@@ -115,5 +132,6 @@ export const StepSubtitle = styled.p<{ active: boolean }>`
   font-size: ${({ theme }) => theme.fonts.sizes.small};
   font-weight: ${({ theme }) => theme.fonts.weights.bold};
   margin: 0;
+  width: 130px;
   margin-top: 4px;
 `;

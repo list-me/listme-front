@@ -41,7 +41,6 @@ export const BoxHotTable = styled.div`
   .htCore td,
   .htCore th {
     border-left: none !important;
-    border-right: none !important;
     border-top: none !important;
     padding-left: 1rem;
   }
