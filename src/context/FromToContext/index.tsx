@@ -33,6 +33,8 @@ interface FromToContextType {
   parseCSV: (file: File) => void;
   currentFile: File | undefined;
   setCurrentFile: React.Dispatch<React.SetStateAction<File | undefined>>;
+  colHeadersToPreviewTable: string[];
+  setColHeadersToPreviewTable: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 interface CSVRow {
@@ -50,6 +52,9 @@ export function FromToContextProvider({
   const [data, setData] = useState<CSVRow[]>([]);
   const [currentFile, setCurrentFile] = useState<File>();
   const [fromToIsOpened, setFromToIsOpened] = useState<boolean>(false);
+  const [colHeadersToPreviewTable, setColHeadersToPreviewTable] = useState([
+    "",
+  ]);
   const [valuesImportConfiguration, setValuesImportConfiguration] =
     useState<IValuesImportConfiguration>({
       separator: {
@@ -103,7 +108,9 @@ export function FromToContextProvider({
 
             return newRow;
           });
-          setData(transformedData.slice(0, 10));
+          const newData = transformedData.slice(0, 10);
+          setData(newData);
+          setColHeadersToPreviewTable(Object.keys(newData[0]));
         },
       });
     },
@@ -138,6 +145,8 @@ export function FromToContextProvider({
     parseCSV,
     currentFile,
     setCurrentFile,
+    colHeadersToPreviewTable,
+    setColHeadersToPreviewTable,
   };
 
   return (

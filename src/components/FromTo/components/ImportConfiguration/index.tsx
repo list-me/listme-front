@@ -16,6 +16,7 @@ function ImportConfiguration(): JSX.Element {
     setCurrentStep,
     valuesImportConfiguration,
     setValuesImportConfiguration,
+    colHeadersToPreviewTable,
   } = useFromToContext();
 
   function handleChange(title: string, value: string): void {
@@ -47,9 +48,8 @@ function ImportConfiguration(): JSX.Element {
       </BoxSelects>
       <BoxHotTable>
         <HotTable
-          key={data as any}
           data={data}
-          colHeaders={Object.keys(data[0])}
+          colHeaders={colHeadersToPreviewTable}
           readOnly
           licenseKey="non-commercial-and-evaluation"
           manualColumnResize
