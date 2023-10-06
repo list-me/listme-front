@@ -4,11 +4,11 @@ const optionsSeparator = [
     label: "Vírgula (,)",
   },
   {
-    value: ",",
+    value: ";",
     label: "Ponto e Vírgula (;)",
   },
   {
-    value: ",",
+    value: "|",
     label: "Pipe (|)",
   },
   {
