@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import Papa from "papaparse";
@@ -33,8 +34,7 @@ interface FromToContextType {
   parseCSV: (file: File) => void;
   currentFile: File | undefined;
   setCurrentFile: React.Dispatch<React.SetStateAction<File | undefined>>;
-  colHeadersToPreviewTable: string[];
-  setColHeadersToPreviewTable: React.Dispatch<React.SetStateAction<string[]>>;
+  colHeadersToPreviewTable: string[] | null;
 }
 
 interface CSVRow {
@@ -52,9 +52,12 @@ export function FromToContextProvider({
   const [data, setData] = useState<CSVRow[]>([]);
   const [currentFile, setCurrentFile] = useState<File>();
   const [fromToIsOpened, setFromToIsOpened] = useState<boolean>(false);
-  const [colHeadersToPreviewTable, setColHeadersToPreviewTable] = useState([
-    "",
-  ]);
+
+  const colHeadersToPreviewTable = useMemo((): string[] | null => {
+    if (data[0]) return Object.keys(data[0]);
+    return null;
+  }, [data]);
+
   const [valuesImportConfiguration, setValuesImportConfiguration] =
     useState<IValuesImportConfiguration>({
       separator: {
@@ -110,7 +113,6 @@ export function FromToContextProvider({
           });
           const newData = transformedData.slice(0, 10);
           setData(newData);
-          setColHeadersToPreviewTable(Object.keys(newData[0]));
         },
       });
     },
@@ -146,7 +148,6 @@ export function FromToContextProvider({
     currentFile,
     setCurrentFile,
     colHeadersToPreviewTable,
-    setColHeadersToPreviewTable,
   };
 
   return (
