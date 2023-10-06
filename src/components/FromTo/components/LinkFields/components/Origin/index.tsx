@@ -1,11 +1,18 @@
+/* eslint-disable react/require-default-props */
 import React from "react";
 import { ContainerOrigin, SubTitleOrigin, TitleOrigin } from "./styles";
 
-function Origin(): JSX.Element {
+function Origin({
+  title,
+  example,
+}: {
+  title: string;
+  example?: string | number;
+}): JSX.Element {
   return (
     <ContainerOrigin>
-      <TitleOrigin>Nome</TitleOrigin>
-      <SubTitleOrigin>Amostra: Luminária Davis</SubTitleOrigin>
+      <TitleOrigin>{title}</TitleOrigin>
+      {example ? <SubTitleOrigin>Amostra: {example}</SubTitleOrigin> : <></>}
     </ContainerOrigin>
   );
 }
