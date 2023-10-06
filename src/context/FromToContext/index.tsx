@@ -36,7 +36,7 @@ interface FromToContextType {
 }
 
 interface CSVRow {
-  [key: string]: string;
+  [key: string]: string | number;
 }
 
 const FromToContext = createContext<FromToContextType | undefined>(undefined);
@@ -77,11 +77,38 @@ export function FromToContextProvider({
         delimiter: valuesImportConfiguration.separator.value,
         quoteChar: valuesImportConfiguration.delimiter.value,
         complete: (result) => {
-          setData(result.data.slice(0, 10));
+          const transformedData = result.data.map((row) => {
+            const newRow = { ...row };
+
+            // Iterando sobre cada chave (coluna) do objeto row
+            Object.keys(newRow).forEach((key) => {
+              const value = newRow[key];
+
+              if (typeof value === "string") {
+                let numberValue;
+
+                if (valuesImportConfiguration.decimal.value === ",") {
+                  numberValue = value.replace(".", ",");
+                } else if (valuesImportConfiguration.decimal.value === ".") {
+                  numberValue = value.replace(",", ".");
+                } else {
+                  numberValue = value;
+                }
+
+                if (!Number.isNaN(numberValue)) {
+                  newRow[key] = numberValue;
+                }
+              }
+            });
+
+            return newRow;
+          });
+          setData(transformedData.slice(0, 10));
         },
       });
     },
     [
+      valuesImportConfiguration.decimal.value,
       valuesImportConfiguration.delimiter.value,
       valuesImportConfiguration.separator.value,
     ],
