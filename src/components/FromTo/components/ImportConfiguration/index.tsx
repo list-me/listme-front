@@ -1,14 +1,53 @@
 import { HotTable } from "@handsontable/react";
-import { AlertText, BoxHotTable, ContainerImportConfiguration } from "./styles";
+import {
+  AlertText,
+  BoxHotTable,
+  BoxSelects,
+  ContainerImportConfiguration,
+} from "./styles";
 import { useFromToContext } from "../../../../context/FromToContext";
 import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
+import SelectComponent from "../../../Select";
+import options from "./utils/options";
 
 function ImportConfiguration(): JSX.Element {
-  const { data, setCurrentStep } = useFromToContext();
+  const {
+    data,
+    setCurrentStep,
+    valuesImportConfiguration,
+    setValuesImportConfiguration,
+  } = useFromToContext();
+
+  function handleChange(title: string, value: string): void {
+    if (["separator", "delimiter", "charset", "decimal"].includes(title)) {
+      setValuesImportConfiguration((prev) => ({
+        ...prev,
+        [title]: value,
+      }));
+    }
+  }
+
   return data.length > 0 ? (
     <ContainerImportConfiguration>
+      <BoxSelects>
+        {options.map((item) => (
+          <SelectComponent
+            key={item.type}
+            select={
+              valuesImportConfiguration[
+                item.type as "separator" | "delimiter" | "charset" | "decimal"
+              ]
+            }
+            onChange={(value) => handleChange(item.type, value)}
+            options={item.list}
+            placeHolder=""
+            labelText={item.title}
+          />
+        ))}
+      </BoxSelects>
       <BoxHotTable>
         <HotTable
+          key={data as any}
           data={data}
           colHeaders={Object.keys(data[0])}
           readOnly

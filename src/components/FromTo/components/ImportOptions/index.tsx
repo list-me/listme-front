@@ -27,21 +27,21 @@ function ImportOptions(): JSX.Element {
     <ContainerImportOptions>
       <Select
         select={test}
-        setSelect={setTest}
+        onChange={setTest}
         options={options}
         labelText="Importação de produtos"
         placeHolder="Selecione: "
       />
       <Select
         select={test}
-        setSelect={setTest}
+        onChange={setTest}
         options={options}
         labelText="Status de novo produto"
         placeHolder="Selecione: "
       />
       <Select
         select={test}
-        setSelect={setTest}
+        onChange={setTest}
         options={options}
         labelText="Importar assets"
         placeHolder="Selecione: "

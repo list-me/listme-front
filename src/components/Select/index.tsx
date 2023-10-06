@@ -3,7 +3,7 @@ import { ContainerSelect, LabelSelect, customStyles } from "./styles";
 
 const SelectComponent = ({
   select,
-  setSelect,
+  onChange,
   options,
   labelText,
   placeHolder,
@@ -15,7 +15,7 @@ const SelectComponent = ({
       <Select
         isSearchable={false}
         value={select}
-        onChange={(selectedOption) => setSelect(selectedOption as string)}
+        onChange={(selectedOption) => onChange(selectedOption as string)}
         options={options}
         styles={customStyles({ small }) as any}
         placeholder={placeHolder}

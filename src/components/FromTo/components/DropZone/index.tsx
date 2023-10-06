@@ -7,7 +7,6 @@ import {
   DropzoneInputProps,
 } from "react-dropzone";
 import { toast } from "react-toastify";
-import Papa from "papaparse";
 import {
   CloseButton,
   ContainerDropZone,
@@ -20,25 +19,8 @@ import { ReactComponent as FileIcon } from "../../../../assets/csv-file.svg";
 import { ReactComponent as CloseIcon } from "../../../../assets/close-gray.svg";
 import { useFromToContext } from "../../../../context/FromToContext";
 
-interface CSVRow {
-  [key: string]: string;
-}
-
 const MyDropzone = (): JSX.Element => {
-  const { setData, fileName, setFileName } = useFromToContext();
-
-  const parseCSV = useCallback(
-    (file: File): void => {
-      Papa.parse<CSVRow>(file, {
-        header: true,
-        complete: (result) => {
-          console.log("Parsed Result:", result);
-          setData(result.data.slice(0, 10));
-        },
-      });
-    },
-    [setData],
-  );
+  const { parseCSV, currentFile, setCurrentFile } = useFromToContext();
 
   const onDrop = useCallback(
     (acceptedFiles: File[], fileRejections: File[]) => {
@@ -55,6 +37,7 @@ const MyDropzone = (): JSX.Element => {
       }
 
       const file = acceptedFiles[0];
+
       // @ts-ignore
       const ext = file.name.split(".").pop().toLowerCase();
 
@@ -72,12 +55,11 @@ const MyDropzone = (): JSX.Element => {
       reader.onload = () => {
         console.log("Arquivo lido:", file.name);
       };
-
-      setFileName(file.name);
+      setCurrentFile(file);
       parseCSV(file);
       reader.readAsArrayBuffer(file);
     },
-    [parseCSV, setFileName],
+    [parseCSV, setCurrentFile],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -86,14 +68,14 @@ const MyDropzone = (): JSX.Element => {
     maxFiles: 1,
   } as unknown as DropzoneOptions);
 
-  if (fileName) {
+  if (currentFile?.name) {
     return (
       <ContainerPreview>
         <IconContainer>
           <FileIcon />
         </IconContainer>
-        <TitleFile>{fileName}</TitleFile>
-        <CloseButton onClick={() => setFileName("")}>
+        <TitleFile>{currentFile?.name}</TitleFile>
+        <CloseButton onClick={() => setCurrentFile(undefined)}>
           <CloseIcon />
         </CloseButton>
       </ContainerPreview>

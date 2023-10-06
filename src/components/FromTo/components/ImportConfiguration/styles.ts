@@ -12,6 +12,12 @@ export const AlertText = styled.p`
   font-size: ${({ theme }) => theme.fonts.sizes.small};
   font-weight: ${({ theme }) => theme.fonts.weights.regular};
 `;
+export const BoxSelects = styled.div`
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+  z-index: 1000;
+`;
 
 export const BoxHotTable = styled.div`
   overflow: auto;

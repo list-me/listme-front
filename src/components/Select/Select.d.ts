@@ -6,7 +6,7 @@ type OptionType = {
 
 interface ISelect {
   select: ValueType<OptionType, false>;
-  setSelect: (option: ValueType<OptionType, false>) => void;
+  onChange: (option: ValueType<OptionType, false>) => void;
   options: OptionsType<OptionType>;
   labelText?: string;
   placeHolder: string;

@@ -1,11 +1,10 @@
-import React, { useState } from "react";
 import MyDropzone from "../DropZone";
 import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
 import { ContainerImportFile } from "./styles";
 import { useFromToContext } from "../../../../context/FromToContext";
 
 function ImportFile(): JSX.Element {
-  const { setCurrentStep, fileName, setFromToIsOpened } = useFromToContext();
+  const { setCurrentStep, currentFile, setFromToIsOpened } = useFromToContext();
 
   return (
     <ContainerImportFile>
@@ -14,7 +13,7 @@ function ImportFile(): JSX.Element {
         <NavigationButton abort onClick={() => setFromToIsOpened(false)}>
           Cancelar
         </NavigationButton>
-        {fileName && (
+        {currentFile?.name && (
           <NavigationButton onClick={() => setCurrentStep((prev) => prev + 1)}>
             Continuar
           </NavigationButton>

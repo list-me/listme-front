@@ -40,7 +40,7 @@ function LinkFields(): JSX.Element {
             <Origin />
             <SelectComponent
               select={select}
-              setSelect={setSelect}
+              onChange={setSelect}
               options={options}
               placeHolder="Selecione"
               small
