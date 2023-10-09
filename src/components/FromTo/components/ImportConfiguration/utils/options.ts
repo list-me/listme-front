@@ -31,10 +31,6 @@ const optionsCharset = [
     value: "UTF-8",
     label: "UTF-8",
   },
-  {
-    value: "UTF-32",
-    label: "UTF-32",
-  },
 ];
 const optionsDecimal = [
   {
