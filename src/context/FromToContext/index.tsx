@@ -47,35 +47,11 @@ export function FromToContextProvider({
         delimiter: valuesImportConfiguration.separator.value,
         quoteChar: valuesImportConfiguration.delimiter.value,
         complete: (result) => {
-          const decimalChar = valuesImportConfiguration.decimal.value;
-
-          const transformValue = (value: string): string | number => {
-            const parsedValue = parseFloat(value.replace(",", "."));
-
-            if (!Number.isNaN(parsedValue)) {
-              if (decimalChar === ",") {
-                return parsedValue.toString().replace(".", ",");
-              }
-              return parsedValue;
-            }
-            return value;
-          };
-
-          const transformedData = result.data.map((row) => {
-            const newRow = { ...row };
-            // eslint-disable-next-line guard-for-in, no-restricted-syntax
-            for (const key in newRow) {
-              newRow[key] = transformValue(newRow[key].toString());
-            }
-            return newRow;
-          });
-
-          setData(transformedData.slice(0, 10));
+          setData(result.data.slice(0, 10));
         },
       });
     },
     [
-      valuesImportConfiguration.decimal.value,
       valuesImportConfiguration.delimiter.value,
       valuesImportConfiguration.separator.value,
     ],
