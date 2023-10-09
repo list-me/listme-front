@@ -9,6 +9,7 @@ import { useFromToContext } from "../../../../context/FromToContext";
 import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
 import SelectComponent from "../../../Select";
 import options from "./utils/options";
+import handleChangeSelect from "../../utils/handleChangeSelect";
 
 function ImportConfiguration(): JSX.Element {
   const {
@@ -19,14 +20,7 @@ function ImportConfiguration(): JSX.Element {
     colHeadersToPreviewTable,
   } = useFromToContext();
 
-  function handleChange(title: string, value: string): void {
-    if (["separator", "delimiter", "charset", "decimal"].includes(title)) {
-      setValuesImportConfiguration((prev) => ({
-        ...prev,
-        [title]: value,
-      }));
-    }
-  }
+  const types = ["separator", "delimiter", "charset", "decimal"];
 
   return data.length > 0 ? (
     <ContainerImportConfiguration>
@@ -39,7 +33,14 @@ function ImportConfiguration(): JSX.Element {
                 item.type as "separator" | "delimiter" | "charset" | "decimal"
               ]
             }
-            onChange={(value) => handleChange(item.type, value)}
+            onChange={(value) =>
+              handleChangeSelect(
+                item.type,
+                value,
+                types,
+                setValuesImportConfiguration,
+              )
+            }
             options={item.list}
             placeHolder=""
             labelText={item.title}
