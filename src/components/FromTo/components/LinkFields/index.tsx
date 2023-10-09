@@ -10,23 +10,20 @@ import Origin from "./components/Origin";
 import SelectComponent from "../../../Select";
 import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
 import { useFromToContext } from "../../../../context/FromToContext";
+import { useProductContext } from "../../../../context/products";
 
 function LinkFields(): JSX.Element {
   const [select, setSelect] = useState();
   const { setCurrentStep, setFromToIsOpened, colHeadersToPreviewTable, data } =
     useFromToContext();
+  const { template } = useProductContext();
 
-  const options = [
-    {
-      value: "Adicionar novos e atualizar os existentes",
-      label: "Adicionar novos e atualizar os existentes",
-    },
-    { value: "Apenas adicionar novos", label: "Apenas adicionar novos" },
-    {
-      value: "Apenas atualizar existentes",
-      label: "Apenas atualizar existentes",
-    },
-  ];
+  const options = template.fields.fields.map((item: any) => {
+    const newItem = { value: item.title, label: item.title, type: item.type };
+    return newItem;
+  });
+
+  console.log("🚀 ~ file: index.tsx:20 ~ LinkFields ~ template:", template);
 
   return (
     <ContainerLinkFields>
