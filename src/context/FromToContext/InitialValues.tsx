@@ -18,15 +18,15 @@ export const initialValuesImportConfiguration = {
 };
 export const initialValuesImportOptions = {
   import: {
-    value: "Adicionar novos e atualizar os existentes",
-    label: "Adicionar novos e atualizar os existentes",
+    value: "Adicionar novos e atualizar existentes",
+    label: "Adicionar novos e atualizar existentes",
   },
   status: {
-    value: "Pendente",
-    label: "Pendente",
+    value: "Concluído",
+    label: "Concluído",
   },
   assets: {
-    value: "Pular assets existentes",
-    label: "Pular assets existentes",
+    value: "Ignorar ativos existentes",
+    label: "Ignorar ativos existentes",
   },
 };

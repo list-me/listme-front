@@ -9,12 +9,11 @@ import handleChangeSelect from "../../utils/handleChangeSelect";
 
 function ImportOptions(): JSX.Element {
   const [checkBox, setCheckBox] = useState("");
-  console.log("🚀 ~ file: index.tsx:12 ~ ImportOptions ~ checkBox:", checkBox);
 
   const { setCurrentStep, valuesImportOptions, setValuesImportOptions } =
     useFromToContext();
 
-  const types = ["import", "starts", "assets"];
+  const types = ["import", "status", "assets"];
 
   return (
     <ContainerImportOptions>

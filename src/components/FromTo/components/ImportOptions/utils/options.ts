@@ -1,39 +1,39 @@
 const optionsImport = [
   {
-    value: ",",
-    label: "Vírgula (,)",
+    value: "Adicionar novos e atualizar existentes",
+    label: "Adicionar novos e atualizar existentes",
   },
   {
-    value: ";",
-    label: "Ponto e Vírgula (;)",
+    value: "Apenas adicionar novos",
+    label: "Apenas adicionar novos",
   },
   {
-    value: "|",
-    label: "Pipe (|)",
-  },
-  {
-    value: "\t",
-    label: "Tab ( )",
+    value: "Apenas atualizar existentes",
+    label: "Apenas atualizar existentes",
   },
 ];
 const optionsStatus = [
   {
-    value: '"',
-    label: 'Aspas Duplas (")',
+    value: "Concluído",
+    label: "Concluído",
   },
   {
-    value: "'",
-    label: "Aspas Simples (')",
+    value: "Rascunho",
+    label: "Rascunho",
+  },
+  {
+    value: "Arquivado",
+    label: "Arquivado",
   },
 ];
 const optionsAssets = [
   {
-    value: "UTF-8",
-    label: "UTF-8",
+    value: "Ignorar ativos existentes",
+    label: "Ignorar ativos existentes",
   },
   {
-    value: "UTF-32",
-    label: "UTF-32",
+    value: "Importar todos os ativos",
+    label: "Importar todos os ativos",
   },
 ];
 
