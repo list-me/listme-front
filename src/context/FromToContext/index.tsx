@@ -47,34 +47,30 @@ export function FromToContextProvider({
         delimiter: valuesImportConfiguration.separator.value,
         quoteChar: valuesImportConfiguration.delimiter.value,
         complete: (result) => {
+          const decimalChar = valuesImportConfiguration.decimal.value;
+
+          const transformValue = (value: string): string | number => {
+            const parsedValue = parseFloat(value.replace(",", "."));
+
+            if (!Number.isNaN(parsedValue)) {
+              if (decimalChar === ",") {
+                return parsedValue.toString().replace(".", ",");
+              }
+              return parsedValue;
+            }
+            return value;
+          };
+
           const transformedData = result.data.map((row) => {
             const newRow = { ...row };
-
-            // Iterando sobre cada chave (coluna) do objeto row
-            Object.keys(newRow).forEach((key) => {
-              const value = newRow[key];
-
-              if (typeof value === "string") {
-                let numberValue;
-
-                if (valuesImportConfiguration.decimal.value === ",") {
-                  numberValue = value.replace(".", ",");
-                } else if (valuesImportConfiguration.decimal.value === ".") {
-                  numberValue = value.replace(",", ".");
-                } else {
-                  numberValue = value;
-                }
-
-                if (!Number.isNaN(numberValue)) {
-                  newRow[key] = numberValue;
-                }
-              }
-            });
-
+            // eslint-disable-next-line guard-for-in, no-restricted-syntax
+            for (const key in newRow) {
+              newRow[key] = transformValue(newRow[key].toString());
+            }
             return newRow;
           });
-          const newData = transformedData.slice(0, 10);
-          setData(newData);
+
+          setData(transformedData.slice(0, 10));
         },
       });
     },
