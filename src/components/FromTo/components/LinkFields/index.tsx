@@ -15,7 +15,7 @@ function LinkFields(): JSX.Element {
   const [select, setSelect] = useState();
   const { setCurrentStep, setFromToIsOpened, colHeadersToPreviewTable, data } =
     useFromToContext();
-  console.log("🚀 ~ file: index.tsx:17 ~ LinkFields ~ data:", data);
+
   const options = [
     {
       value: "Adicionar novos e atualizar os existentes",
