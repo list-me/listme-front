@@ -4,48 +4,37 @@ import Select from "../../../Select";
 import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
 import CheckboxCustom from "../../../Checkbox";
 import { useFromToContext } from "../../../../context/FromToContext";
+import options from "./utils/options";
 
 function ImportOptions(): JSX.Element {
-  const [test, setTest] = useState("");
   const [checkBox, setCheckBox] = useState("");
 
-  const { setCurrentStep } = useFromToContext();
+  const { setCurrentStep, valuesImportOptions, setValuesImportOptions } =
+    useFromToContext();
 
-  const options = [
-    {
-      value: "Adicionar novos e atualizar os existentes",
-      label: "Adicionar novos e atualizar os existentes",
-    },
-    { value: "Apenas adicionar novos", label: "Apenas adicionar novos" },
-    {
-      value: "Apenas atualizar existentes",
-      label: "Apenas atualizar existentes",
-    },
-  ];
+  function handleChange(title: string, value: string): void {
+    if (["import", "starts", "assets"].includes(title)) {
+      setValuesImportOptions((prev) => ({
+        ...prev,
+        [title]: value,
+      }));
+    }
+  }
 
   return (
     <ContainerImportOptions>
-      <Select
-        select={test}
-        onChange={setTest}
-        options={options}
-        labelText="Importação de produtos"
-        placeHolder="Selecione: "
-      />
-      <Select
-        select={test}
-        onChange={setTest}
-        options={options}
-        labelText="Status de novo produto"
-        placeHolder="Selecione: "
-      />
-      <Select
-        select={test}
-        onChange={setTest}
-        options={options}
-        labelText="Importar assets"
-        placeHolder="Selecione: "
-      />
+      {options.map((item) => (
+        <Select
+          key={item.type}
+          select={
+            valuesImportOptions[item.type as "status" | "import" | "assets"]
+          }
+          onChange={(value) => handleChange(item.type, value)}
+          options={item.list}
+          placeHolder=""
+          labelText={item.title}
+        />
+      ))}
       <CheckboxCustom
         onChange={() => setCheckBox}
         label="Crie uma lista estática de todos os produtos importados"

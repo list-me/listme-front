@@ -7,39 +7,16 @@ import React, {
   useState,
 } from "react";
 import Papa from "papaparse";
-
-interface IItemValueImportConfiguration {
-  value: string;
-  label: string;
-}
-
-interface IValuesImportConfiguration {
-  separator: IItemValueImportConfiguration;
-  delimiter: IItemValueImportConfiguration;
-  charset: IItemValueImportConfiguration;
-  decimal: IItemValueImportConfiguration;
-}
-
-interface FromToContextType {
-  currentStep: number;
-  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
-  data: CSVRow[];
-  setData: React.Dispatch<React.SetStateAction<CSVRow[]>>;
-  fromToIsOpened: boolean;
-  setFromToIsOpened: React.Dispatch<React.SetStateAction<boolean>>;
-  valuesImportConfiguration: IValuesImportConfiguration;
-  setValuesImportConfiguration: React.Dispatch<
-    React.SetStateAction<IValuesImportConfiguration>
-  >;
-  parseCSV: (file: File) => void;
-  currentFile: File | undefined;
-  setCurrentFile: React.Dispatch<React.SetStateAction<File | undefined>>;
-  colHeadersToPreviewTable: string[] | null;
-}
-
-interface CSVRow {
-  [key: string]: string | number;
-}
+import {
+  CSVRow,
+  FromToContextType,
+  IValuesImportConfiguration,
+  IValuesImportOptions,
+} from "./fromToContext";
+import {
+  initialValuesImportConfiguration,
+  initialValuesImportOptions,
+} from "./InitialValues";
 
 const FromToContext = createContext<FromToContextType | undefined>(undefined);
 
@@ -59,24 +36,9 @@ export function FromToContextProvider({
   }, [data]);
 
   const [valuesImportConfiguration, setValuesImportConfiguration] =
-    useState<IValuesImportConfiguration>({
-      separator: {
-        value: ",",
-        label: "Vírgula (,)",
-      },
-      delimiter: {
-        value: '"',
-        label: 'Aspas Duplas (")',
-      },
-      charset: {
-        value: "UTF-8",
-        label: "UTF-8",
-      },
-      decimal: {
-        value: ".",
-        label: "Ponto (.)",
-      },
-    });
+    useState<IValuesImportConfiguration>(initialValuesImportConfiguration);
+  const [valuesImportOptions, setValuesImportOptions] =
+    useState<IValuesImportOptions>(initialValuesImportOptions);
 
   const parseCSV = useCallback(
     (file: File): void => {
@@ -148,6 +110,8 @@ export function FromToContextProvider({
     currentFile,
     setCurrentFile,
     colHeadersToPreviewTable,
+    valuesImportOptions,
+    setValuesImportOptions,
   };
 
   return (
