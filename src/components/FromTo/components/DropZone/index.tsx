@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   useDropzone,
   DropzoneOptions,
@@ -11,6 +11,7 @@ import {
   CloseButton,
   ContainerDropZone,
   ContainerPreview,
+  DragBox,
   IconContainer,
   TitleFile,
 } from "./styles";
@@ -68,6 +69,32 @@ const MyDropzone = (): JSX.Element => {
     maxFiles: 1,
   } as unknown as DropzoneOptions);
 
+  // para manipular drag externo
+  const [isFileBeingDragged, setIsFileBeingDragged] = useState(false);
+
+  useEffect(() => {
+    const handleDragOver = (e: Event): null => {
+      e.preventDefault();
+      setIsFileBeingDragged(true);
+      return null;
+    };
+
+    const handleDragEnd = (): null => {
+      setIsFileBeingDragged(false);
+      return null;
+    };
+
+    window.addEventListener("dragover", handleDragOver);
+    window.addEventListener("dragleave", handleDragEnd);
+    window.addEventListener("drop", handleDragEnd);
+
+    return () => {
+      window.removeEventListener("dragover", handleDragOver);
+      window.removeEventListener("dragleave", handleDragEnd);
+      window.removeEventListener("drop", handleDragEnd);
+    };
+  }, []);
+
   if (currentFile?.name) {
     return (
       <ContainerPreview>
@@ -97,6 +124,7 @@ const MyDropzone = (): JSX.Element => {
           : "Clique para selecionar arquivo ou arraste até aqui"}
       </p>
       <span>Arquivos permitidos: csv, xls e xlsx</span>
+      <DragBox isFileBeingDragged={isFileBeingDragged} />
     </ContainerDropZone>
   );
 };
