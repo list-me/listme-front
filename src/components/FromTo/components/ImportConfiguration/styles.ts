@@ -43,6 +43,7 @@ export const BoxHotTable = styled.div`
     border-left: none !important;
     border-top: none !important;
     padding-left: 1rem;
+    padding-right: 1rem;
   }
   .htCore thead th {
     text-align: start;
