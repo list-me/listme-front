@@ -11,6 +11,7 @@ interface ISelect {
   labelText?: string;
   placeHolder: string;
   small?: boolean;
+  isSearchable?: boolean;
 }
 
 type Styles = {

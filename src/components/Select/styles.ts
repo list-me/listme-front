@@ -6,6 +6,13 @@ export const ContainerSelect = styled.div`
   flex-direction: column;
   gap: 8px;
   width: 100%;
+  input {
+    color: ${({ theme }) => theme.colors.grayscale.primary} !important;
+    font-family: ${({ theme }) => theme.fonts.family.default} !important;
+    font-size: 16px !important;
+    font-weight: ${({ theme }) => theme.fonts.weights.bold} !important;
+    width: initial !important;
+  }
 `;
 
 export const LabelSelect = styled.label`

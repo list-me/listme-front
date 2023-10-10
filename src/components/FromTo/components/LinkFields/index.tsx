@@ -23,8 +23,6 @@ function LinkFields(): JSX.Element {
     return newItem;
   });
 
-  console.log("🚀 ~ file: index.tsx:20 ~ LinkFields ~ template:", template);
-
   return (
     <ContainerLinkFields>
       <HeaderLinkFields>
@@ -41,6 +39,7 @@ function LinkFields(): JSX.Element {
               options={options}
               placeHolder="Selecione"
               small
+              isSearchable
             />
           </ContentRowLinkFields>
         ))}
