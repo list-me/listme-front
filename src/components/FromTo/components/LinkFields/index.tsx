@@ -13,7 +13,7 @@ import { useFromToContext } from "../../../../context/FromToContext";
 import { useProductContext } from "../../../../context/products";
 
 function LinkFields(): JSX.Element {
-  const [select, setSelect] = useState();
+  const [selected, setSelected] = useState<{ [key: string]: {} }>({});
   const { setCurrentStep, setFromToIsOpened, colHeadersToPreviewTable, data } =
     useFromToContext();
   const { template } = useProductContext();
@@ -22,6 +22,16 @@ function LinkFields(): JSX.Element {
     const newItem = { value: item.title, label: item.title, type: item.type };
     return newItem;
   });
+
+  const handleSelectChange = (
+    itemKey: string,
+    selectedValue: { value: string; type: string; label: string },
+  ): void => {
+    setSelected((prevSelected) => ({
+      ...prevSelected,
+      [itemKey]: selectedValue,
+    }));
+  };
 
   return (
     <ContainerLinkFields>
@@ -34,12 +44,16 @@ function LinkFields(): JSX.Element {
           <ContentRowLinkFields key={item}>
             <Origin title={item} example={data[0][item]} />
             <SelectComponent
-              select={select}
-              onChange={setSelect}
+              select={selected[item] || null}
+              onChange={(value) => handleSelectChange(item, value)}
               options={options}
               placeHolder="Selecione"
               small
               isSearchable
+              fixedOptions={[
+                { value: "Criar nova coluna", label: "Criar nova coluna" },
+                { value: "Ignorar", label: "Ignorar" },
+              ]}
             />
           </ContentRowLinkFields>
         ))}

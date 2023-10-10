@@ -71,8 +71,14 @@ export const customStyles = ({ small }: { small?: boolean }): Styles => ({
       (state.isSelected || state.isFocused) &&
       themeStyle.colors.background.tertiary,
     cursor: "pointer",
+    marginBottom: "8px",
     "&:disabled": {
       background: "none",
+    },
+    "&:active": {
+      backgroundColor:
+        (state.isSelected || state.isFocused) &&
+        themeStyle.colors.background.tertiary,
     },
   }),
   indicatorSeparator: () => ({

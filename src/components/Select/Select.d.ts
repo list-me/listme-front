@@ -8,6 +8,7 @@ interface ISelect {
   select: ValueType<OptionType, false>;
   onChange: (option: ValueType<OptionType, false>) => void;
   options: OptionsType<OptionType>;
+  fixedOptions?: OptionsType<OptionType>;
   labelText?: string;
   placeHolder: string;
   small?: boolean;
