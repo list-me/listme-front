@@ -53,3 +53,16 @@ export const ContentRowLinkFields = styled.div`
   display: flex;
   width: 100%;
 `;
+
+export const WarnAlert = styled.p`
+  position: relative;
+  left: 8px;
+  top: 5px;
+  color: ${({ theme }) => theme.colors.grayscale.primary};
+  font-family: ${({ theme }) => theme.fonts.family.default};
+  font-size: ${({ theme }) => theme.fonts.sizes.xsmall};
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
+  margin: 0;
+  color: red;
+`;
+export const ContainerSelectText = styled.div``;

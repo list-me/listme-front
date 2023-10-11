@@ -13,5 +13,6 @@ export const ContainerOption = styled.div`
 `;
 export const FixedOptions = styled.div`
   margin: 0 8px;
+  padding-top: 8px;
   border-top: 1px solid #e9ecef;
 `;

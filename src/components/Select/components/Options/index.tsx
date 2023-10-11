@@ -12,7 +12,7 @@ const CustomMenuList = (props: any) => {
 
   return (
     <ContainerOption>
-      <div style={{ overflowY: "auto", maxHeight: "200px" }}>
+      <div style={{ overflowY: "auto", maxHeight: "200px", padding: "8px" }}>
         {regularOptions}
       </div>
       <FixedOptions>{lastTwoOptions}</FixedOptions>
