@@ -24,7 +24,7 @@ import { ReactComponent as TrashIcon } from "../../assets/trash-icon.svg";
 import { ReactComponent as PlusIcon } from "../../assets/plus-small.svg";
 
 import { templateRequests } from "../../services/apis/requests/template";
-import { RelationForm } from "../NewColumn/RelationForm";
+import { RelationForm } from "../CustomTable/components/HeaderDropDown/components/NewColumn/RelationForm";
 
 interface PropsModal {
   isOpen: boolean;
