@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Table, TablePaginationConfig } from "antd";
 import { Container } from "./styles";
 import { ROUTES } from "../../constants/routes";
@@ -50,10 +50,20 @@ function CustomTable(props: any): JSX.Element {
     return countRows;
   }
 
-  useEffect(() => {
+  const handleResize = useCallback(() => {
     const windowHeight = window.innerHeight;
     verifyLimitRows(windowHeight);
   }, []);
+
+  useEffect(() => {
+    const windowHeight = window.innerHeight;
+    verifyLimitRows(windowHeight);
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [handleResize]);
 
   return (
     <Container>
