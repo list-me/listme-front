@@ -20,15 +20,29 @@ interface IOption {
   value: string;
   label: string;
   type: string;
-  optionsList: string[];
+  optionsList?: string[];
+  openDropdown?: boolean;
 }
+
+const fixedOptions = [
+  {
+    value: "Criar nova coluna",
+    label: "Criar nova coluna",
+    openDropdown: true,
+  },
+  { value: "Ignorar", label: "Ignorar" },
+];
 
 function checkSample(
   data: CSVRow[],
   option: IOption,
   key: string,
 ): JSX.Element {
-  if (option?.optionsList[0] && typeof option?.optionsList[0] === "string") {
+  if (
+    option?.optionsList &&
+    option?.optionsList[0] &&
+    typeof option?.optionsList[0] === "string"
+  ) {
     const { optionsList } = option;
     const dataValues = data.map((itemData) => {
       return itemData[key];
@@ -42,15 +56,6 @@ function checkSample(
   }
   return <></>;
 }
-
-const fixedOptions = [
-  {
-    value: "Criar nova coluna",
-    label: "Criar nova coluna",
-    optionsList: [""],
-  },
-  { value: "Ignorar", label: "Ignorar", optionsList: [""] },
-];
 
 function LinkFields(): JSX.Element {
   const [selected, setSelected] = useState<{ [key: string]: IOption }>({});

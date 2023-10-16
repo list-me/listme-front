@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ContainerSelect, LabelSelect, customStyles } from "./styles";
 import makeDropdownIndicator from "./components/DropdownIndicator";
 import { CustomMenuList, CustomMenu } from "./components/Options";
+import CustomOption from "./components/Option";
 
 const SelectComponent = ({
   select,
@@ -38,6 +39,7 @@ const SelectComponent = ({
             DropdownIndicator: DropdownWithProps,
             Menu: CustomMenu,
             MenuList: CustomMenuList,
+            Option: CustomOption,
           }}
           getOptionValue={(option) => option.value}
           noOptionsMessage={({ inputValue }) =>
