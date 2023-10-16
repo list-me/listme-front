@@ -1,64 +1,33 @@
-import React, { ReactComponentElement, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Space, Table, Tag } from "antd";
+import React, { useEffect, useState } from "react";
+import { Space, Tag } from "antd";
 import { TableRowSelection } from "antd/es/table/interface";
 import { toast } from "react-toastify";
-import { Sidebar } from "../../components/Sidebar";
-import { Header } from "../../components/Header";
-import { TitlePage, Container, Content, Capsule } from "./styles";
-import Button from "../../components/Button";
-// @ts-ignore
-import { ReactComponent as AddIcon } from "../../assets/add-secondary.svg";
-// @ts-ignore
+import { TitlePage, Content } from "./styles";
 import { ReactComponent as EditIcon } from "../../assets/edit-icon.svg";
-// @ts-ignore
 import { ReactComponent as CopyIcon } from "../../assets/copy-icon.svg";
-// @ts-ignore
 import { ReactComponent as TrashIcon } from "../../assets/trash-icon.svg";
-import { CustomTable } from "../../components/Table/index";
+import CustomTable from "../../components/Table/index";
 import { templateRequests } from "../../services/apis/requests/template";
-import { TemplateDefault } from "../../components/TemplateDefault";
-import Select from "../../components/Select";
+import TemplateDefault from "../../components/TemplateDefault";
 
 interface IPaginationTemplate {
   page?: number;
   limit?: number;
 }
 
-const Template = () => {
+function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const navigate = useNavigate();
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+  const onSelectChange = (newSelectedRowKeys: React.Key[]): void => {
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
-  const handleTakeNewPages = async ({
-    limit,
-    page,
-  }: IPaginationTemplate): Promise<void> => {
-    setLoading(true);
-    try {
-      handleGetTemplates({ page, limit });
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      toast.error("Ocorreu um erro ao carregar os demais catálogos");
-    }
-  };
-
-  const handleGetTemplates = ({
-    page = 0,
-    limit = 50,
-  }: IPaginationTemplate) => {
+  const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
     templateRequests
       .list({ limit, page })
       .then((response) => {
+        console.log("🚀 ~ file: index.tsx:33 ~ .then ~ response:", response);
         setTemplates(response);
       })
       .catch((error) => {
@@ -72,7 +41,20 @@ const Template = () => {
     onChange: onSelectChange,
   };
 
-  const handleClick = (record: any, rowIndex: number | undefined): void => {};
+  const handleTakeNewPages = async ({
+    limit,
+    page,
+  }: IPaginationTemplate): Promise<void> => {
+    try {
+      handleGetTemplates({ page, limit });
+    } catch (error) {
+      toast.error("Ocorreu um erro ao carregar os demais catálogos");
+    }
+  };
+
+  useEffect(() => {
+    handleGetTemplates({ page: 0, limit: 100 });
+  }, []);
 
   const columns = [
     {
@@ -127,9 +109,7 @@ const Template = () => {
       dataIndex: "is_public",
       width: "10%",
       align: "center",
-      render: (_: any, record: any) => {
-        // const background = record.is_public ? "#3818D9" : "#DEE2E6";
-        // const color = record.is_public ? "#FFFFFF" : "#212529";
+      render: (_: any, _record: any) => {
         const background = "#DEE2E6";
         const color = "#212529";
         return (
@@ -149,7 +129,6 @@ const Template = () => {
             }}
           >
             Privado
-            {/* {record.is_public ? "Público" : "Privado"} */}
           </Tag>
         );
       },
@@ -175,10 +154,6 @@ const Template = () => {
     },
   ];
 
-  useEffect(() => {
-    handleGetTemplates({});
-  }, [modalIsOpen]);
-
   return (
     <TemplateDefault>
       <Content>
@@ -193,7 +168,6 @@ const Template = () => {
       </Content>
     </TemplateDefault>
   );
-};
+}
 
-// eslint-disable-next-line import/prefer-default-export
-export { Template };
+export default Template;
