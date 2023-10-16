@@ -43,6 +43,15 @@ function checkSample(
   return <></>;
 }
 
+const fixedOptions = [
+  {
+    value: "Criar nova coluna",
+    label: "Criar nova coluna",
+    optionsList: [""],
+  },
+  { value: "Ignorar", label: "Ignorar", optionsList: [""] },
+];
+
 function LinkFields(): JSX.Element {
   const [selected, setSelected] = useState<{ [key: string]: IOption }>({});
   const { setCurrentStep, setFromToIsOpened, colHeadersToPreviewTable, data } =
@@ -108,10 +117,7 @@ function LinkFields(): JSX.Element {
                 placeHolder="Selecione"
                 small
                 isSearchable
-                fixedOptions={[
-                  { value: "Criar nova coluna", label: "Criar nova coluna" },
-                  { value: "Ignorar", label: "Ignorar" },
-                ]}
+                fixedOptions={fixedOptions}
               />
               {checkSample(data, selected[item], item)}
             </ContainerSelectText>
