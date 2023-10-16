@@ -79,10 +79,11 @@ function LinkFields(): JSX.Element {
     itemKey: string,
     selectedValue: IOption,
   ): void => {
-    setSelected((prevSelected) => ({
-      ...prevSelected,
-      [itemKey]: selectedValue,
-    }));
+    if (selectedValue.value !== "Criar nova coluna")
+      setSelected((prevSelected) => ({
+        ...prevSelected,
+        [itemKey]: selectedValue,
+      }));
   };
 
   useEffect(() => {
