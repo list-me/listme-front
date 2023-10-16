@@ -32,23 +32,32 @@ function CustomTable(props: any): JSX.Element {
     onShowSizeChange: handleChangePageSize,
   };
 
-  function verifyLimitRows(height: number): number {
-    // 96 de header
-    // 101 de title
-    // 56 do header da tabela
-    // 62 padding com a navegaçao da tabela
-    // o que sobra é o container da tabela somente com o seu content onde cada linha é 83
-    const tableContainerContent = height - 96 - 101 - 56 - 62;
-    //  o menos 1 pra nao vazar o sidebar
-    const countRows = Math.round(tableContainerContent / 83) - 1;
-    if (countRows < 3) {
-      setPageSize(3);
-      return 3;
-    }
+  const verifyLimitRows = (height: number): number => {
+    const constants = {
+      header: 96,
+      title: 101,
+      headerTable: 56,
+      paddingNavigation: 62,
+      rowHeight: 83,
+      marginError: 1, // Considerando o menos 1 para não vazar o sidebar
+    };
 
-    setPageSize(countRows);
-    return countRows;
-  }
+    const tableContainerContent =
+      height -
+      constants.header -
+      constants.title -
+      constants.headerTable -
+      constants.paddingNavigation;
+
+    const countRows =
+      Math.round(tableContainerContent / constants.rowHeight) -
+      constants.marginError;
+
+    const newPageSize = Math.max(3, countRows);
+
+    setPageSize(newPageSize);
+    return newPageSize;
+  };
 
   const handleResize = useCallback(() => {
     const windowHeight = window.innerHeight;
