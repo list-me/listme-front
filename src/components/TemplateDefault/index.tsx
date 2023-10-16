@@ -1,8 +1,12 @@
-import { Sidebar } from "../Sidebar";
+import Sidebar from "../Sidebar";
 import { Header } from "../Header";
 import { Container, Content } from "./styles";
 
-export const TemplateDefault = ({ children }: any) => {
+const TemplateDefault = ({
+  children,
+}: {
+  children: React.ReactNode;
+}): JSX.Element => {
   return (
     <Content>
       <Sidebar />
@@ -13,3 +17,5 @@ export const TemplateDefault = ({ children }: any) => {
     </Content>
   );
 };
+
+export default TemplateDefault;

@@ -23,7 +23,7 @@ import "handsontable/dist/handsontable.full.min.css";
 import { CustomTableProps, ICol } from "./CustomTable.d";
 import { useProductContext } from "../../context/products";
 import { Cell } from "../Cell/index";
-import { NewColumn } from "../NewColumn";
+import { NewColumn } from "./components/HeaderDropDown/components/NewColumn";
 import { Confirmation } from "../Confirmation";
 
 import { Content } from "../../pages/products/styles";

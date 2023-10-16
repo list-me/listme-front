@@ -25,6 +25,7 @@ import { ReactComponent as PlusIcon } from "../../assets/plus-small.svg";
 
 import { templateRequests } from "../../services/apis/requests/template";
 import { RelationForm } from "../CustomTable/components/HeaderDropDown/components/NewColumn/RelationForm";
+import { useProductContext } from "../../context/products";
 
 interface PropsModal {
   isOpen: boolean;
@@ -307,6 +308,8 @@ export const PersonalModal = ({
     }
   }, [options]);
 
+  const { handleRedirectAndGetProducts } = useProductContext();
+
   return (
     <>
       <Modal
@@ -377,6 +380,13 @@ export const PersonalModal = ({
                   onClickModal();
                   onUpdate(newColumn, response);
                 });
+
+                const id = window.location.pathname.substring(10);
+                if (id) {
+                  setTimeout(() => {
+                    handleRedirectAndGetProducts(id).then(() => {});
+                  }, 0);
+                }
               }}
             >
               <div className="encapsulator">
