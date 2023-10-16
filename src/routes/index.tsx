@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import React, { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Template } from "../pages/templates";
+import Template from "../pages/templates";
 import PrivateRoutes from "./PrivateRoutes";
 import Login from "../pages/login";
 import { PublicRoute } from "./PublicRoute";

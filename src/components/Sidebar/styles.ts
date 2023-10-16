@@ -17,8 +17,7 @@ const Active = css`
 
 export const Container = styled.div`
   width: 222px;
-  height: 100vh;
-
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,13 +27,6 @@ export const Container = styled.div`
   background: ${({ theme }) => theme.colors.background.primary};
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.small};
-
-  //@media screen
-  //and (min-device-width: 1200px)
-  //and (max-device-width: 1600px)
-  //and (-webkit-min-device-pixel-ratio: 1) {
-  //  width: 12vw;
-  //}
 `;
 
 export const LogoContainer = styled.span`
