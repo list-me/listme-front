@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ColumnTitleLinkFields,
   ContainerLinkFields,
@@ -13,55 +13,22 @@ import SelectComponent from "../../../Select";
 import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
 import { useFromToContext } from "../../../../context/FromToContext";
 import { useProductContext } from "../../../../context/products";
-import { CSVRow } from "../../../../context/FromToContext/fromToContext";
-import { Confirmation } from "../../../Confirmation";
 import { DropdownMenu } from "../../../DropdownMenu";
 import newColumnOptions from "../../../../utils/newColumnOptions";
 import { PersonalModal } from "../../../CustomModa";
-
-interface IOption {
-  value: string;
-  label: string;
-  type: string;
-  optionsList?: string[];
-  openDropdown?: boolean;
-}
-
-const fixedOptions = [
-  {
-    value: "Criar nova coluna",
-    label: "Criar nova coluna",
-    openDropdown: true,
-  },
-  { value: "Ignorar", label: "Ignorar" },
-];
-
-function checkSample(
-  data: CSVRow[],
-  option: IOption,
-  key: string,
-): JSX.Element {
-  if (
-    option?.optionsList &&
-    option?.optionsList[0] &&
-    typeof option?.optionsList[0] === "string"
-  ) {
-    const { optionsList } = option;
-    const dataValues = data.map((itemData) => {
-      return itemData[key];
-    });
-    const neverIncludes = dataValues.every((itemDataValues) => {
-      return !optionsList.includes(itemDataValues.toString());
-    });
-    if (neverIncludes) {
-      return <WarnAlert className="warnAlert">Erro</WarnAlert>;
-    }
-  }
-  return <></>;
-}
+import fixedOptions from "./utils/fixedOptions";
 
 function LinkFields(): JSX.Element {
+  const iconRef = useRef(null);
+  const [isOpenDropDown, setIsOpenDropDown] = useState<boolean>(false);
+  const [dataToModal, setDataToModal] = useState({});
+  const [warnList, setWarnList] = useState<string[]>([]);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [selected, setSelected] = useState<{ [key: string]: IOption }>({});
+
+  useEffect(() => {
+    console.log(warnList);
+  }, [warnList]);
 
   const {
     template,
@@ -71,10 +38,9 @@ function LinkFields(): JSX.Element {
     handleNewColumn,
   } = useProductContext();
 
-  const iconRef = useRef(null);
-  const [isOpenDropDown, setIsOpenDropDown] = useState<boolean>(false);
-  const [dataToModal, setDataToModal] = useState({});
-  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const { setCurrentStep, setFromToIsOpened, colHeadersToPreviewTable, data } =
+    useFromToContext();
+
   function setNewColumn(newColumn: any, templateUpdated: any): void {
     // eslint-disable-next-line no-param-reassign
     newColumn = {
@@ -99,12 +65,6 @@ function LinkFields(): JSX.Element {
     handleNewColumn(newColumn, templateUpdated);
   }
 
-  const { setCurrentStep, setFromToIsOpened, colHeadersToPreviewTable, data } =
-    useFromToContext();
-
-  const [hasErrors, setHasErrors] = useState(false);
-  const [openConfirmation, setOpenConfirmation] = useState(false);
-
   const options: IOption[] = template.fields.fields.map((item: any) => {
     const newItem = {
       value: item.title,
@@ -119,34 +79,45 @@ function LinkFields(): JSX.Element {
     itemKey: string,
     selectedValue: IOption,
   ): void => {
-    if (selectedValue.value !== "Criar nova coluna")
+    const { value, optionsList } = selectedValue;
+
+    if (value !== "Criar nova coluna") {
       setSelected((prevSelected) => ({
         ...prevSelected,
         [itemKey]: selectedValue,
       }));
-  };
 
-  useEffect(() => {
-    const warn = document.getElementsByClassName("warnAlert");
-    const warnArray = Array.from(warn);
-    if (warnArray.length) {
-      setHasErrors(true);
-    } else {
-      setHasErrors(false);
+      if (
+        optionsList &&
+        optionsList[0] !== "" &&
+        typeof optionsList[0] === "string"
+      ) {
+        const dataValues = data.map((item) => item[itemKey].toString());
+        const neverIncludes = optionsList.every(
+          (opt) => !dataValues.includes(opt),
+        );
+        if (neverIncludes) {
+          if (!warnList?.includes(itemKey)) setWarnList([...warnList, itemKey]);
+        } else if (warnList?.includes(itemKey))
+          setWarnList(warnList.filter((item) => item !== itemKey));
+      } else {
+        setWarnList(warnList?.filter((item) => item !== itemKey));
+      }
     }
-  }, [selected]);
+  };
 
   return (
     <ContainerLinkFields>
-      <Confirmation
-        description="Tem certeza?"
-        action="IMPORTAR"
-        title="IMPORTAR"
-        pass="importar"
-        handleChangeVisible={() => setOpenConfirmation(false)}
-        isOpen={openConfirmation}
-        handleConfirmation={() => setFromToIsOpened(false)}
-      />
+      {warnList.length > 0 ? (
+        <WarnAlert>
+          <span>Atenção:</span> Campo exportável{" "}
+          <span>&quot;{warnList?.join(", ")}&quot;</span> incompatível devido a
+          validação fraca nas escolhas múltiplas. Revise a amostra ou exporte
+          mesmo assim.
+        </WarnAlert>
+      ) : (
+        <></>
+      )}
       <HeaderLinkFields>
         <ColumnTitleLinkFields>Origem</ColumnTitleLinkFields>
         <ColumnTitleLinkFields>Destino</ColumnTitleLinkFields>
@@ -178,7 +149,6 @@ function LinkFields(): JSX.Element {
                   />
                 )}
               />
-              {checkSample(data, selected[item], item)}
             </ContainerSelectText>
           </ContentRowLinkFields>
         ))}
@@ -192,10 +162,7 @@ function LinkFields(): JSX.Element {
         </NavigationButton>
         <NavigationButton
           onClick={() => {
-            if (!hasErrors) setFromToIsOpened(false);
-            else {
-              setOpenConfirmation(true);
-            }
+            setFromToIsOpened(false);
           }}
         >
           Importar

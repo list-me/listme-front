@@ -4,6 +4,7 @@ export const ContainerLinkFields = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
+  max-height: 69vh;
 `;
 
 export const HeaderLinkFields = styled.div`
@@ -54,15 +55,18 @@ export const ContentRowLinkFields = styled.div`
   width: 100%;
 `;
 
+export const ContainerSelectText = styled.div``;
+
 export const WarnAlert = styled.p`
-  position: relative;
-  left: 8px;
-  top: 5px;
+  padding: 16px 20px;
+  background: #fff9db;
+  border: 1px solid #fcc419;
   color: ${({ theme }) => theme.colors.grayscale.primary};
   font-family: ${({ theme }) => theme.fonts.family.default};
-  font-size: ${({ theme }) => theme.fonts.sizes.xsmall};
+  font-size: ${({ theme }) => theme.fonts.sizes.normal};
   font-weight: ${({ theme }) => theme.fonts.weights.regular};
-  margin: 0;
-  color: red;
+  border-radius: 8px;
+  span {
+    font-weight: ${({ theme }) => theme.fonts.weights.bold};
+  }
 `;
-export const ContainerSelectText = styled.div``;
