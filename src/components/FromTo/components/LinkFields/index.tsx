@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ColumnTitleLinkFields,
   ContainerLinkFields,
@@ -15,6 +15,9 @@ import { useFromToContext } from "../../../../context/FromToContext";
 import { useProductContext } from "../../../../context/products";
 import { CSVRow } from "../../../../context/FromToContext/fromToContext";
 import { Confirmation } from "../../../Confirmation";
+import { DropdownMenu } from "../../../DropdownMenu";
+import newColumnOptions from "../../../../utils/newColumnOptions";
+import { PersonalModal } from "../../../CustomModa";
 
 interface IOption {
   value: string;
@@ -59,9 +62,46 @@ function checkSample(
 
 function LinkFields(): JSX.Element {
   const [selected, setSelected] = useState<{ [key: string]: IOption }>({});
+
+  const {
+    template,
+    headerTable,
+    setHeaderTable,
+    setColHeaders,
+    handleNewColumn,
+  } = useProductContext();
+
+  const iconRef = useRef(null);
+  const [isOpenDropDown, setIsOpenDropDown] = useState<boolean>(false);
+  const [dataToModal, setDataToModal] = useState({});
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  function setNewColumn(newColumn: any, templateUpdated: any): void {
+    // eslint-disable-next-line no-param-reassign
+    newColumn = {
+      ...newColumn,
+      className: "htLeft htMiddle",
+      frozen: false,
+      hidden: false,
+      order: String(headerTable.length + 1),
+      width: "300",
+    };
+
+    const newPosition = [...headerTable, newColumn];
+    newPosition.splice(newPosition.length - 2, 1);
+    newPosition.push({});
+    setHeaderTable(newPosition);
+
+    const contentHeaders = headerTable.map((item) => item?.title);
+    contentHeaders.splice(headerTable.length - 1, 1);
+    contentHeaders.push(newColumn?.title);
+    contentHeaders.push(" ");
+    setColHeaders(contentHeaders);
+    handleNewColumn(newColumn, templateUpdated);
+  }
+
   const { setCurrentStep, setFromToIsOpened, colHeadersToPreviewTable, data } =
     useFromToContext();
-  const { template } = useProductContext();
+
   const [hasErrors, setHasErrors] = useState(false);
   const [openConfirmation, setOpenConfirmation] = useState(false);
 
@@ -124,6 +164,19 @@ function LinkFields(): JSX.Element {
                 small
                 isSearchable
                 fixedOptions={fixedOptions}
+                DropDownComponent={() => (
+                  <DropdownMenu
+                    isOpen
+                    icoRef={iconRef}
+                    openModal={(e) => {
+                      setIsOpenDropDown(!isOpenDropDown);
+                      setIsOpenModal(!isOpenModal);
+                      setDataToModal({ type: e?.type });
+                    }}
+                    options={newColumnOptions}
+                    setIsOpen={() => setIsOpenDropDown(false)}
+                  />
+                )}
               />
               {checkSample(data, selected[item], item)}
             </ContainerSelectText>
@@ -148,6 +201,16 @@ function LinkFields(): JSX.Element {
           Importar
         </NavigationButton>
       </BoxButtons>
+
+      <PersonalModal
+        isOpen={isOpenModal}
+        onClickModal={() => setIsOpenModal(false)}
+        data={dataToModal}
+        template={template}
+        onUpdate={(e: any, fields: any) => {
+          return setNewColumn(e, fields);
+        }}
+      />
     </ContainerLinkFields>
   );
 }

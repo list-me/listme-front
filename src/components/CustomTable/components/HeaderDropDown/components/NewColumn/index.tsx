@@ -1,14 +1,10 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable import/prefer-default-export */
 import React, { useRef, useState } from "react";
-import { ReactComponent as TextIcon } from "../../../../../../assets/text-icon.svg";
-import { ReactComponent as RadioIcon } from "../../../../../../assets/radio-icon.svg";
-import { ReactComponent as CheckBoxIcon } from "../../../../../../assets/checkbox-icon.svg";
-import { ReactComponent as ListIcon } from "../../../../../../assets/list-icon.svg";
-import { ReactComponent as FileIcon } from "../../../../../../assets/file-icon.svg";
-import { ReactComponent as LinkIcon } from "../../../../../../assets/link-gray-sm.svg";
+
 import { DropdownMenu } from "../../../../../DropdownMenu";
 import { PersonalModal } from "../../../../../CustomModa";
+import newColumnOptions from "../../../../../../utils/newColumnOptions";
 
 interface NewColumnProps {
   template: any;
@@ -24,40 +20,6 @@ export const NewColumn: React.FC<NewColumnProps> = ({
   const [data, setData] = useState({});
 
   const iconRef = useRef(null);
-
-  const options = [
-    {
-      label: "Campo de texto",
-      icon: <TextIcon />,
-      type: "text",
-    },
-
-    {
-      label: "Escolha única",
-      icon: <RadioIcon />,
-      type: "radio",
-    },
-    {
-      label: "Caixa de seleção",
-      icon: <CheckBoxIcon />,
-      type: "checked",
-    },
-    {
-      label: "Lista suspensa",
-      icon: <ListIcon />,
-      type: "list",
-    },
-    {
-      label: "Arquivo",
-      icon: <FileIcon />,
-      type: "file",
-    },
-    {
-      label: "Relacionamento",
-      icon: <LinkIcon />,
-      type: "relation",
-    },
-  ];
 
   return (
     <>
@@ -78,7 +40,7 @@ export const NewColumn: React.FC<NewColumnProps> = ({
           setIsOpenModal(!isOpenModal);
           setData({ type: e?.type });
         }}
-        options={options}
+        options={newColumnOptions}
         setIsOpen={() => setIsOpen(false)}
       />
     </>

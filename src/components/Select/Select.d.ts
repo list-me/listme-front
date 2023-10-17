@@ -13,6 +13,7 @@ interface ISelect {
   placeHolder: string;
   small?: boolean;
   isSearchable?: boolean;
+  DropDownComponent?: () => JSX.Element;
 }
 
 type Styles = {

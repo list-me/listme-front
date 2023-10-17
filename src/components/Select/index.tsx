@@ -14,8 +14,11 @@ const SelectComponent = ({
   small,
   isSearchable,
   fixedOptions,
+  DropDownComponent,
 }: ISelect): JSX.Element => {
   const DropdownWithProps = makeDropdownIndicator({ isSearchable });
+
+  const CustomOptionWithProps = CustomOption(DropDownComponent);
 
   const [isFocused, setIsFocused] = useState(false);
 
@@ -39,8 +42,9 @@ const SelectComponent = ({
             DropdownIndicator: DropdownWithProps,
             Menu: CustomMenu,
             MenuList: CustomMenuList,
-            Option: CustomOption,
+            Option: CustomOptionWithProps as any,
           }}
+          isOptionDisabled={(option) => option.openDropdown}
           getOptionValue={(option) => option.value}
           noOptionsMessage={({ inputValue }) =>
             inputValue
