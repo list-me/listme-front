@@ -14,20 +14,22 @@ export const IconDropDown = styled.div`
     transform: rotate(-90deg);
   }
 `;
-export const GhostArrow = styled.div`
-  top: 289px;
-  left: -20px;
-  width: 90px;
-  height: 45px;
-  position: absolute;
-`;
+
 export const ContainerNewColumn = styled.div`
   position: absolute;
-  top: -300px;
   left: 210px;
-  width: 270px;
-  height: 616px;
-  background: blue;
+  width: 220px;
+  height: 300px;
   display: flex;
   align-items: center;
+  transform: translateY(-50%);
 `;
+
+export const GhostArrow = styled.div`
+  transform: translateY(10px);
+  left: -20px;
+  width: 90px;
+  height: 100%;
+  position: absolute;
+`;
+export const ContainerOption = styled.div``;

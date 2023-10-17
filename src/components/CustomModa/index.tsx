@@ -44,23 +44,12 @@ type Options = {
   templateId: string;
 };
 
-type Option = {
-  [key: string]: string | number;
-};
-
 type Field = {
   name: string;
   type: string;
   title: string;
   option: string[] | Options[];
   required: boolean;
-};
-
-const EXTENSIOS = {
-  IMAGE: ["jpg", "svg", "jpeg"],
-  VIDEO: ["avi", "mov", "mp4"],
-  mappingType: "mappingType",
-  templateId: "templateId",
 };
 
 export const PersonalModal = ({
@@ -221,73 +210,6 @@ export const PersonalModal = ({
       console.error(error);
       toast.error("Não foi possível alterar o template, tente novamente!");
     }
-  };
-
-  const mountOptions = (): any[] => {
-    return draggerOptions.map((item, index) => {
-      return {
-        title: (
-          <>
-            <Form.Item
-              wrapperCol={{ flex: "auto" }}
-              label={`${index + 1}º Opção`}
-              name="options"
-              rules={[
-                {
-                  required: true,
-                  message: "A opção deve conter até 15 caracteres",
-                  max: 15,
-                },
-              ]}
-              style={{ marginBottom: "6px" }}
-            >
-              <Input
-                value={item.value ?? item}
-                onChange={(e) => {
-                  const { value } = e.target;
-                  const newState = [...draggerOptions];
-                  newState[index] = value;
-                  if (newState[index].length > 15) {
-                    toast.warn(
-                      "Uma opção não pode conter mais de 15 caracteres",
-                    );
-                    return;
-                  }
-
-                  setDraggerOptions(newState);
-                }}
-                name={index.toString()}
-                // onPressEnter={(e) => {
-                //   e.preventDefault();
-                //   if (draggerOptions.length === 12) {
-                //     toast.warn("Este campo não pode conter mais que 12 opções");
-                //     return;
-                //   }
-                //   setDraggerOptions((prevState) => [...prevState, ""]);
-                // }}
-                autoFocus={index === draggerOptions.length - 1}
-              />
-            </Form.Item>
-            <IconContent
-              onClick={() => {
-                if (draggerOptions.length <= 2) {
-                  toast.warning("Necessário conter ao menos duas opções");
-                  return;
-                }
-
-                const newState = [...draggerOptions];
-                newState.splice(index, 1);
-                setDraggerOptions(newState);
-              }}
-            >
-              <TrashIcon />
-            </IconContent>
-          </>
-        ),
-        key: index,
-        value: item,
-      };
-    });
   };
 
   const handleChangeOptions = (option: Options): void => {
@@ -488,7 +410,7 @@ export const PersonalModal = ({
                         options={draggerOptions}
                         setOptions={(values: any) => setDraggerOptions(values)}
                         handleOnDrop={(info: any) => {
-                          const { dropToGap, node, dragNode } = info;
+                          const { node, dragNode } = info;
                           const newTreeData = [...draggerOptions];
                           const dragNodeIndex = newTreeData.findIndex(
                             (n: any) => n.key === dragNode.key,
