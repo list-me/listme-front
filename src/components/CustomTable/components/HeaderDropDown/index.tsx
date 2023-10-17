@@ -128,7 +128,6 @@ function HeaderDropDown({
         >
           <NewColumn
             template={template}
-            newColumn={template}
             setNewColumn={(newColumn: any, templateUpdated: any) => {
               newColumn = {
                 ...newColumn,

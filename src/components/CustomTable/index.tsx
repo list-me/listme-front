@@ -154,7 +154,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           ReactDOM.createRoot(myComponent).render(
             <NewColumn
               template={template}
-              newColumn={template}
               setNewColumn={(newColumn: any, templateUpdated: any) => {
                 newColumn = {
                   ...newColumn,
