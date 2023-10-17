@@ -13,6 +13,8 @@ import { ReactComponent as CloseIcon } from "../../assets/close-gray.svg";
 import StepContent from "./components/StepContent";
 import { useFromToContext } from "../../context/FromToContext";
 
+const INITIAL_STEP = 0;
+
 function FromTo(): JSX.Element | null {
   const { currentStep, fromToIsOpened, setFromToIsOpened } = useFromToContext();
   const stepsArray = [
@@ -35,7 +37,7 @@ function FromTo(): JSX.Element | null {
             <CloseIcon />
           </CloseButton>
         </HeaderModal>
-        {currentStep !== 0 && (
+        {currentStep !== INITIAL_STEP && (
           <StepsContainer>
             {stepsArray.map((item, index) => (
               <StepItem>

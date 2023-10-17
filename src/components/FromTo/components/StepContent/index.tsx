@@ -1,7 +1,7 @@
 import InitialStep from "../InitialStep";
 import ImportFile from "../ImportFile";
 import { StepContentContainer } from "./styles";
-import LoadingSpinner from "../LoadingSpinner";
+// import LoadingSpinner from "../LoadingSpinner";
 import ImportConfiguration from "../ImportConfiguration";
 import { useFromToContext } from "../../../../context/FromToContext";
 import ImportOptions from "../ImportOptions";

@@ -17,6 +17,7 @@ import { DropdownMenu } from "../../../DropdownMenu";
 import newColumnOptions from "../../../../utils/newColumnOptions";
 import { PersonalModal } from "../../../CustomModa";
 import fixedOptions from "./utils/fixedOptions";
+import FinishedStep from "../FinishedStep";
 
 function LinkFields(): JSX.Element {
   const iconRef = useRef(null);
@@ -26,9 +27,7 @@ function LinkFields(): JSX.Element {
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [selected, setSelected] = useState<{ [key: string]: IOption }>({});
 
-  useEffect(() => {
-    console.log(warnList);
-  }, [warnList]);
+  const [finisedContent, setFinisehdContent] = useState<boolean>(false);
 
   const {
     template,
@@ -38,8 +37,7 @@ function LinkFields(): JSX.Element {
     handleNewColumn,
   } = useProductContext();
 
-  const { setCurrentStep, setFromToIsOpened, colHeadersToPreviewTable, data } =
-    useFromToContext();
+  const { setCurrentStep, colHeadersToPreviewTable, data } = useFromToContext();
 
   function setNewColumn(newColumn: any, templateUpdated: any): void {
     // eslint-disable-next-line no-param-reassign
@@ -106,6 +104,7 @@ function LinkFields(): JSX.Element {
     }
   };
 
+  if (finisedContent) return <FinishedStep />;
   return (
     <ContainerLinkFields>
       {warnList.length > 0 ? (
@@ -160,11 +159,7 @@ function LinkFields(): JSX.Element {
         >
           Voltar
         </NavigationButton>
-        <NavigationButton
-          onClick={() => {
-            setFromToIsOpened(false);
-          }}
-        >
+        <NavigationButton onClick={() => setFinisehdContent(true)}>
           Importar
         </NavigationButton>
       </BoxButtons>
