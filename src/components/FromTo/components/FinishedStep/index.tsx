@@ -9,6 +9,7 @@ import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
 import { useFromToContext } from "../../../../context/FromToContext";
 // @ts-ignore
 import check from "../../../../assets/images/checkImage.png";
+import AccordionError from "../AccordionError";
 
 function FinishedStep(): JSX.Element {
   const { setFromToIsOpened } = useFromToContext();
@@ -21,6 +22,7 @@ function FinishedStep(): JSX.Element {
           Foram exportados <span>12 itens com sucesso</span>
         </TextFinishedStep>
       </ContentFinishedStep>
+      <AccordionError />
       <BoxButtons>
         <NavigationButton abort onClick={() => ""}>
           Importar mais produtos
