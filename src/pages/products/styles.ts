@@ -322,6 +322,77 @@ export const Container = styled.div`
         }
       }
     }
+    .radio-item-warn {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 45px;
+      width: fit-content;
+      height: 30px;
+
+      border: 1px solid #f1bc02;
+      border-radius: 24px;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      position: relative;
+    }
+
+    .hover-container {
+      display: flex;
+      z-index: 9999999999999999999999999999;
+    }
+
+    .hover-container .error-message {
+      display: none;
+      position: fixed;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 8px 16px;
+
+      width: 285px;
+      height: 136px;
+      background-color: rgba(0, 0, 0, 0.88);
+      border-radius: 6px;
+      transform: translateY(27px) translateX(-12px);
+    }
+
+    .hover-container .error-message .arrow-right {
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid rgba(0, 0, 0, 0.88);
+      position: absolute;
+      top: -8px;
+    }
+
+    .hover-container:hover .error-message {
+      display: flex;
+    }
+
+    .error-message p {
+      color: #fff;
+      display: flex;
+      font-family: ${({ theme }) => theme.fonts.family.default};
+      font-size: ${({ theme }) => theme.fonts.sizes.normal};
+      font-weight: ${({ theme }) => theme.fonts.weights.regular};
+      width: 253px;
+    }
+
+    .error-message .error-title {
+      color: #f1bc02;
+      font-weight: ${({ theme }) => theme.fonts.weights.bold};
+    }
 
     .dropdown-item {
       display: flex;

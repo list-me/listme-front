@@ -17,6 +17,7 @@ import { ReactComponent as DropdownIcon } from "../../../../assets/icons/headers
 import { ReactComponent as FileIcon } from "../../../../assets/icons/headers/file-icon.svg";
 import { ReactComponent as RadioIcon } from "../../../../assets/icons/headers/radio-icon.svg";
 import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers/relation-icon.svg";
+import { ReactComponent as Info } from "../../../../assets/info.svg";
 import { IDefaultTable } from "./DefaultTable";
 import handleCellChange from "./utils/handleCellChange";
 import handleBeforeCopy from "./utils/handleBeforeCopy";
@@ -32,6 +33,7 @@ import { IDropDownStatus } from "../HeaderDropDown/HeaderDropDown";
 import { IconType } from "../HeaderDropDown/components/Cell/Cell.d";
 import getStyledContent from "./utils/getStyledContent";
 import { ICol } from "../../CustomTable";
+import customRendererRadioComponent from "./utils/customRendererRadioComponent";
 
 function DefaultTable({
   hotRef,
@@ -63,6 +65,7 @@ function DefaultTable({
   hidden,
   handleFreeze,
 }: IDefaultTable): JSX.Element {
+  console.log("🚀 ~ file: index.tsx:66 ~ cols:", cols);
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
 
   useEffect(() => {
@@ -165,17 +168,19 @@ function DefaultTable({
       _instance: Handsontable,
       td: HTMLTableCellElement,
       _row: number,
-      _col: number,
+      col: number,
       _prop: string | number,
-      value: string | null,
+      value: string | string[],
     ): void => {
       // eslint-disable-next-line no-param-reassign
-      td.innerHTML = `<div class="radio-item">
-        ${value ?? ""}
-        ${svgStringDropDown}
-      </div>`;
+      td.innerHTML = customRendererRadioComponent({
+        cols,
+        col,
+        value,
+        svgStringDropDown,
+      });
     },
-    [svgStringDropDown],
+    [cols, svgStringDropDown],
   );
 
   const customRendererFileCallBack = useCallback(
