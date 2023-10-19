@@ -7,7 +7,7 @@ export const ContentFinishedStep = styled.div`
   align-items: center;
   justify-content: center;
   height: 213px;
-  margin: 40px 0 24px 0;
+  margin: 40px 0 16px 0;
 `;
 export const TitleFinishedStep = styled.h4`
   color: ${({ theme }) => theme.colors.grayscale.primary};

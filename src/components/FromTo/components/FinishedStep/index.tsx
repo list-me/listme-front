@@ -9,24 +9,63 @@ import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
 import { useFromToContext } from "../../../../context/FromToContext";
 // @ts-ignore
 import check from "../../../../assets/images/checkImage.png";
+// @ts-ignore
+import errorIcon from "../../../../assets/images/error.png";
 import AccordionError from "../AccordionError";
 
-function FinishedStep(): JSX.Element {
+function FinishedStep({
+  typeFinished,
+}: {
+  typeFinished: "warn" | "error" | "success";
+}): JSX.Element {
   const { setFromToIsOpened } = useFromToContext();
+
+  const configView = {
+    title: {
+      success: "Sucesso!",
+      warn: "Sucesso!",
+      error: "Erro",
+    },
+    text: {
+      success: (
+        <>
+          Foram exportados <span>12 itens com sucesso</span>
+        </>
+      ),
+      warn: (
+        <>
+          Foram exportados <span>12 itens com sucesso</span>
+        </>
+      ),
+      error: (
+        <>
+          Seu arquivo deu falha em <span>12 itens</span>
+        </>
+      ),
+    },
+    icon: {
+      success: check,
+      warn: check,
+      error: errorIcon,
+    },
+  };
+
   return (
     <ContainerFinishedStep>
       <ContentFinishedStep>
-        <img src={check} alt="Vincular List pública" />
-        <TitleFinishedStep>Sucesso!</TitleFinishedStep>
-        <TextFinishedStep>
-          Foram exportados <span>12 itens com sucesso</span>
-        </TextFinishedStep>
+        <img src={configView.icon[typeFinished]} alt="Vincular List pública" />
+        <TitleFinishedStep>{configView.title[typeFinished]}</TitleFinishedStep>
+        <TextFinishedStep>{configView.text[typeFinished]}</TextFinishedStep>
       </ContentFinishedStep>
-      <AccordionError />
+      {typeFinished !== "success" && (
+        <AccordionError typeFinished={typeFinished} />
+      )}
       <BoxButtons>
-        <NavigationButton abort onClick={() => ""}>
-          Importar mais produtos
-        </NavigationButton>
+        {typeFinished !== "error" && (
+          <NavigationButton abort onClick={() => ""}>
+            Importar mais produtos
+          </NavigationButton>
+        )}
         <NavigationButton onClick={() => setFromToIsOpened(false)}>
           Finalizar
         </NavigationButton>

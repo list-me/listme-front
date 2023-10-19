@@ -104,7 +104,8 @@ function LinkFields(): JSX.Element {
     }
   };
 
-  if (finisedContent) return <FinishedStep />;
+  const typeFinished: "warn" | "error" | "success" = "warn";
+  if (finisedContent) return <FinishedStep typeFinished={typeFinished} />;
   return (
     <ContainerLinkFields>
       {warnList.length > 0 ? (

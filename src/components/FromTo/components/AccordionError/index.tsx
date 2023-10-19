@@ -11,10 +11,23 @@ import { ReactComponent as DropDownIconSmall } from "../../../../assets/chevron-
 
 const headerTitles = ["Coluna", "Erro", " Nº de ocorrências"];
 
-function AccordionError(): JSX.Element {
-  const [isOpen, setIsOpen] = useState(true);
+function AccordionError({
+  typeFinished,
+}: {
+  typeFinished: "warn" | "error";
+}): JSX.Element {
+  const [isOpen, setIsOpen] = useState(() => {
+    if (typeFinished === "warn") return false;
+    return true;
+  });
 
   const itemsMock = [
+    { colun: "Única", error: "Opção inexistente", quantity: "2" },
+    { colun: "Seleção", error: "Opção inexistente", quantity: "10" },
+    { colun: "Suspensa", error: "Opção inexistente", quantity: "112" },
+    { colun: "Única", error: "Opção inexistente", quantity: "2" },
+    { colun: "Seleção", error: "Opção inexistente", quantity: "10" },
+    { colun: "Suspensa", error: "Opção inexistente", quantity: "112" },
     { colun: "Única", error: "Opção inexistente", quantity: "2" },
     { colun: "Seleção", error: "Opção inexistente", quantity: "10" },
     { colun: "Suspensa", error: "Opção inexistente", quantity: "112" },
@@ -24,11 +37,13 @@ function AccordionError(): JSX.Element {
   ];
 
   return (
-    <AccordionContainer>
-      <AccordionHeader onClick={() => setIsOpen(!isOpen)}>
-        <h4>Infelizmente, 10 itens foram importados com falhas</h4>
-        <DropDownIconSmall />
-      </AccordionHeader>
+    <AccordionContainer backgroundType={typeFinished}>
+      {typeFinished === "warn" && (
+        <AccordionHeader onClick={() => setIsOpen(!isOpen)} opened={isOpen}>
+          <h4>Infelizmente, 10 itens foram importados com falhas</h4>
+          <DropDownIconSmall />
+        </AccordionHeader>
+      )}
       <AccordionContent className={isOpen ? "open" : ""}>
         <AccordionHeaderContent>
           {headerTitles.map((title: string) => (
