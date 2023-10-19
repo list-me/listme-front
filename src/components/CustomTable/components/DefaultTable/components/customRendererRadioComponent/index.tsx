@@ -1,6 +1,6 @@
 import { renderToString } from "react-dom/server";
-import { ICol } from "../../../CustomTable";
-import { ReactComponent as InfoIcon } from "../../../../../assets/info.svg";
+import { ICol } from "../../../../CustomTable";
+import { ReactComponent as InfoIcon } from "../../../../../../assets/info.svg";
 
 function customRendererRadioComponent({
   cols,
@@ -17,19 +17,19 @@ function customRendererRadioComponent({
 }): string {
   const svgStringInfo: string = renderToString(<InfoIcon />);
 
-  const itemCorrect = cols[col]?.options?.includes(value?.[0]);
+  const itemCorrect = value ? cols[col]?.options?.includes(value?.[0]) : true;
 
-  const radioClass = !itemCorrect && value ? "radio-item-warn" : "radio-item";
+  const radioClass = itemCorrect ? "dropdown-item" : "dropdown-item-warn";
 
   const element = `
   <div class=${radioClass}>
     ${
-      !itemCorrect &&
-      value &&
-      `<div class="hover-container-info" onmouseover="window.yourSetAlertTooltip(true)" onmouseout="window.yourSetAlertTooltip(false)">
+      !itemCorrect
+        ? `<div class="hover-container-info" onmouseover="window.yourSetAlertTooltip(true)" onmouseout="window.yourSetAlertTooltip(false)">
       ${svgStringInfo}
 
     </div>`
+        : ""
     }
     ${value ?? ""}
     ${svgStringDropDown}

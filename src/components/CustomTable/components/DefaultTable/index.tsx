@@ -9,7 +9,6 @@ import DropdownEditor from "../../Editors/Dropdown";
 import RadioEditor from "../../Editors/Radio";
 import RelationEditor from "../../Editors/Relation";
 import { ReactComponent as DropDownIcon } from "../../../../assets/chevron-down.svg";
-import { ReactComponent as DropDownIconSmall } from "../../../../assets/chevron-down-small.svg";
 import { ReactComponent as TextIcon } from "../../../../assets/icons/headers/text-icon.svg";
 import { ReactComponent as ParagraphIcon } from "../../../../assets/icons/headers/textarea-icon.svg";
 import { ReactComponent as CheckedIcon } from "../../../../assets/icons/headers/checked-icon.svg";
@@ -17,7 +16,6 @@ import { ReactComponent as DropdownIcon } from "../../../../assets/icons/headers
 import { ReactComponent as FileIcon } from "../../../../assets/icons/headers/file-icon.svg";
 import { ReactComponent as RadioIcon } from "../../../../assets/icons/headers/radio-icon.svg";
 import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers/relation-icon.svg";
-import { ReactComponent as Info } from "../../../../assets/info.svg";
 import { IDefaultTable } from "./DefaultTable";
 import handleCellChange from "./utils/handleCellChange";
 import handleBeforeCopy from "./utils/handleBeforeCopy";
@@ -33,8 +31,9 @@ import { IDropDownStatus } from "../HeaderDropDown/HeaderDropDown";
 import { IconType } from "../HeaderDropDown/components/Cell/Cell.d";
 import getStyledContent from "./utils/getStyledContent";
 import { ICol } from "../../CustomTable";
-import customRendererRadioComponent from "./utils/customRendererRadioComponent";
+import customRendererRadioComponent from "./components/customRendererRadioComponent";
 import AlertTooltip from "./components/AlertTooltip";
+import customRendererDropdownComponent from "./components/customRendererDropdownComponent";
 
 function DefaultTable({
   hotRef,
@@ -173,14 +172,16 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
-      // eslint-disable-next-line no-param-reassign
-      td.innerHTML = customRendererRadioComponent({
-        cols,
-        col,
-        value,
-        svgStringDropDown,
-        setAlertTooltip,
-      });
+      if (cols) {
+        // eslint-disable-next-line no-param-reassign
+        td.innerHTML = customRendererRadioComponent({
+          cols,
+          col,
+          value,
+          svgStringDropDown,
+          setAlertTooltip,
+        });
+      }
     },
     [cols, svgStringDropDown],
   );
@@ -215,17 +216,20 @@ function DefaultTable({
       _instance: Handsontable,
       td: HTMLTableCellElement,
       _row: number,
-      _col: number,
+      col: number,
       _prop: string | number,
-      value: string | null,
+      value: string | string[],
     ): void => {
       // eslint-disable-next-line no-param-reassign
-      td.innerHTML = `<div class="dropdown-item">
-        ${value ?? ""}
-        ${svgStringDropDown}
-      </div>`;
+      td.innerHTML = customRendererDropdownComponent({
+        cols,
+        col,
+        value,
+        svgStringDropDown,
+        setAlertTooltip,
+      });
     },
-    [svgStringDropDown],
+    [cols, svgStringDropDown],
   );
 
   const customRendererRelation = useCallback(

@@ -375,6 +375,29 @@ export const Container = styled.div`
         }
       }
     }
+    .dropdown-item-warn {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 50px;
+      width: fit-content;
+      height: 30px;
+
+      border: 1px solid #f1bc02;
+      border-radius: 8px;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
 
     .drag-over {
       border: 2px dashed #3818d9;
