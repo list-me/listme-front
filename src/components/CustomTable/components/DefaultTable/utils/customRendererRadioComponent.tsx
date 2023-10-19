@@ -7,11 +7,13 @@ function customRendererRadioComponent({
   col,
   value,
   svgStringDropDown,
+  setAlertTooltip,
 }: {
   cols: ICol[];
   col: number;
   value: string | string[];
   svgStringDropDown: string;
+  setAlertTooltip: React.Dispatch<React.SetStateAction<boolean>>;
 }): string {
   const svgStringInfo: string = renderToString(<InfoIcon />);
 
@@ -24,18 +26,16 @@ function customRendererRadioComponent({
     ${
       !itemCorrect &&
       value &&
-      `<div class="hover-container">
+      `<div class="hover-container-info" onmouseover="window.yourSetAlertTooltip(true)" onmouseout="window.yourSetAlertTooltip(false)">
       ${svgStringInfo}
-      <div class="error-message">
-      <div class="arrow-right"></div>
-        <p class="error-title">Inválido:</p>
-        <p>A entrada não é aceitável, pois não<br />corresponde a nenhum dos itens da<br />coluna especificada.</p>
-      </div>
+
     </div>`
     }
     ${value ?? ""}
     ${svgStringDropDown}
   </div>`;
+
+  (window as any).yourSetAlertTooltip = setAlertTooltip;
 
   return element;
 }

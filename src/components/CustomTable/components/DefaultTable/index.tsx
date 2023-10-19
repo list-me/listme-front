@@ -34,6 +34,7 @@ import { IconType } from "../HeaderDropDown/components/Cell/Cell.d";
 import getStyledContent from "./utils/getStyledContent";
 import { ICol } from "../../CustomTable";
 import customRendererRadioComponent from "./utils/customRendererRadioComponent";
+import AlertTooltip from "./components/AlertTooltip";
 
 function DefaultTable({
   hotRef,
@@ -65,7 +66,6 @@ function DefaultTable({
   hidden,
   handleFreeze,
 }: IDefaultTable): JSX.Element {
-  console.log("🚀 ~ file: index.tsx:66 ~ cols:", cols);
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
 
   useEffect(() => {
@@ -163,6 +163,7 @@ function DefaultTable({
     );
   };
 
+  const [openAlertTooltip, setAlertTooltip] = useState(false);
   const customRendererRadio = useCallback(
     (
       _instance: Handsontable,
@@ -178,6 +179,7 @@ function DefaultTable({
         col,
         value,
         svgStringDropDown,
+        setAlertTooltip,
       });
     },
     [cols, svgStringDropDown],
@@ -297,6 +299,8 @@ function DefaultTable({
 
   return (
     <>
+      {openAlertTooltip && <AlertTooltip />}
+
       <HotTable
         readOnly={isTableLocked}
         ref={hotRef}
