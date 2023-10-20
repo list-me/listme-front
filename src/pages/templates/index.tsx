@@ -23,7 +23,6 @@ function Template(): JSX.Element {
     templateRequests
       .list({ limit, page })
       .then((response) => {
-        console.log("🚀 ~ file: index.tsx:33 ~ .then ~ response:", response);
         setTemplates(response);
       })
       .catch((error) => {
