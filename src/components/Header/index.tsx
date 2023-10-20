@@ -1,14 +1,24 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Container, RightContent } from "./styles";
 import { Profile } from "../Profile";
 import { Notification } from "../Notification";
 import Button from "../Button";
-// @ts-ignore
 import { ReactComponent as AddIcon } from "../../assets/add.svg";
 import { TempModal } from "../TempModal";
+import { templateRequests } from "../../services/apis/requests/template";
+import { IPaginationTemplate } from "../../pages/templates/templates";
 
-export function Header() {
+export function Header({
+  handleGetTemplates,
+}: {
+  handleGetTemplates: ({ page, limit }: IPaginationTemplate) => void;
+}): JSX.Element {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+
+  async function createTemplate(): Promise<void> {
+    await templateRequests.post("list");
+    handleGetTemplates({ page: 0, limit: 100 });
+  }
 
   return (
     <>
@@ -22,7 +32,8 @@ export function Header() {
             isLoading={false}
             width="152px"
             height="45px"
-            onClickModal={() => setModalIsOpen(!modalIsOpen)}
+            // onClickModal={() => setModalIsOpen(!modalIsOpen)}
+            onClickModal={() => createTemplate()}
           >
             <AddIcon />
             Criar template
@@ -34,3 +45,5 @@ export function Header() {
     </>
   );
 }
+
+export default Header;
