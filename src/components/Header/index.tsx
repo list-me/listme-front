@@ -20,7 +20,7 @@ export function Header({
     try {
       await templateRequests.post("list");
       handleGetTemplates({ page: 0, limit: 100 });
-      toast.error("Template criado com sucesso!");
+      toast.success("Template criado com sucesso!");
     } catch (error) {
       toast.error("Ocorreu um erro ao criar o template");
     }
