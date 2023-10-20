@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { Container, RightContent } from "./styles";
 import { Profile } from "../Profile";
 import { Notification } from "../Notification";
@@ -16,8 +17,13 @@ export function Header({
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
 
   async function createTemplate(): Promise<void> {
-    await templateRequests.post("list");
-    handleGetTemplates({ page: 0, limit: 100 });
+    try {
+      await templateRequests.post("list");
+      handleGetTemplates({ page: 0, limit: 100 });
+      toast.success("Template criado com sucesso");
+    } catch (error) {
+      toast.error("Ocorreu um erro ao criar o template");
+    }
   }
 
   return (
