@@ -19,7 +19,7 @@ function customRendererRadioComponent({
 
   const itemCorrect = value ? cols[col]?.options?.includes(value?.[0]) : true;
 
-  const radioClass = itemCorrect ? "dropdown-item" : "dropdown-item-warn";
+  const radioClass = itemCorrect ? "radio-item" : "radio-item-warn";
 
   const element = `
   <div class=${radioClass}>
