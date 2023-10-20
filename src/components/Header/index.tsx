@@ -16,7 +16,7 @@ export function Header({
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
 
   async function createTemplate(): Promise<void> {
-    await templateRequests.post();
+    await templateRequests.post("list");
     handleGetTemplates({ page: 0, limit: 100 });
   }
 

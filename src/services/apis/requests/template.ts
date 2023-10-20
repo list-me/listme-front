@@ -40,11 +40,11 @@ export const templateRequests = {
 
     return response.data;
   },
-  post: async (): Promise<any> => {
+  post: async (type: string): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.post(
       `/template`,
-      { type: "list" },
+      { type },
       {
         headers: {
           Authorization: `Bearer ${token}`,
