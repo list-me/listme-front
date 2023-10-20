@@ -313,7 +313,7 @@ function DefaultTable({
         afterColumnResize={async (newSize: number, column: number) => {
           await handleResize(column, newSize, template);
         }}
-        afterOnCellMouseUp={(event: any, coords, TD) => {
+        afterOnCellMouseUp={(event: any, coords, _TD) => {
           const limitWidth = window.innerWidth - 350;
 
           const invert = event.clientX > limitWidth;
@@ -375,7 +375,7 @@ function DefaultTable({
         }}
         afterChange={afterChangeCallback}
       >
-        {cols.map((col, index: number) => {
+        {cols.map((col, _index: number) => {
           if (col.isCustom && col.type === "list") {
             return (
               <HotColumn

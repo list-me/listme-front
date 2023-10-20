@@ -566,7 +566,6 @@ export const ProductContextProvider = ({
           id: element?.data,
         };
       });
-    fields.pop();
     templateRequests
       .customView(window.location.pathname.substring(10), { fields })
       .catch((_error) =>
