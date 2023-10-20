@@ -66,6 +66,7 @@ function DefaultTable({
   handleFreeze,
 }: IDefaultTable): JSX.Element {
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
+  const [openAlertTooltip, setAlertTooltip] = useState(false);
 
   useEffect(() => {
     if (hotRef.current) {
@@ -159,10 +160,10 @@ function DefaultTable({
       orderChanged,
       columns,
       handleMove,
+      setColumns,
     );
   };
 
-  const [openAlertTooltip, setAlertTooltip] = useState(false);
   const customRendererRadio = useCallback(
     (
       _instance: Handsontable,
@@ -175,7 +176,7 @@ function DefaultTable({
       if (cols) {
         // eslint-disable-next-line no-param-reassign
         td.innerHTML = customRendererRadioComponent({
-          cols,
+          columns,
           col,
           value,
           svgStringDropDown,
@@ -183,7 +184,7 @@ function DefaultTable({
         });
       }
     },
-    [cols, svgStringDropDown],
+    [columns, svgStringDropDown],
   );
 
   const customRendererFileCallBack = useCallback(
