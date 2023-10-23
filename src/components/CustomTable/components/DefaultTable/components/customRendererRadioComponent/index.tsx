@@ -16,7 +16,6 @@ function customRendererRadioComponent({
   svgStringDropDown: string;
   setAlertTooltip: React.Dispatch<React.SetStateAction<boolean>>;
 }): string {
-  // console.log("🚀 ~ file: index.tsx:18 ~ col:", col);
   const svgStringInfo: string = renderToString(<InfoIcon />);
 
   const itemCorrect = value

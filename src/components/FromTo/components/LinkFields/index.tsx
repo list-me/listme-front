@@ -63,15 +63,42 @@ function LinkFields(): JSX.Element {
     handleNewColumn(newColumn, templateUpdated);
   }
 
-  const options: IOption[] = template.fields.fields.map((item: any) => {
-    const newItem = {
-      value: item.title,
-      label: item.title,
-      type: item.type,
-      optionsList: item.options,
-    };
-    return newItem;
-  });
+  const [optionsToVerify, setOptionsToVerify] = useState<string[]>([]);
+
+  useEffect(() => {
+    const keys = Object.keys(selected);
+    const valuesToVerify = keys.map((key) => {
+      return selected[key].value;
+    });
+    setOptionsToVerify(valuesToVerify);
+
+    if (valuesToVerify.length >= headerTable.length - 1) {
+      colHeadersToPreviewTable!.forEach((itemcolHeadersToPreviewTable) => {
+        if (!selected[itemcolHeadersToPreviewTable]) {
+          const ignore = { value: "Ignorar", label: "Ignorar" };
+
+          setSelected((prevSelected) => ({
+            ...prevSelected,
+            [itemcolHeadersToPreviewTable]: ignore,
+          }));
+        }
+      });
+    }
+  }, [colHeadersToPreviewTable, headerTable, selected]);
+
+  const options: IOption[] = template.fields.fields
+    .map((item: any) => {
+      const newItem = {
+        value: item.title,
+        label: item.title,
+        type: item.type,
+        optionsList: item.options,
+      };
+      return newItem;
+    })
+    .filter((itemOption: IOption) => {
+      return !optionsToVerify.includes(itemOption.value);
+    });
 
   const handleSelectChange = (
     itemKey: string,
@@ -84,7 +111,6 @@ function LinkFields(): JSX.Element {
         ...prevSelected,
         [itemKey]: selectedValue,
       }));
-
       if (
         optionsList &&
         optionsList[0] !== "" &&
