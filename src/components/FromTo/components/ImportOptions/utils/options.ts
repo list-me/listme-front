@@ -1,14 +1,14 @@
 const optionsImport = [
   {
-    value: "Adicionar novos e atualizar existentes",
+    value: "create_and_update",
     label: "Adicionar novos e atualizar existentes",
   },
   {
-    value: "Apenas adicionar novos",
+    value: "create",
     label: "Apenas adicionar novos",
   },
   {
-    value: "Apenas atualizar existentes",
+    value: "update",
     label: "Apenas atualizar existentes",
   },
 ];
@@ -26,16 +26,16 @@ const optionsStatus = [
     label: "Arquivado",
   },
 ];
-const optionsAssets = [
-  {
-    value: "Ignorar ativos existentes",
-    label: "Ignorar ativos existentes",
-  },
-  {
-    value: "Importar todos os ativos",
-    label: "Importar todos os ativos",
-  },
-];
+// const optionsAssets = [
+//   {
+//     value: "Ignorar ativos existentes",
+//     label: "Ignorar ativos existentes",
+//   },
+//   {
+//     value: "Importar todos os ativos",
+//     label: "Importar todos os ativos",
+//   },
+// ];
 
 export default [
   {
@@ -48,9 +48,9 @@ export default [
     title: "Status de novo produto",
     type: "status",
   },
-  {
-    list: optionsAssets,
-    title: "Importar assets",
-    type: "assets",
-  },
+  // {
+  //   list: optionsAssets,
+  //   title: "Importar assets",
+  //   type: "assets",
+  // },
 ];

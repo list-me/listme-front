@@ -1,28 +1,28 @@
 const optionsSeparator = [
   {
-    value: ",",
+    value: "comma",
     label: "Vírgula (,)",
   },
   {
-    value: ";",
+    value: "semicolon",
     label: "Ponto e Vírgula (;)",
   },
   {
-    value: "|",
+    value: "pipe",
     label: "Pipe (|)",
   },
   {
-    value: "\t",
+    value: "tab",
     label: "Tab ( )",
   },
 ];
 const optionsDelimiter = [
   {
-    value: '"',
+    value: "double_quotes",
     label: 'Aspas Duplas (")',
   },
   {
-    value: "'",
+    value: "single_quotes",
     label: "Aspas Simples (')",
   },
 ];
@@ -34,12 +34,22 @@ const optionsCharset = [
 ];
 const optionsDecimal = [
   {
-    value: ".",
+    value: "dot",
     label: "Ponto (.)",
   },
   {
-    value: ",",
+    value: "comma",
     label: "Vírgula (,)",
+  },
+];
+const multiOptions = [
+  {
+    value: "comma",
+    label: "Ponto (,)",
+  },
+  {
+    value: "semicolon",
+    label: "Ponto e Vírgula (;)",
   },
 ];
 
@@ -63,5 +73,10 @@ export default [
     list: optionsDecimal,
     title: "Separador decimal",
     type: "decimal",
+  },
+  {
+    list: multiOptions,
+    title: "Separador de múltiplas escolhas",
+    type: "multiOptions",
   },
 ];

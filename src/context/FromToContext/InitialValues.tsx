@@ -1,10 +1,10 @@
 export const initialValuesImportConfiguration = {
   separator: {
-    value: ",",
+    value: "comma",
     label: "Vírgula (,)",
   },
   delimiter: {
-    value: '"',
+    value: "double_quotes",
     label: 'Aspas Duplas (")',
   },
   charset: {
@@ -12,8 +12,12 @@ export const initialValuesImportConfiguration = {
     label: "UTF-8",
   },
   decimal: {
-    value: ".",
+    value: "dot",
     label: "Ponto (.)",
+  },
+  multiOptions: {
+    value: "comma",
+    label: "Vírgula (,)",
   },
 };
 export const initialValuesImportOptions = {

@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+// import React, { useState } from "react";
 import { ContainerImportOptions } from "./styles";
 import Select from "../../../Select";
 import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
-import CheckboxCustom from "../../../Checkbox";
+// import CheckboxCustom from "../../../Checkbox";
 import { useFromToContext } from "../../../../context/FromToContext";
 import options from "./utils/options";
 import handleChangeSelect from "../../utils/handleChangeSelect";
 
 function ImportOptions(): JSX.Element {
-  const [checkBox, setCheckBox] = useState("");
+  // const [checkBox, setCheckBox] = useState("");
 
   const { setCurrentStep, valuesImportOptions, setValuesImportOptions } =
     useFromToContext();
@@ -31,10 +31,10 @@ function ImportOptions(): JSX.Element {
           labelText={item.title}
         />
       ))}
-      <CheckboxCustom
+      {/* <CheckboxCustom
         onChange={() => setCheckBox}
         label="Crie uma lista estática de todos os produtos importados"
-      />
+      /> */}
       <BoxButtons>
         <NavigationButton
           abort

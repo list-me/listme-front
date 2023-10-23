@@ -1,5 +1,6 @@
 import { api } from "../api";
 import { STORAGE } from "../../../constants/localStorage";
+import { ITemplate } from "../../../context/products/product.context";
 
 interface IPagination {
   page?: number;
@@ -51,6 +52,16 @@ export const templateRequests = {
         },
       },
     );
+
+    return response.data;
+  },
+  postFromTo: async (data: ITemplate): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(`/template`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     return response.data;
   },

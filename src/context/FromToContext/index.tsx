@@ -20,6 +20,16 @@ import {
 
 const FromToContext = createContext<FromToContextType | undefined>(undefined);
 
+const papaParams: { [key: string]: string } = {
+  comma: ",",
+  semicolon: ";",
+  pipe: "|",
+  tab: "\t",
+  double_quotes: '"',
+  single_quotes: "'",
+  dot: ".",
+};
+
 export function FromToContextProvider({
   children,
 }: {
@@ -44,8 +54,8 @@ export function FromToContextProvider({
     (file: File): void => {
       Papa.parse<CSVRow>(file, {
         header: true,
-        delimiter: valuesImportConfiguration.separator.value,
-        quoteChar: valuesImportConfiguration.delimiter.value,
+        delimiter: papaParams[valuesImportConfiguration.separator.value],
+        quoteChar: papaParams[valuesImportConfiguration.delimiter.value],
         complete: (result) => {
           setData(result.data.slice(0, 10));
         },
@@ -57,7 +67,8 @@ export function FromToContextProvider({
     ],
   );
 
-  // ouvintes de alteraçoes pra chamadas
+  function finishFromTo() {}
+
   useEffect(() => {
     if (!fromToIsOpened) {
       setCurrentStep(0);
@@ -65,6 +76,7 @@ export function FromToContextProvider({
       setCurrentFile(undefined);
     }
   }, [fromToIsOpened]);
+
   useEffect(() => {
     if (currentFile) parseCSV(currentFile);
   }, [currentFile, parseCSV, valuesImportConfiguration]);
@@ -84,6 +96,7 @@ export function FromToContextProvider({
     colHeadersToPreviewTable,
     valuesImportOptions,
     setValuesImportOptions,
+    finishFromTo,
   };
 
   return (
