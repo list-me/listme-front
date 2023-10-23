@@ -95,7 +95,6 @@ function EditableText({
               setError("");
               setText(() => e.target.value);
             }}
-            // eslint-disable-next-line react/jsx-no-bind
             onKeyDown={handleKeyDown}
             error={error}
           />
