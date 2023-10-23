@@ -9,11 +9,7 @@ import { ReactComponent as TrashIcon } from "../../assets/trash-icon.svg";
 import CustomTable from "../../components/Table/index";
 import { templateRequests } from "../../services/apis/requests/template";
 import TemplateDefault from "../../components/TemplateDefault";
-
-interface IPaginationTemplate {
-  page?: number;
-  limit?: number;
-}
+import { IPaginationTemplate } from "./templates";
 
 function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
@@ -154,7 +150,7 @@ function Template(): JSX.Element {
   ];
 
   return (
-    <TemplateDefault>
+    <TemplateDefault handleGetTemplates={handleGetTemplates}>
       <Content>
         <TitlePage> Templates </TitlePage>
         <CustomTable
