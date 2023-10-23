@@ -11,11 +11,14 @@ interface IPagination {
 export const templateRequests = {
   list: async ({ page = 0, limit = 20 }: IPagination): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
-    const response = await api.get(`/templates/?page=${page}&limit=${limit}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await api.get(
+      `/templates/?offset=${page}&limit=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
 
     return response?.data?.templates
       ?.sort((lastItem: any, nextItem: any) => {
