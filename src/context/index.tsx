@@ -6,8 +6,8 @@ import { ImageContextProvider } from "./images";
 
 const providers = [
   ProductContextProvider,
-  ImageContextProvider,
   FromToContextProvider,
+  ImageContextProvider,
 ];
 
 export const AppContextProvider = combineContexts(...providers);

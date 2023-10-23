@@ -22,7 +22,7 @@ export const initialValuesImportConfiguration = {
 };
 export const initialValuesImportOptions = {
   import: {
-    value: "Adicionar novos e atualizar existentes",
+    value: "create_and_update",
     label: "Adicionar novos e atualizar existentes",
   },
   status: {

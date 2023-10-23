@@ -8,6 +8,7 @@ export interface IValuesImportConfiguration {
   delimiter: IItemValueImport;
   charset: IItemValueImport;
   decimal: IItemValueImport;
+  multiOptions: IItemValueImport;
 }
 export interface IValuesImportOptions {
   import: IItemValueImport;
@@ -33,6 +34,15 @@ export interface FromToContextType {
   valuesImportOptions: IValuesImportOptions;
   setValuesImportOptions: React.Dispatch<
     React.SetStateAction<IValuesImportOptions>
+  >;
+  finishFromTo: () => void;
+  selectedLinkFields: {
+    [key: string]: IOption;
+  };
+  setSelectedLinkFields: React.Dispatch<
+    React.SetStateAction<{
+      [key: string]: IOption;
+    }>
   >;
 }
 

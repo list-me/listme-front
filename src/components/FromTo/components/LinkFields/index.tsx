@@ -25,7 +25,6 @@ function LinkFields(): JSX.Element {
   const [dataToModal, setDataToModal] = useState({});
   const [warnList, setWarnList] = useState<string[]>([]);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-  const [selected, setSelected] = useState<{ [key: string]: IOption }>({});
 
   const [finisedContent, setFinisehdContent] = useState<boolean>(false);
 
@@ -36,6 +35,8 @@ function LinkFields(): JSX.Element {
     setColHeaders,
     handleNewColumn,
   } = useProductContext();
+  const { finishFromTo, selectedLinkFields, setSelectedLinkFields } =
+    useFromToContext();
 
   const { setCurrentStep, colHeadersToPreviewTable, data } = useFromToContext();
 
@@ -66,25 +67,30 @@ function LinkFields(): JSX.Element {
   const [optionsToVerify, setOptionsToVerify] = useState<string[]>([]);
 
   useEffect(() => {
-    const keys = Object.keys(selected);
+    const keys = Object.keys(selectedLinkFields);
     const valuesToVerify = keys.map((key) => {
-      return selected[key].value;
+      return selectedLinkFields[key].value;
     });
     setOptionsToVerify(valuesToVerify);
 
     if (valuesToVerify.length >= headerTable.length - 1) {
       colHeadersToPreviewTable!.forEach((itemcolHeadersToPreviewTable) => {
-        if (!selected[itemcolHeadersToPreviewTable]) {
+        if (!selectedLinkFields[itemcolHeadersToPreviewTable]) {
           const ignore = { value: "Ignorar", label: "Ignorar" };
 
-          setSelected((prevSelected) => ({
+          setSelectedLinkFields((prevSelected) => ({
             ...prevSelected,
             [itemcolHeadersToPreviewTable]: ignore,
           }));
         }
       });
     }
-  }, [colHeadersToPreviewTable, headerTable, selected]);
+  }, [
+    colHeadersToPreviewTable,
+    headerTable.length,
+    selectedLinkFields,
+    setSelectedLinkFields,
+  ]);
 
   const options: IOption[] = template.fields.fields
     .map((item: any) => {
@@ -107,7 +113,7 @@ function LinkFields(): JSX.Element {
     const { value, optionsList } = selectedValue;
 
     if (value !== "Criar nova coluna") {
-      setSelected((prevSelected) => ({
+      setSelectedLinkFields((prevSelected) => ({
         ...prevSelected,
         [itemKey]: selectedValue,
       }));
@@ -154,7 +160,7 @@ function LinkFields(): JSX.Element {
             <Origin title={item} example={data[0][item]} />
             <ContainerSelectText>
               <SelectComponent
-                select={selected[item] || null}
+                select={selectedLinkFields[item] || null}
                 onChange={(value) => handleSelectChange(item, value)}
                 options={options}
                 placeHolder="Selecione"
@@ -186,7 +192,10 @@ function LinkFields(): JSX.Element {
         >
           Voltar
         </NavigationButton>
-        <NavigationButton onClick={() => setFinisehdContent(true)}>
+        {/* <NavigationButton onClick={() => setFinisehdContent(true)}>
+          Importar
+        </NavigationButton> */}
+        <NavigationButton onClick={() => finishFromTo()}>
           Importar
         </NavigationButton>
       </BoxButtons>

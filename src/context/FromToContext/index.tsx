@@ -17,6 +17,10 @@ import {
   initialValuesImportConfiguration,
   initialValuesImportOptions,
 } from "./InitialValues";
+import { useProductContext } from "../products";
+import { templateRequests } from "../../services/apis/requests/template";
+import { ITemplate } from "../products/product.context";
+import { productRequests } from "../../services/apis/requests/product";
 
 const FromToContext = createContext<FromToContextType | undefined>(undefined);
 
@@ -39,6 +43,9 @@ export function FromToContextProvider({
   const [data, setData] = useState<CSVRow[]>([]);
   const [currentFile, setCurrentFile] = useState<File>();
   const [fromToIsOpened, setFromToIsOpened] = useState<boolean>(false);
+  const [selectedLinkFields, setSelectedLinkFields] = useState<{
+    [key: string]: IOption;
+  }>({});
 
   const colHeadersToPreviewTable = useMemo((): string[] | null => {
     if (data[0]) return Object.keys(data[0]);
@@ -67,7 +74,49 @@ export function FromToContextProvider({
     ],
   );
 
-  function finishFromTo() {}
+  const { headerTable, template } = useProductContext();
+
+  function finishFromTo(): void {
+    const formData = new FormData();
+    formData.append(currentFile?.name || "Generic_Name", currentFile as Blob);
+
+    const targets: { [key: string]: string } = {};
+
+    headerTable.forEach((item) => {
+      if (item.title) targets[item.title] = item.data;
+    });
+
+    const keys = Object.keys(selectedLinkFields);
+    const validKeys = keys.filter((key) => {
+      return selectedLinkFields[key].value !== "Ignorar";
+    });
+
+    const fieldsToSend = validKeys.map((key) => {
+      return {
+        origin: key,
+        target: targets[selectedLinkFields[key].value],
+      };
+    });
+    const dataFromTo = {
+      name: currentFile?.name,
+      type: "import",
+      fields: {
+        fields: fieldsToSend,
+
+        separator: valuesImportConfiguration.separator.value,
+        text_delimiter: valuesImportConfiguration.delimiter.value,
+        charset: valuesImportConfiguration.charset.value,
+        decimal_delimiter: valuesImportConfiguration.decimal.value,
+        action: valuesImportOptions.import.value,
+
+        template_id: template.id,
+      },
+    };
+    Promise.all([
+      templateRequests.postFromTo(dataFromTo as unknown as ITemplate),
+      productRequests.postFromToCSV(formData),
+    ]);
+  }
 
   useEffect(() => {
     if (!fromToIsOpened) {
@@ -97,6 +146,8 @@ export function FromToContextProvider({
     valuesImportOptions,
     setValuesImportOptions,
     finishFromTo,
+    selectedLinkFields,
+    setSelectedLinkFields,
   };
 
   return (

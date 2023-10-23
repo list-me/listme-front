@@ -20,7 +20,13 @@ function ImportConfiguration(): JSX.Element {
     colHeadersToPreviewTable,
   } = useFromToContext();
 
-  const types = ["separator", "delimiter", "charset", "decimal"];
+  const types = [
+    "separator",
+    "delimiter",
+    "charset",
+    "decimal",
+    "multiOptions",
+  ];
 
   return data.length > 0 ? (
     <ContainerImportConfiguration>
@@ -30,7 +36,12 @@ function ImportConfiguration(): JSX.Element {
             key={item.type}
             select={
               valuesImportConfiguration[
-                item.type as "separator" | "delimiter" | "charset" | "decimal"
+                item.type as
+                  | "separator"
+                  | "delimiter"
+                  | "charset"
+                  | "decimal"
+                  | "multiOptions"
               ]
             }
             onChange={(value) =>
@@ -59,7 +70,7 @@ function ImportConfiguration(): JSX.Element {
             viewportColumnRenderingOffset={Object.keys(data[0]).length + 1}
             viewportRowRenderingOffset={11}
             height={435}
-            width={943}
+            width={958}
             autoColumnSize
           />
         )}

@@ -13,14 +13,16 @@ export const AlertText = styled.p`
   font-weight: ${({ theme }) => theme.fonts.weights.regular};
 `;
 export const BoxSelects = styled.div`
-  display: flex;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: 178px 188px 123px 175px 246px;
+  gap: 12px;
   margin-bottom: 24px;
   z-index: 1000;
 `;
 
 export const BoxHotTable = styled.div`
   overflow: auto;
+  background: blue;
   .handsontable .wtHolder {
     ::-webkit-scrollbar {
       width: 15px !important;
@@ -34,6 +36,7 @@ export const BoxHotTable = styled.div`
       border-radius: 8px !important;
       border: 2px solid transparent;
     }
+    width: 100% !important;
   }
   .htCore {
     width: 100%;
