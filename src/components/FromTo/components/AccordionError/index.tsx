@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   AccordionColumnContentText,
   AccordionContainer,
@@ -8,6 +8,7 @@ import {
   AccordionItemContent,
 } from "./styles";
 import { ReactComponent as DropDownIconSmall } from "../../../../assets/chevron-down-small.svg";
+import { useFromToContext } from "../../../../context/FromToContext";
 
 const headerTitles = ["Coluna", "Erro", " Nº de ocorrências"];
 
@@ -21,26 +22,21 @@ function AccordionError({
     return true;
   });
 
-  const itemsMock = [
-    { colun: "Única", error: "Opção inexistente", quantity: "2" },
-    { colun: "Seleção", error: "Opção inexistente", quantity: "10" },
-    { colun: "Suspensa", error: "Opção inexistente", quantity: "112" },
-    { colun: "Única", error: "Opção inexistente", quantity: "2" },
-    { colun: "Seleção", error: "Opção inexistente", quantity: "10" },
-    { colun: "Suspensa", error: "Opção inexistente", quantity: "112" },
-    { colun: "Única", error: "Opção inexistente", quantity: "2" },
-    { colun: "Seleção", error: "Opção inexistente", quantity: "10" },
-    { colun: "Suspensa", error: "Opção inexistente", quantity: "112" },
-    { colun: "Única", error: "Opção inexistente", quantity: "2" },
-    { colun: "Seleção", error: "Opção inexistente", quantity: "10" },
-    { colun: "Suspensa", error: "Opção inexistente", quantity: "112" },
-  ];
+  const { csvError } = useFromToContext();
+
+  const itemsToView = useMemo(() => {
+    if (typeFinished === "warn") return csvError.warnings;
+    if (typeFinished === "error") return csvError.errors;
+  }, [csvError.errors, csvError.warnings, typeFinished]);
 
   return (
     <AccordionContainer backgroundType={typeFinished}>
       {typeFinished === "warn" && (
         <AccordionHeader onClick={() => setIsOpen(!isOpen)} opened={isOpen}>
-          <h4>Infelizmente, 10 itens foram importados com falhas</h4>
+          <h4>
+            Infelizmente, {csvError.warnings.length} itens foram importados com
+            falhas
+          </h4>
           <DropDownIconSmall />
         </AccordionHeader>
       )}
@@ -52,16 +48,16 @@ function AccordionError({
             </AccordionColumnContentText>
           ))}
         </AccordionHeaderContent>
-        {itemsMock.map((item) => (
+        {itemsToView?.map((item) => (
           <AccordionItemContent>
             <AccordionColumnContentText>
-              {item.colun}
+              {item.column}
             </AccordionColumnContentText>
             <AccordionColumnContentText>
-              {item.error}
+              {item.reason}
             </AccordionColumnContentText>
             <AccordionColumnContentText>
-              {item.quantity}
+              {item.total}
             </AccordionColumnContentText>
           </AccordionItemContent>
         ))}

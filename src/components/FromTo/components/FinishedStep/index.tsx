@@ -55,7 +55,7 @@ function FinishedStep({
       <ContentFinishedStep>
         <img src={configView.icon[typeFinished]} alt="Vincular List pública" />
         <TitleFinishedStep>{configView.title[typeFinished]}</TitleFinishedStep>
-        <TextFinishedStep>{configView.text[typeFinished]}</TextFinishedStep>
+        {/* <TextFinishedStep>{configView.text[typeFinished]}</TextFinishedStep> */}
       </ContentFinishedStep>
       {typeFinished !== "success" && (
         <AccordionError typeFinished={typeFinished} />

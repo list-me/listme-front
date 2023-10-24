@@ -44,8 +44,13 @@ export interface FromToContextType {
       [key: string]: IOption;
     }>
   >;
+  csvError: ICSVError;
 }
 
 export interface CSVRow {
   [key: string]: string | number;
+}
+export interface ICSVError {
+  errors: { column: string; total: number; reason: string }[];
+  warnings: { column: string; total: number; reason: string }[];
 }

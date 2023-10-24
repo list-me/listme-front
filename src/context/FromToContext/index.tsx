@@ -7,9 +7,11 @@ import React, {
   useState,
 } from "react";
 import Papa from "papaparse";
+import { toast } from "react-toastify";
 import {
   CSVRow,
   FromToContextType,
+  ICSVError,
   IValuesImportConfiguration,
   IValuesImportOptions,
 } from "./fromToContext";
@@ -21,7 +23,6 @@ import { useProductContext } from "../products";
 import { templateRequests } from "../../services/apis/requests/template";
 import { ITemplate } from "../products/product.context";
 import { productRequests } from "../../services/apis/requests/product";
-import { toast } from "react-toastify";
 
 const FromToContext = createContext<FromToContextType | undefined>(undefined);
 
@@ -47,6 +48,7 @@ export function FromToContextProvider({
   const [selectedLinkFields, setSelectedLinkFields] = useState<{
     [key: string]: IOption;
   }>({});
+  const [csvError, setCsvError] = useState<ICSVError>({} as ICSVError);
 
   const colHeadersToPreviewTable = useMemo((): string[] | null => {
     if (data[0]) return Object.keys(data[0]);
@@ -124,6 +126,7 @@ export function FromToContextProvider({
         return productRequests.postFromToCSV(formData);
       })
       .then((productResponse) => {
+        setCsvError(productResponse);
         toast.success("Importaçao realizada com sucesso");
       })
       .catch((error) => {
@@ -131,6 +134,7 @@ export function FromToContextProvider({
           toast.error(error.response.data.message);
         } else {
           console.error("Erro na requisição:", error.message);
+          toast.error(error.message);
         }
       });
   }
@@ -165,6 +169,7 @@ export function FromToContextProvider({
     finishFromTo,
     selectedLinkFields,
     setSelectedLinkFields,
+    csvError,
   };
 
   return (

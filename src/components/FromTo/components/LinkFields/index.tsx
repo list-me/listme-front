@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ColumnTitleLinkFields,
   ContainerLinkFields,
@@ -35,7 +35,7 @@ function LinkFields(): JSX.Element {
     setColHeaders,
     handleNewColumn,
   } = useProductContext();
-  const { finishFromTo, selectedLinkFields, setSelectedLinkFields } =
+  const { finishFromTo, selectedLinkFields, setSelectedLinkFields, csvError } =
     useFromToContext();
 
   const { setCurrentStep, colHeadersToPreviewTable, data } = useFromToContext();
@@ -136,7 +136,16 @@ function LinkFields(): JSX.Element {
     }
   };
 
-  const typeFinished: "warn" | "error" | "success" = "warn";
+  const typeFinished: "warn" | "error" | "success" = useMemo(() => {
+    if (csvError?.errors?.length > 0) {
+      return "error";
+    }
+    if (csvError?.warnings?.length > 0) {
+      return "warn";
+    }
+    return "success";
+  }, [csvError]);
+
   if (finisedContent) return <FinishedStep typeFinished={typeFinished} />;
   return (
     <ContainerLinkFields>
@@ -192,10 +201,12 @@ function LinkFields(): JSX.Element {
         >
           Voltar
         </NavigationButton>
-        {/* <NavigationButton onClick={() => setFinisehdContent(true)}>
-          Importar
-        </NavigationButton> */}
-        <NavigationButton onClick={() => finishFromTo()}>
+        <NavigationButton
+          onClick={() => {
+            finishFromTo();
+            setFinisehdContent(true);
+          }}
+        >
           Importar
         </NavigationButton>
       </BoxButtons>
