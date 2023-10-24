@@ -322,7 +322,36 @@ export const Container = styled.div`
         }
       }
     }
+    .radio-item-warn {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
 
+      min-width: 45px;
+      width: fit-content;
+      height: 30px;
+
+      border: 1px solid #f1bc02;
+      border-radius: 24px;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      position: relative;
+    }
+
+    .hover-container-info {
+      display: flex;
+      position: relative;
+      top: 1px;
+    }
     .dropdown-item {
       display: flex;
       align-items: center;
@@ -333,6 +362,29 @@ export const Container = styled.div`
       height: 30px;
 
       border: 1px solid #dee2e6;
+      border-radius: 8px;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+    .dropdown-item-warn {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 50px;
+      width: fit-content;
+      height: 30px;
+
+      border: 1px solid #f1bc02;
       border-radius: 8px;
 
       padding-left: 8px;

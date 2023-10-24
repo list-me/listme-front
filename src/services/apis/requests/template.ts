@@ -1,5 +1,6 @@
 import { api } from "../api";
 import { STORAGE } from "../../../constants/localStorage";
+import { ITemplate } from "../../../context/products/product.context";
 
 interface IPagination {
   page?: number;
@@ -10,11 +11,14 @@ interface IPagination {
 export const templateRequests = {
   list: async ({ page = 0, limit = 20 }: IPagination): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
-    const response = await api.get(`/templates/?page=${page}&limit=${limit}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await api.get(
+      `/templates/?offset=${page}&limit=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
 
     return response?.data?.templates
       ?.sort((lastItem: any, nextItem: any) => {
@@ -51,6 +55,16 @@ export const templateRequests = {
         },
       },
     );
+
+    return response.data;
+  },
+  postFromTo: async (data: ITemplate): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(`/template`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     return response.data;
   },

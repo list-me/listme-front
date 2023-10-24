@@ -49,7 +49,7 @@ function EditableText({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent): void {
-      if (text.length < 5) {
+      if (text?.length < 5) {
         setError("O nome deve ser mais longo ou igual a 5 caracteres.");
       } else if (ref.current && !ref.current.contains(event.target as Node)) {
         updateTitle();
