@@ -48,6 +48,7 @@ export function FromToContextProvider({
   const [selectedLinkFields, setSelectedLinkFields] = useState<{
     [key: string]: IOption;
   }>({});
+
   const [csvError, setCsvError] = useState<ICSVError>({} as ICSVError);
 
   const colHeadersToPreviewTable = useMemo((): string[] | null => {
@@ -57,6 +58,7 @@ export function FromToContextProvider({
 
   const [valuesImportConfiguration, setValuesImportConfiguration] =
     useState<IValuesImportConfiguration>(initialValuesImportConfiguration);
+
   const [valuesImportOptions, setValuesImportOptions] =
     useState<IValuesImportOptions>(initialValuesImportOptions);
 
@@ -108,6 +110,7 @@ export function FromToContextProvider({
         charset: valuesImportConfiguration.charset.value,
         decimal_delimiter: valuesImportConfiguration.decimal.value,
         action: valuesImportOptions.import.value,
+        status: valuesImportOptions.status.value,
 
         template_id: template.id,
       },

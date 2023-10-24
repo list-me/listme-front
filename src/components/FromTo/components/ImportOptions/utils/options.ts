@@ -14,16 +14,12 @@ const optionsImport = [
 ];
 const optionsStatus = [
   {
-    value: "Concluído",
-    label: "Concluído",
+    value: "active",
+    label: "Ativo",
   },
   {
-    value: "Rascunho",
-    label: "Rascunho",
-  },
-  {
-    value: "Arquivado",
-    label: "Arquivado",
+    value: "inactive",
+    label: "Inativo",
   },
 ];
 // const optionsAssets = [
