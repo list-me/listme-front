@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import {
   CSVRow,
   FromToContextType,
-  ICSVError,
+  ICSVResponse,
   IValuesImportConfiguration,
   IValuesImportOptions,
 } from "./fromToContext";
@@ -49,7 +49,9 @@ export function FromToContextProvider({
     [key: string]: IOption;
   }>({});
 
-  const [csvError, setCsvError] = useState<ICSVError>({} as ICSVError);
+  const [csvResponse, setCsvResponse] = useState<ICSVResponse>(
+    {} as ICSVResponse,
+  );
 
   const colHeadersToPreviewTable = useMemo((): string[] | null => {
     if (data[0]) return Object.keys(data[0]);
@@ -110,7 +112,7 @@ export function FromToContextProvider({
         charset: valuesImportConfiguration.charset.value,
         decimal_delimiter: valuesImportConfiguration.decimal.value,
         action: valuesImportOptions.import.value,
-        // status: valuesImportOptions.status.value,
+        status: valuesImportOptions.status.value,
 
         template_id: template.id,
       },
@@ -129,7 +131,7 @@ export function FromToContextProvider({
         return productRequests.postFromToCSV(formData);
       })
       .then((productResponse) => {
-        setCsvError(productResponse);
+        setCsvResponse(productResponse);
         return productResponse;
       })
       .catch((error) => {
@@ -147,7 +149,7 @@ export function FromToContextProvider({
     setCurrentStep(0);
     setData([]);
     setCurrentFile(undefined);
-    setCsvError({} as ICSVError);
+    setCsvResponse({} as ICSVResponse);
     setSelectedLinkFields({});
     setValuesImportConfiguration(initialValuesImportConfiguration);
     setValuesImportOptions(initialValuesImportOptions);
@@ -181,7 +183,7 @@ export function FromToContextProvider({
     finishFromTo,
     selectedLinkFields,
     setSelectedLinkFields,
-    csvError,
+    csvResponse,
     toClean,
   };
 

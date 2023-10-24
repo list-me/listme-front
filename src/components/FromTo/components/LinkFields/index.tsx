@@ -39,8 +39,12 @@ function LinkFields(): JSX.Element {
     setColHeaders,
     handleNewColumn,
   } = useProductContext();
-  const { finishFromTo, selectedLinkFields, setSelectedLinkFields, csvError } =
-    useFromToContext();
+  const {
+    finishFromTo,
+    selectedLinkFields,
+    setSelectedLinkFields,
+    csvResponse,
+  } = useFromToContext();
 
   const { setCurrentStep, colHeadersToPreviewTable, data } = useFromToContext();
 
@@ -141,14 +145,14 @@ function LinkFields(): JSX.Element {
   };
 
   const typeFinished: "warn" | "error" | "success" = useMemo(() => {
-    if (csvError?.errors?.length > 0) {
+    if (csvResponse?.errors?.length > 0) {
       return "error";
     }
-    if (csvError?.warnings?.length > 0) {
+    if (csvResponse?.warnings?.length > 0) {
       return "warn";
     }
     return "success";
-  }, [csvError]);
+  }, [csvResponse]);
 
   if (loading) return <LoadingSpinner text="Enviando arquivo..." subText="" />;
   if (finisedContent) return <FinishedStep typeFinished={typeFinished} />;

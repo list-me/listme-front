@@ -3,6 +3,7 @@ import {
   ContainerFinishedStep,
   TitleFinishedStep,
   ContentFinishedStep,
+  TextFinishedStep,
 } from "./styles";
 import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
 import { useFromToContext } from "../../../../context/FromToContext";
@@ -19,7 +20,9 @@ function FinishedStep({
 }: {
   typeFinished: "warn" | "error" | "success";
 }): JSX.Element {
-  const { setFromToIsOpened, setCurrentStep, toClean } = useFromToContext();
+  const { setFromToIsOpened, setCurrentStep, toClean, csvResponse } =
+    useFromToContext();
+  console.log("🚀 ~ file: index.tsx:24 ~ csvResponse:", csvResponse);
   const { handleRedirectAndGetProducts } = useProductContext();
 
   const configView = {
@@ -31,7 +34,16 @@ function FinishedStep({
     text: {
       success: (
         <>
-          Foram exportados <span>12 itens com sucesso</span>
+          {csvResponse.total > 1 ? (
+            <>
+              Foram exportados{" "}
+              <span>{csvResponse.total} itens com sucesso</span>
+            </>
+          ) : (
+            <>
+              Foi exportado <span>{csvResponse.total} item com sucesso</span>
+            </>
+          )}
         </>
       ),
       warn: (
@@ -62,7 +74,7 @@ function FinishedStep({
       <ContentFinishedStep>
         <img src={configView.icon[typeFinished]} alt="Vincular List pública" />
         <TitleFinishedStep>{configView.title[typeFinished]}</TitleFinishedStep>
-        {/* <TextFinishedStep>{configView.text[typeFinished]}</TextFinishedStep> */}
+        <TextFinishedStep>{configView.text[typeFinished]}</TextFinishedStep>
       </ContentFinishedStep>
       {typeFinished !== "success" && (
         <AccordionError typeFinished={typeFinished} />

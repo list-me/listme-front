@@ -22,15 +22,16 @@ function AccordionError({
     return true;
   });
 
-  const { csvError } = useFromToContext();
+  const { csvResponse } = useFromToContext();
 
+  // eslint-disable-next-line consistent-return
   const itemsToView = useMemo(() => {
-    if (typeFinished === "warn") return csvError.warnings;
-    if (typeFinished === "error") return csvError.errors;
-  }, [csvError.errors, csvError.warnings, typeFinished]);
+    if (typeFinished === "warn") return csvResponse.warnings;
+    if (typeFinished === "error") return csvResponse.errors;
+  }, [csvResponse.errors, csvResponse.warnings, typeFinished]);
 
-  const warnTextError = `Infelizmente, ${csvError.warnings.length} ${
-    csvError.warnings.length > 1
+  const warnTextError = `Infelizmente, ${csvResponse.warnings.length} ${
+    csvResponse.warnings.length > 1
       ? "itens foram importados com falhas"
       : "item foi importado com falha"
   }`;
