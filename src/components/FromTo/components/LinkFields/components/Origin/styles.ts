@@ -12,6 +12,10 @@ export const TitleOrigin = styled.p`
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
   font-weight: ${({ theme }) => theme.fonts.weights.regular};
   margin: 0;
+  width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 export const SubTitleOrigin = styled.p`
   margin: 0;
