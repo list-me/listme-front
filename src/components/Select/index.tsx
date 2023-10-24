@@ -22,9 +22,7 @@ const SelectComponent = ({
 
   const [isFocused, setIsFocused] = useState(false);
 
-  const optionsToView = fixedOptions
-    ? [{ value: "Selecione", label: "Selecione" }, ...options, ...fixedOptions]
-    : options;
+  const optionsToView = fixedOptions ? [...options, ...fixedOptions] : options;
 
   return (
     <ContainerSelect>

@@ -21,6 +21,7 @@ import { useProductContext } from "../products";
 import { templateRequests } from "../../services/apis/requests/template";
 import { ITemplate } from "../products/product.context";
 import { productRequests } from "../../services/apis/requests/product";
+import { toast } from "react-toastify";
 
 const FromToContext = createContext<FromToContextType | undefined>(undefined);
 
@@ -77,9 +78,6 @@ export function FromToContextProvider({
   const { headerTable, template } = useProductContext();
 
   function finishFromTo(): void {
-    const formData = new FormData();
-    formData.append(currentFile?.name || "Generic_Name", currentFile as Blob);
-
     const targets: { [key: string]: string } = {};
 
     headerTable.forEach((item) => {
@@ -112,10 +110,29 @@ export function FromToContextProvider({
         template_id: template.id,
       },
     };
-    Promise.all([
-      templateRequests.postFromTo(dataFromTo as unknown as ITemplate),
-      productRequests.postFromToCSV(formData),
-    ]);
+
+    templateRequests
+      .postFromTo(dataFromTo as unknown as ITemplate)
+      .then((templateResponse) => {
+        const templateId = templateResponse.id;
+
+        const formData = new FormData();
+        formData.append("file", currentFile as Blob);
+
+        formData.append("templateId", templateId);
+
+        return productRequests.postFromToCSV(formData);
+      })
+      .then((productResponse) => {
+        toast.success("Importaçao realizada com sucesso");
+      })
+      .catch((error) => {
+        if (error.response) {
+          toast.error(error.response.data.message);
+        } else {
+          console.error("Erro na requisição:", error.message);
+        }
+      });
   }
 
   useEffect(() => {
