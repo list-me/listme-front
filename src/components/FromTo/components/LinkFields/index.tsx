@@ -20,6 +20,7 @@ import fixedOptions from "./utils/fixedOptions";
 import FinishedStep from "../FinishedStep";
 import LoadingSpinner from "../LoadingSpinner";
 import isEmptyObject from "../../../../utils/isEmptyObject";
+import { ReactComponent as PlusIcon } from "../../../../assets/plus-fromto.svg";
 
 function LinkFields(): JSX.Element {
   const iconRef = useRef(null);
@@ -201,11 +202,13 @@ function LinkFields(): JSX.Element {
       <BoxButtons>
         <NavigationButton
           abort
+          prev
           onClick={() => {
             setSelectedLinkFields({});
             setCurrentStep((prev) => prev - 1);
           }}
         >
+          <PlusIcon />
           Voltar
         </NavigationButton>
         <NavigationButton
@@ -217,6 +220,7 @@ function LinkFields(): JSX.Element {
             if (result) setFinisehdContent(true);
           }}
         >
+          <PlusIcon />
           Importar
         </NavigationButton>
       </BoxButtons>

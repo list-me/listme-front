@@ -22,7 +22,6 @@ export const BoxSelects = styled.div`
 
 export const BoxHotTable = styled.div`
   overflow: auto;
-  background: blue;
   .handsontable .wtHolder {
     ::-webkit-scrollbar {
       width: 15px !important;

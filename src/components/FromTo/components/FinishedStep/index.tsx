@@ -12,6 +12,7 @@ import check from "../../../../assets/images/checkImage.png";
 import errorIcon from "../../../../assets/images/error.png";
 import AccordionError from "../AccordionError";
 import { useProductContext } from "../../../../context/products";
+import { ReactComponent as PlusIcon } from "../../../../assets/plus-fromto.svg";
 
 function FinishedStep({
   typeFinished,
@@ -70,16 +71,19 @@ function FinishedStep({
         {typeFinished !== "error" && (
           <NavigationButton
             abort
+            prev
             onClick={() => {
               toClean();
               setCurrentStep(0);
             }}
           >
+            <PlusIcon />
             Importar mais produtos
           </NavigationButton>
         )}
         {typeFinished !== "error" ? (
           <NavigationButton onClick={() => setFromToIsOpened(false)}>
+            <PlusIcon />
             Finalizar
           </NavigationButton>
         ) : (
@@ -89,6 +93,7 @@ function FinishedStep({
               setCurrentStep(0);
             }}
           >
+            <PlusIcon />
             Tentar Novamente
           </NavigationButton>
         )}

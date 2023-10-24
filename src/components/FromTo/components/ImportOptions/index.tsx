@@ -6,6 +6,7 @@ import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
 import { useFromToContext } from "../../../../context/FromToContext";
 import options from "./utils/options";
 import handleChangeSelect from "../../utils/handleChangeSelect";
+import { ReactComponent as PlusIcon } from "../../../../assets/plus-fromto.svg";
 
 function ImportOptions(): JSX.Element {
   // const [checkBox, setCheckBox] = useState("");
@@ -38,11 +39,14 @@ function ImportOptions(): JSX.Element {
       <BoxButtons>
         <NavigationButton
           abort
+          prev
           onClick={() => setCurrentStep((prev) => prev - 1)}
         >
+          <PlusIcon />
           Voltar
         </NavigationButton>
         <NavigationButton onClick={() => setCurrentStep((prev) => prev + 1)}>
+          <PlusIcon />
           Continuar
         </NavigationButton>
       </BoxButtons>
