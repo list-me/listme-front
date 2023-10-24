@@ -30,6 +30,7 @@ function CustomTable(props: any): JSX.Element {
     total: props?.dataProvider?.length,
     onChange: handleChangePage,
     onShowSizeChange: handleChangePageSize,
+    showSizeChanger: false,
   };
 
   const verifyLimitRows = (height: number): number => {
