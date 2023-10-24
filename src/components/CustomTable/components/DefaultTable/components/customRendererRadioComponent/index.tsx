@@ -25,7 +25,7 @@ function customRendererRadioComponent({
   const radioClass = itemCorrect ? "radio-item" : "radio-item-warn";
 
   const element = `
-  <div class=${radioClass}>
+  <div class=${radioClass} onclick="window.yourSetAlertTooltip(false)">
     ${
       !itemCorrect
         ? `<div class="hover-container-info" onmouseover="window.yourSetAlertTooltip(true)" onmouseout="window.yourSetAlertTooltip(false)">
