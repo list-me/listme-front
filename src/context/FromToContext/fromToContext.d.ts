@@ -35,7 +35,7 @@ export interface FromToContextType {
   setValuesImportOptions: React.Dispatch<
     React.SetStateAction<IValuesImportOptions>
   >;
-  finishFromTo: () => void;
+  finishFromTo: () => Promise<any>;
   selectedLinkFields: {
     [key: string]: IOption;
   };
@@ -45,6 +45,7 @@ export interface FromToContextType {
     }>
   >;
   csvError: ICSVError;
+  toClean: () => void;
 }
 
 export interface CSVRow {

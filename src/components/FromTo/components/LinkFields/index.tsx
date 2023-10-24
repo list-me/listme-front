@@ -18,6 +18,8 @@ import newColumnOptions from "../../../../utils/newColumnOptions";
 import { PersonalModal } from "../../../CustomModa";
 import fixedOptions from "./utils/fixedOptions";
 import FinishedStep from "../FinishedStep";
+import LoadingSpinner from "../LoadingSpinner";
+import isEmptyObject from "../../../../utils/isEmptyObject";
 
 function LinkFields(): JSX.Element {
   const iconRef = useRef(null);
@@ -27,6 +29,7 @@ function LinkFields(): JSX.Element {
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
   const [finisedContent, setFinisehdContent] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const {
     template,
@@ -146,6 +149,7 @@ function LinkFields(): JSX.Element {
     return "success";
   }, [csvError]);
 
+  if (loading) return <LoadingSpinner text="Enviando arquivo..." subText="" />;
   if (finisedContent) return <FinishedStep typeFinished={typeFinished} />;
   return (
     <ContainerLinkFields>
@@ -197,14 +201,20 @@ function LinkFields(): JSX.Element {
       <BoxButtons>
         <NavigationButton
           abort
-          onClick={() => setCurrentStep((prev) => prev - 1)}
+          onClick={() => {
+            setSelectedLinkFields({});
+            setCurrentStep((prev) => prev - 1);
+          }}
         >
           Voltar
         </NavigationButton>
         <NavigationButton
-          onClick={() => {
-            finishFromTo();
-            setFinisehdContent(true);
+          disabled={isEmptyObject(selectedLinkFields)}
+          onClick={async () => {
+            setLoading(true);
+            const result = await finishFromTo();
+            setLoading(false);
+            if (result) setFinisehdContent(true);
           }}
         >
           Importar

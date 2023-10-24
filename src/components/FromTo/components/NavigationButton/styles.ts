@@ -20,6 +20,10 @@ export const NavigationButton = styled.button<{ abort?: boolean }>`
     filter: ${(props) =>
       props.abort ? "brightness(0.98)" : "brightness(0.88)"};
   }
+  :disabled {
+    opacity: 0.7;
+    filter: initial;
+  }
 `;
 
 export const BoxButtons = styled.div`

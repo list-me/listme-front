@@ -79,7 +79,7 @@ export function FromToContextProvider({
 
   const { headerTable, template } = useProductContext();
 
-  function finishFromTo(): void {
+  function finishFromTo(): Promise<any> {
     const targets: { [key: string]: string } = {};
 
     headerTable.forEach((item) => {
@@ -113,7 +113,7 @@ export function FromToContextProvider({
       },
     };
 
-    templateRequests
+    const result = templateRequests
       .postFromTo(dataFromTo as unknown as ITemplate)
       .then((templateResponse) => {
         const templateId = templateResponse.id;
@@ -127,7 +127,7 @@ export function FromToContextProvider({
       })
       .then((productResponse) => {
         setCsvError(productResponse);
-        toast.success("Importaçao realizada com sucesso");
+        return productResponse;
       })
       .catch((error) => {
         if (error.response) {
@@ -137,13 +137,22 @@ export function FromToContextProvider({
           toast.error(error.message);
         }
       });
+    return result;
+  }
+
+  function toClean(): void {
+    setCurrentStep(0);
+    setData([]);
+    setCurrentFile(undefined);
+    setCsvError({} as ICSVError);
+    setSelectedLinkFields({});
+    setValuesImportConfiguration(initialValuesImportConfiguration);
+    setValuesImportOptions(initialValuesImportOptions);
   }
 
   useEffect(() => {
     if (!fromToIsOpened) {
-      setCurrentStep(0);
-      setData([]);
-      setCurrentFile(undefined);
+      toClean();
     }
   }, [fromToIsOpened]);
 
@@ -170,6 +179,7 @@ export function FromToContextProvider({
     selectedLinkFields,
     setSelectedLinkFields,
     csvError,
+    toClean,
   };
 
   return (

@@ -2,7 +2,6 @@ import React from "react";
 import {
   ContainerFinishedStep,
   TitleFinishedStep,
-  TextFinishedStep,
   ContentFinishedStep,
 } from "./styles";
 import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
@@ -18,7 +17,7 @@ function FinishedStep({
 }: {
   typeFinished: "warn" | "error" | "success";
 }): JSX.Element {
-  const { setFromToIsOpened } = useFromToContext();
+  const { setFromToIsOpened, setCurrentStep, toClean } = useFromToContext();
 
   const configView = {
     title: {
@@ -62,13 +61,30 @@ function FinishedStep({
       )}
       <BoxButtons>
         {typeFinished !== "error" && (
-          <NavigationButton abort onClick={() => ""}>
+          <NavigationButton
+            abort
+            onClick={() => {
+              toClean();
+              setCurrentStep(0);
+            }}
+          >
             Importar mais produtos
           </NavigationButton>
         )}
-        <NavigationButton onClick={() => setFromToIsOpened(false)}>
-          Finalizar
-        </NavigationButton>
+        {typeFinished !== "error" ? (
+          <NavigationButton onClick={() => setFromToIsOpened(false)}>
+            Finalizar
+          </NavigationButton>
+        ) : (
+          <NavigationButton
+            onClick={() => {
+              toClean();
+              setCurrentStep(0);
+            }}
+          >
+            Tentar Novamente
+          </NavigationButton>
+        )}
       </BoxButtons>
     </ContainerFinishedStep>
   );
