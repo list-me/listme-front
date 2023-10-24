@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   ContainerFinishedStep,
   TitleFinishedStep,
@@ -11,6 +11,7 @@ import check from "../../../../assets/images/checkImage.png";
 // @ts-ignore
 import errorIcon from "../../../../assets/images/error.png";
 import AccordionError from "../AccordionError";
+import { useProductContext } from "../../../../context/products";
 
 function FinishedStep({
   typeFinished,
@@ -18,6 +19,7 @@ function FinishedStep({
   typeFinished: "warn" | "error" | "success";
 }): JSX.Element {
   const { setFromToIsOpened, setCurrentStep, toClean } = useFromToContext();
+  const { handleRedirectAndGetProducts } = useProductContext();
 
   const configView = {
     title: {
@@ -48,6 +50,11 @@ function FinishedStep({
       error: errorIcon,
     },
   };
+
+  useEffect(() => {
+    const id = window.location.pathname.substring(10);
+    handleRedirectAndGetProducts(id).then(() => {});
+  }, [handleRedirectAndGetProducts]);
 
   return (
     <ContainerFinishedStep>
