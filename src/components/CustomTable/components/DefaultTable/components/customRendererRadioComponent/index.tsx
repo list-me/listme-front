@@ -1,5 +1,4 @@
 import { renderToString } from "react-dom/server";
-import { ICol } from "../../../../CustomTable";
 import { ReactComponent as InfoIcon } from "../../../../../../assets/info.svg";
 import { IHeader } from "../../../../../../context/products/product.context";
 
