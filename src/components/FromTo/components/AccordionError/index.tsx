@@ -29,14 +29,17 @@ function AccordionError({
     if (typeFinished === "error") return csvError.errors;
   }, [csvError.errors, csvError.warnings, typeFinished]);
 
+  const warnTextError = `Infelizmente, ${csvError.warnings.length} ${
+    csvError.warnings.length > 1
+      ? "itens foram importados com falhas"
+      : "item foi importado com falha"
+  }`;
+
   return (
     <AccordionContainer backgroundType={typeFinished}>
       {typeFinished === "warn" && (
         <AccordionHeader onClick={() => setIsOpen(!isOpen)} opened={isOpen}>
-          <h4>
-            Infelizmente, {csvError.warnings.length} itens foram importados com
-            falhas
-          </h4>
+          <h4>{warnTextError}</h4>
           <DropDownIconSmall />
         </AccordionHeader>
       )}
