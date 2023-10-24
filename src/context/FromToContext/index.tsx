@@ -136,7 +136,7 @@ export function FromToContextProvider({
       })
       .catch((error) => {
         if (error.response) {
-          toast.error(error.response.data.message);
+          toast.error(error.response.data.message[0]);
         } else {
           console.error("Erro na requisição:", error.message);
           toast.error(error.message);
