@@ -26,8 +26,8 @@ export const initialValuesImportOptions = {
     label: "Adicionar novos e atualizar existentes",
   },
   status: {
-    value: "Concluído",
-    label: "Concluído",
+    value: "active",
+    label: "Ativo",
   },
   assets: {
     value: "Ignorar ativos existentes",

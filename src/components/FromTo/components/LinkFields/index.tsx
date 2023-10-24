@@ -20,6 +20,7 @@ import fixedOptions from "./utils/fixedOptions";
 import FinishedStep from "../FinishedStep";
 import LoadingSpinner from "../LoadingSpinner";
 import isEmptyObject from "../../../../utils/isEmptyObject";
+import { ReactComponent as PlusIcon } from "../../../../assets/plus-fromto.svg";
 
 function LinkFields(): JSX.Element {
   const iconRef = useRef(null);
@@ -38,8 +39,12 @@ function LinkFields(): JSX.Element {
     setColHeaders,
     handleNewColumn,
   } = useProductContext();
-  const { finishFromTo, selectedLinkFields, setSelectedLinkFields, csvError } =
-    useFromToContext();
+  const {
+    finishFromTo,
+    selectedLinkFields,
+    setSelectedLinkFields,
+    csvResponse,
+  } = useFromToContext();
 
   const { setCurrentStep, colHeadersToPreviewTable, data } = useFromToContext();
 
@@ -140,14 +145,14 @@ function LinkFields(): JSX.Element {
   };
 
   const typeFinished: "warn" | "error" | "success" = useMemo(() => {
-    if (csvError?.errors?.length > 0) {
+    if (csvResponse?.errors?.length > 0) {
       return "error";
     }
-    if (csvError?.warnings?.length > 0) {
+    if (csvResponse?.warnings?.length > 0) {
       return "warn";
     }
     return "success";
-  }, [csvError]);
+  }, [csvResponse]);
 
   if (loading) return <LoadingSpinner text="Enviando arquivo..." subText="" />;
   if (finisedContent) return <FinishedStep typeFinished={typeFinished} />;
@@ -201,11 +206,13 @@ function LinkFields(): JSX.Element {
       <BoxButtons>
         <NavigationButton
           abort
+          prev
           onClick={() => {
             setSelectedLinkFields({});
             setCurrentStep((prev) => prev - 1);
           }}
         >
+          <PlusIcon />
           Voltar
         </NavigationButton>
         <NavigationButton
@@ -217,6 +224,7 @@ function LinkFields(): JSX.Element {
             if (result) setFinisehdContent(true);
           }}
         >
+          <PlusIcon />
           Importar
         </NavigationButton>
       </BoxButtons>

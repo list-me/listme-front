@@ -10,6 +10,7 @@ import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
 import SelectComponent from "../../../Select";
 import options from "./utils/options";
 import handleChangeSelect from "../../utils/handleChangeSelect";
+import { ReactComponent as PlusIcon } from "../../../../assets/plus-fromto.svg";
 
 function ImportConfiguration(): JSX.Element {
   const {
@@ -81,11 +82,14 @@ function ImportConfiguration(): JSX.Element {
       <BoxButtons>
         <NavigationButton
           abort
+          prev
           onClick={() => setCurrentStep((prev) => prev - 1)}
         >
+          <PlusIcon />
           Voltar
         </NavigationButton>
         <NavigationButton onClick={() => setCurrentStep((prev) => prev + 1)}>
+          <PlusIcon />
           Continuar
         </NavigationButton>
       </BoxButtons>
