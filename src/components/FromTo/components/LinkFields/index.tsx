@@ -151,6 +151,15 @@ function LinkFields(): JSX.Element {
     }
   };
 
+  function verifyAllIgnore(): boolean {
+    const keys = Object.keys(selectedLinkFields);
+    const allIgnored = keys.every((key) => {
+      return selectedLinkFields[key].value === "Ignorar";
+    });
+    console.log(allIgnored);
+    return allIgnored;
+  }
+
   const typeFinished: "warn" | "error" | "success" = useMemo(() => {
     if (csvResponse?.errors?.length > 0) {
       return "error";
@@ -223,7 +232,7 @@ function LinkFields(): JSX.Element {
           Voltar
         </NavigationButton>
         <NavigationButton
-          disabled={isEmptyObject(selectedLinkFields)}
+          disabled={isEmptyObject(selectedLinkFields) || verifyAllIgnore()}
           onClick={async () => {
             setLoading(true);
             const result = await finishFromTo();
