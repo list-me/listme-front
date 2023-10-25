@@ -100,4 +100,14 @@ export const templateRequests = {
 
     return response.data[0];
   },
+  deleteTemplateImport: async (id: string): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.delete(`/template/${id}/import`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data[0];
+  },
 };

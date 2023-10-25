@@ -47,7 +47,16 @@ function FinishedStep({
       ),
       warn: (
         <>
-          Foram exportados <span>12 itens com sucesso</span>
+          {csvResponse.total > 1 ? (
+            <>
+              Foram exportados{" "}
+              <span>{csvResponse.total} itens com sucesso</span>
+            </>
+          ) : (
+            <>
+              Foi exportado <span>{csvResponse.total} item com sucesso</span>
+            </>
+          )}
         </>
       ),
       error: (
