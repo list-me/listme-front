@@ -80,8 +80,14 @@ function LinkFields(): JSX.Element {
       return selectedLinkFields[key].value;
     });
     setOptionsToVerify(valuesToVerify);
+    const copyArray = [...headerTable];
 
-    if (valuesToVerify.length >= headerTable.length - 1) {
+    copyArray.pop();
+
+    const allIgnore = copyArray.every((item) => {
+      return valuesToVerify.includes(item.data.toString());
+    });
+    if (allIgnore) {
       colHeadersToPreviewTable!.forEach((itemcolHeadersToPreviewTable) => {
         if (!selectedLinkFields[itemcolHeadersToPreviewTable]) {
           const ignore = { value: "Ignorar", label: "Ignorar" };
@@ -95,6 +101,7 @@ function LinkFields(): JSX.Element {
     }
   }, [
     colHeadersToPreviewTable,
+    headerTable,
     headerTable.length,
     selectedLinkFields,
     setSelectedLinkFields,
