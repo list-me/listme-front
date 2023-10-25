@@ -49,16 +49,22 @@ function HeaderDropDown({
         event.clientX,
         event.clientY,
       );
+      console.log(
+        "🚀 ~ file: index.tsx:52 ~ handleClickOutside ~ clickedElement:",
+        clickedElement,
+      );
 
       if (dropdownRef.current && dropdownRef.current.contains(clickedElement)) {
         return;
       }
 
       let node = clickedElement;
+
       while (node && node !== document.body) {
         if (
           node instanceof HTMLElement &&
-          node.classList.contains("ant-modal")
+          (node.classList.contains("ant-modal") ||
+            node.classList.contains("ant-select-dropdown"))
         ) {
           return;
         }
