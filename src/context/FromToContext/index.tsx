@@ -107,6 +107,7 @@ export function FromToContextProvider({
         decimal_delimiter: valuesImportConfiguration.decimal.value,
         action: valuesImportOptions.import.value,
         status: valuesImportOptions.status.value,
+        multioptions: valuesImportConfiguration.multiOptions.value,
 
         template_id: template.id,
       },
