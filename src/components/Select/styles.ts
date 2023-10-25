@@ -81,7 +81,7 @@ export const customStyles = ({ small }: { small?: boolean }): Styles => ({
         themeStyle.colors.background.tertiary,
     },
     "&:not(hover)": {
-      backgroundColor: "initial",
+      backgroundColor: !state.isSelected && "initial",
     },
   }),
   indicatorSeparator: () => ({

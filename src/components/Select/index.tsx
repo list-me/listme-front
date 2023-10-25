@@ -2,7 +2,7 @@ import Select from "react-select";
 import { useState } from "react";
 import { ContainerSelect, LabelSelect, customStyles } from "./styles";
 import makeDropdownIndicator from "./components/DropdownIndicator";
-import { CustomMenuList, CustomMenu } from "./components/Options";
+import CustomMenuList from "./components/Options";
 import CustomOption from "./components/Option";
 
 const SelectComponent = ({
@@ -40,7 +40,6 @@ const SelectComponent = ({
           onBlur={() => setIsFocused(false)}
           components={{
             DropdownIndicator: DropdownWithProps,
-            Menu: CustomMenu,
             MenuList: CustomMenuList,
             Option: CustomOptionWithProps as any,
           }}

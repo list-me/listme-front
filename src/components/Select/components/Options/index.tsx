@@ -2,7 +2,6 @@
 /* eslint-disable react/destructuring-assignment */
 
 import React from "react";
-import { components } from "react-select";
 import { ContainerOption, FixedOptions } from "./styles";
 
 const CustomMenuList = (props: any) => {
@@ -20,12 +19,4 @@ const CustomMenuList = (props: any) => {
   );
 };
 
-const CustomMenu = (props: any) => {
-  return props?.children ? (
-    <components.Menu {...props}>{props.children}</components.Menu>
-  ) : (
-    <></>
-  );
-};
-
-export { CustomMenu, CustomMenuList };
+export default CustomMenuList;
