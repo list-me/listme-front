@@ -301,10 +301,6 @@ export const PersonalModal = ({
                 }
 
                 handleUpdateTemplate(fields).then((response) => {
-                  console.log(
-                    "🚀 ~ file: index.tsx:297 ~ handleUpdateTemplate ~ response:",
-                    response,
-                  );
                   const newColumn = {
                     ...fields,
                     data: response[response?.length - 1]?.id,

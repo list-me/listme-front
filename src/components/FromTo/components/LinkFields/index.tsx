@@ -80,8 +80,14 @@ function LinkFields(): JSX.Element {
       return selectedLinkFields[key].value;
     });
     setOptionsToVerify(valuesToVerify);
+    const copyArray = [...headerTable];
 
-    if (valuesToVerify.length >= headerTable.length - 1) {
+    copyArray.pop();
+
+    const allIgnore = copyArray.every((item) => {
+      return valuesToVerify.includes(item.data.toString());
+    });
+    if (allIgnore) {
       colHeadersToPreviewTable!.forEach((itemcolHeadersToPreviewTable) => {
         if (!selectedLinkFields[itemcolHeadersToPreviewTable]) {
           const ignore = { value: "Ignorar", label: "Ignorar" };
@@ -95,6 +101,7 @@ function LinkFields(): JSX.Element {
     }
   }, [
     colHeadersToPreviewTable,
+    headerTable,
     headerTable.length,
     selectedLinkFields,
     setSelectedLinkFields,
@@ -143,6 +150,14 @@ function LinkFields(): JSX.Element {
       }
     }
   };
+
+  function verifyAllIgnore(): boolean {
+    const keys = Object.keys(selectedLinkFields);
+    const allIgnored = keys.every((key) => {
+      return selectedLinkFields[key].value === "Ignorar";
+    });
+    return allIgnored;
+  }
 
   const typeFinished: "warn" | "error" | "success" = useMemo(() => {
     if (csvResponse?.errors?.length > 0) {
@@ -216,7 +231,7 @@ function LinkFields(): JSX.Element {
           Voltar
         </NavigationButton>
         <NavigationButton
-          disabled={isEmptyObject(selectedLinkFields)}
+          disabled={isEmptyObject(selectedLinkFields) || verifyAllIgnore()}
           onClick={async () => {
             setLoading(true);
             const result = await finishFromTo();

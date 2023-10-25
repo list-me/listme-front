@@ -111,21 +111,21 @@ export function FromToContextProvider({
         template_id: template.id,
       },
     };
-
+    let templateId = "";
     const result = templateRequests
       .postFromTo(dataFromTo as unknown as ITemplate)
       .then((templateResponse) => {
-        const templateId = templateResponse.id;
+        templateId = templateResponse.id;
 
         const formData = new FormData();
         formData.append("file", currentFile as Blob);
 
         formData.append("templateId", templateId);
-
         return productRequests.postFromToCSV(formData);
       })
       .then((productResponse) => {
         setCsvResponse(productResponse);
+        templateRequests.deleteTemplateImport(templateId);
         return productResponse;
       })
       .catch((error) => {

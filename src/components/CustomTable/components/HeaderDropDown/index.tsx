@@ -55,10 +55,12 @@ function HeaderDropDown({
       }
 
       let node = clickedElement;
+
       while (node && node !== document.body) {
         if (
           node instanceof HTMLElement &&
-          node.classList.contains("ant-modal")
+          (node.classList.contains("ant-modal") ||
+            node.classList.contains("ant-select-dropdown"))
         ) {
           return;
         }
