@@ -156,7 +156,6 @@ function LinkFields(): JSX.Element {
     const allIgnored = keys.every((key) => {
       return selectedLinkFields[key].value === "Ignorar";
     });
-    console.log(allIgnored);
     return allIgnored;
   }
 
