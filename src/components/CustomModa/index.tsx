@@ -172,10 +172,11 @@ export const PersonalModal = ({
   }: Field): Promise<any> => {
     let templateUpdated = [];
     let newField: any;
+
     if (isUpdate) {
       templateUpdated = template.fields.fields.map((item: any) => {
         if (item.id === data.id) {
-          data.options = option;
+          data.options = option.length;
           data.type = type;
           data.name = name;
           data.title = title;
@@ -201,6 +202,15 @@ export const PersonalModal = ({
       };
       templateUpdated.push(newField);
     }
+
+    templateUpdated.forEach((item: any) => {
+      delete item.frozen;
+      delete item.order;
+      delete item.width;
+      delete item.hidden;
+    });
+
+    console.log("🚀 ~ file: index.tsx:174 ~ templateUpdated:", templateUpdated);
 
     try {
       await templateRequests.update(template?.id, { fields: templateUpdated });
@@ -258,7 +268,6 @@ export const PersonalModal = ({
               }}
               onFinish={(fields) => {
                 if (!fields.type) fields.type = type;
-
                 if (
                   fields.type == "relation" &&
                   (options[0].field == "" || !options[0].originField)
@@ -294,6 +303,10 @@ export const PersonalModal = ({
                 }
 
                 handleUpdateTemplate(fields).then((response) => {
+                  console.log(
+                    "🚀 ~ file: index.tsx:297 ~ handleUpdateTemplate ~ response:",
+                    response,
+                  );
                   const newColumn = {
                     ...fields,
                     data: response[response?.length - 1]?.id,
