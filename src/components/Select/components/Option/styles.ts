@@ -32,4 +32,9 @@ export const GhostArrow = styled.div`
   height: 100%;
   position: absolute;
 `;
-export const ContainerOption = styled.div``;
+export const ContainerOption = styled.div`
+  :hover {
+    background: ${({ theme }) => theme.colors.background.tertiary};
+    border-radius: 8px;
+  }
+`;

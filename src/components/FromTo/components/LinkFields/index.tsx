@@ -103,7 +103,7 @@ function LinkFields(): JSX.Element {
   const options: IOption[] = template.fields.fields
     .map((item: any) => {
       const newItem = {
-        value: item.title,
+        value: item.id,
         label: item.title,
         type: item.type,
         optionsList: item.options,

@@ -81,15 +81,9 @@ export function FromToContextProvider({
     ],
   );
 
-  const { headerTable, template } = useProductContext();
+  const { template } = useProductContext();
 
   function finishFromTo(): Promise<any> {
-    const targets: { [key: string]: string } = {};
-
-    headerTable.forEach((item) => {
-      if (item.title) targets[item.title] = item.data;
-    });
-
     const keys = Object.keys(selectedLinkFields);
     const validKeys = keys.filter((key) => {
       return selectedLinkFields[key].value !== "Ignorar";
@@ -98,7 +92,7 @@ export function FromToContextProvider({
     const fieldsToSend = validKeys.map((key) => {
       return {
         origin: key,
-        target: targets[selectedLinkFields[key].value],
+        target: selectedLinkFields[key].value,
       };
     });
     const dataFromTo = {

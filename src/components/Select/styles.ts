@@ -75,10 +75,13 @@ export const customStyles = ({ small }: { small?: boolean }): Styles => ({
     "&:disabled": {
       background: "none",
     },
-    "&:active": {
+    "&:hover": {
       backgroundColor:
         (state.isSelected || state.isFocused) &&
         themeStyle.colors.background.tertiary,
+    },
+    "&:not(hover)": {
+      backgroundColor: !state.isSelected && "initial",
     },
   }),
   indicatorSeparator: () => ({

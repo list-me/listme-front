@@ -1,5 +1,4 @@
 import { renderToString } from "react-dom/server";
-import { ICol } from "../../../../CustomTable";
 import { ReactComponent as InfoIcon } from "../../../../../../assets/info.svg";
 import { IHeader } from "../../../../../../context/products/product.context";
 
@@ -25,7 +24,7 @@ function customRendererRadioComponent({
   const radioClass = itemCorrect ? "radio-item" : "radio-item-warn";
 
   const element = `
-  <div class=${radioClass}>
+  <div class=${radioClass} onclick="window.yourSetAlertTooltip(false)">
     ${
       !itemCorrect
         ? `<div class="hover-container-info" onmouseover="window.yourSetAlertTooltip(true)" onmouseout="window.yourSetAlertTooltip(false)">

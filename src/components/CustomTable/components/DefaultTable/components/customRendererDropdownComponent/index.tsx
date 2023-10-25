@@ -21,7 +21,7 @@ function customRendererDropdownComponent({
 
   const radioClass = itemCorrect ? "dropdown-item" : "dropdown-item-warn";
 
-  const element = `<div class=${radioClass}>
+  const element = `<div class=${radioClass}  onclick="window.yourSetAlertTooltip(false)">
   ${
     value && !itemCorrect
       ? `<div class="hover-container-info" onmouseover="window.yourSetAlertTooltip(true)" onmouseout="window.yourSetAlertTooltip(false)">

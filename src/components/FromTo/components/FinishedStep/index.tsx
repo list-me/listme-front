@@ -22,7 +22,6 @@ function FinishedStep({
 }): JSX.Element {
   const { setFromToIsOpened, setCurrentStep, toClean, csvResponse } =
     useFromToContext();
-  console.log("🚀 ~ file: index.tsx:24 ~ csvResponse:", csvResponse);
   const { handleRedirectAndGetProducts } = useProductContext();
 
   const configView = {
