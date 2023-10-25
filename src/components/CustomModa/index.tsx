@@ -210,8 +210,6 @@ export const PersonalModal = ({
       delete item.hidden;
     });
 
-    console.log("🚀 ~ file: index.tsx:174 ~ templateUpdated:", templateUpdated);
-
     try {
       await templateRequests.update(template?.id, { fields: templateUpdated });
       toast.success("Template atualizado com sucesso");
