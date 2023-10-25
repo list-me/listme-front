@@ -49,10 +49,6 @@ function HeaderDropDown({
         event.clientX,
         event.clientY,
       );
-      console.log(
-        "🚀 ~ file: index.tsx:52 ~ handleClickOutside ~ clickedElement:",
-        clickedElement,
-      );
 
       if (dropdownRef.current && dropdownRef.current.contains(clickedElement)) {
         return;
