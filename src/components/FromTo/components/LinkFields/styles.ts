@@ -55,7 +55,9 @@ export const ContentRowLinkFields = styled.div`
   width: 100%;
 `;
 
-export const ContainerSelectText = styled.div``;
+export const ContainerSelectText = styled.div`
+  width: 100%;
+`;
 
 export const WarnAlert = styled.p`
   padding: 16px 20px;
