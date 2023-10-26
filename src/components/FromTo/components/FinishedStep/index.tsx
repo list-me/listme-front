@@ -17,8 +17,10 @@ import { ReactComponent as PlusIcon } from "../../../../assets/plus-fromto.svg";
 
 function FinishedStep({
   typeFinished,
+  setFinisehdContent,
 }: {
   typeFinished: "warn" | "error" | "success";
+  setFinisehdContent: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
   const { setFromToIsOpened, setCurrentStep, toClean, csvResponse } =
     useFromToContext();
@@ -105,8 +107,7 @@ function FinishedStep({
         ) : (
           <NavigationButton
             onClick={() => {
-              toClean();
-              setCurrentStep(0);
+              setFinisehdContent(false);
             }}
           >
             <PlusIcon />
