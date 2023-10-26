@@ -59,11 +59,7 @@ function FinishedStep({
           )}
         </>
       ),
-      error: (
-        <>
-          Seu arquivo deu falha em <span>12 itens</span>
-        </>
-      ),
+      error: <></>,
     },
     icon: {
       success: check,
