@@ -32,8 +32,8 @@ function AccordionError({
 
   const warnTextError = `Infelizmente, ${csvResponse.warnings.length} ${
     csvResponse.warnings.length > 1
-      ? "itens foram importados com falhas"
-      : "item foi importado com falha"
+      ? "colunas foram importadas com falhas"
+      : "coluna foi importada com falha"
   }`;
 
   return (
