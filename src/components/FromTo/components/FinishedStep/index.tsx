@@ -49,19 +49,34 @@ function FinishedStep({
       ),
       warn: (
         <>
-          {csvResponse.total > 1 ? (
+          {csvResponse.warnings.length > 1 ? (
             <>
               Foram exportados{" "}
-              <span>{csvResponse.total} itens com sucesso</span>
+              <span>{csvResponse.warnings.length} itens com sucesso</span>
             </>
           ) : (
             <>
-              Foi exportado <span>{csvResponse.total} item com sucesso</span>
+              Foi exportado{" "}
+              <span>{csvResponse.warnings.length} item com sucesso</span>
             </>
           )}
         </>
       ),
-      error: <></>,
+      error: (
+        <>
+          {csvResponse.errors.length > 1 ? (
+            <>
+              Seu arquivo deu falha em{" "}
+              <span>{csvResponse.errors.length} itens</span>
+            </>
+          ) : (
+            <>
+              Seu arquivo deu falha em{" "}
+              <span>{csvResponse.errors.length} item</span>
+            </>
+          )}
+        </>
+      ),
     },
     icon: {
       success: check,
