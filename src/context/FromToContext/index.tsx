@@ -70,6 +70,7 @@ export function FromToContextProvider({
         header: true,
         delimiter: papaParams[valuesImportConfiguration.separator.value],
         quoteChar: papaParams[valuesImportConfiguration.delimiter.value],
+        skipEmptyLines: false,
         complete: (result) => {
           setData(result.data.slice(0, 10));
         },

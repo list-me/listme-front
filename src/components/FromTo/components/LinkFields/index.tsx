@@ -44,6 +44,7 @@ function LinkFields(): JSX.Element {
     selectedLinkFields,
     setSelectedLinkFields,
     csvResponse,
+    valuesImportConfiguration,
   } = useFromToContext();
 
   const { setCurrentStep, colHeadersToPreviewTable, data } = useFromToContext();
@@ -137,10 +138,25 @@ function LinkFields(): JSX.Element {
         optionsList[0] !== "" &&
         typeof optionsList[0] === "string"
       ) {
-        const dataValues = data.map((item) => item[itemKey].toString());
+        const dataValues = data.map((item) => {
+          return item[itemKey];
+        });
+
+        const typeMultiOptions: { [key: string]: string } = {
+          comma: ",",
+          semicolon: ";",
+        };
+
         const neverIncludes = optionsList.every(
-          (opt) => !dataValues.includes(opt),
+          (opt) =>
+            !dataValues.includes(opt) &&
+            !dataValues.includes(
+              optionsList.join(
+                typeMultiOptions[valuesImportConfiguration.multiOptions.value],
+              ),
+            ),
         );
+
         if (neverIncludes) {
           if (!warnList?.includes(itemKey)) setWarnList([...warnList, itemKey]);
         } else if (warnList?.includes(itemKey))
