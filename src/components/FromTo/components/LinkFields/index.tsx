@@ -239,7 +239,6 @@ function LinkFields(): JSX.Element {
           abort
           prev
           onClick={() => {
-            setSelectedLinkFields({});
             setCurrentStep((prev) => prev - 1);
           }}
         >
