@@ -6,7 +6,9 @@ import { ContainerOption, FixedOptions } from "./styles";
 
 const CustomMenuList = (props: any) => {
   const childrenArray = React.Children.toArray(props.children);
+
   const regularOptions = childrenArray.slice(0, -2);
+
   const lastTwoOptions = childrenArray.slice(-2);
 
   const [isMenuUp, setIsMenuUp] = useState(false);

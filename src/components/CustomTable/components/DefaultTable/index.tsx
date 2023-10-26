@@ -304,7 +304,7 @@ function DefaultTable({
 
   return (
     <>
-      {openAlertTooltip && <AlertTooltip />}
+      {openAlertTooltip && <AlertTooltip setAlertTooltip={setAlertTooltip} />}
 
       <HotTable
         readOnly={isTableLocked}

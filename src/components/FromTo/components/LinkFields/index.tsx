@@ -186,7 +186,13 @@ function LinkFields(): JSX.Element {
   }, [csvResponse]);
 
   if (loading) return <LoadingSpinner text="Enviando arquivo..." subText="" />;
-  if (finisedContent) return <FinishedStep typeFinished={typeFinished} />;
+  if (finisedContent)
+    return (
+      <FinishedStep
+        typeFinished={typeFinished}
+        setFinisehdContent={setFinisehdContent}
+      />
+    );
   return (
     <ContainerLinkFields>
       {warnList.length > 0 ? (
@@ -239,7 +245,6 @@ function LinkFields(): JSX.Element {
           abort
           prev
           onClick={() => {
-            setSelectedLinkFields({});
             setCurrentStep((prev) => prev - 1);
           }}
         >

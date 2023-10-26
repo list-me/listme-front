@@ -352,6 +352,20 @@ export const Container = styled.div`
       position: relative;
       top: 1px;
     }
+    .hover-container-info:hover {
+      svg {
+        stroke: transparent;
+        fill: #f1bc02;
+      }
+      path {
+        stroke: #fff;
+        fill: #f1bc02;
+        :first-child {
+          stroke: #f1bc02;
+        }
+      }
+    }
+
     .dropdown-item {
       display: flex;
       align-items: center;
