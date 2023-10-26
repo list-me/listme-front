@@ -42,7 +42,8 @@ const MyDropzone = (): JSX.Element => {
       // @ts-ignore
       const ext = file.name.split(".").pop().toLowerCase();
 
-      if (!["csv", "xls", "xlsx"].includes(ext)) {
+      // if (!["csv", "xls", "xlsx"].includes(ext)) {
+      if (!["csv"].includes(ext)) {
         toast.error(
           "Arquivo Rejeitado: a extensão do arquivo não é permitida.",
         );
@@ -65,7 +66,8 @@ const MyDropzone = (): JSX.Element => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: ".csv, .xls, .xlsx",
+    // accept: ".csv, .xls, .xlsx",
+    accept: ".csv",
     maxFiles: 1,
   } as unknown as DropzoneOptions);
 
@@ -123,7 +125,8 @@ const MyDropzone = (): JSX.Element => {
           ? "Solte o arquivo aqui!"
           : "Clique para selecionar arquivo ou arraste até aqui"}
       </p>
-      <span>Arquivos permitidos: csv, xls e xlsx</span>
+      <span>Arquivo permitido: csv.</span>
+      {/* <span>Arquivos permitidos: csv, xls e xlsx</span> */}
       <DragBox isFileBeingDragged={isFileBeingDragged} />
     </ContainerDropZone>
   );
