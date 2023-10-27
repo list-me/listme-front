@@ -9,7 +9,6 @@ import DropdownEditor from "../../Editors/Dropdown";
 import RadioEditor from "../../Editors/Radio";
 import RelationEditor from "../../Editors/Relation";
 import { ReactComponent as DropDownIcon } from "../../../../assets/chevron-down.svg";
-import { ReactComponent as DropDownIconSmall } from "../../../../assets/chevron-down-small.svg";
 import { ReactComponent as TextIcon } from "../../../../assets/icons/headers/text-icon.svg";
 import { ReactComponent as ParagraphIcon } from "../../../../assets/icons/headers/textarea-icon.svg";
 import { ReactComponent as CheckedIcon } from "../../../../assets/icons/headers/checked-icon.svg";
@@ -32,6 +31,7 @@ import { IDropDownStatus } from "../HeaderDropDown/HeaderDropDown";
 import { IconType } from "../HeaderDropDown/components/Cell/Cell.d";
 import getStyledContent from "./utils/getStyledContent";
 import { ICol } from "../../CustomTable";
+import disableMultiSelectionWithControl from "./utils/disableMultiSelectionWithControl";
 
 function DefaultTable({
   hotRef,
@@ -307,6 +307,9 @@ function DefaultTable({
         fixedColumnsLeft={getMaxOrderForFrozen(cols) + 1}
         afterScrollVertically={afterScrollVerticallyCallback}
         beforeCopy={beforeCopyCallback}
+        beforeOnCellMouseDown={(event) => {
+          disableMultiSelectionWithControl(event, hotRef);
+        }}
         afterPaste={afterPasteCallback}
         afterColumnMove={afterColumnMoveCallback}
         afterGetColHeader={styledHeader}
