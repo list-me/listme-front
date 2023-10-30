@@ -293,6 +293,7 @@ function DefaultTable({
   return (
     <>
       <HotTable
+        className="hot-table"
         readOnly={isTableLocked}
         ref={hotRef}
         colHeaders={colHeaders}
