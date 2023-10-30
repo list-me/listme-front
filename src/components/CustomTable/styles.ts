@@ -23,6 +23,7 @@ export const Container = styled.div`
   /* Arquivo CSS */
   .hot-table .corner {
     cursor: not-allowed;
+    pointer-events: none;
   }
 
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
