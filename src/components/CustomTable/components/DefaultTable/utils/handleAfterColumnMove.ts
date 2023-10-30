@@ -10,6 +10,7 @@ const handleAfterColumnMove = (
   orderChanged: boolean,
   columns: IHeader[],
   handleMove: Function,
+  setColumns: any,
 ): void => {
   if (!orderChanged) return;
 
@@ -48,7 +49,6 @@ const handleAfterColumnMove = (
     }
     newColumns[lastIndex].frozen = false;
   }
-
   handleMove(newColumns);
 };
 

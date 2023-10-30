@@ -1,28 +1,23 @@
+/* eslint-disable react/destructuring-assignment */
 import { useNavigate } from "react-router-dom";
-import React, { useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Table, TablePaginationConfig } from "antd";
 import { Container } from "./styles";
-import { productContext } from "../../context/products";
 import { ROUTES } from "../../constants/routes";
-import { toast } from "react-toastify";
 
-export const CustomTable = (props: any) => {
-  const productHook = useContext(productContext);
+function CustomTable(props: any): JSX.Element {
   const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(
-    window.innerWidth >= 1024 && window.innerWidth <= 1536 ? 6 : 10,
-  );
+  const [pageSize, setPageSize] = useState<number>(0);
 
-  const handleChangePageSize = (current: number, size: number) => {
+  const handleChangePageSize = (_current: number, size: number): void => {
     setCurrentPage(1);
     setPageSize(size);
   };
 
-  const handleChangePage = (page: number) => {
+  const handleChangePage = (page: number): void => {
     setCurrentPage(page);
-    // props.onLoadMore({ pageSize, page });
   };
 
   const sizeType = props.size ?? "middle";
@@ -31,11 +26,54 @@ export const CustomTable = (props: any) => {
     position: ["bottomRight"],
     size: sizeType,
     current: currentPage,
-    pageSize: pageSize,
+    pageSize,
     total: props?.dataProvider?.length,
     onChange: handleChangePage,
     onShowSizeChange: handleChangePageSize,
+    showSizeChanger: false,
   };
+
+  const verifyLimitRows = (height: number): number => {
+    const constants = {
+      header: 96,
+      title: 101,
+      headerTable: 56,
+      paddingNavigation: 62,
+      rowHeight: 83,
+      marginError: 1, // Considerando o menos 1 para não vazar o sidebar
+    };
+
+    const tableContainerContent =
+      height -
+      constants.header -
+      constants.title -
+      constants.headerTable -
+      constants.paddingNavigation;
+
+    const countRows =
+      Math.round(tableContainerContent / constants.rowHeight) -
+      constants.marginError;
+
+    const newPageSize = Math.max(3, countRows);
+
+    setPageSize(newPageSize);
+    return newPageSize;
+  };
+
+  const handleResize = useCallback(() => {
+    const windowHeight = window.innerHeight;
+    verifyLimitRows(windowHeight);
+  }, []);
+
+  useEffect(() => {
+    const windowHeight = window.innerHeight;
+    verifyLimitRows(windowHeight);
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [handleResize]);
 
   return (
     <Container>
@@ -50,7 +88,7 @@ export const CustomTable = (props: any) => {
         }}
         pagination={paginationConfig}
         rowSelection={props.rowSelection}
-        onRow={(record, rowIndex) => {
+        onRow={(record, _rowIndex) => {
           return {
             onClick: () => navigate(`${ROUTES.PRODUCTS}/${record.id}`),
           };
@@ -58,4 +96,6 @@ export const CustomTable = (props: any) => {
       />
     </Container>
   );
-};
+}
+
+export default CustomTable;
