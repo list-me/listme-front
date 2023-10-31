@@ -10,12 +10,14 @@ export const ContainerFilter = styled.div`
   justify-content: flex-end;
 `;
 export const SidebarFilter = styled.div`
-  width: 554px;
+  width: 684px;
   height: 100%;
   padding: 32px;
   background: #fff;
+  padding-right: 26px;
   border-radius: 8px 0px 0px 8px;
-
+  display: flex;
+  flex-direction: column;
   transform: translateX(100%);
   animation: slideIn 0.15s forwards;
 
@@ -32,6 +34,7 @@ export const HeaderFilter = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-right: 6px;
 `;
 export const TitleFilter = styled.h4`
   color: ${({ theme }) => theme.colors.fourth};
@@ -51,9 +54,28 @@ export const FilterLogic = styled.div`
   width: 100%;
   height: 64px;
   background: #f3f4f6;
-  margin-top: 24px;
   border-radius: 4px;
-  z-index: 99999999999999999999999999999999999999999999999999999999;
+`;
+export const FilterCenterContent = styled.div`
+  height: 100%;
+  overflow: auto;
+  padding-right: 4px;
+  margin-bottom: 24px;
+  margin-top: 24px;
+  padding-bottom: 64px;
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: ${({ theme }) => theme.colors.grayscale.ninth};
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #cccccc;
+    border-radius: 8px;
+    border: 2px solid transparent;
+  }
 `;
 export const Condition = styled.div<{ smallBefore?: boolean }>`
   display: flex;
@@ -61,7 +83,6 @@ export const Condition = styled.div<{ smallBefore?: boolean }>`
   gap: 16px;
   margin-top: 16px;
   position: relative;
-  z-index: 11 !important;
   ::before {
     content: "";
     height: ${(props) => (props.smallBefore ? "40px" : "69px")};
@@ -75,6 +96,9 @@ export const Condition = styled.div<{ smallBefore?: boolean }>`
     border-right: none;
     left: 12px;
   }
+`;
+export const ConditionItem = styled.div`
+  width: 187px;
 `;
 export const NewCondition = styled.button`
   display: flex;

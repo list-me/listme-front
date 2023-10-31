@@ -1,8 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   CloseButton,
   Condition,
+  ConditionItem,
   ContainerFilter,
+  FilterCenterContent,
   FilterLogic,
   HeaderFilter,
   NewCondition,
@@ -15,9 +17,19 @@ import { ReactComponent as CloseIcon } from "../../assets/close-gray.svg";
 
 import { useFilterContext } from "../../context/FilterContext";
 import SelectComponent from "../Select";
+import Button from "../Button";
+import { ICondition } from "./Filter";
+
+//  nao deve ter value pq so inicia com os dois campos
+const initialCondition: ICondition = {
+  column: " ",
+  condition: " ",
+  value: "",
+};
 
 function Filter(): JSX.Element {
   const { openedFilter, setOpenedFilter } = useFilterContext();
+  const [conditions, setConditions] = useState([initialCondition]);
 
   const sidebarFilterRef = useRef<HTMLDivElement | null>(null);
 
@@ -40,7 +52,25 @@ function Filter(): JSX.Element {
     };
   }, [openedFilter, setOpenedFilter]);
 
-  const conditions = ["", "", ""];
+  function addNewCondition(currentConditions: ICondition[]): void {
+    const lastItem = currentConditions[conditions.length - 1];
+
+    if (!lastItem.value) {
+      const copyConditions = [...currentConditions];
+
+      const newItemDefault = {
+        column: " ",
+        condition: " ",
+        value: " ",
+      };
+
+      copyConditions.pop();
+
+      setConditions([...copyConditions, newItemDefault]);
+    } else {
+      setConditions((prev) => [...prev, initialCondition]);
+    }
+  }
 
   return (
     <ContainerFilter>
@@ -51,29 +81,51 @@ function Filter(): JSX.Element {
             <CloseIcon />
           </CloseButton>
         </HeaderFilter>
-        <FilterLogic>oi</FilterLogic>
-        {conditions.map((_item, index) => (
-          <Condition smallBefore={index === 0}>
-            <SelectComponent
-              select={undefined}
-              onChange={() => ""}
-              options={undefined}
-              placeHolder=""
-              small
-            />
-            <SelectComponent
-              select={undefined}
-              onChange={() => ""}
-              options={undefined}
-              placeHolder=""
-              small
-            />
-          </Condition>
-        ))}
-        <NewCondition>
-          <NewConditionPlus />
-          Nova condição
-        </NewCondition>
+        <FilterCenterContent>
+          <FilterLogic>oi</FilterLogic>
+          {conditions.map((item, index) => (
+            <Condition smallBefore={index === 0}>
+              {item.column && (
+                <ConditionItem>
+                  <SelectComponent
+                    select={undefined}
+                    onChange={() => ""}
+                    options={undefined}
+                    placeHolder=""
+                    small
+                  />
+                </ConditionItem>
+              )}
+              {item.condition && (
+                <ConditionItem>
+                  <SelectComponent
+                    select={undefined}
+                    onChange={() => ""}
+                    options={undefined}
+                    placeHolder=""
+                    small
+                  />
+                </ConditionItem>
+              )}
+              {item.value && (
+                <ConditionItem>
+                  <SelectComponent
+                    select={undefined}
+                    onChange={() => ""}
+                    options={undefined}
+                    placeHolder=""
+                    small
+                  />
+                </ConditionItem>
+              )}
+            </Condition>
+          ))}
+          <NewCondition onClick={() => addNewCondition(conditions)}>
+            <NewConditionPlus />
+            Nova condição
+          </NewCondition>
+        </FilterCenterContent>
+        <Button onClickModal={() => ""}>Filtrar produtos</Button>
       </SidebarFilter>
     </ContainerFilter>
   );
