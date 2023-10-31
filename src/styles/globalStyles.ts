@@ -9,24 +9,24 @@ const GlobalStyle = createGlobalStyle`
     outline: 0;
     padding: 0;
   }
-  
+
   *::before,
   *::after {
     box-sizing: border-box;
   }
-  
+
   html {
     font-size: 62.5%;
     scroll-behavior: smooth;
     overflow-x: hidden;
   }
-  
+
   body {
     background-color: #F3F4F6;
     font-family: Satoshi Regular;
     font-weight: 500;
     min-height: 100vh;
- 
+
     text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -35,14 +35,14 @@ const GlobalStyle = createGlobalStyle`
   #root {
     overscroll-behavior: contain;
   }
-    
+
   ul,
   li {
     margin: 0;
     padding: 0;
     list-style: none;
   }
-  
+
   img {
     border-style: none;
     height: auto;
@@ -50,7 +50,7 @@ const GlobalStyle = createGlobalStyle`
     vertical-align: middle;
     user-select: none;
   }
-  
+
   h1,
   h2,
   h3,
@@ -61,13 +61,13 @@ const GlobalStyle = createGlobalStyle`
     margin-bottom: 1.5rem;
     margin-top: 0;
   }
-  
+
   p,
   a {
     margin-bottom: 1rem;
     margin-top: 0;
   }
-  
+
   a {
     background-color: transparent;
     text-decoration: none;

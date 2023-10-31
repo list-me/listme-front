@@ -16,8 +16,7 @@ export const Container = styled.div<DropdownMenuStyleProps>`
   z-index: 9999;
 `;
 
-export const SuspenseMenu = styled.div<{ left?: number | null }>`
-  position: relative;
+export const SuspenseMenu = styled.div`
   z-index: 9999;
 
   height: auto;
@@ -25,24 +24,19 @@ export const SuspenseMenu = styled.div<{ left?: number | null }>`
 
   border-radius: 8px;
   box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.07);
+  top: 245px;
 
   background: white;
-  position: fixed;
-  left: ${({ left }) => `${left}px`};
-  top: 26%;
+  position: absolute;
+  top: 10px;
 
   display: flex;
   flex-direction: column;
 
-  /* margin-top: 32rem; */
   padding: 16px;
 
   span:not(:first-child) {
     margin-top: 16px;
-  }
-
-  @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-    top: 25rem;
   }
 `;
 

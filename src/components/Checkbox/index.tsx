@@ -1,10 +1,14 @@
 import React from "react";
 import { Checkbox } from "antd";
-import { CheckboxCustomProps } from "./Checkbox.d";
 
-export const CheckboxCustom: React.FC<CheckboxCustomProps> = ({
+function CheckboxCustom({
   onChange = () => {},
   label,
-}) => {
+}: {
+  onChange: () => void;
+  label: string;
+}): JSX.Element {
   return <Checkbox onChange={onChange}>{label}</Checkbox>;
-};
+}
+
+export default CheckboxCustom;
