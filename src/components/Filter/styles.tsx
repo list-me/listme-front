@@ -52,9 +52,21 @@ export const CloseButton = styled.button`
 `;
 export const FilterLogic = styled.div`
   width: 100%;
+  padding: 16px;
   height: 64px;
   background: #f3f4f6;
   border-radius: 4px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  color: ${({ theme }) => theme.colors.fourth};
+  font-family: ${({ theme }) => theme.fonts.family.default};
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
+`;
+export const FilterLogicSelectContainer = styled.div`
+  width: 115px;
 `;
 export const FilterCenterContent = styled.div`
   height: 100%;
@@ -63,7 +75,7 @@ export const FilterCenterContent = styled.div`
   margin-bottom: 24px;
   margin-top: 24px;
   padding-bottom: 64px;
-
+  overflow-x: hidden;
   ::-webkit-scrollbar {
     width: 4px;
     height: 4px;
@@ -83,6 +95,7 @@ export const Condition = styled.div<{ smallBefore?: boolean }>`
   gap: 16px;
   margin-top: 16px;
   position: relative;
+  width: 100%;
   ::before {
     content: "";
     height: ${(props) => (props.smallBefore ? "40px" : "69px")};
@@ -97,8 +110,8 @@ export const Condition = styled.div<{ smallBefore?: boolean }>`
     left: 12px;
   }
 `;
-export const ConditionItem = styled.div`
-  width: 187px;
+export const ConditionItem = styled.div<{ small?: boolean }>`
+  width: ${(props) => (props.small ? "31.5%" : "100%;")};
 `;
 export const NewCondition = styled.button`
   display: flex;

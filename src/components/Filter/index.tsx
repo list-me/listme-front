@@ -6,6 +6,7 @@ import {
   ContainerFilter,
   FilterCenterContent,
   FilterLogic,
+  FilterLogicSelectContainer,
   HeaderFilter,
   NewCondition,
   SidebarFilter,
@@ -20,8 +21,7 @@ import SelectComponent from "../Select";
 import Button from "../Button";
 import { ICondition } from "./Filter";
 
-//  nao deve ter value pq so inicia com os dois campos
-const initialCondition: ICondition = {
+const defaultCondition: ICondition = {
   column: " ",
   condition: " ",
   value: "",
@@ -29,7 +29,7 @@ const initialCondition: ICondition = {
 
 function Filter(): JSX.Element {
   const { openedFilter, setOpenedFilter } = useFilterContext();
-  const [conditions, setConditions] = useState([initialCondition]);
+  const [conditions, setConditions] = useState([defaultCondition]);
 
   const sidebarFilterRef = useRef<HTMLDivElement | null>(null);
 
@@ -68,7 +68,7 @@ function Filter(): JSX.Element {
 
       setConditions([...copyConditions, newItemDefault]);
     } else {
-      setConditions((prev) => [...prev, initialCondition]);
+      setConditions((prev) => [...prev, defaultCondition]);
     }
   }
 
@@ -82,11 +82,26 @@ function Filter(): JSX.Element {
           </CloseButton>
         </HeaderFilter>
         <FilterCenterContent>
-          <FilterLogic>oi</FilterLogic>
+          <FilterLogic>
+            Resultados devem atender
+            <FilterLogicSelectContainer>
+              <SelectComponent
+                select={undefined}
+                onChange={() => ""}
+                options={undefined}
+                placeHolder=""
+                small
+              />
+            </FilterLogicSelectContainer>
+            critérios
+          </FilterLogic>
           {conditions.map((item, index) => (
-            <Condition smallBefore={index === 0}>
+            <Condition
+              key={item.column + item.condition}
+              smallBefore={index === 0}
+            >
               {item.column && (
-                <ConditionItem>
+                <ConditionItem small={!!item.value}>
                   <SelectComponent
                     select={undefined}
                     onChange={() => ""}
@@ -97,7 +112,7 @@ function Filter(): JSX.Element {
                 </ConditionItem>
               )}
               {item.condition && (
-                <ConditionItem>
+                <ConditionItem small={!!item.value}>
                   <SelectComponent
                     select={undefined}
                     onChange={() => ""}
@@ -108,7 +123,7 @@ function Filter(): JSX.Element {
                 </ConditionItem>
               )}
               {item.value && (
-                <ConditionItem>
+                <ConditionItem small={!!item.value}>
                   <SelectComponent
                     select={undefined}
                     onChange={() => ""}
