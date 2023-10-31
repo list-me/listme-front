@@ -2,21 +2,17 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable import/prefer-default-export */
 import { Divider } from "antd";
-import React, { useContext, useEffect, useRef } from "react";
-import { productContext } from "../../context/products";
+import React, { useEffect, useRef } from "react";
 import { DropdownMenuProps } from "./DropdownMenu.d";
 import { SuspenseMenu, Item } from "./styles";
 
 export const DropdownMenu: React.FC<DropdownMenuProps> = ({
-  changeOpen = () => {},
   isOpen,
   icoRef,
   openModal = () => {},
   options,
-  left,
   setIsOpen = () => {},
   col,
-  template,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const variable: string[] = [];
@@ -26,7 +22,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
       setIsOpen();
     };
 
-    function handleOutsideClick(event: any) {
+    function handleOutsideClick(event: any): void {
       if (icoRef.current && icoRef.current!.contains(event.target)) {
         return;
       }
@@ -48,7 +44,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   return (
     <>
       {isOpen ? (
-        <SuspenseMenu left={left} ref={modalRef}>
+        <SuspenseMenu ref={modalRef}>
           {options?.map((item) => {
             if (variable.length === 2) {
               variable.pop();
@@ -61,7 +57,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   <Item
                     className="item"
                     key={Math.random()}
-                    onClick={(e) => {
+                    onClick={(_e) => {
                       openModal(item, col);
                     }}
                     isLast={item?.label.toLowerCase().includes("excluir")}

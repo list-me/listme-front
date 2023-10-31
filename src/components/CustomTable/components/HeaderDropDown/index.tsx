@@ -55,10 +55,12 @@ function HeaderDropDown({
       }
 
       let node = clickedElement;
+
       while (node && node !== document.body) {
         if (
           node instanceof HTMLElement &&
-          node.classList.contains("ant-modal")
+          (node.classList.contains("ant-modal") ||
+            node.classList.contains("ant-select-dropdown"))
         ) {
           return;
         }
@@ -128,7 +130,6 @@ function HeaderDropDown({
         >
           <NewColumn
             template={template}
-            newColumn={template}
             setNewColumn={(newColumn: any, templateUpdated: any) => {
               newColumn = {
                 ...newColumn,

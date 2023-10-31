@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { AxiosResponse } from "axios";
 import { api } from "../api";
 import { STORAGE } from "../../../constants/localStorage";
@@ -64,6 +65,17 @@ export const productRequests = {
     const response = await api.get(`/product/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  },
+  postFromToCSV: async (formData: FormData): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(`/products/import/csv`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
       },
     });
 

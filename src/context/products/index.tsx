@@ -382,10 +382,12 @@ export const ProductContextProvider = ({
         ) {
           const newValue =
             typeof fields[field] === "object" ? fields[field] : [fields[field]];
-          obj.push({
-            id: field,
-            value: newValue || [""],
-          });
+
+          if (newValue[0] !== "")
+            obj.push({
+              id: field,
+              value: newValue || [""],
+            });
         }
       });
     }
@@ -566,7 +568,6 @@ export const ProductContextProvider = ({
           id: element?.data,
         };
       });
-    fields.pop();
     templateRequests
       .customView(window.location.pathname.substring(10), { fields })
       .catch((_error) =>

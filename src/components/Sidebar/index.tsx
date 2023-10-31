@@ -11,25 +11,20 @@ import {
   Capsule,
   LogoContainer,
 } from "./styles";
-// @ts-ignore
 import { ReactComponent as Logo } from "../../assets/logo.svg";
 import { ROUTES } from "../../constants/routes";
-// @ts-ignore
 import { ReactComponent as TemplateIcon } from "../../assets/templates.svg";
-// @ts-ignore
 import { ReactComponent as SettingsIcon } from "../../assets/settings.svg";
-// @ts-ignore
 import { ReactComponent as LogoutIcon } from "../../assets/log-out.svg";
 import { ReactComponent as KeyIcon } from "../../assets/key-icon.svg";
 import { STORAGE } from "../../constants/localStorage";
 import { Loading } from "../Loading";
 
-export function Sidebar() {
+function Sidebar(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isSelected, setIsSelected] = useState<boolean>(true);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     setIsLoading(true);
     try {
       window.localStorage.removeItem(STORAGE.TOKEN);
@@ -43,7 +38,7 @@ export function Sidebar() {
     }
   };
 
-  const handleGetCurrentActiveButton = (item: any) => {
+  const handleGetCurrentActiveButton = (item: any): boolean => {
     return (
       window.location.pathname.replace("/", "") === item.label.toLowerCase()
     );
@@ -119,3 +114,5 @@ export function Sidebar() {
     </Container>
   );
 }
+
+export default Sidebar;

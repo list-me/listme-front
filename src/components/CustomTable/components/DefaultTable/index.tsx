@@ -9,7 +9,6 @@ import DropdownEditor from "../../Editors/Dropdown";
 import RadioEditor from "../../Editors/Radio";
 import RelationEditor from "../../Editors/Relation";
 import { ReactComponent as DropDownIcon } from "../../../../assets/chevron-down.svg";
-import { ReactComponent as DropDownIconSmall } from "../../../../assets/chevron-down-small.svg";
 import { ReactComponent as TextIcon } from "../../../../assets/icons/headers/text-icon.svg";
 import { ReactComponent as ParagraphIcon } from "../../../../assets/icons/headers/textarea-icon.svg";
 import { ReactComponent as CheckedIcon } from "../../../../assets/icons/headers/checked-icon.svg";
@@ -32,6 +31,10 @@ import { IDropDownStatus } from "../HeaderDropDown/HeaderDropDown";
 import { IconType } from "../HeaderDropDown/components/Cell/Cell.d";
 import getStyledContent from "./utils/getStyledContent";
 import { ICol } from "../../CustomTable";
+import disableMultiSelectionWithControl from "./utils/disableMultiSelectionWithControl";
+import customRendererRadioComponent from "./components/customRendererRadioComponent";
+import AlertTooltip from "./components/AlertTooltip";
+import customRendererDropdownComponent from "./components/customRendererDropdownComponent";
 
 function DefaultTable({
   hotRef,
@@ -64,6 +67,7 @@ function DefaultTable({
   handleFreeze,
 }: IDefaultTable): JSX.Element {
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
+  const [openAlertTooltip, setAlertTooltip] = useState(false);
 
   useEffect(() => {
     if (hotRef.current) {
@@ -157,6 +161,7 @@ function DefaultTable({
       orderChanged,
       columns,
       handleMove,
+      setColumns,
     );
   };
 
@@ -165,17 +170,22 @@ function DefaultTable({
       _instance: Handsontable,
       td: HTMLTableCellElement,
       _row: number,
-      _col: number,
+      col: number,
       _prop: string | number,
-      value: string | null,
+      value: string | string[],
     ): void => {
-      // eslint-disable-next-line no-param-reassign
-      td.innerHTML = `<div class="radio-item">
-        ${value ?? ""}
-        ${svgStringDropDown}
-      </div>`;
+      if (cols) {
+        // eslint-disable-next-line no-param-reassign
+        td.innerHTML = customRendererRadioComponent({
+          columns,
+          col,
+          value,
+          svgStringDropDown,
+          setAlertTooltip,
+        });
+      }
     },
-    [svgStringDropDown],
+    [columns, svgStringDropDown],
   );
 
   const customRendererFileCallBack = useCallback(
@@ -208,17 +218,20 @@ function DefaultTable({
       _instance: Handsontable,
       td: HTMLTableCellElement,
       _row: number,
-      _col: number,
+      col: number,
       _prop: string | number,
-      value: string | null,
+      value: string | string[],
     ): void => {
       // eslint-disable-next-line no-param-reassign
-      td.innerHTML = `<div class="dropdown-item">
-        ${value ?? ""}
-        ${svgStringDropDown}
-      </div>`;
+      td.innerHTML = customRendererDropdownComponent({
+        cols,
+        col,
+        value,
+        svgStringDropDown,
+        setAlertTooltip,
+      });
     },
-    [svgStringDropDown],
+    [cols, svgStringDropDown],
   );
 
   const customRendererRelation = useCallback(
@@ -292,7 +305,10 @@ function DefaultTable({
 
   return (
     <>
+      {openAlertTooltip && <AlertTooltip setAlertTooltip={setAlertTooltip} />}
+
       <HotTable
+        className="hot-table"
         readOnly={isTableLocked}
         ref={hotRef}
         colHeaders={colHeaders}
@@ -307,13 +323,16 @@ function DefaultTable({
         fixedColumnsLeft={getMaxOrderForFrozen(cols) + 1}
         afterScrollVertically={afterScrollVerticallyCallback}
         beforeCopy={beforeCopyCallback}
+        beforeOnCellMouseDown={(event) => {
+          disableMultiSelectionWithControl(event, hotRef);
+        }}
         afterPaste={afterPasteCallback}
         afterColumnMove={afterColumnMoveCallback}
         afterGetColHeader={styledHeader}
         afterColumnResize={async (newSize: number, column: number) => {
           await handleResize(column, newSize, template);
         }}
-        afterOnCellMouseUp={(event: any, coords, TD) => {
+        afterOnCellMouseUp={(event: any, coords, _TD) => {
           const limitWidth = window.innerWidth - 350;
 
           const invert = event.clientX > limitWidth;
@@ -375,7 +394,7 @@ function DefaultTable({
         }}
         afterChange={afterChangeCallback}
       >
-        {cols.map((col, index: number) => {
+        {cols.map((col, _index: number) => {
           if (col.isCustom && col.type === "list") {
             return (
               <HotColumn

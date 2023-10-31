@@ -1,5 +1,6 @@
 import { api } from "../api";
 import { STORAGE } from "../../../constants/localStorage";
+import { ITemplate } from "../../../context/products/product.context";
 
 interface IPagination {
   page?: number;
@@ -10,11 +11,14 @@ interface IPagination {
 export const templateRequests = {
   list: async ({ page = 0, limit = 20 }: IPagination): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
-    const response = await api.get(`/templates/?page=${page}&limit=${limit}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await api.get(
+      `/templates/?offset=${page}&limit=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
 
     return response?.data?.templates
       ?.sort((lastItem: any, nextItem: any) => {
@@ -40,6 +44,31 @@ export const templateRequests = {
 
     return response.data;
   },
+  post: async (type: string): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(
+      `/template`,
+      { type },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  },
+  postFromTo: async (data: ITemplate): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(`/template`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  },
+
   update: async (id: string, template: any): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.patch(`/template/${id}`, template, {
@@ -64,6 +93,16 @@ export const templateRequests = {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.delete(`/template/remove/column/${id}`, {
       data: column,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data[0];
+  },
+  deleteTemplateImport: async (id: string): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.delete(`/template/${id}/import`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

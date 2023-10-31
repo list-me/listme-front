@@ -27,7 +27,6 @@ export const HeaderCell: React.FC<ICellProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const iconRef = useRef(null);
   const [titleHeader, setTitleHeader] = useState<string>(label);
-  const [posicaoPai, setPosicaoPai] = useState<number | null>(null);
   const [options, setOptions] = useState<any[]>();
 
   useEffect(() => {
@@ -69,20 +68,11 @@ export const HeaderCell: React.FC<ICellProps> = ({
       },
     ];
     setOptions([...customOptions]);
-
-    const pai = ref.current;
-    if (pai) {
-      const left = pai?.getBoundingClientRect().left + window.scrollX;
-      setPosicaoPai(left);
-    }
   }, [isOpen, column, freeze]);
 
   return (
     <>
       <DropdownMenu
-        changeOpen={() => {
-          setIsOpen(!isOpen);
-        }}
         isOpen
         icoRef={iconRef}
         openModal={(option): void => {
@@ -111,11 +101,9 @@ export const HeaderCell: React.FC<ICellProps> = ({
           setIsOpen(!isOpen);
         }}
         options={options as any}
-        left={posicaoPai}
         setIsOpen={() => {
           setIsOpen(false);
         }}
-        template={template}
         col={column?.order}
       />
       <Content ref={ref}>

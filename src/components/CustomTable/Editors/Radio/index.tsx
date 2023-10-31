@@ -120,6 +120,7 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
     cellProperties: any,
   ): void {
     super.prepare(row, col, prop, td, originalValue, cellProperties);
+
     let value: string;
     if (originalValue) {
       value =

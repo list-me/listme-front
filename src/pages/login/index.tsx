@@ -17,7 +17,7 @@ import {
 import { ReactComponent as LogoSVG } from "../../assets/logo.svg";
 import { ReactComponent as GoogleLogoSVG } from "../../assets/google-logo.svg";
 import Button from "../../components/Button";
-import { CheckboxCustom } from "../../components/Checkbox";
+import CheckboxCustom from "../../components/Checkbox";
 import { authRequests } from "../../services/apis/requests/auth";
 import { ROUTES } from "../../constants/routes";
 import { STORAGE } from "../../constants/localStorage";

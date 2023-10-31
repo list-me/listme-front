@@ -22,6 +22,8 @@ import Button from "../../../Button";
 import { Temp } from "../../../Temp";
 import { IHeaderTable } from "../../../../context/products/product.context";
 import EditableText from "../../../EditableText";
+import FromTo from "../../../FromTo";
+import { useFromToContext } from "../../../../context/FromToContext";
 
 function HeaderFilters({
   template,
@@ -37,7 +39,7 @@ function HeaderFilters({
   const navigate = useNavigate();
 
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
-
+  const { setFromToIsOpened } = useFromToContext();
   return (
     <>
       <Header>
@@ -61,7 +63,12 @@ function HeaderFilters({
           <MoreOptions>
             <EllipsisIcon />
           </MoreOptions>
-          <Button height="52px" width="227px" isSecondary>
+          <Button
+            height="52px"
+            width="227px"
+            isSecondary
+            onClick={() => setFromToIsOpened(true)}
+          >
             <DownloadIcon />
             Importar produtos
           </Button>
@@ -85,6 +92,7 @@ function HeaderFilters({
           </Item>
         </Contents>
       </Filters>
+      <FromTo />
     </>
   );
 }
