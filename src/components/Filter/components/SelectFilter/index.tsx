@@ -2,6 +2,7 @@ import Select from "react-select";
 import { useState } from "react";
 import { ContainerSelect, customStyles } from "./styles";
 import CustomOption from "../../../Select/components/Option";
+import CustomInputFilter from "../CustomInputFilter";
 
 const SelectFilter = ({
   select,
@@ -29,6 +30,7 @@ const SelectFilter = ({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         components={{
+          SingleValue: CustomInputFilter,
           Option: CustomOptionWithProps as any,
         }}
       />
