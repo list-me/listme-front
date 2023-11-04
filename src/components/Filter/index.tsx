@@ -1,80 +1,51 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import {
   CloseButton,
-  Condition,
-  ConditionItem,
+  Filter,
+  FilterItem,
   ContainerFilter,
   FilterCenterContent,
   FilterLogic,
   FilterLogicSelectContainer,
   HeaderFilter,
-  NewCondition,
+  NewFilter,
   SidebarFilter,
   TitleFilter,
+  TrashButton,
 } from "./styles";
-import { ReactComponent as NewConditionPlus } from "../../assets/new-condition-plus.svg";
+import { ReactComponent as NewFilterPlus } from "../../assets/new-condition-plus.svg";
 
 import { ReactComponent as CloseIcon } from "../../assets/close-gray.svg";
+import { ReactComponent as TrashIcon } from "../../assets/trash-filter.svg";
 
 import { useFilterContext } from "../../context/FilterContext";
-import SelectComponent from "../Select";
 import Button from "../Button";
-import { ICondition } from "./Filter";
+import SelectFilter from "./components/SelectFilter";
 
-const defaultCondition: ICondition = {
-  column: " ",
-  condition: " ",
-  value: "",
-};
+function FilterComponent(): JSX.Element {
+  const {
+    setOpenedFilter,
+    options,
+    filters,
+    removeFilter,
+    setFilters,
+    defaultFilter,
+    typesOptions,
+  } = useFilterContext();
 
-function Filter(): JSX.Element {
-  const { openedFilter, setOpenedFilter } = useFilterContext();
-  const [conditions, setConditions] = useState([defaultCondition]);
-
-  const sidebarFilterRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent): void {
-      if (
-        sidebarFilterRef.current &&
-        !sidebarFilterRef.current.contains(event.target as Node)
-      ) {
-        setOpenedFilter(false);
-      }
-    }
-
-    setTimeout(() => {
-      document.addEventListener("click", handleClickOutside);
-    }, 0);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [openedFilter, setOpenedFilter]);
-
-  function addNewCondition(currentConditions: ICondition[]): void {
-    const lastItem = currentConditions[conditions.length - 1];
-
-    if (!lastItem.value) {
-      const copyConditions = [...currentConditions];
-
-      const newItemDefault = {
-        column: " ",
-        condition: " ",
-        value: " ",
-      };
-
-      copyConditions.pop();
-
-      setConditions([...copyConditions, newItemDefault]);
-    } else {
-      setConditions((prev) => [...prev, defaultCondition]);
-    }
+  function changeValue(
+    e: any,
+    index: number,
+    typeChange: "column" | "condition" | "value",
+  ): void {
+    const newFilters = [...filters];
+    newFilters[index][typeChange] = e;
+    setFilters(newFilters);
   }
 
   return (
     <ContainerFilter>
-      <SidebarFilter ref={sidebarFilterRef}>
+      <SidebarFilter>
         <HeaderFilter>
           <TitleFilter>Filtrar por</TitleFilter>
           <CloseButton onClick={() => setOpenedFilter(false)}>
@@ -85,7 +56,7 @@ function Filter(): JSX.Element {
           <FilterLogic>
             Resultados devem atender
             <FilterLogicSelectContainer>
-              <SelectComponent
+              <SelectFilter
                 select={undefined}
                 onChange={() => ""}
                 options={undefined}
@@ -95,50 +66,56 @@ function Filter(): JSX.Element {
             </FilterLogicSelectContainer>
             critérios
           </FilterLogic>
-          {conditions.map((item, index) => (
-            <Condition
-              key={item.column + item.condition}
+          {filters.map((item, index) => (
+            <Filter
+              key={item.column.label + item.column.value}
               smallBefore={index === 0}
             >
               {item.column && (
-                <ConditionItem small={!!item.value}>
-                  <SelectComponent
-                    select={undefined}
-                    onChange={() => ""}
+                <FilterItem small={item.condition.complement}>
+                  <SelectFilter
+                    select={item.column}
+                    onChange={(e) => changeValue(e, index, "column")}
+                    options={options}
+                    placeHolder=""
+                    small
+                  />
+                </FilterItem>
+              )}
+              <FilterItem small={item.condition.complement}>
+                <SelectFilter
+                  isDisabled={!item.column.type}
+                  select={item.condition}
+                  onChange={(e) => changeValue(e, index, "condition")}
+                  options={typesOptions[item.column.type]}
+                  placeHolder=""
+                  small
+                />
+              </FilterItem>
+              {item.condition.complement && (
+                <FilterItem small={item.condition.complement}>
+                  <SelectFilter
+                    select={item.value}
+                    onChange={(e) => changeValue(e, index, "value")}
                     options={undefined}
                     placeHolder=""
                     small
                   />
-                </ConditionItem>
+                </FilterItem>
               )}
-              {item.condition && (
-                <ConditionItem small={!!item.value}>
-                  <SelectComponent
-                    select={undefined}
-                    onChange={() => ""}
-                    options={undefined}
-                    placeHolder=""
-                    small
-                  />
-                </ConditionItem>
+              {filters.length > 1 && (
+                <TrashButton onClick={() => removeFilter(filters, index)}>
+                  <TrashIcon />
+                </TrashButton>
               )}
-              {item.value && (
-                <ConditionItem small={!!item.value}>
-                  <SelectComponent
-                    select={undefined}
-                    onChange={() => ""}
-                    options={undefined}
-                    placeHolder=""
-                    small
-                  />
-                </ConditionItem>
-              )}
-            </Condition>
+            </Filter>
           ))}
-          <NewCondition onClick={() => addNewCondition(conditions)}>
-            <NewConditionPlus />
+          <NewFilter
+            onClick={() => setFilters((prev) => [...prev, defaultFilter])}
+          >
+            <NewFilterPlus />
             Nova condição
-          </NewCondition>
+          </NewFilter>
         </FilterCenterContent>
         <Button onClickModal={() => ""}>Filtrar produtos</Button>
       </SidebarFilter>
@@ -146,4 +123,4 @@ function Filter(): JSX.Element {
   );
 }
 
-export default Filter;
+export default FilterComponent;

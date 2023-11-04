@@ -1,5 +1,7 @@
-export interface ICondition {
-  column: string;
-  condition: string;
-  value?: string;
+interface IOption {
+  value: string;
+  label: string;
+  type?: string;
+  optionsList?: string[];
+  openDropdown?: boolean;
 }

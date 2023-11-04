@@ -89,7 +89,7 @@ export const FilterCenterContent = styled.div`
     border: 2px solid transparent;
   }
 `;
-export const Condition = styled.div<{ smallBefore?: boolean }>`
+export const Filter = styled.div<{ smallBefore?: boolean }>`
   display: flex;
   padding-left: 24px;
   gap: 16px;
@@ -110,10 +110,10 @@ export const Condition = styled.div<{ smallBefore?: boolean }>`
     left: 12px;
   }
 `;
-export const ConditionItem = styled.div<{ small?: boolean }>`
-  width: ${(props) => (props.small ? "31.5%" : "100%;")};
+export const FilterItem = styled.div<{ small?: boolean }>`
+  width: ${(props) => (props.small ? "31.5%" : "")};
 `;
-export const NewCondition = styled.button`
+export const NewFilter = styled.button`
   display: flex;
   align-items: center;
   margin-top: 18px;
@@ -149,4 +149,16 @@ export const NewCondition = styled.button`
     border-right: none;
     left: 12px;
   }
+`;
+
+export const TrashButton = styled.button`
+  display: flex;
+  width: 48px;
+  height: 48px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
 `;
