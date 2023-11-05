@@ -4,22 +4,18 @@ import { useProductContext } from "../products";
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
-const defaultFilter: IFilter = {
-  column: {
-    label: "",
-    type: "",
-    optionsList: [""],
-    value: "",
-  },
-  condition: { label: "", value: "", complement: false },
-  value: "",
-};
-
 export function FilterContextProvider({
   children,
 }: {
   children: React.ReactNode;
 }): JSX.Element {
+  const defaultFilter: IFilter = {
+    column: {},
+    condition: {},
+    value: "",
+    id: 1,
+  } as IFilter;
+
   const [openedFilter, setOpenedFilter] = useState(true);
   const [filters, setFilters] = useState([defaultFilter]);
 

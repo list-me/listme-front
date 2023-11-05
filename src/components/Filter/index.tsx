@@ -1,4 +1,4 @@
-import { useRef } from "react";
+/* eslint-disable react/no-array-index-key */
 import {
   CloseButton,
   Filter,
@@ -12,6 +12,8 @@ import {
   SidebarFilter,
   TitleFilter,
   TrashButton,
+  CloseButtonTransparent,
+  InputFilter,
 } from "./styles";
 import { ReactComponent as NewFilterPlus } from "../../assets/new-condition-plus.svg";
 
@@ -40,15 +42,38 @@ function FilterComponent(): JSX.Element {
   ): void {
     const newFilters = [...filters];
     newFilters[index][typeChange] = e;
+
     setFilters(newFilters);
   }
 
+  const logicOptions = [
+    {
+      label: "Todos os",
+      value: "Todos os",
+    },
+    {
+      label: "Quaisquer",
+      value: "Quaisquer",
+    },
+  ];
+
   return (
     <ContainerFilter>
+      <CloseButtonTransparent
+        onClick={() => {
+          setFilters([defaultFilter]);
+          setOpenedFilter(false);
+        }}
+      />
       <SidebarFilter>
         <HeaderFilter>
           <TitleFilter>Filtrar por</TitleFilter>
-          <CloseButton onClick={() => setOpenedFilter(false)}>
+          <CloseButton
+            onClick={() => {
+              setFilters([defaultFilter]);
+              setOpenedFilter(false);
+            }}
+          >
             <CloseIcon />
           </CloseButton>
         </HeaderFilter>
@@ -59,48 +84,54 @@ function FilterComponent(): JSX.Element {
               <SelectFilter
                 select={undefined}
                 onChange={() => ""}
-                options={undefined}
-                placeHolder=""
+                options={logicOptions}
+                placeHolder="Selecione"
                 small
               />
             </FilterLogicSelectContainer>
             critérios
           </FilterLogic>
           {filters.map((item, index) => (
-            <Filter
-              key={item.column.label + item.column.value}
-              smallBefore={index === 0}
-            >
-              {item.column && (
-                <FilterItem small={item.condition.complement}>
-                  <SelectFilter
-                    select={item.column}
-                    onChange={(e) => changeValue(e, index, "column")}
-                    options={options}
-                    placeHolder=""
-                    small
-                  />
-                </FilterItem>
-              )}
-              <FilterItem small={item.condition.complement}>
+            <Filter key={item.id} smallBefore={index === 0}>
+              <FilterItem
+                small={item.condition.complement}
+                trash={filters.length > 1}
+              >
+                <SelectFilter
+                  select={
+                    filters[index].column.value
+                      ? filters[index].column
+                      : undefined
+                  }
+                  onChange={(e) => changeValue(e, index, "column")}
+                  options={options}
+                  placeHolder="Selecione a coluna"
+                  small
+                />
+              </FilterItem>
+              <FilterItem
+                small={item.condition.complement}
+                trash={filters.length > 1}
+              >
                 <SelectFilter
                   isDisabled={!item.column.type}
-                  select={item.condition}
+                  select={
+                    filters[index].condition.value
+                      ? filters[index].condition
+                      : undefined
+                  }
                   onChange={(e) => changeValue(e, index, "condition")}
                   options={typesOptions[item.column.type]}
-                  placeHolder=""
+                  placeHolder="Condição"
                   small
                 />
               </FilterItem>
               {item.condition.complement && (
-                <FilterItem small={item.condition.complement}>
-                  <SelectFilter
-                    select={item.value}
-                    onChange={(e) => changeValue(e, index, "value")}
-                    options={undefined}
-                    placeHolder=""
-                    small
-                  />
+                <FilterItem
+                  small={item.condition.complement}
+                  trash={filters.length > 1}
+                >
+                  <InputFilter placeholder="Insira o valor" />
                 </FilterItem>
               )}
               {filters.length > 1 && (
@@ -111,7 +142,12 @@ function FilterComponent(): JSX.Element {
             </Filter>
           ))}
           <NewFilter
-            onClick={() => setFilters((prev) => [...prev, defaultFilter])}
+            onClick={() =>
+              setFilters((prev) => [
+                ...prev,
+                { ...defaultFilter, id: filters.length + 1 },
+              ])
+            }
           >
             <NewFilterPlus />
             Nova condição

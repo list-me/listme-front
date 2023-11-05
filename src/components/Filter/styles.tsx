@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import styled from "styled-components";
 
 export const ContainerFilter = styled.div`
@@ -9,8 +10,15 @@ export const ContainerFilter = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
+export const CloseButtonTransparent = styled.button`
+  background: transparent;
+  flex-grow: 1;
+  border: none;
+  cursor: initial;
+`;
+
 export const SidebarFilter = styled.div`
-  width: 684px;
+  width: 684px !important;
   height: 100%;
   padding: 32px;
   background: #fff;
@@ -110,8 +118,8 @@ export const Filter = styled.div<{ smallBefore?: boolean }>`
     left: 12px;
   }
 `;
-export const FilterItem = styled.div<{ small?: boolean }>`
-  width: ${(props) => (props.small ? "31.5%" : "")};
+export const FilterItem = styled.div<{ small?: boolean; trash?: boolean }>`
+  width: ${(props) => (props.small ? (props.trash ? "28%" : "31.5%") : "50%")};
 `;
 export const NewFilter = styled.button`
   display: flex;
@@ -161,4 +169,16 @@ export const TrashButton = styled.button`
   background: none;
   border-radius: 6px;
   border: 1px solid #e9ecef;
+`;
+export const InputFilter = styled.input`
+  display: flex;
+  height: 48px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border-radius: 6px;
+  width: 100%;
+  border: 1px solid #d1d6dc;
+  padding: 8px;
 `;

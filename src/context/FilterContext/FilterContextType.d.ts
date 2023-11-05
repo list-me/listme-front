@@ -22,4 +22,5 @@ export interface IFilter {
   };
   condition: { label: string; value: string; complement: boolean };
   value?: string;
+  id: number;
 }
