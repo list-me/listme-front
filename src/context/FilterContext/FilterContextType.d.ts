@@ -10,7 +10,11 @@ export interface FilterContextType {
 }
 
 interface ITypes {
-  [key: string]: { label: string; value: string; complement: boolean }[];
+  [key: string]: {
+    label: string;
+    value: string;
+    input: "text" | "multi" | "";
+  }[];
 }
 
 export interface IFilter {
@@ -20,7 +24,7 @@ export interface IFilter {
     optionsList: string[];
     value: string;
   };
-  condition: { label: string; value: string; complement: boolean };
+  condition: { label: string; value: string; input: "text" | "multi" | "" };
   value?: string;
   id: number;
 }

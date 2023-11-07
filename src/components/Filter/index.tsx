@@ -94,7 +94,7 @@ function FilterComponent(): JSX.Element {
           {filters.map((item, index) => (
             <Filter key={item.id} smallBefore={index === 0}>
               <FilterItem
-                small={item.condition.complement}
+                small={!!item.condition.input}
                 trash={filters.length > 1}
               >
                 <SelectFilter
@@ -111,10 +111,11 @@ function FilterComponent(): JSX.Element {
                 />
               </FilterItem>
               <FilterItem
-                small={item.condition.complement}
+                small={!!item.condition.input}
                 trash={filters.length > 1}
               >
                 <SelectFilter
+                  isSearchable={false}
                   isDisabled={!item.column.type}
                   select={
                     filters[index].condition.value
@@ -127,12 +128,23 @@ function FilterComponent(): JSX.Element {
                   small
                 />
               </FilterItem>
-              {item.condition.complement && (
+              {item.condition.input && (
                 <FilterItem
-                  small={item.condition.complement}
+                  small={!!item.condition.input}
                   trash={filters.length > 1}
                 >
-                  <InputFilter placeholder="Insira o valor" />
+                  {item.condition.input === "text" ? (
+                    <InputFilter placeholder="Insira o valor" />
+                  ) : (
+                    <SelectFilter
+                      isMulti
+                      select={undefined}
+                      onChange={() => ""}
+                      options={typesOptions[item.column.type]}
+                      placeHolder="Valores"
+                      small
+                    />
+                  )}
                 </FilterItem>
               )}
               {filters.length > 1 && (

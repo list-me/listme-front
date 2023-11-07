@@ -20,8 +20,7 @@ enum IconType {
 }
 
 function CustomInputFilter(props: any): JSX.Element {
-  const { label } = props?.data;
-  const { type } = props?.data;
+  const { label, type } = props?.data;
 
   const ICON_HEADER = useMemo(
     () => ({
