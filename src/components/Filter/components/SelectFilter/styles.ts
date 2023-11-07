@@ -32,6 +32,7 @@ export const customStyles = ({ small }: { small?: boolean }): Styles => ({
     "&:hover": {
       borderColor: "#D1D6DC",
     },
+    display: "flex",
     boxShadow: "none",
     cursor: "pointer",
     position: "relative",

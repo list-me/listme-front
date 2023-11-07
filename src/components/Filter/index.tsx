@@ -98,6 +98,7 @@ function FilterComponent(): JSX.Element {
                 trash={filters.length > 1}
               >
                 <SelectFilter
+                  isSearchable
                   select={
                     filters[index].column.value
                       ? filters[index].column

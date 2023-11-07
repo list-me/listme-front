@@ -20,10 +20,13 @@ const SelectFilter = ({
   return (
     <ContainerSelect>
       <Select
-        isSearchable={false}
+        isSearchable={isSearchable}
         isDisabled={isDisabled}
-        value={select}
-        onChange={(selectedOption) => onChange(selectedOption as string)}
+        value={isFocused ? "" : select}
+        onChange={(selectedOption) => {
+          setIsFocused(false);
+          onChange(selectedOption as string);
+        }}
         options={options}
         styles={customStyles({ small }) as any}
         placeholder={isSearchable && isFocused ? "Digite aqui" : placeHolder}

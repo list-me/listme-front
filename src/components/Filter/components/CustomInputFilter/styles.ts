@@ -10,8 +10,9 @@ export const CustomInputFilterContainer = styled.div`
   display: flex;
   gap: 8px;
   align-items: center;
-  position: relative;
-  top: -11px;
+  top: -1px;
+  left: 8px;
+  position: absolute;
   overflow: hidden;
   white-space: nowrap;
   path {
