@@ -6,12 +6,14 @@ export const CustomInputFilterContainer = styled.div`
   font-size: 14px;
   font-weight: 400;
   height: 100%;
-  width: 100%;
+  width: 150%;
   display: flex;
   gap: 8px;
   align-items: center;
   position: relative;
   top: -11px;
+  overflow: hidden;
+  white-space: nowrap;
   path {
     stroke: #000;
   }

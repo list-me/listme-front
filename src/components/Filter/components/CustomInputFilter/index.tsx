@@ -44,10 +44,12 @@ function CustomInputFilter(props: any): JSX.Element {
   );
 
   return (
-    <CustomInputFilterContainer {...props}>
-      {getIconByType(type)}
-      {label}
-    </CustomInputFilterContainer>
+    <>
+      <CustomInputFilterContainer {...props} title={label}>
+        {getIconByType(type)}
+        {label}
+      </CustomInputFilterContainer>
+    </>
   );
 }
 
