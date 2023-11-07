@@ -31,6 +31,7 @@ import { IDropDownStatus } from "../HeaderDropDown/HeaderDropDown";
 import { IconType } from "../HeaderDropDown/components/Cell/Cell.d";
 import getStyledContent from "./utils/getStyledContent";
 import { ICol } from "../../CustomTable";
+import disableMultiSelectionWithControl from "./utils/disableMultiSelectionWithControl";
 import customRendererRadioComponent from "./components/customRendererRadioComponent";
 import AlertTooltip from "./components/AlertTooltip";
 import customRendererDropdownComponent from "./components/customRendererDropdownComponent";
@@ -307,6 +308,7 @@ function DefaultTable({
       {openAlertTooltip && <AlertTooltip setAlertTooltip={setAlertTooltip} />}
 
       <HotTable
+        className="hot-table"
         readOnly={isTableLocked}
         ref={hotRef}
         colHeaders={colHeaders}
@@ -321,6 +323,9 @@ function DefaultTable({
         fixedColumnsLeft={getMaxOrderForFrozen(cols) + 1}
         afterScrollVertically={afterScrollVerticallyCallback}
         beforeCopy={beforeCopyCallback}
+        beforeOnCellMouseDown={(event) => {
+          disableMultiSelectionWithControl(event, hotRef);
+        }}
         afterPaste={afterPasteCallback}
         afterColumnMove={afterColumnMoveCallback}
         afterGetColHeader={styledHeader}
