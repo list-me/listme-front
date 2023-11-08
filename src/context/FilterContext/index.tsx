@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { FilterContextType, IFilter } from "./FilterContextType";
+import { FilterContextType, IConditions, IFilter } from "./FilterContextType";
 import { useProductContext } from "../products";
 import typesOptions from "./utils/typesOptions";
 import { productRequests } from "../../services/apis/requests/product";
@@ -30,6 +30,10 @@ export function FilterContextProvider({
   const [openedFilter, setOpenedFilter] = useState(true);
   const [filters, setFilters] = useState([defaultFilter]);
   const [optionsToSelect, setOptionsToSelect] = useState<any>();
+
+  const [conditions, setConditions] = useState<IConditions[]>(
+    [] as IConditions[],
+  );
 
   function removeRepeatedObjects(array: any, chave: any): any[] {
     const uniqueObjects = [];
@@ -117,12 +121,29 @@ export function FilterContextProvider({
     }
   }
 
+  useEffect(() => {
+    function applyConditions(): any {
+      const toConditions = filters.map((filter) => {
+        const converted = {
+          field: filter.column.value,
+          action: filter.condition.value,
+          value: filter.value,
+        };
+        return converted;
+      });
+      console.log(
+        "🚀 ~ file: index.tsx:134 ~ toConditions ~ toConditions:",
+        toConditions,
+      );
+    }
+    applyConditions();
+  }, [filters]);
+
   function changeValue(
     e: any,
     index: number,
     typeChange: "column" | "condition" | "value" | "selectValue",
   ): void {
-    console.log("veio");
     const newFilters = [...filters];
     newFilters[index][typeChange] = e;
 

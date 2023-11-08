@@ -39,13 +39,6 @@ function FilterComponent(): JSX.Element {
     optionsToSelect,
   } = useFilterContext();
 
-  useEffect(() => {
-    console.log(
-      "🚀 ~ file: index.tsx:40 ~ FilterComponent ~ filters:",
-      filters,
-    );
-  }, [filters]);
-
   const logicOptions = [
     {
       label: "Todos os",

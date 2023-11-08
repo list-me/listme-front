@@ -51,3 +51,9 @@ export type IProductsFilter = {
   template_id: string;
   fields: IFieldsProductFilter[];
 }[];
+
+export interface IConditions {
+  field: string;
+  action: string;
+  value: string[];
+}
