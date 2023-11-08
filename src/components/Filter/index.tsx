@@ -1,4 +1,5 @@
 /* eslint-disable react/no-array-index-key */
+import { useEffect } from "react";
 import {
   CloseButton,
   Filter,
@@ -37,6 +38,13 @@ function FilterComponent(): JSX.Element {
     getOptions,
     optionsToSelect,
   } = useFilterContext();
+
+  useEffect(() => {
+    console.log(
+      "🚀 ~ file: index.tsx:40 ~ FilterComponent ~ filters:",
+      filters,
+    );
+  }, [filters]);
 
   const logicOptions = [
     {
@@ -129,7 +137,14 @@ function FilterComponent(): JSX.Element {
                   trash={filters.length > 1}
                 >
                   {item.condition.input === "text" ? (
-                    <InputFilter placeholder="Insira o valor" />
+                    <InputFilter
+                      type="text"
+                      placeholder="Insira o valor"
+                      value={item.value}
+                      onChange={(e) => {
+                        changeValue(e.target.value, index, "value");
+                      }}
+                    />
                   ) : (
                     <SelectFilter
                       isMulti
