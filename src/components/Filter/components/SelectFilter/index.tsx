@@ -46,8 +46,10 @@ const SelectFilter = ({
           isSearchable={false}
           isClearable={false}
           classNamePrefix="react-select"
-          onChange={(selectedOption) => console.log(selectedOption)}
           options={options}
+          onChange={(selectedOption) => {
+            onChange(selectedOption);
+          }}
           styles={customStyles({ small }) as any}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}

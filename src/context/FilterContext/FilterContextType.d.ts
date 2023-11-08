@@ -11,7 +11,7 @@ export interface FilterContextType {
   changeValue: (
     e: any,
     index: number,
-    typeChange: "column" | "condition" | "value",
+    typeChange: "column" | "condition" | "value" | "selectValue",
   ) => void;
   optionsToSelect: any;
 }
@@ -34,6 +34,7 @@ export interface IFilter {
   };
   condition: { label: string; value: string; input: "text" | "multi" | "" };
   value?: string;
+  selectValue: string[];
   id: number;
 }
 

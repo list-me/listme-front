@@ -113,8 +113,9 @@ export function FilterContextProvider({
   function changeValue(
     e: any,
     index: number,
-    typeChange: "column" | "condition" | "value",
+    typeChange: "column" | "condition" | "value" | "selectValue",
   ): void {
+    console.log("veio");
     const newFilters = [...filters];
     newFilters[index][typeChange] = e;
 

@@ -148,8 +148,8 @@ function FilterComponent(): JSX.Element {
                   ) : (
                     <SelectFilter
                       isMulti
-                      select={undefined}
-                      onChange={() => ""}
+                      select={item.selectValue}
+                      onChange={(e) => changeValue(e, index, "selectValue")}
                       options={optionsToSelect}
                       placeHolder="Valores"
                       small
