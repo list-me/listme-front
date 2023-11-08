@@ -56,7 +56,7 @@ const handleAfterScrollVertically = async (
           if (data) {
             data.products?.forEach((item: any) => {
               const object: any = {};
-              item.fields.forEach((field: any) => {
+              item?.fields?.forEach((field: any) => {
                 const currentField = headerTable.find(
                   (e: any) => e.data == field.id,
                 );

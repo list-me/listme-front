@@ -208,30 +208,35 @@ export const ProductContextProvider = ({
         id: string;
         created_at: string;
       }[] = [];
-      data?.products?.forEach((item) => {
-        const object: { [key: string]: string | string[] } = {};
-        item.fields.forEach((field) => {
-          const currentField = templateFields.find((e) => e.data === field.id);
+      if (data.products.length) {
+        data?.products?.forEach((item) => {
+          const object: { [key: string]: string | string[] } = {};
+          if (item?.fields?.length) {
+            item?.fields?.forEach((field) => {
+              const currentField = templateFields.find(
+                (e) => e.data === field.id,
+              );
 
-          if (currentField && field.value) {
-            const test = !COMPONENT_CELL_PER_TYPE[
-              currentField?.type?.toUpperCase()
-            ]
-              ? field?.value[0]
-              : field?.value;
+              if (currentField && field.value) {
+                const test = !COMPONENT_CELL_PER_TYPE[
+                  currentField?.type?.toUpperCase()
+                ]
+                  ? field?.value[0]
+                  : field?.value;
 
-            object[field?.id] = test;
+                object[field?.id] = test;
+              }
+            });
           }
+          const toProductFields = {
+            ...object,
+            id: item.id,
+            created_at: item.created_at,
+          };
+
+          productFields.push(toProductFields);
         });
-
-        const toProductFields = {
-          ...object,
-          id: item.id,
-          created_at: item.created_at,
-        };
-
-        productFields.push(toProductFields);
-      });
+      }
 
       setProducts(productFields);
       setTotal(data?.total);

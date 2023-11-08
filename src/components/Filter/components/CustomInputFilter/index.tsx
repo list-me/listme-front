@@ -44,11 +44,7 @@ function CustomInputFilter(props: any): JSX.Element {
 
   return (
     <>
-      <CustomInputFilterContainer
-        onFocus={() => console.log("oi")}
-        {...props}
-        title={label}
-      >
+      <CustomInputFilterContainer {...props} title={label}>
         {getIconByType(type)}
         {label}
       </CustomInputFilterContainer>

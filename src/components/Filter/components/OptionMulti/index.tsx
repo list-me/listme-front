@@ -26,6 +26,11 @@ export const ContainerOption = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
+    p {
+      margin: 0;
+      position: relative;
+      top: -3px;
+    }
   }
 `;
 

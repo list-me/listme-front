@@ -33,18 +33,9 @@ function FilterComponent(): JSX.Element {
     setFilters,
     defaultFilter,
     typesOptions,
+    changeValue,
+    getOptions,
   } = useFilterContext();
-
-  function changeValue(
-    e: any,
-    index: number,
-    typeChange: "column" | "condition" | "value",
-  ): void {
-    const newFilters = [...filters];
-    newFilters[index][typeChange] = e;
-
-    setFilters(newFilters);
-  }
 
   const logicOptions = [
     {
@@ -140,7 +131,7 @@ function FilterComponent(): JSX.Element {
                       isMulti
                       select={undefined}
                       onChange={() => ""}
-                      options={typesOptions[item.column.type]}
+                      options={getOptions(item)}
                       placeHolder="Valores"
                       small
                     />

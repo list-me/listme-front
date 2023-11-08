@@ -1,6 +1,20 @@
-import React, { createContext, useContext, useState } from "react";
-import { FilterContextType, IFilter, ITypes } from "./FilterContextType";
+/* eslint-disable no-restricted-syntax */
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import {
+  FilterContextType,
+  IFieldsProductFilter,
+  IFilter,
+  IProductsFilter,
+} from "./FilterContextType";
 import { useProductContext } from "../products";
+import typesOptions from "./utils/typesOptions";
+import { productRequests } from "../../services/apis/requests/product";
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
@@ -15,6 +29,28 @@ export function FilterContextProvider({
     value: "",
     id: 1,
   } as IFilter;
+  const { template } = useProductContext();
+
+  const [multiSelectSearch, setMultiSelectSearch] = useState("");
+
+  const [productsForSelect, setProductsForSelect] = useState<IProductsFilter>(
+    [],
+  );
+
+  const getProducts = useCallback(async () => {
+    const { data } = await productRequests.list(
+      { page: 0, limit: 100, keyword: multiSelectSearch },
+      template.id,
+    );
+    console.log("🚀 ~ file: index.tsx:45 ~ getProducts ~ data:", data);
+    setProductsForSelect(data.products);
+  }, [template?.id, multiSelectSearch]);
+
+  useEffect(() => {
+    if (template?.id) {
+      getProducts();
+    }
+  }, [getProducts, multiSelectSearch, template?.id]);
 
   const [openedFilter, setOpenedFilter] = useState(true);
   const [filters, setFilters] = useState([defaultFilter]);
@@ -24,226 +60,21 @@ export function FilterContextProvider({
     setFilters(newFilters);
   }
 
-  const typesOptions: ITypes = {
-    text: [
-      {
-        label: "O texto contém",
-        value: "O texto contém",
-        input: "text",
-      },
-      {
-        label: "O texto não contém",
-        value: "O texto não contém",
-        input: "text",
-      },
-      {
-        label: "O texto começa com",
-        value: "O texto começa com",
-        input: "text",
-      },
-      {
-        label: "O texto termina com",
-        value: "O texto termina com",
-        input: "text",
-      },
-      {
-        label: "O texto é exatamente igual a",
-        value: "O texto é exatamente igual a",
-        input: "text",
-      },
-      {
-        label: "Está preenchido(não está em branco)",
-        value: "Está preenchido(não está em branco)",
-        input: "",
-      },
-      {
-        label: "Não está preenchido (vazio)",
-        value: "Não está preenchido (vazio)",
-        input: "",
-      },
-    ],
-    paragraph: [
-      {
-        label: "O texto contém",
-        value: "O texto contém",
-        input: "text",
-      },
-      {
-        label: "O texto não contém",
-        value: "O texto não contém",
-        input: "text",
-      },
-      {
-        label: "O texto começa com",
-        value: "O texto começa com",
-        input: "text",
-      },
-      {
-        label: "O texto termina com",
-        value: "O texto termina com",
-        input: "text",
-      },
-      {
-        label: "O texto é exatamente igual a",
-        value: "O texto é exatamente igual a",
-        input: "text",
-      },
-      {
-        label: "Está preenchido(não está em branco)",
-        value: "Está preenchido(não está em branco)",
-        input: "",
-      },
-      {
-        label: "Não está preenchido (vazio)",
-        value: "Não está preenchido (vazio)",
-        input: "",
-      },
-    ],
-    radio: [
-      {
-        label: "Contém uma das opções",
-        value: "Contém uma das opções",
-        input: "multi",
-      },
-      {
-        label: "Não contém nenhuma opção",
-        value: "Não contém nenhuma opção",
-        input: "multi",
-      },
-      {
-        label: "Contém o texto",
-        value: "Contém o texto",
-        input: "text",
-      },
-      {
-        label: "Não contém o texto",
-        value: "Não contém o texto",
-        input: "text",
-      },
-      {
-        label: "Está preenchido (não está em branco)",
-        value: "Está preenchido (não está em branco)",
-        input: "",
-      },
-      {
-        label: "Não está preenchido (vazio)",
-        value: "Não está preenchido (vazio)",
-        input: "",
-      },
-    ],
-    list: [
-      {
-        label: "Contém uma das opções",
-        value: "Contém uma das opções",
-        input: "multi",
-      },
-      {
-        label: "Não contém nenhuma opção",
-        value: "Não contém nenhuma opção",
-        input: "multi",
-      },
-      {
-        label: "Contém o texto",
-        value: "Contém o texto",
-        input: "text",
-      },
-      {
-        label: "Não contém o texto",
-        value: "Não contém o texto",
-        input: "text",
-      },
-      {
-        label: "Está preenchido (não está em branco)",
-        value: "Está preenchido (não está em branco)",
-        input: "",
-      },
-      {
-        label: "Não está preenchido (vazio)",
-        value: "Não está preenchido (vazio)",
-        input: "",
-      },
-    ],
-    checked: [
-      {
-        label: "Contém todos",
-        value: "Contém todos",
-        input: "multi",
-      },
-      {
-        label: "Contém ao menos um",
-        value: "Contém ao menos um",
-        input: "multi",
-      },
-      {
-        label: "Não contém",
-        value: "Não contém",
-        input: "multi",
-      },
-      { label: "Contém", value: "Contém", input: "text" },
-      {
-        label: "Não Contém",
-        value: "Não Contém",
-        input: "text",
-      },
-      {
-        label: "Está preenchido (não está em branco)",
-        value: "Está preenchido (não está em branco)",
-        input: "",
-      },
-      {
-        label: "Não está preenchido (vazio)",
-        value: "Não está preenchido (vazio)",
-        input: "",
-      },
-    ],
-    file: [
-      {
-        label: "O nome do arquivo contém o texto",
-        value: "O nome do arquivo contém o texto",
-        input: "text",
-      },
-      {
-        label: "Está preenchido (não está em branco)",
-        value: "Está preenchido (não está em branco)",
-        input: "",
-      },
-      {
-        label: "Não está preenchido (vazio)",
-        value: "Não está preenchido (vazio)",
-        input: "",
-      },
-    ],
-    relation: [
-      {
-        label: "Contém todos",
-        value: "Contém todos",
-        input: "multi",
-      },
-      {
-        label: "Contpem ao menos um",
-        value: "Contpem ao menos um",
-        input: "multi",
-      },
-      { label: "Contém", value: "Contém", input: "text" },
-      {
-        label: "Não contém",
-        value: "Não contém",
-        input: "text",
-      },
-      {
-        label: "Está preenchido (não está em branco)",
-        value: "Está preenchido (não está em branco)",
-        input: "",
-      },
-      {
-        label: "Não está preenchido (vazio)",
-        value: "Não está preenchido (vazio)",
-        input: "",
-      },
-    ],
-  };
-
   const { headerTable } = useProductContext();
+
+  function removeObjetosRepetidos(array: any, chave: any): any[] {
+    const uniqueObjects = [];
+    const keys = new Set();
+
+    for (const objeto of array) {
+      if (!keys.has(objeto[chave])) {
+        keys.add(objeto[chave]);
+        uniqueObjects.push(objeto);
+      }
+    }
+
+    return uniqueObjects;
+  }
 
   const options: IOption[] = headerTable
     .map((item: any) => {
@@ -257,6 +88,49 @@ export function FilterContextProvider({
     })
     .filter((item) => item.value);
 
+  function getOptions(currentItem: IFilter): {
+    label: string | string[];
+    value: string;
+  }[] {
+    const itemsColumn: IFieldsProductFilter[] = [];
+    const { value } = currentItem?.column;
+
+    productsForSelect.forEach((product) => {
+      if (product.fields) {
+        product.fields.forEach((field) => {
+          if (field.id === value) {
+            const newObject = {
+              id: product.id,
+              value: field.value,
+              title: field.title,
+            };
+            itemsColumn.push(newObject);
+          }
+        });
+      }
+    });
+
+    const items = itemsColumn?.map((item) => {
+      return { label: item.value[0], value: item.id };
+    });
+    const itemsFiltered = items.filter((fItem) => {
+      return fItem.label;
+    });
+
+    return removeObjetosRepetidos(itemsFiltered, "label");
+  }
+
+  function changeValue(
+    e: any,
+    index: number,
+    typeChange: "column" | "condition" | "value",
+  ): void {
+    const newFilters = [...filters];
+    newFilters[index][typeChange] = e;
+
+    setFilters(newFilters);
+  }
+
   const value = {
     openedFilter,
     setOpenedFilter,
@@ -266,6 +140,8 @@ export function FilterContextProvider({
     removeFilter,
     defaultFilter,
     typesOptions,
+    getOptions,
+    changeValue,
   };
 
   return (
