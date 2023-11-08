@@ -124,17 +124,27 @@ export function FilterContextProvider({
   useEffect(() => {
     function applyConditions(): any {
       const toConditions = filters.map((filter) => {
-        const converted = {
-          field: filter.column.value,
-          action: filter.condition.value,
-          value: filter.value,
-        };
-        return converted;
+        if (filter.value) {
+          const converted = {
+            field: filter.column.value,
+            action: filter.condition.value,
+            value: filter.value,
+          };
+          return converted;
+        }
+        if (filter.selectValue) {
+          const selecteds = filter.selectValue.map((item: any) => {
+            return item.value;
+          });
+
+          const converted = {
+            field: filter.column.value,
+            action: filter.condition.value,
+            value: selecteds,
+          };
+          return converted;
+        }
       });
-      console.log(
-        "🚀 ~ file: index.tsx:134 ~ toConditions ~ toConditions:",
-        toConditions,
-      );
     }
     applyConditions();
   }, [filters]);
