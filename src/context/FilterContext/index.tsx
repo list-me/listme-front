@@ -6,11 +6,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import {
-  FilterContextType,
-  IFilter,
-  IProductsFilter,
-} from "./FilterContextType";
+import { FilterContextType, IFilter } from "./FilterContextType";
 import { useProductContext } from "../products";
 import typesOptions from "./utils/typesOptions";
 import { productRequests } from "../../services/apis/requests/product";
@@ -31,27 +27,34 @@ export function FilterContextProvider({
   const { template } = useProductContext();
 
   const [multiSelectSearch, setMultiSelectSearch] = useState("");
-
-  const [productsForSelect, setProductsForSelect] = useState<IProductsFilter>(
-    [],
-  );
-
-  const getProducts = useCallback(async () => {
-    const { data } = await productRequests.list(
-      { page: 0, limit: 100, keyword: multiSelectSearch },
-      template.id,
-    );
-    setProductsForSelect(data.products);
-  }, [template?.id, multiSelectSearch]);
-
-  useEffect(() => {
-    if (template?.id) {
-      getProducts();
-    }
-  }, [getProducts, multiSelectSearch, template?.id]);
-
   const [openedFilter, setOpenedFilter] = useState(true);
   const [filters, setFilters] = useState([defaultFilter]);
+  const [optionsToSelect, setOptionsToSelect] = useState<any>();
+
+  function removeRepeatedObjects(array: any, chave: any): any[] {
+    const uniqueObjects = [];
+    const keys = new Set();
+
+    for (const objeto of array) {
+      if (!keys.has(objeto[chave])) {
+        keys.add(objeto[chave]);
+        uniqueObjects.push(objeto);
+      }
+    }
+
+    return uniqueObjects;
+  }
+
+  const getProducts = useCallback(
+    async (templateId: string) => {
+      const { data } = await productRequests.list(
+        { page: 0, limit: 100, keyword: multiSelectSearch },
+        templateId,
+      );
+      return data.products;
+    },
+    [multiSelectSearch],
+  );
 
   function removeFilter(currentFilters: IFilter[], index: number): void {
     const newFilters = currentFilters.filter((_, i) => i !== index);
@@ -59,20 +62,6 @@ export function FilterContextProvider({
   }
 
   const { headerTable } = useProductContext();
-
-  // function removeObjetosRepetidos(array: any, chave: any): any[] {
-  //   const uniqueObjects = [];
-  //   const keys = new Set();
-
-  //   for (const objeto of array) {
-  //     if (!keys.has(objeto[chave])) {
-  //       keys.add(objeto[chave]);
-  //       uniqueObjects.push(objeto);
-  //     }
-  //   }
-
-  //   return uniqueObjects;
-  // }
 
   const options: IOption[] = headerTable
     .map((item: any) => {
@@ -86,21 +75,39 @@ export function FilterContextProvider({
     })
     .filter((item) => item.value);
 
-  function getOptions(currentItem: IFilter): any {
-    const { type } = currentItem.column;
+  async function getOptions(currentItem: IFilter): Promise<any> {
+    const { type } = currentItem?.column;
 
-    if (type === "radio") {
-      const field = template.fields.fields.find((tField: any) => {
-        return tField.id === currentItem.column.value;
+    if (type === "radio" || type === "list" || type === "checked") {
+      const field = template?.fields?.fields?.find((tField: any) => {
+        return tField?.id === currentItem?.column?.value;
       });
 
-      const optionsToView = field.options.map((option: any) => {
+      const optionsToView = field?.options?.map((option: any) => {
         return { value: option, label: option };
       });
 
-      return optionsToView;
+      setOptionsToSelect(optionsToView);
     }
-    return null;
+
+    if (type === "relation") {
+      if (typeof currentItem.column.optionsList[0] !== "string") {
+        const { templateId, originField } = currentItem.column.optionsList[0];
+        const productsToSelect = await getProducts(templateId);
+        const productFields: any = [];
+        productsToSelect.forEach((product: any) => {
+          product.fields.forEach((pField: any) => {
+            if (pField.id === originField) productFields.push(pField);
+          });
+        });
+
+        const optionsToView = productFields.map((option: any) => {
+          return { value: option.value[0], label: option.value[0] };
+        });
+
+        setOptionsToSelect(removeRepeatedObjects(optionsToView, "value"));
+      }
+    }
   }
 
   function changeValue(
@@ -125,6 +132,7 @@ export function FilterContextProvider({
     typesOptions,
     getOptions,
     changeValue,
+    optionsToSelect,
   };
 
   return (

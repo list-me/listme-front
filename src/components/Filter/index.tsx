@@ -35,6 +35,7 @@ function FilterComponent(): JSX.Element {
     typesOptions,
     changeValue,
     getOptions,
+    optionsToSelect,
   } = useFilterContext();
 
   const logicOptions = [
@@ -95,7 +96,10 @@ function FilterComponent(): JSX.Element {
                       ? filters[index].column
                       : undefined
                   }
-                  onChange={(e) => changeValue(e, index, "column")}
+                  onChange={(e) => {
+                    changeValue(e, index, "column");
+                    getOptions(item);
+                  }}
                   options={options}
                   placeHolder="Selecione a coluna"
                   small
@@ -131,7 +135,7 @@ function FilterComponent(): JSX.Element {
                       isMulti
                       select={undefined}
                       onChange={() => ""}
-                      options={getOptions(item)}
+                      options={optionsToSelect}
                       placeHolder="Valores"
                       small
                     />

@@ -13,6 +13,7 @@ export interface FilterContextType {
     index: number,
     typeChange: "column" | "condition" | "value",
   ) => void;
+  optionsToSelect: any;
 }
 
 interface ITypes {
@@ -28,6 +29,7 @@ export interface IFilter {
     label: string;
     type: string;
     optionsList: string[];
+    // optionsList: string[] | { originField: string; templateId: string }[];
     value: string;
   };
   condition: { label: string; value: string; input: "text" | "multi" | "" };
