@@ -1,5 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import { useCallback, useEffect } from "react";
+import { toast } from "react-toastify";
 import {
   CloseButton,
   Filter,
@@ -27,7 +28,6 @@ import SelectFilter from "./components/SelectFilter";
 import { useProductContext } from "../../context/products";
 import { IConditions } from "../../context/FilterContext/FilterContextType";
 import { IHeaderTable } from "../../context/products/product.context";
-import { toast } from "react-toastify";
 
 function FilterComponent(): JSX.Element {
   const {
@@ -42,6 +42,8 @@ function FilterComponent(): JSX.Element {
     getOptions,
     optionsToSelect,
     conditions,
+    operator,
+    setOperator,
   } = useFilterContext();
 
   const { handleGetTemplate, template, handleGetProducts } =
@@ -50,11 +52,11 @@ function FilterComponent(): JSX.Element {
   const logicOptions = [
     {
       label: "Todos os",
-      value: "Todos os",
+      value: "AND",
     },
     {
       label: "Quaisquer",
-      value: "Quaisquer",
+      value: "OR",
     },
   ];
 
@@ -69,10 +71,12 @@ function FilterComponent(): JSX.Element {
           const product = await handleGetProducts(
             template.id,
             headerTableToGetProducts,
+            // @ts-ignore
             0,
             100,
             "",
             currentConditions,
+            operator.value,
           );
           return product;
         }
@@ -85,6 +89,7 @@ function FilterComponent(): JSX.Element {
         return null;
       }
     }
+    return null;
   }
 
   return (
@@ -112,8 +117,8 @@ function FilterComponent(): JSX.Element {
             Resultados devem atender
             <FilterLogicSelectContainer>
               <SelectFilter
-                select={undefined}
-                onChange={() => ""}
+                select={operator}
+                onChange={(e) => setOperator(e)}
                 options={logicOptions}
                 placeHolder="Selecione"
                 small

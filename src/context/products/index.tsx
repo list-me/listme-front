@@ -199,11 +199,13 @@ export const ProductContextProvider = ({
       limit: number = 100,
       keyword: string = "",
       conditions: IConditions[] | undefined = undefined,
+      operator?: string,
     ) => {
       const { data }: { data: IProductsRequest } = await productRequests.list(
         { page, limit, keyword },
         templateId,
         conditions,
+        operator,
       );
 
       const productFields: {

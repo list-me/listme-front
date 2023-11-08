@@ -38,6 +38,7 @@ import {
 } from "../../context/products/product.context";
 import Filter from "../Filter";
 import { useFilterContext } from "../../context/FilterContext";
+import NotFound from "./components/NotFound";
 
 registerAllModules();
 registerAllEditors();
@@ -68,7 +69,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     handleFreeze,
   } = useProductContext();
 
-  const { openedFilter } = useFilterContext();
+  const { openedFilter, conditions } = useFilterContext();
 
   const [cols, setCols] = useState<ICol[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -359,6 +360,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             setIsOpen={setIsOpen}
             handleFreeze={handleFreeze}
           />
+          {!!conditions.length && products.length < 1 && <NotFound />}
         </Container>
         <div ref={loadingRef} style={{ display: "none" }}>
           <LoadingFetch />

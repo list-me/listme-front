@@ -15,6 +15,8 @@ export interface FilterContextType {
   ) => void;
   optionsToSelect: any;
   conditions: IConditions[];
+  setOperator: React.Dispatch<React.SetStateAction<IOperator>>;
+  operator: IOperator;
 }
 
 interface ITypes {
@@ -57,3 +59,8 @@ export type IConditions =
   | { field: string; action: string; value: string }
   | { field: string; action: string; value: string[] }
   | null;
+
+export interface IOperator {
+  label: string;
+  value: string;
+}

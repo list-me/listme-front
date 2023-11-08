@@ -6,7 +6,12 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { FilterContextType, IConditions, IFilter } from "./FilterContextType";
+import {
+  FilterContextType,
+  IConditions,
+  IFilter,
+  IOperator,
+} from "./FilterContextType";
 import { useProductContext } from "../products";
 import typesOptions from "./utils/typesOptions";
 import { productRequests } from "../../services/apis/requests/product";
@@ -30,6 +35,7 @@ export function FilterContextProvider({
   const [openedFilter, setOpenedFilter] = useState(true);
   const [filters, setFilters] = useState([defaultFilter]);
   const [optionsToSelect, setOptionsToSelect] = useState<any>();
+  const [operator, setOperator] = useState<IOperator>({} as IOperator);
 
   const [conditions, setConditions] = useState<IConditions[]>(
     [] as IConditions[],
@@ -175,6 +181,8 @@ export function FilterContextProvider({
     changeValue,
     optionsToSelect,
     conditions,
+    operator,
+    setOperator,
   };
 
   return (
