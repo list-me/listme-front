@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import {
   CloseButton,
   Filter,
@@ -24,6 +24,10 @@ import { ReactComponent as TrashIcon } from "../../assets/trash-filter.svg";
 import { useFilterContext } from "../../context/FilterContext";
 import Button from "../Button";
 import SelectFilter from "./components/SelectFilter";
+import { useProductContext } from "../../context/products";
+import { IConditions } from "../../context/FilterContext/FilterContextType";
+import { IHeaderTable } from "../../context/products/product.context";
+import { toast } from "react-toastify";
 
 function FilterComponent(): JSX.Element {
   const {
@@ -37,7 +41,11 @@ function FilterComponent(): JSX.Element {
     changeValue,
     getOptions,
     optionsToSelect,
+    conditions,
   } = useFilterContext();
+
+  const { handleGetTemplate, template, handleGetProducts } =
+    useProductContext();
 
   const logicOptions = [
     {
@@ -49,6 +57,35 @@ function FilterComponent(): JSX.Element {
       value: "Quaisquer",
     },
   ];
+
+  async function applyFilter(currentConditions: IConditions[]): Promise<any> {
+    if (currentConditions[0]) {
+      try {
+        const headerTableToGetProducts = (await handleGetTemplate(
+          template.id,
+        )) as IHeaderTable[];
+
+        if (headerTableToGetProducts) {
+          const product = await handleGetProducts(
+            template.id,
+            headerTableToGetProducts,
+            0,
+            100,
+            "",
+            currentConditions,
+          );
+          return product;
+        }
+        return null;
+      } catch (error) {
+        console.error(error);
+        toast.error(
+          "Ocorreu um erro com sua solicitação de produtos, tente novamente",
+        );
+        return null;
+      }
+    }
+  }
 
   return (
     <ContainerFilter>
@@ -169,7 +206,9 @@ function FilterComponent(): JSX.Element {
             Nova condição
           </NewFilter>
         </FilterCenterContent>
-        <Button onClickModal={() => ""}>Filtrar produtos</Button>
+        <Button onClickModal={() => applyFilter(conditions)}>
+          Filtrar produtos
+        </Button>
       </SidebarFilter>
     </ContainerFilter>
   );

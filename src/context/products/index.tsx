@@ -21,6 +21,7 @@ import {
   ITemplate,
 } from "./product.context";
 import { fileRequests } from "../../services/apis/requests/file";
+import { IConditions } from "../FilterContext/FilterContextType";
 
 export interface ICustom {
   show?: boolean;
@@ -197,10 +198,12 @@ export const ProductContextProvider = ({
       page: number = 0,
       limit: number = 100,
       keyword: string = "",
+      conditions: IConditions[] | undefined = undefined,
     ) => {
       const { data }: { data: IProductsRequest } = await productRequests.list(
         { page, limit, keyword },
         templateId,
+        conditions,
       );
 
       const productFields: {

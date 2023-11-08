@@ -133,7 +133,7 @@ export function FilterContextProvider({
           return converted;
         }
         if (filter.selectValue) {
-          const selecteds = filter.selectValue.map((item: any) => {
+          const selecteds: string[] = filter.selectValue.map((item: any) => {
             return item.value;
           });
 
@@ -144,7 +144,9 @@ export function FilterContextProvider({
           };
           return converted;
         }
+        return null;
       });
+      if (toConditions.length) setConditions(toConditions);
     }
     applyConditions();
   }, [filters]);
@@ -172,6 +174,7 @@ export function FilterContextProvider({
     getOptions,
     changeValue,
     optionsToSelect,
+    conditions,
   };
 
   return (

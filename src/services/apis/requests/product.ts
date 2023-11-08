@@ -2,6 +2,7 @@
 import { AxiosResponse } from "axios";
 import { api } from "../api";
 import { STORAGE } from "../../../constants/localStorage";
+import { IConditions } from "../../../context/FilterContext/FilterContextType";
 
 interface IPagination {
   page?: number;
@@ -13,22 +14,32 @@ export const productRequests = {
   list: async (
     { page = 0, limit = 200, keyword }: IPagination,
     templateId?: string,
+    conditions?: IConditions[] | undefined,
+    operator?: string,
   ): Promise<AxiosResponse> => {
+    console.log("🚀 ~ file: product.ts:20 ~ conditions:", conditions);
     const token = window.localStorage.getItem(STORAGE.TOKEN);
-    const response = await api.post(
-      `/products/filter`,
-      {
-        template_id: templateId,
-        key: keyword,
-        limit,
-        offset: page,
+
+    const requestData = {
+      template_id: templateId,
+      key: keyword,
+      limit,
+      conditions,
+      operator,
+      offset: page,
+    };
+
+    // if (conditions && conditions[0]?.field) {
+    //   console.log("veio");
+    //   // @ts-ignore
+    //   requestData.conditions = conditions;
+    // }
+
+    const response = await api.post(`/products/filter`, requestData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
+    });
 
     return response;
   },

@@ -14,6 +14,7 @@ export interface FilterContextType {
     typeChange: "column" | "condition" | "value" | "selectValue",
   ) => void;
   optionsToSelect: any;
+  conditions: IConditions[];
 }
 
 interface ITypes {
@@ -52,8 +53,7 @@ export type IProductsFilter = {
   fields: IFieldsProductFilter[];
 }[];
 
-export interface IConditions {
-  field: string;
-  action: string;
-  value: string[];
-}
+export type IConditions =
+  | { field: string; action: string; value: string }
+  | { field: string; action: string; value: string[] }
+  | null;
