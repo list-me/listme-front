@@ -97,12 +97,19 @@ export function FilterContextProvider({
         const productFields: any = [];
         productsToSelect.forEach((product: any) => {
           product.fields.forEach((pField: any) => {
-            if (pField.id === originField) productFields.push(pField);
+            const newField = {
+              itemId: product.id,
+              ...pField,
+            };
+            if (pField.id === originField) productFields.push(newField);
           });
         });
 
         const optionsToView = productFields.map((option: any) => {
-          return { value: option.value[0], label: option.value[0] };
+          return {
+            value: option.itemId,
+            label: option.value[0],
+          };
         });
 
         setOptionsToSelect(removeRepeatedObjects(optionsToView, "value"));
