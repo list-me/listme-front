@@ -8,7 +8,6 @@ import React, {
 } from "react";
 import {
   FilterContextType,
-  IFieldsProductFilter,
   IFilter,
   IProductsFilter,
 } from "./FilterContextType";
@@ -42,7 +41,6 @@ export function FilterContextProvider({
       { page: 0, limit: 100, keyword: multiSelectSearch },
       template.id,
     );
-    console.log("🚀 ~ file: index.tsx:45 ~ getProducts ~ data:", data);
     setProductsForSelect(data.products);
   }, [template?.id, multiSelectSearch]);
 
@@ -62,19 +60,19 @@ export function FilterContextProvider({
 
   const { headerTable } = useProductContext();
 
-  function removeObjetosRepetidos(array: any, chave: any): any[] {
-    const uniqueObjects = [];
-    const keys = new Set();
+  // function removeObjetosRepetidos(array: any, chave: any): any[] {
+  //   const uniqueObjects = [];
+  //   const keys = new Set();
 
-    for (const objeto of array) {
-      if (!keys.has(objeto[chave])) {
-        keys.add(objeto[chave]);
-        uniqueObjects.push(objeto);
-      }
-    }
+  //   for (const objeto of array) {
+  //     if (!keys.has(objeto[chave])) {
+  //       keys.add(objeto[chave]);
+  //       uniqueObjects.push(objeto);
+  //     }
+  //   }
 
-    return uniqueObjects;
-  }
+  //   return uniqueObjects;
+  // }
 
   const options: IOption[] = headerTable
     .map((item: any) => {
@@ -88,36 +86,21 @@ export function FilterContextProvider({
     })
     .filter((item) => item.value);
 
-  function getOptions(currentItem: IFilter): {
-    label: string | string[];
-    value: string;
-  }[] {
-    const itemsColumn: IFieldsProductFilter[] = [];
-    const { value } = currentItem?.column;
+  function getOptions(currentItem: IFilter): any {
+    const { type } = currentItem.column;
 
-    productsForSelect.forEach((product) => {
-      if (product.fields) {
-        product.fields.forEach((field) => {
-          if (field.id === value) {
-            const newObject = {
-              id: product.id,
-              value: field.value,
-              title: field.title,
-            };
-            itemsColumn.push(newObject);
-          }
-        });
-      }
-    });
+    if (type === "radio") {
+      const field = template.fields.fields.find((tField: any) => {
+        return tField.id === currentItem.column.value;
+      });
 
-    const items = itemsColumn?.map((item) => {
-      return { label: item.value[0], value: item.id };
-    });
-    const itemsFiltered = items.filter((fItem) => {
-      return fItem.label;
-    });
+      const optionsToView = field.options.map((option: any) => {
+        return { value: option, label: option };
+      });
 
-    return removeObjetosRepetidos(itemsFiltered, "label");
+      return optionsToView;
+    }
+    return null;
   }
 
   function changeValue(
