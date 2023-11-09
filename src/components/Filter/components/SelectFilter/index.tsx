@@ -64,9 +64,7 @@ const SelectFilter = ({
           isSearchable
           classNamePrefix="react-select"
           options={
-            select?.value?.length > 0
-              ? sortSelectedFirst(select?.value, options)
-              : options
+            select?.length > 0 ? sortSelectedFirst(select, options) : options
           }
           placeholder=""
           value={select?.value}
@@ -86,8 +84,8 @@ const SelectFilter = ({
       )}
       {isMulti && (
         <FakePlaceHolder>
-          {select?.value?.length > 0
-            ? `Selecionado(s): ${select?.value?.length}`
+          {select?.length > 0
+            ? `Selecionado(s): ${select?.length}`
             : "Selecionar"}
         </FakePlaceHolder>
       )}

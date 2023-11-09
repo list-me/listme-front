@@ -10,13 +10,11 @@ import {
   FilterContextType,
   IConditions,
   IFilter,
-  IInputValue,
   IOperator,
 } from "./FilterContextType";
 import { useProductContext } from "../products";
 import typesOptions from "./utils/typesOptions";
 import { productRequests } from "../../services/apis/requests/product";
-import useDebounce from "../../hooks/useDebounce/useDebounce";
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
@@ -46,13 +44,6 @@ export function FilterContextProvider({
     [] as IConditions[],
   );
 
-  const [inputValue, setInputValue] = useState<IInputValue>({} as IInputValue);
-  const debouncedInputValue = useDebounce(inputValue, 1000);
-  const [selectValue, setSelectValue] = useState<IInputValue>(
-    {} as IInputValue,
-  );
-  const debouncedSelectValue = useDebounce(selectValue, 1000);
-
   const changeValue = useCallback(
     (
       e: any,
@@ -67,23 +58,6 @@ export function FilterContextProvider({
     },
     [],
   );
-
-  useEffect(() => {
-    if (debouncedInputValue.value)
-      changeValue(
-        debouncedInputValue.value,
-        debouncedInputValue.index,
-        debouncedInputValue.typeChange,
-      );
-  }, [changeValue, debouncedInputValue]);
-  useEffect(() => {
-    if (debouncedSelectValue.value)
-      changeValue(
-        debouncedSelectValue.value,
-        debouncedSelectValue.index,
-        debouncedSelectValue.typeChange,
-      );
-  }, [changeValue, debouncedSelectValue]);
 
   function removeRepeatedObjects(array: any, chave: any): any[] {
     const uniqueObjects = [];
@@ -222,10 +196,6 @@ export function FilterContextProvider({
     conditions,
     operator,
     setOperator,
-    inputValue,
-    setInputValue,
-    selectValue,
-    setSelectValue,
   };
 
   return (

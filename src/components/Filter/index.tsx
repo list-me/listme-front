@@ -1,5 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 import {
   CloseButton,
   Filter,
@@ -19,14 +20,18 @@ import {
 import { ReactComponent as NewFilterPlus } from "../../assets/new-condition-plus.svg";
 
 import { ReactComponent as CloseIcon } from "../../assets/close-gray.svg";
-import { ReactComponent as TrashIcon } from "../../assets/trash-filter.svg";
 
 import { useFilterContext } from "../../context/FilterContext";
 import Button from "../Button";
 import SelectFilter from "./components/SelectFilter";
 import { useProductContext } from "../../context/products";
-import { IConditions } from "../../context/FilterContext/FilterContextType";
+import {
+  IConditions,
+  IInputValue,
+} from "../../context/FilterContext/FilterContextType";
 import { IHeaderTable } from "../../context/products/product.context";
+import useDebounce from "../../hooks/useDebounce/useDebounce";
+import ConditionFilterComponent from "./components/ConditionFilterComponent";
 
 function FilterComponent(): JSX.Element {
   const {
@@ -43,10 +48,6 @@ function FilterComponent(): JSX.Element {
     conditions,
     operator,
     setOperator,
-    selectValue,
-    setSelectValue,
-    inputValue,
-    setInputValue,
   } = useFilterContext();
 
   const { handleGetTemplate, template, handleGetProducts } =
@@ -129,87 +130,17 @@ function FilterComponent(): JSX.Element {
             critérios
           </FilterLogic>
           {filters.map((item, index) => (
-            <Filter key={item.id} smallBefore={index === 0}>
-              <FilterItem
-                small={!!item.condition.input}
-                trash={filters.length > 1}
-              >
-                <SelectFilter
-                  isSearchable
-                  select={
-                    filters[index].column.value
-                      ? filters[index].column
-                      : undefined
-                  }
-                  onChange={(e) => {
-                    changeValue(e, index, "column");
-                    getOptions(item, index);
-                  }}
-                  options={options}
-                  placeHolder="Selecione a coluna"
-                  small
-                />
-              </FilterItem>
-              <FilterItem
-                small={!!item.condition.input}
-                trash={filters.length > 1}
-              >
-                <SelectFilter
-                  isSearchable={false}
-                  isDisabled={!item.column.type}
-                  select={
-                    filters[index].condition.value
-                      ? filters[index].condition
-                      : undefined
-                  }
-                  onChange={(e) => changeValue(e, index, "condition")}
-                  options={typesOptions[item.column.type]}
-                  placeHolder="Condição"
-                  small
-                />
-              </FilterItem>
-              {item.condition.input && (
-                <FilterItem
-                  small={!!item.condition.input}
-                  trash={filters.length > 1}
-                >
-                  {item.condition.input === "text" ? (
-                    <InputFilter
-                      type="text"
-                      value={inputValue.value}
-                      placeholder="Insira o valor"
-                      onChange={(e) => {
-                        setInputValue({
-                          value: e.target.value,
-                          index,
-                          typeChange: "value",
-                        });
-                      }}
-                    />
-                  ) : (
-                    <SelectFilter
-                      isMulti
-                      select={selectValue}
-                      onChange={(e) =>
-                        setSelectValue({
-                          value: e,
-                          index,
-                          typeChange: "selectValue",
-                        })
-                      }
-                      options={optionsToSelect[index]}
-                      placeHolder="Valores"
-                      small
-                    />
-                  )}
-                </FilterItem>
-              )}
-              {filters.length > 1 && (
-                <TrashButton onClick={() => removeFilter(filters, index)}>
-                  <TrashIcon />
-                </TrashButton>
-              )}
-            </Filter>
+            <ConditionFilterComponent
+              item={item}
+              index={index}
+              filters={filters}
+              changeValue={changeValue}
+              getOptions={getOptions}
+              typesOptions={typesOptions}
+              options={options}
+              optionsToSelect={optionsToSelect}
+              removeFilter={removeFilter}
+            />
           ))}
           <NewFilter
             onClick={() =>

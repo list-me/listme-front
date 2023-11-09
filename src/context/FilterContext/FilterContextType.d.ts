@@ -17,10 +17,6 @@ export interface FilterContextType {
   conditions: IConditions[];
   setOperator: React.Dispatch<React.SetStateAction<IOperator>>;
   operator: IOperator;
-  inputValue: IInputValue;
-  setInputValue: React.Dispatch<React.SetStateAction<IInputValue>>;
-  selectValue: IInputValue;
-  setSelectValue: React.Dispatch<React.SetStateAction<IInputValue>>;
 }
 
 interface ITypes {
