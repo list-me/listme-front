@@ -94,8 +94,7 @@ export const ButtonFilter = styled.div<{
   padding: ${(props) => props.filterActive && "8px 8px 8px 0px"};
   border-radius: 4px;
   position: relative;
-  > span {
-  }
+  cursor: pointer;
 `;
 export const CountFilter = styled.div`
   width: 20px;

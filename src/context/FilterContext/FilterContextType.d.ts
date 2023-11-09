@@ -17,6 +17,10 @@ export interface FilterContextType {
   conditions: IConditions[];
   setOperator: React.Dispatch<React.SetStateAction<IOperator>>;
   operator: IOperator;
+  inputValue: IInputValue;
+  setInputValue: React.Dispatch<React.SetStateAction<IInputValue>>;
+  selectValue: IInputValue;
+  setSelectValue: React.Dispatch<React.SetStateAction<IInputValue>>;
 }
 
 interface ITypes {
@@ -63,4 +67,10 @@ export type IConditions =
 export interface IOperator {
   label: string;
   value: string;
+}
+
+export interface IInputValue {
+  value: any;
+  index: number;
+  typeChange: "value" | "column" | "condition" | "selectValue";
 }

@@ -10,11 +10,13 @@ import {
   FilterContextType,
   IConditions,
   IFilter,
+  IInputValue,
   IOperator,
 } from "./FilterContextType";
 import { useProductContext } from "../products";
 import typesOptions from "./utils/typesOptions";
 import { productRequests } from "../../services/apis/requests/product";
+import useDebounce from "../../hooks/useDebounce/useDebounce";
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
@@ -31,7 +33,7 @@ export function FilterContextProvider({
   } as IFilter;
   const { template } = useProductContext();
 
-  const [multiSelectSearch, setMultiSelectSearch] = useState("");
+  const [multiSelectSearch] = useState("");
   const [openedFilter, setOpenedFilter] = useState(true);
   const [filters, setFilters] = useState([defaultFilter]);
   const [optionsToSelect, setOptionsToSelect] = useState<any>();
@@ -43,6 +45,44 @@ export function FilterContextProvider({
   const [conditions, setConditions] = useState<IConditions[]>(
     [] as IConditions[],
   );
+
+  const [inputValue, setInputValue] = useState<IInputValue>({} as IInputValue);
+  const debouncedInputValue = useDebounce(inputValue, 1000);
+  const [selectValue, setSelectValue] = useState<IInputValue>(
+    {} as IInputValue,
+  );
+  const debouncedSelectValue = useDebounce(selectValue, 1000);
+
+  const changeValue = useCallback(
+    (
+      e: any,
+      index: number,
+      typeChange: "column" | "condition" | "value" | "selectValue",
+    ) => {
+      const newFilters = [...filters];
+      newFilters[index][typeChange] = e;
+
+      setFilters(newFilters);
+    },
+    [filters],
+  );
+
+  useEffect(() => {
+    if (debouncedInputValue.value)
+      changeValue(
+        debouncedInputValue.value,
+        debouncedInputValue.index,
+        debouncedInputValue.typeChange,
+      );
+  }, [changeValue, debouncedInputValue]);
+  useEffect(() => {
+    if (debouncedSelectValue.value)
+      changeValue(
+        debouncedSelectValue.value,
+        debouncedSelectValue.index,
+        debouncedSelectValue.typeChange,
+      );
+  }, [changeValue, debouncedSelectValue]);
 
   function removeRepeatedObjects(array: any, chave: any): any[] {
     const uniqueObjects = [];
@@ -157,19 +197,8 @@ export function FilterContextProvider({
       });
       if (toConditions.length) setConditions(toConditions);
     }
-    applyConditions();
+    if (filters[0].id) applyConditions();
   }, [filters]);
-
-  function changeValue(
-    e: any,
-    index: number,
-    typeChange: "column" | "condition" | "value" | "selectValue",
-  ): void {
-    const newFilters = [...filters];
-    newFilters[index][typeChange] = e;
-
-    setFilters(newFilters);
-  }
 
   const value = {
     openedFilter,
@@ -186,6 +215,10 @@ export function FilterContextProvider({
     conditions,
     operator,
     setOperator,
+    inputValue,
+    setInputValue,
+    selectValue,
+    setSelectValue,
   };
 
   return (

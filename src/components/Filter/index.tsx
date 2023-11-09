@@ -1,5 +1,4 @@
 /* eslint-disable react/no-array-index-key */
-import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
   CloseButton,
@@ -28,8 +27,6 @@ import SelectFilter from "./components/SelectFilter";
 import { useProductContext } from "../../context/products";
 import { IConditions } from "../../context/FilterContext/FilterContextType";
 import { IHeaderTable } from "../../context/products/product.context";
-import useDebounce from "../../hooks/useDebounce/useDebounce";
-import { IInputValue } from "./Filter";
 
 function FilterComponent(): JSX.Element {
   const {
@@ -46,31 +43,11 @@ function FilterComponent(): JSX.Element {
     conditions,
     operator,
     setOperator,
+    selectValue,
+    setSelectValue,
+    inputValue,
+    setInputValue,
   } = useFilterContext();
-
-  const [inputValue, setInputValue] = useState<IInputValue>({} as IInputValue);
-  const debouncedInputValue = useDebounce(inputValue, 1000);
-  const [selectValue, setSelectValue] = useState<IInputValue>(
-    {} as IInputValue,
-  );
-  const debouncedSelectValue = useDebounce(selectValue, 1000);
-
-  useEffect(() => {
-    if (debouncedInputValue.value)
-      changeValue(
-        debouncedInputValue.value,
-        debouncedInputValue.index,
-        debouncedInputValue.typeChange,
-      );
-  }, [changeValue, debouncedInputValue]);
-  useEffect(() => {
-    if (debouncedSelectValue.value)
-      changeValue(
-        debouncedSelectValue.value,
-        debouncedSelectValue.index,
-        debouncedSelectValue.typeChange,
-      );
-  }, [changeValue, debouncedSelectValue]);
 
   const { handleGetTemplate, template, handleGetProducts } =
     useProductContext();
