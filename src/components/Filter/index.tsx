@@ -199,6 +199,7 @@ function FilterComponent(): JSX.Element {
                   {item.condition.input === "text" ? (
                     <InputFilter
                       type="text"
+                      value={inputValue.value}
                       placeholder="Insira o valor"
                       onChange={(e) => {
                         setInputValue({
@@ -211,7 +212,7 @@ function FilterComponent(): JSX.Element {
                   ) : (
                     <SelectFilter
                       isMulti
-                      select={item.selectValue}
+                      select={selectValue}
                       onChange={(e) =>
                         setSelectValue({
                           value: e,
