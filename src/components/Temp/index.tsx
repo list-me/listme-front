@@ -44,9 +44,6 @@ export const Temp: React.FC<IProps> = ({
     open: { x: 0, opacity: 1 },
     closed: { x: "-100%", opacity: 0, transition: { duration: 1 } },
   };
-  // const handleCustomChange = debounce((newValue: string) => {
-  //   handleSetFilter(newValue);
-  // }, 200);
 
   useEffect(() => {
     window.addEventListener("keydown", function (e) {
@@ -81,7 +78,7 @@ export const Temp: React.FC<IProps> = ({
         {!!conditions[0]?.action && (
           <CountFilter>{conditions.length}</CountFilter>
         )}
-        <Item onClick={() => setOpenedFilter((prev) => !prev)}>
+        <Item onClick={() => setOpenedFilter(true)}>
           <FilterIcon />
           Filtrar
         </Item>

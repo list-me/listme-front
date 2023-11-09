@@ -49,7 +49,7 @@ const NotFound: React.FC = () => {
         {!!conditions[0]?.action && (
           <CountFilter>{conditions.length}</CountFilter>
         )}
-        <Item onClick={() => setOpenedFilter((prev) => !prev)}>
+        <Item onClick={() => setOpenedFilter(true)}>
           <FilterIcon />
           Filtrar
         </Item>

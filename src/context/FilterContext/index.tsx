@@ -33,7 +33,7 @@ export function FilterContextProvider({
 
   const [multiSelectSearch] = useState("");
   const [openedFilter, setOpenedFilter] = useState(true);
-  const [filters, setFilters] = useState([defaultFilter]);
+  const [filters, setFilters] = useState([...[defaultFilter]]);
   const [optionsToSelect, setOptionsToSelect] = useState<any>([{}]);
   const [operator, setOperator] = useState<IOperator>({
     label: "Todos os",
@@ -53,6 +53,7 @@ export function FilterContextProvider({
       setFilters((prevFilters) => {
         const newFilters = [...prevFilters];
         newFilters[index][typeChange] = e;
+
         return newFilters;
       });
     },

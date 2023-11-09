@@ -20,21 +20,24 @@ const SelectFilter = ({
   const CustomOptionWithProps = CustomOption(<></>);
 
   const sortSelectedFirst = (selected: any, optionsToSorted: any): any => {
-    const selectedValues = selected?.map((item: any) => item.value);
-    const sortedOptions = [...optionsToSorted].sort((a, b) => {
-      const aIsSelected = selectedValues.includes(a.value);
-      const bIsSelected = selectedValues.includes(b.value);
+    if (optionsToSorted.length > 0) {
+      const selectedValues = selected?.map((item: any) => item?.value);
+      const sortedOptions = [...optionsToSorted]?.sort((a, b) => {
+        const aIsSelected = selectedValues?.includes(a.value);
+        const bIsSelected = selectedValues?.includes(b.value);
 
-      if (aIsSelected && !bIsSelected) {
-        return -1;
-      }
-      if (!aIsSelected && bIsSelected) {
-        return 1;
-      }
-      return 0;
-    });
+        if (aIsSelected && !bIsSelected) {
+          return -1;
+        }
+        if (!aIsSelected && bIsSelected) {
+          return 1;
+        }
+        return 0;
+      });
 
-    return sortedOptions;
+      return sortedOptions;
+    }
+    return selected;
   };
 
   return (
