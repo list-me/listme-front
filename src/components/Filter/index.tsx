@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
   CloseButton,
@@ -28,6 +28,8 @@ import SelectFilter from "./components/SelectFilter";
 import { useProductContext } from "../../context/products";
 import { IConditions } from "../../context/FilterContext/FilterContextType";
 import { IHeaderTable } from "../../context/products/product.context";
+import useDebounce from "../../hooks/useDebounce/useDebounce";
+import { IInputValue } from "./Filter";
 
 function FilterComponent(): JSX.Element {
   const {
@@ -45,6 +47,30 @@ function FilterComponent(): JSX.Element {
     operator,
     setOperator,
   } = useFilterContext();
+
+  const [inputValue, setInputValue] = useState<IInputValue>({} as IInputValue);
+  const debouncedInputValue = useDebounce(inputValue, 1000);
+  const [selectValue, setSelectValue] = useState<IInputValue>(
+    {} as IInputValue,
+  );
+  const debouncedSelectValue = useDebounce(selectValue, 1000);
+
+  useEffect(() => {
+    if (debouncedInputValue.value)
+      changeValue(
+        debouncedInputValue.value,
+        debouncedInputValue.index,
+        debouncedInputValue.typeChange,
+      );
+  }, [changeValue, debouncedInputValue]);
+  useEffect(() => {
+    if (debouncedSelectValue.value)
+      changeValue(
+        debouncedSelectValue.value,
+        debouncedSelectValue.index,
+        debouncedSelectValue.typeChange,
+      );
+  }, [changeValue, debouncedSelectValue]);
 
   const { handleGetTemplate, template, handleGetProducts } =
     useProductContext();
@@ -174,16 +200,25 @@ function FilterComponent(): JSX.Element {
                     <InputFilter
                       type="text"
                       placeholder="Insira o valor"
-                      value={item.value}
                       onChange={(e) => {
-                        changeValue(e.target.value, index, "value");
+                        setInputValue({
+                          value: e.target.value,
+                          index,
+                          typeChange: "value",
+                        });
                       }}
                     />
                   ) : (
                     <SelectFilter
                       isMulti
                       select={item.selectValue}
-                      onChange={(e) => changeValue(e, index, "selectValue")}
+                      onChange={(e) =>
+                        setSelectValue({
+                          value: e,
+                          index,
+                          typeChange: "selectValue",
+                        })
+                      }
                       options={optionsToSelect}
                       placeHolder="Valores"
                       small
