@@ -64,7 +64,8 @@ export function FilterContextProvider({
 
       setFilters(newFilters);
     },
-    [filters],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   useEffect(() => {
