@@ -2,7 +2,13 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
 
-import { ButtonCustom, Contents, Item } from "./styles";
+import {
+  ButtonCustom,
+  ButtonFilter,
+  Contents,
+  CountFilter,
+  Item,
+} from "./styles";
 import { ReactComponent as ChevronDownIcon } from "../../assets/chevron-down.svg";
 import { ReactComponent as EyeOffIcon } from "../../assets/eye-off.svg";
 import { ReactComponent as FilterIcon } from "../../assets/filter.svg";
@@ -26,6 +32,7 @@ export const Temp: React.FC<IProps> = ({
   options,
   handleSearch = () => {},
 }) => {
+  const { conditions } = useFilterContext();
   const iconRef = useRef(null);
   const searchRef = useRef(null);
 
@@ -72,10 +79,15 @@ export const Temp: React.FC<IProps> = ({
         Colunas Ocultas
         <ChevronDownIcon ref={iconRef} />
       </Item>
-      <Item onClick={() => setOpenedFilter((prev) => !prev)}>
-        <FilterIcon />
-        Filtrar
-      </Item>
+      <ButtonFilter filterActive={!!conditions[0]?.action}>
+        {!!conditions[0]?.action && (
+          <CountFilter>{conditions.length}</CountFilter>
+        )}
+        <Item onClick={() => setOpenedFilter((prev) => !prev)}>
+          <FilterIcon />
+          Filtrar
+        </Item>
+      </ButtonFilter>
       <Item ref={searchRef}>
         <SearchIcon onClick={() => setOnSearch(!onSearch)} />
         <AnimatePresence>

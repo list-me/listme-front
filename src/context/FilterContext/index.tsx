@@ -35,7 +35,10 @@ export function FilterContextProvider({
   const [openedFilter, setOpenedFilter] = useState(true);
   const [filters, setFilters] = useState([defaultFilter]);
   const [optionsToSelect, setOptionsToSelect] = useState<any>();
-  const [operator, setOperator] = useState<IOperator>({} as IOperator);
+  const [operator, setOperator] = useState<IOperator>({
+    label: "Todos os",
+    value: "AND",
+  });
 
   const [conditions, setConditions] = useState<IConditions[]>(
     [] as IConditions[],
