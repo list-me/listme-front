@@ -19,9 +19,9 @@ const SelectFilter = ({
 
   const CustomOptionWithProps = CustomOption(<></>);
 
-  const sortSelectedFirst = (selected: any, options: any) => {
-    const selectedValues = selected.map((item: any) => item.value);
-    const sortedOptions = [...options].sort((a, b) => {
+  const sortSelectedFirst = (selected: any, optionsToSorted: any): any => {
+    const selectedValues = selected?.map((item: any) => item.value);
+    const sortedOptions = [...optionsToSorted].sort((a, b) => {
       const aIsSelected = selectedValues.includes(a.value);
       const bIsSelected = selectedValues.includes(b.value);
 
@@ -63,8 +63,13 @@ const SelectFilter = ({
           isMulti
           isSearchable
           classNamePrefix="react-select"
-          options={sortSelectedFirst(select?.value, options)}
-          placeholder={placeHolder}
+          options={
+            select?.value?.length > 0
+              ? sortSelectedFirst(select?.value, options)
+              : options
+          }
+          placeholder=""
+          value={select?.value}
           components={{
             Option: OptionMulti as any,
           }}
@@ -79,9 +84,11 @@ const SelectFilter = ({
           isClearable={false}
         />
       )}
-      {isMulti && select?.value?.length && (
+      {isMulti && (
         <FakePlaceHolder>
-          Selecionado(s): {select?.value?.length}
+          {select?.value?.length > 0
+            ? `Selecionado(s): ${select?.value?.length}`
+            : "Selecionar"}
         </FakePlaceHolder>
       )}
     </ContainerSelect>

@@ -72,6 +72,7 @@ export const FakePlaceHolder = styled.p`
   align-items: center;
 `;
 
+// @ts-ignore
 export const customStyles = ({ small }: { small?: boolean }): Styles => ({
   control: (provided: any) => ({
     ...provided,
@@ -82,7 +83,6 @@ export const customStyles = ({ small }: { small?: boolean }): Styles => ({
     "&:hover": {
       borderColor: "#D1D6DC",
     },
-    display: "flex",
     boxShadow: "none",
     cursor: "pointer",
     position: "relative",
@@ -93,7 +93,6 @@ export const customStyles = ({ small }: { small?: boolean }): Styles => ({
     fontFamily: themeStyle.fonts.family.default,
     fontSize: themeStyle.fonts.sizes.normal,
     fontWeight: themeStyle.fonts.weights.regular,
-    display: "flex",
   }),
   placeholder: (provided: any) => ({
     ...provided,
