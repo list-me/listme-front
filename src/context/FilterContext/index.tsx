@@ -59,12 +59,12 @@ export function FilterContextProvider({
       index: number,
       typeChange: "column" | "condition" | "value" | "selectValue",
     ) => {
-      const newFilters = [...filters];
-      newFilters[index][typeChange] = e;
-
-      setFilters(newFilters);
+      setFilters((prevFilters) => {
+        const newFilters = [...prevFilters];
+        newFilters[index][typeChange] = e;
+        return newFilters;
+      });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 

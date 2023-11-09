@@ -11,15 +11,19 @@ import { templateRequests } from "../../services/apis/requests/template";
 import TemplateDefault from "../../components/TemplateDefault";
 import { IPaginationTemplate } from "./templates";
 import { useFilterContext } from "../../context/FilterContext";
+import { IInputValue } from "../../context/FilterContext/FilterContextType";
 
 function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
-  const { setFilters, defaultFilter } = useFilterContext();
+  const { setFilters, defaultFilter, setSelectValue, setInputValue } =
+    useFilterContext();
 
   useEffect(() => {
     setFilters([defaultFilter]);
+    setSelectValue({} as IInputValue);
+    setInputValue({} as IInputValue);
   }, []);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]): void => {
