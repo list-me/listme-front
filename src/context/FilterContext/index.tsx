@@ -36,7 +36,7 @@ export function FilterContextProvider({
   const [multiSelectSearch] = useState("");
   const [openedFilter, setOpenedFilter] = useState(true);
   const [filters, setFilters] = useState([defaultFilter]);
-  const [optionsToSelect, setOptionsToSelect] = useState<any>();
+  const [optionsToSelect, setOptionsToSelect] = useState<any>([{}]);
   const [operator, setOperator] = useState<IOperator>({
     label: "Todos os",
     value: "AND",
@@ -129,7 +129,7 @@ export function FilterContextProvider({
     })
     .filter((item) => item.value);
 
-  async function getOptions(currentItem: IFilter): Promise<any> {
+  async function getOptions(currentItem: IFilter, index: number): Promise<any> {
     const { type } = currentItem?.column;
 
     if (type === "radio" || type === "list" || type === "checked") {
@@ -141,7 +141,10 @@ export function FilterContextProvider({
         return { value: option, label: option };
       });
 
-      setOptionsToSelect(optionsToView);
+      const newOptions = [...optionsToSelect];
+      newOptions[index] = optionsToView;
+
+      setOptionsToSelect(newOptions);
     }
 
     if (type === "relation") {
@@ -166,7 +169,10 @@ export function FilterContextProvider({
           };
         });
 
-        setOptionsToSelect(removeRepeatedObjects(optionsToView, "value"));
+        const newOptions = [...optionsToSelect];
+        newOptions[index] = removeRepeatedObjects(optionsToView, "value");
+
+        setOptionsToSelect(newOptions);
       }
     }
   }

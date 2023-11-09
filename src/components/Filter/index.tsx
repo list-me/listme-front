@@ -143,7 +143,7 @@ function FilterComponent(): JSX.Element {
                   }
                   onChange={(e) => {
                     changeValue(e, index, "column");
-                    getOptions(item);
+                    getOptions(item, index);
                   }}
                   options={options}
                   placeHolder="Selecione a coluna"
@@ -197,7 +197,7 @@ function FilterComponent(): JSX.Element {
                           typeChange: "selectValue",
                         })
                       }
-                      options={optionsToSelect}
+                      options={optionsToSelect[index]}
                       placeHolder="Valores"
                       small
                     />

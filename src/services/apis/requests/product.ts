@@ -17,7 +17,6 @@ export const productRequests = {
     conditions?: IConditions[] | undefined,
     operator?: string,
   ): Promise<AxiosResponse> => {
-    console.log("🚀 ~ file: product.ts:20 ~ conditions:", conditions);
     const token = window.localStorage.getItem(STORAGE.TOKEN);
 
     const requestData = {
@@ -28,12 +27,6 @@ export const productRequests = {
       operator,
       offset: page,
     };
-
-    // if (conditions && conditions[0]?.field) {
-    //   console.log("veio");
-    //   // @ts-ignore
-    //   requestData.conditions = conditions;
-    // }
 
     const response = await api.post(`/products/filter`, requestData, {
       headers: {
