@@ -22,7 +22,7 @@ export const productRequests = {
 
     const requestData = {
       template_id: templateId,
-      key: keyword,
+      key: keyword || undefined,
       limit,
       conditions,
       operator,

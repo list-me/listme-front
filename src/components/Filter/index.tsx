@@ -61,6 +61,7 @@ function FilterComponent(): JSX.Element {
   ];
 
   async function applyFilter(currentConditions: IConditions[]): Promise<any> {
+    setOpenedFilter(false);
     if (currentConditions[0]) {
       try {
         const headerTableToGetProducts = (await handleGetTemplate(
