@@ -97,7 +97,6 @@ function FilterComponent(): JSX.Element {
     <ContainerFilter>
       <CloseButtonTransparent
         onClick={() => {
-          setFilters([defaultFilter]);
           setOpenedFilter(false);
         }}
       />
@@ -106,7 +105,6 @@ function FilterComponent(): JSX.Element {
           <TitleFilter>Filtrar por</TitleFilter>
           <CloseButton
             onClick={() => {
-              setFilters([defaultFilter]);
               setOpenedFilter(false);
             }}
           >

@@ -1,6 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import laptop from "../../../../assets/images/laptop.png";
+import { ButtonFilter, CountFilter, Item } from "../../../Temp/styles";
+import { ReactComponent as FilterIcon } from "../../../../assets/filter.svg";
+import { useFilterContext } from "../../../../context/FilterContext";
 
 export const ContainerNotFound = styled.div`
   display: flex;
@@ -34,6 +37,7 @@ export const TextNotFound = styled.p`
 `;
 
 const NotFound: React.FC = () => {
+  const { conditions, setOpenedFilter } = useFilterContext();
   return (
     <ContainerNotFound>
       <img src={laptop} alt="Nenhum resultado encontrado para seu filtro!" />
@@ -41,6 +45,15 @@ const NotFound: React.FC = () => {
       <TextNotFound>
         Explore outras opções de filtro para encontrar o que você procura
       </TextNotFound>
+      <ButtonFilter filterActive={!!conditions[0]?.action}>
+        {!!conditions[0]?.action && (
+          <CountFilter>{conditions.length}</CountFilter>
+        )}
+        <Item onClick={() => setOpenedFilter((prev) => !prev)}>
+          <FilterIcon />
+          Filtrar
+        </Item>
+      </ButtonFilter>
     </ContainerNotFound>
   );
 };

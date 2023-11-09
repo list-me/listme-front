@@ -32,7 +32,7 @@ export const Temp: React.FC<IProps> = ({
   options,
   handleSearch = () => {},
 }) => {
-  const { conditions } = useFilterContext();
+  const { conditions, setOpenedFilter } = useFilterContext();
   const iconRef = useRef(null);
   const searchRef = useRef(null);
 
@@ -56,8 +56,6 @@ export const Temp: React.FC<IProps> = ({
       }
     });
   }, []);
-
-  const { setOpenedFilter } = useFilterContext();
 
   return (
     <Contents>
