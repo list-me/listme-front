@@ -10,17 +10,10 @@ import CustomTable from "../../components/Table/index";
 import { templateRequests } from "../../services/apis/requests/template";
 import TemplateDefault from "../../components/TemplateDefault";
 import { IPaginationTemplate } from "./templates";
-import { useFilterContext } from "../../context/FilterContext";
 
 function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-
-  const { setFilters, defaultFilter } = useFilterContext();
-
-  useEffect(() => {
-    setFilters([defaultFilter]);
-  }, []);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]): void => {
     setSelectedRowKeys(newSelectedRowKeys);

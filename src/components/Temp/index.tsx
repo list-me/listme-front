@@ -21,7 +21,6 @@ import Modal from "../Modal";
 import { productContext } from "../../context/products";
 import Button from "../Button";
 import { motion, AnimatePresence } from "framer-motion";
-import { useFilterContext } from "../../context/FilterContext";
 
 interface IProps {
   options?: any[];
@@ -32,7 +31,6 @@ export const Temp: React.FC<IProps> = ({
   options,
   handleSearch = () => {},
 }) => {
-  const { conditions, setOpenedFilter, filterStatus } = useFilterContext();
   const iconRef = useRef(null);
   const searchRef = useRef(null);
 
@@ -74,15 +72,10 @@ export const Temp: React.FC<IProps> = ({
         Colunas Ocultas
         <ChevronDownIcon ref={iconRef} />
       </Item>
-      <ButtonFilter filterActive={filterStatus && !!conditions[0]?.action}>
-        {filterStatus && !!conditions[0]?.action && (
-          <CountFilter>{conditions.length}</CountFilter>
-        )}
-        <Item onClick={() => setOpenedFilter(true)}>
-          <FilterIcon />
-          Filtrar
-        </Item>
-      </ButtonFilter>
+      <Item>
+        <FilterIcon />
+        Filtrar
+      </Item>
       <Item ref={searchRef}>
         <SearchIcon onClick={() => setOnSearch(!onSearch)} />
         <AnimatePresence>
