@@ -22,6 +22,7 @@ const SelectFilter = ({
   index,
   loadingOptions,
 }: ISelect): JSX.Element => {
+  console.log("🚀 ~ file: index.tsx:25 ~ select:", select);
   const initialOptions = useMemo(() => options, []);
   const [currentOptions, setCurrentOptions] = useState(options);
   const { getOptions } = useFilterContext();
@@ -107,13 +108,9 @@ const SelectFilter = ({
             isSearchable
             isDisabled={loadingOptions}
             classNamePrefix="react-select"
-            options={
-              select?.length > 0
-                ? sortSelectedFirst(select, currentOptions)
-                : currentOptions
-            }
+            options={sortSelectedFirst(select, currentOptions)}
             placeholder=""
-            value={select?.value}
+            value={select}
             components={{
               Option: OptionMulti as any,
             }}
