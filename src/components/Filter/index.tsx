@@ -81,13 +81,14 @@ function FilterComponent(): JSX.Element {
             currentConditions,
             operator.value,
           );
+          setConditionsFilter(currentConditions);
+          setOpenedFilter(false);
+          setFilterStatus(true);
           return product;
         }
-        setConditionsFilter(currentConditions);
-        setOpenedFilter(false);
-        setFilterStatus(true);
         return null;
       } catch (error) {
+        console.error(error);
         toast.error(
           "Ocorreu um erro com sua solicitação de produtos, tente novamente",
         );
@@ -97,12 +98,23 @@ function FilterComponent(): JSX.Element {
     return null;
   }
 
+  function updateFilter() {
+    const valuesConditions = conditionsFilter.map((cond) => {
+      return cond?.value;
+    });
+    const filteredFilter = filters.filter((filt) => {
+      return valuesConditions.includes(filt.value);
+    });
+    setFilters(filteredFilter);
+  }
+
   return (
     <ContainerFilter>
       <CloseButtonTransparent
         onClick={() => {
           setOpenedFilter(false);
           setConditions(conditionsFilter);
+          updateFilter();
         }}
       />
       <SidebarFilter>
@@ -112,6 +124,7 @@ function FilterComponent(): JSX.Element {
             onClick={() => {
               setOpenedFilter(false);
               setConditions(conditionsFilter);
+              updateFilter();
             }}
           >
             <CloseIcon />

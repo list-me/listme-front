@@ -50,7 +50,7 @@ const SelectFilter = ({
   const CustomOptionWithProps = CustomOption(<></>);
 
   const sortSelectedFirst = (selected: any, optionsToSorted: any): any => {
-    if (optionsToSorted.length > 0) {
+    if (optionsToSorted && optionsToSorted.length > 0) {
       const selectedValues = selected?.map((sItem: any) => sItem?.value);
       const sortedOptions = [...optionsToSorted]?.sort((a, b) => {
         const aIsSelected = selectedValues?.includes(a.value);
