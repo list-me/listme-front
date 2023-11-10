@@ -22,7 +22,6 @@ const SelectFilter = ({
   index,
   loadingOptions,
 }: ISelect): JSX.Element => {
-  console.log("🚀 ~ file: index.tsx:25 ~ select:", select);
   const initialOptions = useMemo(() => options, []);
   const [currentOptions, setCurrentOptions] = useState(options);
   const { getOptions } = useFilterContext();
