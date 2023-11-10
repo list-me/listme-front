@@ -31,7 +31,6 @@ export function FilterContextProvider({
   } as IFilter;
   const { template } = useProductContext();
 
-  const [multiSelectSearch] = useState("");
   const [openedFilter, setOpenedFilter] = useState(true);
   const [filters, setFilters] = useState([...[defaultFilter]]);
   const [optionsToSelect, setOptionsToSelect] = useState<any>([{}]);
@@ -60,7 +59,7 @@ export function FilterContextProvider({
     [],
   );
 
-  function removeRepeatedObjects(array: any, chave: any): any[] {
+  const removeRepeatedObjects = useCallback((array: any, chave: any): any[] => {
     const uniqueObjects = [];
     const keys = new Set();
 
@@ -72,18 +71,15 @@ export function FilterContextProvider({
     }
 
     return uniqueObjects;
-  }
+  }, []);
 
-  const getProducts = useCallback(
-    async (templateId: string) => {
-      const { data } = await productRequests.list(
-        { page: 0, limit: 100, keyword: multiSelectSearch },
-        templateId,
-      );
-      return data.products;
-    },
-    [multiSelectSearch],
-  );
+  const getProducts = useCallback(async (templateId: string, key?: string) => {
+    const { data } = await productRequests.list(
+      { page: 0, limit: 100, keyword: key },
+      templateId,
+    );
+    return data.products;
+  }, []);
 
   function removeFilter(currentFilters: IFilter[], index: number): void {
     const newFilters = currentFilters.filter((_, i) => i !== index);
@@ -104,53 +100,62 @@ export function FilterContextProvider({
     })
     .filter((item) => item.value);
 
-  async function getOptions(currentItem: IFilter, index: number): Promise<any> {
-    const { type } = currentItem?.column;
+  const getOptions = useCallback(
+    async (currentItem: IFilter, index: number, key?: string): Promise<any> => {
+      const { type } = currentItem?.column;
 
-    if (type === "radio" || type === "list" || type === "checked") {
-      const field = template?.fields?.fields?.find((tField: any) => {
-        return tField?.id === currentItem?.column?.value;
-      });
-
-      const optionsToView = field?.options?.map((option: any) => {
-        return { value: option, label: option };
-      });
-
-      const newOptions = [...optionsToSelect];
-      newOptions[index] = optionsToView;
-
-      setOptionsToSelect(newOptions);
-    }
-
-    if (type === "relation") {
-      if (typeof currentItem.column.optionsList[0] !== "string") {
-        const { templateId, originField } = currentItem.column.optionsList[0];
-        const productsToSelect = await getProducts(templateId);
-        const productFields: any = [];
-        productsToSelect.forEach((product: any) => {
-          product.fields.forEach((pField: any) => {
-            const newField = {
-              itemId: product.id,
-              ...pField,
-            };
-            if (pField.id === originField) productFields.push(newField);
-          });
+      if (type === "radio" || type === "list" || type === "checked") {
+        const field = template?.fields?.fields?.find((tField: any) => {
+          return tField?.id === currentItem?.column?.value;
         });
 
-        const optionsToView = productFields.map((option: any) => {
-          return {
-            value: option.itemId,
-            label: option.value[0],
-          };
+        const optionsToView = field?.options?.map((option: any) => {
+          return { value: option, label: option };
         });
 
         const newOptions = [...optionsToSelect];
-        newOptions[index] = removeRepeatedObjects(optionsToView, "value");
+        newOptions[index] = optionsToView;
 
         setOptionsToSelect(newOptions);
       }
-    }
-  }
+
+      if (type === "relation") {
+        if (typeof currentItem.column.optionsList[0] !== "string") {
+          const { templateId, originField } = currentItem.column.optionsList[0];
+          const productsToSelect = await getProducts(templateId, key);
+          const productFields: any = [];
+          productsToSelect.forEach((product: any) => {
+            product.fields.forEach((pField: any) => {
+              const newField = {
+                itemId: product.id,
+                ...pField,
+              };
+              if (pField.id === originField) productFields.push(newField);
+            });
+          });
+
+          const optionsToView = productFields.map((option: any) => {
+            return {
+              value: option.itemId,
+              label: option.value[0],
+            };
+          });
+
+          const newOptions = [...optionsToSelect];
+          newOptions[index] = removeRepeatedObjects(optionsToView, "value");
+
+          setOptionsToSelect(newOptions);
+        }
+      }
+    },
+    [
+      template,
+      optionsToSelect,
+      setOptionsToSelect,
+      getProducts,
+      removeRepeatedObjects,
+    ],
+  );
 
   useEffect(() => {
     function applyConditions(): any {

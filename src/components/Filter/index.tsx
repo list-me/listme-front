@@ -131,6 +131,7 @@ function FilterComponent(): JSX.Element {
           </FilterLogic>
           {filters.map((item, index) => (
             <ConditionFilterComponent
+              key={item.id}
               item={item}
               index={index}
               filters={filters}

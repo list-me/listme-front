@@ -16,6 +16,8 @@ interface ISelect {
   DropDownComponent?: () => JSX.Element;
   isDisabled?: boolean;
   isMulti?: boolean;
+  item?: IFilter;
+  index?: index;
 }
 
 type Styles = {

@@ -107,6 +107,8 @@ function ConditionFilterComponent({
               options={optionsToSelect[index]}
               placeHolder="Valores"
               small
+              item={item}
+              index={index}
             />
           )}
         </FilterItem>
