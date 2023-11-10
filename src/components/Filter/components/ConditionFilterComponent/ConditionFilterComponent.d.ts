@@ -12,4 +12,5 @@ interface IConditionFilterComponent {
   options: IOption[];
   optionsToSelect: any;
   removeFilter: (currentFilters: IFilter[], index: number) => void;
+  loadingOptions?: boolean;
 }

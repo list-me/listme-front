@@ -18,6 +18,7 @@ interface ISelect {
   isMulti?: boolean;
   item?: IFilter;
   index?: index;
+  loadingOptions?: boolean;
 }
 
 type Styles = {

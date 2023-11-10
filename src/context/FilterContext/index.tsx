@@ -33,6 +33,8 @@ export function FilterContextProvider({
 
   const [filterStatus, setFilterStatus] = useState(false);
 
+  const [loadingOptions, setLoadingOptions] = useState(false);
+
   const [openedFilter, setOpenedFilter] = useState(false);
   const [filters, setFilters] = useState([...[defaultFilter]]);
   const [optionsToSelect, setOptionsToSelect] = useState<any>([{}]);
@@ -76,10 +78,12 @@ export function FilterContextProvider({
   }, []);
 
   const getProducts = useCallback(async (templateId: string, key?: string) => {
+    setLoadingOptions(true);
     const { data } = await productRequests.list(
       { page: 0, limit: 100, keyword: key },
       templateId,
     );
+    setLoadingOptions(false);
     return data.products;
   }, []);
 
@@ -206,6 +210,7 @@ export function FilterContextProvider({
     setOperator,
     filterStatus,
     setFilterStatus,
+    loadingOptions,
   };
 
   return (

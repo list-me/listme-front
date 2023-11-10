@@ -15,6 +15,7 @@ function ConditionFilterComponent({
   options,
   optionsToSelect,
   removeFilter,
+  loadingOptions,
 }: IConditionFilterComponent): JSX.Element {
   const [inputValue, setInputValue] = useState<IInputValue>({} as IInputValue);
   const debouncedInputValue = useDebounce(inputValue, 500);
@@ -109,6 +110,7 @@ function ConditionFilterComponent({
               small
               item={item}
               index={index}
+              loadingOptions={loadingOptions}
             />
           )}
         </FilterItem>

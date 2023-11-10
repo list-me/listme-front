@@ -20,6 +20,7 @@ const SelectFilter = ({
   isMulti,
   item,
   index,
+  loadingOptions,
 }: ISelect): JSX.Element => {
   const initialOptions = useMemo(() => options, []);
   const [currentOptions, setCurrentOptions] = useState(options);
@@ -104,6 +105,7 @@ const SelectFilter = ({
             ref={refMulti}
             isMulti
             isSearchable
+            isDisabled={loadingOptions}
             classNamePrefix="react-select"
             options={
               select?.length > 0
@@ -132,7 +134,9 @@ const SelectFilter = ({
       )}
       {isMulti && !searchText && (
         <FakePlaceHolder>
-          {isFocused
+          {loadingOptions
+            ? "Carregando Dados ..."
+            : isFocused
             ? "Digite aqui"
             : !searchText && select?.length > 0
             ? `Selecionado(s): ${select?.length}`

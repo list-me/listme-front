@@ -40,6 +40,7 @@ function FilterComponent(): JSX.Element {
     operator,
     setOperator,
     setFilterStatus,
+    loadingOptions,
   } = useFilterContext();
 
   const { handleGetTemplate, template, handleGetProducts } =
@@ -134,6 +135,7 @@ function FilterComponent(): JSX.Element {
               options={options}
               optionsToSelect={optionsToSelect}
               removeFilter={removeFilter}
+              loadingOptions={loadingOptions}
             />
           ))}
           <NewFilter
