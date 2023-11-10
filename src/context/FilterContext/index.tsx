@@ -31,6 +31,8 @@ export function FilterContextProvider({
   } as IFilter;
   const { template } = useProductContext();
 
+  const [filterStatus, setFilterStatus] = useState(false);
+
   const [openedFilter, setOpenedFilter] = useState(true);
   const [filters, setFilters] = useState([...[defaultFilter]]);
   const [optionsToSelect, setOptionsToSelect] = useState<any>([{}]);
@@ -202,6 +204,8 @@ export function FilterContextProvider({
     conditions,
     operator,
     setOperator,
+    filterStatus,
+    setFilterStatus,
   };
 
   return (

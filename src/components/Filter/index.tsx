@@ -1,10 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
 import {
   CloseButton,
-  Filter,
-  FilterItem,
   ContainerFilter,
   FilterCenterContent,
   FilterLogic,
@@ -13,9 +10,7 @@ import {
   NewFilter,
   SidebarFilter,
   TitleFilter,
-  TrashButton,
   CloseButtonTransparent,
-  InputFilter,
 } from "./styles";
 import { ReactComponent as NewFilterPlus } from "../../assets/new-condition-plus.svg";
 
@@ -25,12 +20,8 @@ import { useFilterContext } from "../../context/FilterContext";
 import Button from "../Button";
 import SelectFilter from "./components/SelectFilter";
 import { useProductContext } from "../../context/products";
-import {
-  IConditions,
-  IInputValue,
-} from "../../context/FilterContext/FilterContextType";
+import { IConditions } from "../../context/FilterContext/FilterContextType";
 import { IHeaderTable } from "../../context/products/product.context";
-import useDebounce from "../../hooks/useDebounce/useDebounce";
 import ConditionFilterComponent from "./components/ConditionFilterComponent";
 
 function FilterComponent(): JSX.Element {
@@ -48,6 +39,7 @@ function FilterComponent(): JSX.Element {
     conditions,
     operator,
     setOperator,
+    setFilterStatus,
   } = useFilterContext();
 
   const { handleGetTemplate, template, handleGetProducts } =
@@ -66,6 +58,7 @@ function FilterComponent(): JSX.Element {
 
   async function applyFilter(currentConditions: IConditions[]): Promise<any> {
     setOpenedFilter(false);
+    setFilterStatus(true);
     if (currentConditions[0]) {
       try {
         const headerTableToGetProducts = (await handleGetTemplate(

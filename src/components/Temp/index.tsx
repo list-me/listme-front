@@ -32,7 +32,7 @@ export const Temp: React.FC<IProps> = ({
   options,
   handleSearch = () => {},
 }) => {
-  const { conditions, setOpenedFilter } = useFilterContext();
+  const { conditions, setOpenedFilter, filterStatus } = useFilterContext();
   const iconRef = useRef(null);
   const searchRef = useRef(null);
 
@@ -74,8 +74,8 @@ export const Temp: React.FC<IProps> = ({
         Colunas Ocultas
         <ChevronDownIcon ref={iconRef} />
       </Item>
-      <ButtonFilter filterActive={!!conditions[0]?.action}>
-        {!!conditions[0]?.action && (
+      <ButtonFilter filterActive={filterStatus && !!conditions[0]?.action}>
+        {filterStatus && !!conditions[0]?.action && (
           <CountFilter>{conditions.length}</CountFilter>
         )}
         <Item onClick={() => setOpenedFilter(true)}>

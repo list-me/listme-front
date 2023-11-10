@@ -17,6 +17,8 @@ export interface FilterContextType {
   conditions: IConditions[];
   setOperator: React.Dispatch<React.SetStateAction<IOperator>>;
   operator: IOperator;
+  filterStatus: boolean;
+  setFilterStatus: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface ITypes {
