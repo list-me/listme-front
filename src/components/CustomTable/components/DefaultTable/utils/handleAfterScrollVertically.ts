@@ -7,6 +7,10 @@ import {
   IHeaderTable,
 } from "../../../../../context/products/product.context";
 import { productRequests } from "../../../../../services/apis/requests/product";
+import {
+  IConditions,
+  IOperator,
+} from "../../../../../context/FilterContext/FilterContextType";
 
 let isFetchingNextPage = false;
 
@@ -24,6 +28,8 @@ const handleAfterScrollVertically = async (
   headerTable: IHeaderTable[],
   componentCellPerType: ICustomCellType,
   currentKeyword: string,
+  conditions: IConditions[],
+  operator: IOperator,
 ): Promise<void> => {
   const { hotInstance } = hotRef.current!;
   if (hotInstance && !isFetchingNextPage) {
@@ -48,6 +54,8 @@ const handleAfterScrollVertically = async (
           const response = await productRequests.list(
             { keyword: currentKeyword, page, limit: 100 },
             window.location.pathname.substring(10),
+            conditions,
+            operator.value,
           );
 
           const productFields: any[] = [];

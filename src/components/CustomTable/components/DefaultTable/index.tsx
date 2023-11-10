@@ -35,6 +35,8 @@ import disableMultiSelectionWithControl from "./utils/disableMultiSelectionWithC
 import customRendererRadioComponent from "./components/customRendererRadioComponent";
 import AlertTooltip from "./components/AlertTooltip";
 import customRendererDropdownComponent from "./components/customRendererDropdownComponent";
+import { useFilterContext } from "../../../../context/FilterContext";
+import { useProductContext } from "../../../../context/products";
 
 function DefaultTable({
   hotRef,
@@ -68,6 +70,9 @@ function DefaultTable({
 }: IDefaultTable): JSX.Element {
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
   const [openAlertTooltip, setAlertTooltip] = useState(false);
+
+  const { operator } = useFilterContext();
+  const { conditionsFilter } = useProductContext();
 
   useEffect(() => {
     if (hotRef.current) {
@@ -143,6 +148,8 @@ function DefaultTable({
       headerTable,
       componentCellPerType,
       currentKeyword,
+      conditionsFilter,
+      operator,
     );
   };
 
