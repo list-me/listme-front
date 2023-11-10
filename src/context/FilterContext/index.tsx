@@ -191,6 +191,9 @@ export function FilterContextProvider({
       if (toConditions.length) setConditions(toConditions);
     }
     if (filters[0]?.id) applyConditions();
+    else {
+      setConditions([]);
+    }
   }, [filters]);
 
   const value = {

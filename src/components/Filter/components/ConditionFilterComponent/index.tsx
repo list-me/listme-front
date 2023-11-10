@@ -41,11 +41,11 @@ function ConditionFilterComponent({
       );
   }, [changeValue, debouncedSelectValue]);
 
-  function getColumnOptions(options: IOption[]) {
+  function getColumnOptions(cOptions: IOption[]): IOption[] {
     const filtersNameColumn = filters.map((filt) => {
       return filt.column.label;
     });
-    const filteredOptionsColumn = options.filter((op) => {
+    const filteredOptionsColumn = cOptions.filter((op) => {
       return !filtersNameColumn.includes(op.label);
     });
     return filteredOptionsColumn;
@@ -125,11 +125,9 @@ function ConditionFilterComponent({
           )}
         </FilterItem>
       )}
-      {filters.length > 1 && (
-        <TrashButton onClick={() => removeFilter(filters, index)}>
-          <TrashIcon />
-        </TrashButton>
-      )}
+      <TrashButton onClick={() => removeFilter(filters, index)}>
+        <TrashIcon />
+      </TrashButton>
     </Filter>
   );
 }

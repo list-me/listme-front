@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import styled from "styled-components";
+import { IFilter } from "../../context/FilterContext/FilterContextType";
 
 export const ContainerFilter = styled.div`
   width: 100%;
@@ -122,7 +123,7 @@ export const Filter = styled.div<{ smallBefore?: boolean }>`
 export const FilterItem = styled.div<{ small?: boolean; trash?: boolean }>`
   width: ${(props) => (props.small ? (props.trash ? "28%" : "31.5%") : "50%")};
 `;
-export const NewFilter = styled.button`
+export const NewFilter = styled.button<{ filters: IFilter[] }>`
   display: flex;
   align-items: center;
   margin-top: 18px;
@@ -157,6 +158,7 @@ export const NewFilter = styled.button`
     border-top: none;
     border-right: none;
     left: 12px;
+    display: ${(props) => (props.filters.length ? "initial" : "none")};
   }
 `;
 

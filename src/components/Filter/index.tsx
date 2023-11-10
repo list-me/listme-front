@@ -50,6 +50,7 @@ function FilterComponent(): JSX.Element {
     handleGetProducts,
     setConditionsFilter,
     conditionsFilter,
+    handleRedirectAndGetProducts,
   } = useProductContext();
 
   const logicOptions = [
@@ -94,18 +95,24 @@ function FilterComponent(): JSX.Element {
         );
         return null;
       }
+    } else {
+      const id = window.location.pathname.substring(10);
+      if (id) {
+        setTimeout(() => {
+          handleRedirectAndGetProducts(id).then(() => {});
+        }, 0);
+      }
+      setConditionsFilter([null]);
+      setOpenedFilter(false);
+      setFilterStatus(true);
+      return null;
     }
-    return null;
   }
 
-  function updateFilter() {
+  function updateFilter(): void {
     const valuesConditions = conditionsFilter.map((cond) => {
       return cond?.value;
     });
-    console.log(
-      "🚀 ~ file: index.tsx:105 ~ valuesConditions ~ valuesConditions:",
-      valuesConditions,
-    );
     if (valuesConditions.length > 0 && valuesConditions[0] !== undefined) {
       const filteredFilter = filters.filter((filt) => {
         return valuesConditions.includes(filt.value);
@@ -166,6 +173,7 @@ function FilterComponent(): JSX.Element {
             />
           ))}
           <NewFilter
+            filters={filters}
             onClick={() =>
               setFilters((prev) => [
                 ...prev,
