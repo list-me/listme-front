@@ -33,7 +33,7 @@ export function FilterContextProvider({
 
   const [filterStatus, setFilterStatus] = useState(false);
 
-  const [openedFilter, setOpenedFilter] = useState(true);
+  const [openedFilter, setOpenedFilter] = useState(false);
   const [filters, setFilters] = useState([...[defaultFilter]]);
   const [optionsToSelect, setOptionsToSelect] = useState<any>([{}]);
   const [operator, setOperator] = useState<IOperator>({
