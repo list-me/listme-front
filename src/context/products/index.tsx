@@ -82,6 +82,8 @@ interface ITypeProductContext {
     bucketUrl: string,
   ) => Promise<Array<string> | void>;
   customFields: ICustomField[];
+  conditionsFilter: IConditions[];
+  setConditionsFilter: React.Dispatch<React.SetStateAction<IConditions[]>>;
 }
 
 interface SignedUrlResponse {
@@ -108,6 +110,9 @@ export const ProductContextProvider = ({
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [filter, setFilter] = useState<string | undefined>(undefined);
   const [total, setTotal] = useState<number>(0);
+  const [conditionsFilter, setConditionsFilter] = useState<IConditions[]>([
+    {},
+  ] as IConditions[]);
 
   const COMPONENT_CELL_PER_TYPE: ICustomCellType = useMemo(
     () => ({
@@ -719,6 +724,8 @@ export const ProductContextProvider = ({
     uploadImages,
     setTotal,
     customFields,
+    conditionsFilter,
+    setConditionsFilter,
   };
 
   return (

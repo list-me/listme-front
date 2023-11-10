@@ -13,7 +13,7 @@ function ConditionFilterComponent({
   getOptions,
   typesOptions,
   options,
-  optionsToSelect,
+  optionsToMultiSelect,
   removeFilter,
   loadingOptions,
 }: IConditionFilterComponent): JSX.Element {
@@ -105,7 +105,7 @@ function ConditionFilterComponent({
                   typeChange: "selectValue",
                 })
               }
-              options={optionsToSelect[index]}
+              options={optionsToMultiSelect[index]}
               placeHolder="Valores"
               small
               item={item}

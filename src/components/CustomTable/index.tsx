@@ -67,9 +67,10 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     setTotal,
     uploadImages,
     handleFreeze,
+    conditionsFilter,
   } = useProductContext();
 
-  const { openedFilter, conditions } = useFilterContext();
+  const { openedFilter } = useFilterContext();
 
   const [cols, setCols] = useState<ICol[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -360,7 +361,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             setIsOpen={setIsOpen}
             handleFreeze={handleFreeze}
           />
-          {!!conditions.length && products.length < 1 && <NotFound />}
+          {!!conditionsFilter.length && products.length < 1 && <NotFound />}
         </Container>
         <div ref={loadingRef} style={{ display: "none" }}>
           <LoadingFetch />

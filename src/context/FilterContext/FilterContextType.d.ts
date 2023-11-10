@@ -13,8 +13,9 @@ export interface FilterContextType {
     index: number,
     typeChange: "column" | "condition" | "value" | "selectValue",
   ) => void;
-  optionsToSelect: any;
+  optionsToMultiSelect: any;
   conditions: IConditions[];
+  setConditions: React.Dispatch<React.SetStateAction<IConditions[]>>;
   setOperator: React.Dispatch<React.SetStateAction<IOperator>>;
   operator: IOperator;
   filterStatus: boolean;

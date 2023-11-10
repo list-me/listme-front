@@ -10,7 +10,7 @@ interface IConditionFilterComponent {
   getOptions: (currentItem: IFilter, index: number) => any;
   typesOptions: ITypes;
   options: IOption[];
-  optionsToSelect: any;
+  optionsToMultiSelect: any;
   removeFilter: (currentFilters: IFilter[], index: number) => void;
   loadingOptions?: boolean;
 }

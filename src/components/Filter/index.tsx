@@ -35,16 +35,22 @@ function FilterComponent(): JSX.Element {
     typesOptions,
     changeValue,
     getOptions,
-    optionsToSelect,
+    optionsToMultiSelect,
     conditions,
+    setConditions,
     operator,
     setOperator,
     setFilterStatus,
     loadingOptions,
   } = useFilterContext();
 
-  const { handleGetTemplate, template, handleGetProducts } =
-    useProductContext();
+  const {
+    handleGetTemplate,
+    template,
+    handleGetProducts,
+    setConditionsFilter,
+    conditionsFilter,
+  } = useProductContext();
 
   const logicOptions = [
     {
@@ -58,8 +64,6 @@ function FilterComponent(): JSX.Element {
   ];
 
   async function applyFilter(currentConditions: IConditions[]): Promise<any> {
-    setOpenedFilter(false);
-    setFilterStatus(true);
     if (currentConditions[0]) {
       try {
         const headerTableToGetProducts = (await handleGetTemplate(
@@ -79,9 +83,11 @@ function FilterComponent(): JSX.Element {
           );
           return product;
         }
+        setConditionsFilter(currentConditions);
+        setOpenedFilter(false);
+        setFilterStatus(true);
         return null;
       } catch (error) {
-        console.error(error);
         toast.error(
           "Ocorreu um erro com sua solicitação de produtos, tente novamente",
         );
@@ -96,6 +102,7 @@ function FilterComponent(): JSX.Element {
       <CloseButtonTransparent
         onClick={() => {
           setOpenedFilter(false);
+          setConditions(conditionsFilter);
         }}
       />
       <SidebarFilter>
@@ -104,6 +111,7 @@ function FilterComponent(): JSX.Element {
           <CloseButton
             onClick={() => {
               setOpenedFilter(false);
+              setConditions(conditionsFilter);
             }}
           >
             <CloseIcon />
@@ -133,7 +141,7 @@ function FilterComponent(): JSX.Element {
               getOptions={getOptions}
               typesOptions={typesOptions}
               options={options}
-              optionsToSelect={optionsToSelect}
+              optionsToMultiSelect={optionsToMultiSelect}
               removeFilter={removeFilter}
               loadingOptions={loadingOptions}
             />

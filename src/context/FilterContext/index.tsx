@@ -37,7 +37,7 @@ export function FilterContextProvider({
 
   const [openedFilter, setOpenedFilter] = useState(false);
   const [filters, setFilters] = useState([...[defaultFilter]]);
-  const [optionsToSelect, setOptionsToSelect] = useState<any>([{}]);
+  const [optionsToMultiSelect, setOptionsToMultiSelect] = useState<any>([{}]);
   const [operator, setOperator] = useState<IOperator>({
     label: "Todos os",
     value: "AND",
@@ -119,10 +119,10 @@ export function FilterContextProvider({
           return { value: option, label: option };
         });
 
-        const newOptions = [...optionsToSelect];
+        const newOptions = [...optionsToMultiSelect];
         newOptions[index] = optionsToView;
 
-        setOptionsToSelect(newOptions);
+        setOptionsToMultiSelect(newOptions);
       }
 
       if (type === "relation") {
@@ -147,17 +147,17 @@ export function FilterContextProvider({
             };
           });
 
-          const newOptions = [...optionsToSelect];
+          const newOptions = [...optionsToMultiSelect];
           newOptions[index] = removeRepeatedObjects(optionsToView, "value");
 
-          setOptionsToSelect(newOptions);
+          setOptionsToMultiSelect(newOptions);
         }
       }
     },
     [
       template,
-      optionsToSelect,
-      setOptionsToSelect,
+      optionsToMultiSelect,
+      setOptionsToMultiSelect,
       getProducts,
       removeRepeatedObjects,
     ],
@@ -204,8 +204,9 @@ export function FilterContextProvider({
     typesOptions,
     getOptions,
     changeValue,
-    optionsToSelect,
+    optionsToMultiSelect,
     conditions,
+    setConditions,
     operator,
     setOperator,
     filterStatus,

@@ -18,7 +18,7 @@ import { ReactComponent as MenuIcon } from "../../assets/menu.svg";
 import DropdownMenu from "../RepDropdownMenu";
 import { Input } from "../Input";
 import Modal from "../Modal";
-import { productContext } from "../../context/products";
+import { productContext, useProductContext } from "../../context/products";
 import Button from "../Button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFilterContext } from "../../context/FilterContext";
@@ -32,7 +32,8 @@ export const Temp: React.FC<IProps> = ({
   options,
   handleSearch = () => {},
 }) => {
-  const { conditions, setOpenedFilter, filterStatus } = useFilterContext();
+  const { setOpenedFilter, filterStatus } = useFilterContext();
+  const { conditionsFilter } = useProductContext();
   const iconRef = useRef(null);
   const searchRef = useRef(null);
 
@@ -74,9 +75,11 @@ export const Temp: React.FC<IProps> = ({
         Colunas Ocultas
         <ChevronDownIcon ref={iconRef} />
       </Item>
-      <ButtonFilter filterActive={filterStatus && !!conditions[0]?.action}>
-        {filterStatus && !!conditions[0]?.action && (
-          <CountFilter>{conditions.length}</CountFilter>
+      <ButtonFilter
+        filterActive={filterStatus && !!conditionsFilter[0]?.action}
+      >
+        {filterStatus && !!conditionsFilter[0]?.action && (
+          <CountFilter>{conditionsFilter.length}</CountFilter>
         )}
         <Item onClick={() => setOpenedFilter(true)}>
           <FilterIcon />
