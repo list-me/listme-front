@@ -102,10 +102,16 @@ function FilterComponent(): JSX.Element {
     const valuesConditions = conditionsFilter.map((cond) => {
       return cond?.value;
     });
-    const filteredFilter = filters.filter((filt) => {
-      return valuesConditions.includes(filt.value);
-    });
-    setFilters(filteredFilter);
+    console.log(
+      "🚀 ~ file: index.tsx:105 ~ valuesConditions ~ valuesConditions:",
+      valuesConditions,
+    );
+    if (valuesConditions.length > 0 && valuesConditions[0] !== undefined) {
+      const filteredFilter = filters.filter((filt) => {
+        return valuesConditions.includes(filt.value);
+      });
+      setFilters(filteredFilter);
+    }
   }
 
   return (

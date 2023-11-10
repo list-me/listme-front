@@ -190,7 +190,7 @@ export function FilterContextProvider({
       });
       if (toConditions.length) setConditions(toConditions);
     }
-    if (filters[0].id) applyConditions();
+    if (filters[0]?.id) applyConditions();
   }, [filters]);
 
   const value = {
