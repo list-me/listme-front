@@ -1,5 +1,6 @@
+/* eslint-disable no-nested-ternary */
 import Select from "react-select";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ContainerSelect, FakePlaceHolder, customStyles } from "./styles";
 import CustomOption from "../../../Select/components/Option";
 import CustomInputFilter from "../CustomInputFilter";
@@ -16,6 +17,10 @@ const SelectFilter = ({
   isMulti,
 }: ISelect): JSX.Element => {
   const [isFocused, setIsFocused] = useState(false);
+
+  const [searchText, setSearchText] = useState("");
+
+  const refMulti = useRef(null);
 
   const CustomOptionWithProps = CustomOption(<></>);
 
@@ -41,7 +46,15 @@ const SelectFilter = ({
   };
 
   return (
-    <ContainerSelect focused={isFocused}>
+    <ContainerSelect
+      focused={isFocused}
+      onClick={() => {
+        if (isMulti) {
+          (refMulti as any).current?.focus();
+          setIsFocused(true);
+        }
+      }}
+    >
       {!isMulti ? (
         <Select
           isSearchable={isSearchable}
@@ -63,6 +76,7 @@ const SelectFilter = ({
         />
       ) : (
         <Select
+          ref={refMulti}
           isMulti
           isSearchable
           classNamePrefix="react-select"
@@ -83,15 +97,21 @@ const SelectFilter = ({
           }}
           closeMenuOnSelect={false}
           isClearable={false}
+          onInputChange={(e) => setSearchText(e)}
         />
       )}
-      {isMulti && (
-        <FakePlaceHolder>
-          {select?.length > 0
-            ? `Selecionado(s): ${select?.length}`
-            : "Selecionar"}
-        </FakePlaceHolder>
-      )}
+      {isMulti &&
+        (searchText ? (
+          <FakePlaceHolder>{searchText}</FakePlaceHolder>
+        ) : (
+          <FakePlaceHolder>
+            {isFocused
+              ? "Digite aqui"
+              : !searchText && select?.length > 0
+              ? `Selecionado(s): ${select?.length}`
+              : "Selecionar"}
+          </FakePlaceHolder>
+        ))}
     </ContainerSelect>
   );
 };

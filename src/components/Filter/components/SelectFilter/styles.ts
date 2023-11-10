@@ -47,7 +47,14 @@ export const ContainerSelect = styled.div<{ focused?: boolean }>`
   .react-select__control {
     .react-select__value-container--is-multi {
       input {
-        display: ${(props) => (props.focused ? "initial" : "none")};
+        color: #fff !important;
+      }
+      .react-select__placeholder {
+        display: none;
+      }
+      .react-select__dropdown-indicator {
+        background: blue;
+        width: 100%;
       }
     }
   }
