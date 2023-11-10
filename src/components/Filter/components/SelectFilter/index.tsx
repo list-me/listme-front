@@ -100,18 +100,15 @@ const SelectFilter = ({
           onInputChange={(e) => setSearchText(e)}
         />
       )}
-      {isMulti &&
-        (searchText ? (
-          <FakePlaceHolder>{searchText}</FakePlaceHolder>
-        ) : (
-          <FakePlaceHolder>
-            {isFocused
-              ? "Digite aqui"
-              : !searchText && select?.length > 0
-              ? `Selecionado(s): ${select?.length}`
-              : "Selecionar"}
-          </FakePlaceHolder>
-        ))}
+      {isMulti && !searchText && (
+        <FakePlaceHolder>
+          {isFocused
+            ? "Digite aqui"
+            : !searchText && select?.length > 0
+            ? `Selecionado(s): ${select?.length}`
+            : "Selecionar"}
+        </FakePlaceHolder>
+      )}
     </ContainerSelect>
   );
 };

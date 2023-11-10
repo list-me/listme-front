@@ -46,9 +46,6 @@ export const ContainerSelect = styled.div<{ focused?: boolean }>`
 
   .react-select__control {
     .react-select__value-container--is-multi {
-      input {
-        color: #fff !important;
-      }
       .react-select__placeholder {
         display: none;
       }
