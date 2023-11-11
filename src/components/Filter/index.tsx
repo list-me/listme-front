@@ -148,6 +148,7 @@ function FilterComponent(): JSX.Element {
             Resultados devem atender
             <FilterLogicSelectContainer>
               <SelectFilter
+                isSearchable={false}
                 select={operator}
                 onChange={(e) => setOperator(e)}
                 options={logicOptions}

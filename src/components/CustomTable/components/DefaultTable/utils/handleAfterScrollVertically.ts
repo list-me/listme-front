@@ -51,10 +51,13 @@ const handleAfterScrollVertically = async (
         setIsTableLocked(true);
 
         try {
+          const tratedConditions = conditions[0]?.action
+            ? conditions
+            : undefined;
           const response = await productRequests.list(
             { keyword: currentKeyword, page, limit: 100 },
             window.location.pathname.substring(10),
-            conditions,
+            tratedConditions,
             operator.value,
           );
 

@@ -1,7 +1,12 @@
 /* eslint-disable no-nested-ternary */
 import Select from "react-select";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ContainerSelect, FakePlaceHolder, customStyles } from "./styles";
+import {
+  ContainerSelect,
+  FakePlaceHolder,
+  FakeValue,
+  customStyles,
+} from "./styles";
 import CustomOption from "../../../Select/components/Option";
 import CustomInputFilter from "../CustomInputFilter";
 import OptionMulti from "../OptionMulti";
@@ -38,16 +43,14 @@ const SelectFilter = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchText]);
 
-  const refMulti = useRef(null);
-  const refContainerMulti = useRef(null);
+  // const refContainerMulti = useRef(null);
   const refDefaultSelect = useRef(null);
-  console.log("🚀 ~ file: index.tsx:44 ~ refDefaultSelect:", refDefaultSelect);
 
-  const handleOutsideClick = (_e: any): void => {
-    setCurrentOptions(initialOptions);
-  };
+  // const handleOutsideClick = (_e: any): void => {
+  //   setCurrentOptions(initialOptions);
+  // };
 
-  useOutsideClick(refContainerMulti, handleOutsideClick);
+  // useOutsideClick(refContainerMulti, handleOutsideClick);
 
   const CustomOptionWithProps = CustomOption(<></>);
 
@@ -74,17 +77,16 @@ const SelectFilter = ({
 
   const [currentPlaceHolder, setPlaceHolder] = useState(placeHolder);
 
+  const [visibleMulti, setVisibleMulti] = useState(false);
+
+  const MultiRef = useRef(null);
+
+  useEffect(() => {
+    setCurrentOptions(options);
+  }, [options]);
+
   return (
-    <ContainerSelect
-      focused={isFocused}
-      onClick={() => {
-        if (isMulti) {
-          (refMulti as any).current?.focus();
-          setIsFocused(true);
-        }
-      }}
-      isDisabled={isDisabled}
-    >
+    <ContainerSelect focused={isFocused} isDisabled={isDisabled}>
       {!isMulti ? (
         <Select
           ref={refDefaultSelect}
@@ -105,50 +107,51 @@ const SelectFilter = ({
           placeholder={currentPlaceHolder}
         />
       ) : (
-        <div ref={refContainerMulti}>
-          <Select
-            ref={refMulti}
-            isMulti
-            isSearchable
-            isDisabled={loadingOptions}
-            classNamePrefix="react-select"
-            options={sortSelectedFirst(select, currentOptions)}
-            placeholder=""
-            value={select}
-            components={{
-              Option: OptionMulti as any,
-            }}
-            hideSelectedOptions={false}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => {
-              setIsFocused(false);
-            }}
-            styles={customStyles({ small }) as any}
-            onChange={(selectedOption) => {
-              setIsFocused(false);
-              onChange(selectedOption);
-            }}
-            closeMenuOnSelect={false}
-            isClearable={false}
-            onInputChange={(e) => setSearchText(e)}
-          />
-        </div>
-      )}
-      {isMulti && !searchText && (
-        <FakePlaceHolder
-          onClick={() => {
-            setIsFocused(true);
-            (refMulti as any).current?.focus();
-          }}
-        >
-          {loadingOptions
-            ? "Carregando Dados ..."
-            : isFocused
-            ? "Digite aqui"
-            : !searchText && select?.length > 0
-            ? `Selecionado(s): ${select?.length}`
-            : "Selecionar"}
-        </FakePlaceHolder>
+        <>
+          {!visibleMulti ? (
+            <FakeValue
+              onClick={() => {
+                setVisibleMulti(true);
+                setTimeout(() => {
+                  if (MultiRef.current) {
+                    (MultiRef as any).current.focus();
+                  }
+                }, 10);
+              }}
+            >
+              {select?.length > 0
+                ? `Selecionado(s): ${select?.length}`
+                : "Selecionar"}
+            </FakeValue>
+          ) : (
+            <Select
+              ref={MultiRef}
+              className="multiSelect"
+              isMulti
+              isSearchable
+              isDisabled={loadingOptions}
+              classNamePrefix="react-select"
+              options={sortSelectedFirst(select, currentOptions)}
+              placeholder="Digite Aqui"
+              value={select}
+              components={{
+                Option: OptionMulti as any,
+              }}
+              hideSelectedOptions={false}
+              onBlur={() => {
+                setVisibleMulti(false);
+              }}
+              styles={customStyles({ small }) as any}
+              onChange={(selectedOption) => {
+                setIsFocused(false);
+                onChange(selectedOption);
+              }}
+              closeMenuOnSelect={false}
+              isClearable={false}
+              onInputChange={(e) => setSearchText(e)}
+            />
+          )}
+        </>
       )}
     </ContainerSelect>
   );

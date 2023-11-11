@@ -40,8 +40,16 @@ export const ContainerSelect = styled.div<{
     width: initial !important;
     font-weight: ${({ theme }) => theme.fonts.weights.regular} !important;
   }
+  .react-select__input {
+    left: 8px;
+    position: relative;
+    color: ${({ theme }) => theme.colors.grayscale.primary} !important;
+    font-family: ${({ theme }) => theme.fonts.family.default} !important;
+    font-size: 16px !important;
+    width: initial !important;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular} !important;
+  }
 
-  /*
   .react-select__multi-value {
     display: none !important;
   }
@@ -56,22 +64,22 @@ export const ContainerSelect = styled.div<{
         width: 100%;
       }
     }
-  } */
+  }
 
-  /* .react-select__placeholder {
+  .react-select__placeholder {
     display: flex;
     height: 100%;
     align-items: center;
-  } */
-  /* .react-select__value-container {
+  }
+  .react-select__value-container {
     overflow-y: auto;
     display: flex;
     height: 100%;
-  } */
+  }
 `;
 
 export const FakePlaceHolder = styled.p`
-  /* color: ${({ theme }) => theme.colors.grayscale.primary};
+  color: ${({ theme }) => theme.colors.grayscale.primary};
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
   font-weight: ${({ theme }) => theme.fonts.weights.regular};
@@ -81,7 +89,7 @@ export const FakePlaceHolder = styled.p`
   height: 100%;
   display: flex;
   padding-left: 8px;
-  align-items: center; */
+  align-items: center;
 `;
 
 // @ts-ignore
@@ -144,3 +152,17 @@ export const customStyles = ({ small }: { small?: boolean }): Styles => ({
     display: "none",
   }),
 });
+
+export const FakeValue = styled.div`
+  width: 100%;
+  height: 48px;
+  border-radius: 8px;
+  border: 1px solid #d1d6dc;
+  padding-left: 8px;
+  color: ${({ theme }) => theme.colors.grayscale.primary};
+  font-family: ${({ theme }) => theme.fonts.family.default};
+  font-size: ${({ theme }) => theme.fonts.sizes.normal};
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
+  display: flex;
+  align-items: center;
+`;
