@@ -107,7 +107,12 @@ export function FilterContextProvider({
     .filter((item) => item.value);
 
   const getOptions = useCallback(
-    async (currentItem: IFilter, index: number, key?: string): Promise<any> => {
+    async (
+      currentItem: IFilter,
+      index: number,
+      key?: string,
+      search?: boolean,
+    ): Promise<any> => {
       const { type } = currentItem?.column;
 
       if (type === "radio" || type === "list" || type === "checked") {
@@ -148,16 +153,20 @@ export function FilterContextProvider({
           });
 
           const newOptions = [...optionsToMultiSelect];
-          newOptions[index] = removeRepeatedObjects(optionsToView, "value");
+          newOptions[index] = removeRepeatedObjects(
+            search
+              ? [...optionsToView, ...optionsToMultiSelect[index]]
+              : optionsToView,
+            "value",
+          );
 
           setOptionsToMultiSelect(newOptions);
         }
       }
     },
     [
-      template,
+      template?.fields?.fields,
       optionsToMultiSelect,
-      setOptionsToMultiSelect,
       getProducts,
       removeRepeatedObjects,
     ],

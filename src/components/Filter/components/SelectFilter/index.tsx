@@ -27,30 +27,15 @@ const SelectFilter = ({
   index,
   loadingOptions,
 }: ISelect): JSX.Element => {
-  const initialOptions = useMemo(() => options, []);
+  // const initialOptions = useMemo(() => options, []);
   const [currentOptions, setCurrentOptions] = useState(options);
   const { getOptions } = useFilterContext();
-  const [isFocused, setIsFocused] = useState(false);
 
   const [searchText, setSearchText] = useState("");
 
   const debouncedSearchText = useDebounce(searchText, 500);
 
-  useEffect(() => {
-    if (debouncedSearchText && item) {
-      getOptions(item, index, debouncedSearchText);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchText]);
-
-  // const refContainerMulti = useRef(null);
   const refDefaultSelect = useRef(null);
-
-  // const handleOutsideClick = (_e: any): void => {
-  //   setCurrentOptions(initialOptions);
-  // };
-
-  // useOutsideClick(refContainerMulti, handleOutsideClick);
 
   const CustomOptionWithProps = CustomOption(<></>);
 
@@ -81,12 +66,35 @@ const SelectFilter = ({
 
   const MultiRef = useRef(null);
 
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
+
   useEffect(() => {
     setCurrentOptions(options);
   }, [options]);
 
+  useEffect(() => {
+    const includes =
+      options && Array.isArray(options)
+        ? options.filter((opt: any) =>
+            opt.label.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+          )
+        : [];
+    if (!includes.length && debouncedSearchText && item) {
+      getOptions(item, index, debouncedSearchText, true).then(() => {
+        setVisibleMulti(true);
+        setTimeout(() => {
+          if (MultiRef.current) {
+            (MultiRef as any).current.focus();
+          }
+        }, 10);
+        setMenuIsOpen(true);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearchText]);
+
   return (
-    <ContainerSelect focused={isFocused} isDisabled={isDisabled}>
+    <ContainerSelect isDisabled={isDisabled}>
       {!isMulti ? (
         <Select
           ref={refDefaultSelect}
@@ -107,7 +115,7 @@ const SelectFilter = ({
           placeholder={currentPlaceHolder}
         />
       ) : (
-        <>
+        <div>
           {!visibleMulti ? (
             <FakeValue
               onClick={() => {
@@ -117,9 +125,12 @@ const SelectFilter = ({
                     (MultiRef as any).current.focus();
                   }
                 }, 10);
+                setMenuIsOpen(true);
               }}
             >
-              {select?.length > 0
+              {loadingOptions
+                ? "Carregando Dados..."
+                : select?.length > 0
                 ? `Selecionado(s): ${select?.length}`
                 : "Selecionar"}
             </FakeValue>
@@ -137,21 +148,21 @@ const SelectFilter = ({
               components={{
                 Option: OptionMulti as any,
               }}
+              onBlur={() => setVisibleMulti(false)}
+              inputValue={searchText}
+              defaultInputValue={searchText}
               hideSelectedOptions={false}
-              onBlur={() => {
-                setVisibleMulti(false);
-              }}
               styles={customStyles({ small }) as any}
               onChange={(selectedOption) => {
-                setIsFocused(false);
                 onChange(selectedOption);
               }}
               closeMenuOnSelect={false}
               isClearable={false}
               onInputChange={(e) => setSearchText(e)}
+              menuIsOpen={menuIsOpen}
             />
           )}
-        </>
+        </div>
       )}
     </ContainerSelect>
   );

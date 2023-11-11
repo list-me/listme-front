@@ -7,7 +7,12 @@ export interface FilterContextType {
   removeFilter: (currentFilters: IFilter[], index: number) => void;
   defaultFilter: IFilter;
   typesOptions: ITypes;
-  getOptions: (currentItem: IFilter, index: number, key?: string) => any;
+  getOptions: (
+    currentItem: IFilter,
+    index: number,
+    key?: string,
+    search?: boolean,
+  ) => Promise<any>;
   changeValue: (
     e: any,
     index: number,
