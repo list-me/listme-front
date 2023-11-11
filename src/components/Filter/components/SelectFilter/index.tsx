@@ -39,13 +39,15 @@ const SelectFilter = ({
   }, [debouncedSearchText]);
 
   const refMulti = useRef(null);
-  const testRef = useRef(null);
+  const refContainerMulti = useRef(null);
+  const refDefaultSelect = useRef(null);
+  console.log("🚀 ~ file: index.tsx:44 ~ refDefaultSelect:", refDefaultSelect);
 
   const handleOutsideClick = (_e: any): void => {
     setCurrentOptions(initialOptions);
   };
 
-  useOutsideClick(testRef, handleOutsideClick);
+  useOutsideClick(refContainerMulti, handleOutsideClick);
 
   const CustomOptionWithProps = CustomOption(<></>);
 
@@ -70,6 +72,8 @@ const SelectFilter = ({
     return selected;
   };
 
+  const [currentPlaceHolder, setPlaceHolder] = useState(placeHolder);
+
   return (
     <ContainerSelect
       focused={isFocused}
@@ -79,28 +83,29 @@ const SelectFilter = ({
           setIsFocused(true);
         }
       }}
+      isDisabled={isDisabled}
     >
       {!isMulti ? (
         <Select
+          ref={refDefaultSelect}
+          options={options}
           isSearchable={isSearchable}
           isDisabled={isDisabled}
-          value={isFocused ? "" : select}
+          value={select}
+          classNamePrefix="react-select-default"
           onChange={(selectedOption) => {
-            setIsFocused(false);
             onChange(selectedOption as string);
           }}
-          options={options}
+          onFocus={() => setPlaceHolder("Digite aqui")}
           styles={customStyles({ small }) as any}
-          placeholder={isSearchable && isFocused ? "Digite aqui" : placeHolder}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
           components={{
             SingleValue: CustomInputFilter,
             Option: CustomOptionWithProps as any,
           }}
+          placeholder={currentPlaceHolder}
         />
       ) : (
-        <div ref={testRef}>
+        <div ref={refContainerMulti}>
           <Select
             ref={refMulti}
             isMulti
@@ -120,6 +125,7 @@ const SelectFilter = ({
             }}
             styles={customStyles({ small }) as any}
             onChange={(selectedOption) => {
+              setIsFocused(false);
               onChange(selectedOption);
             }}
             closeMenuOnSelect={false}
@@ -129,7 +135,12 @@ const SelectFilter = ({
         </div>
       )}
       {isMulti && !searchText && (
-        <FakePlaceHolder>
+        <FakePlaceHolder
+          onClick={() => {
+            setIsFocused(true);
+            (refMulti as any).current?.focus();
+          }}
+        >
           {loadingOptions
             ? "Carregando Dados ..."
             : isFocused
