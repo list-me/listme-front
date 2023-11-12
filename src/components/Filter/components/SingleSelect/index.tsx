@@ -20,6 +20,7 @@ import { ReactComponent as DropdownIcon } from "../../../../assets/icons/headers
 import { ReactComponent as FileIcon } from "../../../../assets/icons/headers/file-icon.svg";
 import { ReactComponent as RadioIcon } from "../../../../assets/icons/headers/radio-icon.svg";
 import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers/relation-icon.svg";
+import { ReactComponent as SearchIcon } from "../../../../assets/search-gray.svg";
 import useOutsideClick from "../../../../hooks/useOnClickOutside/useOnClickOutside";
 import {
   IColumnFilter,
@@ -146,11 +147,16 @@ function SingleSelect({
       </SingleSelectValue>
       {openedMenu && (
         <MenuOptions>
-          <SearchOption
-            placeholder="Busque..."
-            onChange={(e) => setSearchValue(e.target.value)}
-          />
-          <div>
+          <div className="searchContainer">
+            <SearchOption
+              placeholder="Busque..."
+              onChange={(e) => setSearchValue(e.target.value)}
+            />
+            <div className="searchIcon">
+              <SearchIcon />
+            </div>
+          </div>
+          <div className="optionsContainer">
             {sortSelectedFirst(select, currentOptions).map((opt) => (
               <Option
                 key={opt.value}

@@ -54,6 +54,7 @@ export const MenuOptions = styled.p`
   background: blue;
   position: absolute;
   left: 0%;
+  height: auto;
   top: 52px;
   border-radius: 8px;
   background: #fff;
@@ -62,23 +63,31 @@ export const MenuOptions = styled.p`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 8px;
-  > div {
+  .optionsContainer {
     padding: 8px;
     width: 100%;
     max-height: 300px;
     background: blue;
-    position: absolute;
     left: 0%;
     top: 52px;
     border-radius: 8px;
     background: #fff;
-    box-shadow: 0px 10px 40px 0px rgba(56, 24, 217, 0.07);
     z-index: 9;
     display: flex;
     flex-direction: column;
     gap: 4px;
     overflow-y: auto;
+  }
+  .searchContainer {
+    padding: 8px;
+    display: flex;
+    position: relative;
+    padding-bottom: 0;
+  }
+  .searchIcon {
+    position: absolute;
+    top: 22px;
+    right: 20px;
   }
 `;
 export const Option = styled.p<{ active: boolean }>`
@@ -106,6 +115,7 @@ export const SearchOption = styled.input`
   height: 45px;
   border: none;
   padding: 12px;
+  width: 100%;
   color: #000;
   font-size: 14px;
   font-weight: 400;
