@@ -36,14 +36,16 @@ interface ITypes {
   }[];
 }
 
+export interface IColumnFilter {
+  label: string;
+  type: string;
+  optionsList: string[];
+  // optionsList: string[] | { originField: string; templateId: string }[];
+  value: string;
+}
+
 export interface IFilter {
-  column: {
-    label: string;
-    type: string;
-    optionsList: string[];
-    // optionsList: string[] | { originField: string; templateId: string }[];
-    value: string;
-  };
+  column: IColumnFilter;
   condition: { label: string; value: string; input: "text" | "multi" | "" };
   value?: string;
   selectValue: string[];

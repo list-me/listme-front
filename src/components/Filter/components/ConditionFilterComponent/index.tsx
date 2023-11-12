@@ -4,6 +4,7 @@ import SelectFilter from "../SelectFilter";
 import { ReactComponent as TrashIcon } from "../../../../assets/trash-filter.svg";
 import { IInputValue } from "../../../../context/FilterContext/FilterContextType";
 import useDebounce from "../../../../hooks/useDebounce/useDebounce";
+import SingleSelect from "../SingleSelect";
 
 function ConditionFilterComponent({
   item,
@@ -54,7 +55,17 @@ function ConditionFilterComponent({
   return (
     <Filter key={item.id} smallBefore={index === 0}>
       <FilterItem small={!!item.condition.input} trash={filters.length > 1}>
-        <SelectFilter
+        <SingleSelect
+          placeHolder="Selecione a coluna"
+          options={options}
+          changeValue={changeValue}
+          index={index}
+          type="column"
+          item={item}
+          getOptions={getOptions}
+          select={filters[index].column}
+        />
+        {/* <SelectFilter
           isSearchable
           select={
             filters[index].column.value ? filters[index].column : undefined
@@ -66,7 +77,7 @@ function ConditionFilterComponent({
           options={getColumnOptions(options)}
           placeHolder="Selecione a coluna"
           small
-        />
+        /> */}
       </FilterItem>
       <FilterItem small={!!item.condition.input} trash={filters.length > 1}>
         <SelectFilter

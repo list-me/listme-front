@@ -49,13 +49,13 @@ export function FilterContextProvider({
 
   const changeValue = useCallback(
     (
-      e: any,
+      value: any,
       index: number,
       typeChange: "column" | "condition" | "value" | "selectValue",
     ) => {
       setFilters((prevFilters) => {
         const newFilters = [...prevFilters];
-        newFilters[index][typeChange] = e;
+        newFilters[index][typeChange] = value;
 
         return newFilters;
       });
