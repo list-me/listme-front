@@ -9,25 +9,48 @@ export const ContainerSingleSelect = styled.button<{ openedMenu: boolean }>`
   background: none;
   display: flex;
   align-items: center;
-  padding: 0 16px;
+
   justify-content: space-between;
   position: relative;
+  *::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background-color: unset;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #cccccc;
+    border-radius: 4px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: #3818d9;
+  }
 `;
 export const SingleSelectValue = styled.p<{ active: boolean }>`
-  margin: 0;
-  color: ${(props) => (props.active ? "#000" : "#868e96")};
-  font-size: 14px;
-  font-weight: 400;
   display: flex;
-  align-items: center;
-  gap: 8px;
-  path {
-    stroke: #000;
+  padding: 0 16px;
+  height: 48px;
+  justify-content: space-between;
+  margin: 0;
+  border-radius: 8px;
+  width: 100%;
+  > div {
+    color: ${(props) => (props.active ? "#000" : "#868e96")};
+    font-size: 14px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    path {
+      stroke: #000;
+    }
   }
 `;
 export const MenuOptions = styled.p`
   width: 100%;
-  max-height: 300px;
   background: blue;
   position: absolute;
   left: 0%;
@@ -40,6 +63,23 @@ export const MenuOptions = styled.p`
   flex-direction: column;
   gap: 4px;
   padding: 8px;
+  > div {
+    padding: 8px;
+    width: 100%;
+    max-height: 300px;
+    background: blue;
+    position: absolute;
+    left: 0%;
+    top: 52px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0px 10px 40px 0px rgba(56, 24, 217, 0.07);
+    z-index: 9;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-y: auto;
+  }
 `;
 export const Option = styled.p<{ active: boolean }>`
   margin: 0;
@@ -59,4 +99,14 @@ export const Option = styled.p<{ active: boolean }>`
   :hover {
     background: #e2e0ff;
   }
+`;
+export const SearchOption = styled.input`
+  border-radius: 8px;
+  background: var(--gray-gray-1, #f1f3f5);
+  height: 45px;
+  border: none;
+  padding: 12px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 400;
 `;
