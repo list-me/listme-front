@@ -16,11 +16,12 @@ function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
-  const { setFilters, defaultFilter } = useFilterContext();
+  const { setFilters, defaultFilter, setFilterStatus } = useFilterContext();
 
   useEffect(() => {
     setFilters([defaultFilter]);
-  }, [defaultFilter, setFilters]);
+    setFilterStatus(false);
+  }, [defaultFilter, setFilterStatus, setFilters]);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]): void => {
     setSelectedRowKeys(newSelectedRowKeys);
