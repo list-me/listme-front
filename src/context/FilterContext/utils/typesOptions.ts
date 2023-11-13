@@ -200,12 +200,6 @@ const typesOptions: ITypes = {
       value: "rel_contain_least_one",
       input: "multi",
     },
-    { label: "Contém", value: "contain", input: "text" },
-    {
-      label: "Não contém",
-      value: "not_contain",
-      input: "text",
-    },
     {
       label: "Está preenchido (não está em branco)",
       value: "is_not_empty",
