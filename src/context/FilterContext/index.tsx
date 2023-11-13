@@ -96,8 +96,9 @@ export function FilterContextProvider({
 
     if (type === "relation") {
       if (typeof currentItem.column.optionsList[0] !== "string") {
-        const { templateId, originField } = currentItem.column.optionsList[0];
+        const { templateId, field } = currentItem.column.optionsList[0];
         const productsToSelect = await getProducts(templateId, key);
+
         const productFields: any = [];
         productsToSelect.forEach((product: any) => {
           product.fields.forEach((pField: any) => {
@@ -105,7 +106,8 @@ export function FilterContextProvider({
               itemId: product.id,
               ...pField,
             };
-            if (pField.id === originField) productFields.push(newField);
+
+            if (pField.id === field) productFields.push(newField);
           });
         });
 
@@ -201,11 +203,6 @@ export function FilterContextProvider({
 
   useEffect(() => {
     function applyConditions(): any {
-      console.log(
-        "🚀 ~ file: index.tsx:227 ~ toConditions ~ filters:",
-        filters,
-      );
-
       const toConditions = filters.map((filter) => {
         if (filter?.value) {
           const converted = {
