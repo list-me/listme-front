@@ -16,7 +16,12 @@ function customRendererFile(
   value: any,
   hotRef: React.RefObject<HotTable>,
   loadingRef: React.RefObject<HTMLDivElement>,
-  uploadImages: (files: File[], bucketUrl: string) => Promise<void | string[]>,
+  uploadImages: (
+    files: File[],
+    bucketUrl: string,
+    companyId: string,
+    optionals?: { brand?: string; name?: string },
+  ) => Promise<void | string[]>,
   template: any,
 ): void {
   td.className = "file-cell";
@@ -68,9 +73,30 @@ function customRendererFile(
         if (event.dataTransfer?.files.length) {
           const { files } = event.dataTransfer;
           const parsedFiles: Array<File> = Array.from(files);
+
+          const optionals = {
+            brand: "",
+            name: "",
+          };
+
+          if (template.id === "8956d969-d769-4f09-8736-e0b4d73b3e3d") {
+            const brand = _instance.getDataAtRowProp(row, "730291");
+
+            optionals.brand = brand?.length ? brand[0]?.id : undefined;
+            optionals.name = _instance.getDataAtRowProp(row, "474091");
+          }
+
+          if (template.id === "a13f5317-d855-4766-9063-c916f4d90b83") {
+            const brand = _instance.getDataAtRowProp(row, "956614");
+            optionals.brand = brand?.length ? brand[0]?.id : undefined;
+            optionals.name = _instance.getDataAtRowProp(row, "889711");
+          }
+
           const newFiles: Array<string> | void = await uploadImages(
             parsedFiles,
             template.id,
+            template.companyId,
+            optionals,
           );
 
           if (newFiles && newFiles.length) {

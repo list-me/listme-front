@@ -62,3 +62,7 @@ export const generateUUID = (): string => {
     return v.toString(16);
   });
 };
+
+export const isCollectionCompany = (companyId: string): boolean => {
+  return companyId === process.env.REACT_COLLECTION_COMPANY_ID;
+};

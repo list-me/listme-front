@@ -28,7 +28,12 @@ export interface IDefaultTable {
   columns: IHeader[];
   setColumns: React.Dispatch<React.SetStateAction<IHeader[]>>;
   handleMove: Function;
-  uploadImages: (files: File[], bucketUrl: string) => Promise<void | string[]>;
+  uploadImages: (
+    files: File[],
+    bucketUrl: string,
+    companyId: string,
+    optionals?: { brand?: string; name?: string },
+  ) => Promise<void | string[]>;
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   headerTable: IHeaderTable[];
