@@ -59,13 +59,11 @@ function SingleSelect({
   index: number;
   type: "selectValue" | "value" | "column" | "condition";
   item: IFilter;
-  // eslint-disable-next-line react/require-default-props
   getOptions: ((currentItem: IFilter, index: number) => any) | undefined;
   select: IColumnFilter;
   // eslint-disable-next-line react/require-default-props
   isSearchable?: boolean;
 }): JSX.Element {
-  console.log("🚀 ~ file: index.tsx:67 ~ select:", select);
   const [currentOptions, setCurrentOptions] = useState<IOption[]>(options);
   const [searchValue, setSearchValue] = useState<string>("");
   const debaunceSearchValue = useDebounce(searchValue, 500);
@@ -77,11 +75,12 @@ function SingleSelect({
       });
       setCurrentOptions(filteredOptions);
     }
-    if (isSearchable && debaunceSearchValue) filterOptions(debaunceSearchValue);
+
+    if (debaunceSearchValue) filterOptions(debaunceSearchValue);
     else {
       setCurrentOptions(options);
     }
-  }, [debaunceSearchValue, isSearchable, options]);
+  }, [debaunceSearchValue, options]);
 
   const ICON_HEADER = useMemo(
     () => ({
@@ -113,35 +112,11 @@ function SingleSelect({
     setSearchValue("");
   });
 
-  const sortSelectedFirst = (
-    selected: IColumnFilter,
-    optionsToSorted: IOption[],
-  ): IOption[] => {
-    if (optionsToSorted && optionsToSorted.length > 0) {
-      const sortedOptions = [...optionsToSorted]?.sort((a, b) => {
-        const aIsSelected = selected.value?.includes(a.value);
-        const bIsSelected = selected.value?.includes(b.value);
-
-        if (aIsSelected && !bIsSelected) {
-          return -1;
-        }
-        if (!aIsSelected && bIsSelected) {
-          return 1;
-        }
-        return 0;
-      });
-
-      return sortedOptions;
-    }
-    return optionsToSorted;
-  };
-
   return (
     <ContainerSingleSelect ref={menuRef} openedMenu={openedMenu}>
       <SingleSelectValue
         active={!!select?.label}
         onClick={() => setOpenedMenu(true)}
-        isDisabled={!(currentOptions?.length > 0)}
       >
         <div>
           {select.type && getIconByType(select.type as any)}
@@ -165,15 +140,15 @@ function SingleSelect({
             </div>
           )}
           <div className="optionsContainer">
-            {sortSelectedFirst(select, currentOptions)?.map((opt) => (
+            {currentOptions?.map((opt) => (
               <Option
                 key={opt.value}
                 onClick={() => {
                   changeValue(opt, index, type);
-                  if (getOptions !== undefined) getOptions(item, index);
-                  setSearchValue("");
-                  setCurrentOptions(options);
                   setOpenedMenu(false);
+                  setCurrentOptions(options);
+                  setSearchValue("");
+                  if (getOptions !== undefined) getOptions(item, index);
                 }}
                 active={opt?.value === select?.value}
               >

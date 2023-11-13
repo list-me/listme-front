@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Filter, FilterItem, InputFilter, TrashButton } from "../../styles";
-import SelectFilter from "../SelectFilter";
 import { ReactComponent as TrashIcon } from "../../../../assets/trash-filter.svg";
-import {
-  IFilter,
-  IInputValue,
-} from "../../../../context/FilterContext/FilterContextType";
+import { IInputValue } from "../../../../context/FilterContext/FilterContextType";
 import useDebounce from "../../../../hooks/useDebounce/useDebounce";
 import SingleSelect from "../SingleSelect";
 import MultiSelect from "../MultiSelect";
+import typesOptions from "../../../../context/FilterContext/utils/typesOptions";
 
 function ConditionFilterComponent({
   item,
@@ -16,17 +13,16 @@ function ConditionFilterComponent({
   filters,
   changeValue,
   getOptions,
-  typesOptions,
   options,
   optionsToMultiSelect,
   removeFilter,
-  loadingOptions,
 }: IConditionFilterComponent): JSX.Element {
   const [inputValue, setInputValue] = useState<IInputValue>({} as IInputValue);
   const debouncedInputValue = useDebounce(inputValue, 500);
   const [selectValue, setSelectValue] = useState<IInputValue>(
     {} as IInputValue,
   );
+
   const debouncedSelectValue = useDebounce(selectValue, 500);
 
   useEffect(() => {
@@ -45,16 +41,6 @@ function ConditionFilterComponent({
         debouncedSelectValue.typeChange,
       );
   }, [changeValue, debouncedSelectValue]);
-
-  function getColumnOptions(cOptions: IOption[]): IOption[] {
-    const filtersNameColumn = filters.map((filt) => {
-      return filt.column.label;
-    });
-    const filteredOptionsColumn = cOptions.filter((op) => {
-      return !filtersNameColumn.includes(op.label);
-    });
-    return filteredOptionsColumn;
-  }
 
   return (
     <Filter
@@ -111,32 +97,9 @@ function ConditionFilterComponent({
               changeValue={setSelectValue}
               index={index}
               type="selectValue"
-              // item={item}
-              // getOptions={getOptions}
               select={selectValue}
               isSearchable
             />
-            // <SelectFilter
-            //   isMulti
-            //   select={
-            //     selectValue?.value?.length > 0
-            //       ? selectValue.value
-            //       : filters[index].selectValue
-            //   }
-            //   onChange={(e) =>
-            //     setSelectValue({
-            //       value: e,
-            //       index,
-            //       typeChange: "selectValue",
-            //     })
-            //   }
-            //   options={optionsToMultiSelect[index]}
-            //   placeHolder="Valores"
-            //   small
-            //   item={item}
-            //   index={index}
-            //   loadingOptions={loadingOptions}
-            // />
           )}
         </FilterItem>
       )}

@@ -13,7 +13,6 @@ import {
   IOperator,
 } from "./FilterContextType";
 import { useProductContext } from "../products";
-import typesOptions from "./utils/typesOptions";
 import { productRequests } from "../../services/apis/requests/product";
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
@@ -213,7 +212,6 @@ export function FilterContextProvider({
     setFilters,
     removeFilter,
     defaultFilter,
-    typesOptions,
     getOptions,
     changeValue,
     optionsToMultiSelect,

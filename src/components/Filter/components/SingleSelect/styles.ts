@@ -52,8 +52,6 @@ export const SingleSelectValue = styled.p<{
       stroke: #000;
     }
   }
-  opacity: ${(props) => (props.isDisabled ? "0.5" : "1")};
-  pointer-events: ${(props) => (props.isDisabled ? "none" : "initial")};
 `;
 export const MenuOptions = styled.p`
   width: 100%;

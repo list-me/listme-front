@@ -6,7 +6,6 @@ export interface FilterContextType {
   setFilters: React.Dispatch<React.SetStateAction<IFilter[]>>;
   removeFilter: (currentFilters: IFilter[], index: number) => void;
   defaultFilter: IFilter;
-  typesOptions: ITypes;
   getOptions: (
     currentItem: IFilter,
     index: number,
