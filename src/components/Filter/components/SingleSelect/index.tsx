@@ -101,7 +101,6 @@ function SingleSelect({
 
   useOutsideClick(menuRef, () => {
     setOpenedMenu(false);
-    setCurrentOptions(options);
     setSearchValue("");
   });
 

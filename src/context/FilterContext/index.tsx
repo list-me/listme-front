@@ -91,7 +91,6 @@ export function FilterContextProvider({
 
       const newOptions = [...optionsToMultiSelect];
       newOptions[index] = optionsToView;
-
       setOptionsToMultiSelect(newOptions);
     }
 

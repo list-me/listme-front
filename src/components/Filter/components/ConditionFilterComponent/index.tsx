@@ -25,6 +25,7 @@ function ConditionFilterComponent({
 
   useEffect(() => {
     setSelectValue({} as IInputValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [optionsToMultiSelect[index]]);
   useEffect(() => {
     setInputValue({} as IInputValue);
