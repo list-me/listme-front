@@ -34,8 +34,7 @@ export const ButtonClearAll = styled.button`
 `;
 
 export const SidebarFilter = styled.div`
-  /* width: 684px !important; */
-  width: 45% !important;
+  min-width: 45% !important;
   height: 100%;
   padding: 32px;
   background: #fff;
