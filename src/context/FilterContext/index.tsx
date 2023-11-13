@@ -30,7 +30,7 @@ export function FilterContextProvider({
     value: "",
     id: 1,
   } as IFilter;
-  const { template, headerTable } = useProductContext();
+  const { headerTable } = useProductContext();
 
   const [filterStatus, setFilterStatus] = useState(false);
 
@@ -89,9 +89,11 @@ export function FilterContextProvider({
         return { value: option, label: option };
       });
 
-      const newOptions = [...optionsToMultiSelect];
-      newOptions[index] = optionsToView;
-      setOptionsToMultiSelect(newOptions);
+      setOptionsToMultiSelect((prev: any) => {
+        const newOptions = [...prev];
+        newOptions[index] = optionsToView;
+        return newOptions;
+      });
     }
 
     if (type === "relation") {
@@ -117,15 +119,14 @@ export function FilterContextProvider({
             label: option.value[0],
           };
         });
-
-        const newOptions = [...optionsToMultiSelect];
-        newOptions[index] = removeRepeatedObjects(
-          search
-            ? [...optionsToView, ...optionsToMultiSelect[index]]
-            : optionsToView,
-          "value",
-        );
-        setOptionsToMultiSelect(newOptions);
+        setOptionsToMultiSelect((prev: any) => {
+          const newOptions = [...prev];
+          newOptions[index] = removeRepeatedObjects(
+            search ? [...optionsToView, ...prev[index]] : optionsToView,
+            "value",
+          );
+          return newOptions;
+        });
       }
     }
   };
