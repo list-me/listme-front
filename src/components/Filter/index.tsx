@@ -11,10 +11,12 @@ import {
   SidebarFilter,
   TitleFilter,
   CloseButtonTransparent,
+  ButtonClearAll,
 } from "./styles";
 import { ReactComponent as NewFilterPlus } from "../../assets/new-condition-plus.svg";
 
 import { ReactComponent as CloseIcon } from "../../assets/close-gray.svg";
+import { ReactComponent as TrashIcon } from "../../assets/trash-filter.svg";
 
 import { useFilterContext } from "../../context/FilterContext";
 import Button from "../Button";
@@ -191,6 +193,14 @@ function FilterComponent(): JSX.Element {
         <Button onClickModal={() => applyFilter(conditions)}>
           Filtrar produtos
         </Button>
+        <ButtonClearAll onClick={() => setFilters([defaultFilter])}>
+          {filters.length > 0 && (
+            <>
+              <TrashIcon />
+              Limpar todos os filtros
+            </>
+          )}
+        </ButtonClearAll>
       </SidebarFilter>
     </ContainerFilter>
   );

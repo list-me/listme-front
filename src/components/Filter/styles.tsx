@@ -17,6 +17,21 @@ export const CloseButtonTransparent = styled.button`
   border: none;
   cursor: initial;
 `;
+export const ButtonClearAll = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #3818d9;
+  font-size: 16px;
+  font-weight: 700;
+  background: none;
+  margin-top: 20px;
+  border: none;
+  gap: 8px;
+  path {
+    stroke: #3818d9;
+  }
+`;
 
 export const SidebarFilter = styled.div`
   /* width: 684px !important; */

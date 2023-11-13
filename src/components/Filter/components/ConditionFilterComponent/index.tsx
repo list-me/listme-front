@@ -18,7 +18,6 @@ function ConditionFilterComponent({
   loadingOptions,
 }: IConditionFilterComponent): JSX.Element {
   const [inputValue, setInputValue] = useState<IInputValue>({} as IInputValue);
-  console.log("🚀 ~ file: index.tsx:21 ~ inputValue:", inputValue);
   const debouncedInputValue = useDebounce(inputValue, 500);
   const [selectValue, setSelectValue] = useState<IInputValue>(
     {} as IInputValue,
