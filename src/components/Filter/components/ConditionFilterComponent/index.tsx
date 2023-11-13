@@ -26,6 +26,9 @@ function ConditionFilterComponent({
   useEffect(() => {
     setSelectValue({} as IInputValue);
   }, [optionsToMultiSelect[index]]);
+  useEffect(() => {
+    setInputValue({} as IInputValue);
+  }, [options]);
 
   const debouncedSelectValue = useDebounce(selectValue, 500);
 
