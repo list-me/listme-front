@@ -52,6 +52,7 @@ function MultiSelect({
   select,
   loadingOptions,
   item,
+  filters,
 }: {
   options: { value: string; label: string }[];
   placeHolder: string;
@@ -64,12 +65,21 @@ function MultiSelect({
   // eslint-disable-next-line react/require-default-props
   loadingOptions?: boolean;
   item: IFilter;
+  filters: IFilter[];
 }): JSX.Element {
   const idsSelecteds = select?.value?.map(
     (itemSelected: { value: string; label: string }) => {
       return itemSelected.value;
     },
   );
+
+  useEffect(() => {
+    changeValue({
+      index,
+      typeChange: "selectValue",
+      value: filters[index].selectValue,
+    } as IInputValue);
+  }, [options]);
 
   const [currentOptions, setCurrentOptions] =
     useState<{ value: string; label: string }[]>(options);

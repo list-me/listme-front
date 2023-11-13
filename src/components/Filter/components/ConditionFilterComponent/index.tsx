@@ -18,21 +18,11 @@ function ConditionFilterComponent({
   loadingOptions,
 }: IConditionFilterComponent): JSX.Element {
   const [inputValue, setInputValue] = useState<IInputValue>({} as IInputValue);
+  console.log("🚀 ~ file: index.tsx:21 ~ inputValue:", inputValue);
   const debouncedInputValue = useDebounce(inputValue, 500);
   const [selectValue, setSelectValue] = useState<IInputValue>(
     {} as IInputValue,
   );
-
-  useEffect(() => {
-    setSelectValue({
-      index,
-      typeChange: "selectValue",
-      value: filters[index].selectValue,
-    } as IInputValue);
-  }, [optionsToMultiSelect[index]]);
-  useEffect(() => {
-    setInputValue({} as IInputValue);
-  }, [options]);
 
   const debouncedSelectValue = useDebounce(selectValue, 500);
 
@@ -118,6 +108,7 @@ function ConditionFilterComponent({
               isSearchable
               loadingOptions={loadingOptions}
               item={item}
+              filters={filters}
             />
           )}
         </FilterItem>

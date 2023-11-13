@@ -201,8 +201,13 @@ export function FilterContextProvider({
 
   useEffect(() => {
     function applyConditions(): any {
+      console.log(
+        "🚀 ~ file: index.tsx:227 ~ toConditions ~ filters:",
+        filters,
+      );
+
       const toConditions = filters.map((filter) => {
-        if (filter.value) {
+        if (filter?.value) {
           const converted = {
             field: filter.column.value,
             action: filter.condition.value,
@@ -210,8 +215,8 @@ export function FilterContextProvider({
           };
           return converted;
         }
-        if (filter.selectValue) {
-          const selecteds: string[] = filter.selectValue.map((item: any) => {
+        if (filter?.selectValue) {
+          const selecteds: string[] = filter?.selectValue?.map((item: any) => {
             return item.value;
           });
 
