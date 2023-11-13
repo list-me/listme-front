@@ -166,11 +166,12 @@ export const ProductContextProvider = ({
           const [fileName, fileType] = file.name.split(".");
 
           let signedUrl: SignedUrlResponse;
-          if (
-            isCollectionCompany(companyId) &&
-            optionals?.brand &&
-            optionals?.name
-          ) {
+          if (isCollectionCompany(companyId)) {
+            if (!optionals?.brand || !optionals?.name) {
+              // eslint-disable-next-line @typescript-eslint/no-throw-literal
+              throw "Marca e Nome devem estar preenchidos";
+            }
+
             signedUrl = await getSignedUrl(fileName, fileType, bucketUrl, {
               brand: optionals.brand,
               name: optionals.name,
@@ -186,8 +187,11 @@ export const ProductContextProvider = ({
         await Promise.all(uploadPromises);
         return filesNames;
       } catch (error) {
-        console.log({ error });
-        throw new Error("Ocorreu um erro ao realizar o upload dos arquivos");
+        if (typeof error === "string") {
+          toast.warning(error);
+        } else {
+          throw new Error("Ocorreu um erro ao realizar o upload dos arquivos");
+        }
       }
     },
     [],

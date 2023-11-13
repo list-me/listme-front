@@ -26,11 +26,11 @@ export const fileRequests = {
     optionals?: { brand?: string; name?: string },
   ): Promise<SignedUrlResponse> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
+    let url: string = `template/signed-url?file_type=${fileType}&template_id=${templateId}&file_name=${fileName}`;
 
-    const url: string = `template/signed-url?fileType=${fileType}&templateId=${templateId}&fileName=${fileName}`;
-
-    if (optionals?.brand && optionals.name)
-      url.concat(`&brand=${optionals.brand}&name=${optionals.name}`);
+    if (optionals?.brand && optionals?.name) {
+      url = `template/signed-url?file_type=${fileType}&template_id=${templateId}&file_name=${fileName}&brand=${optionals.brand}&name=${optionals.name}`;
+    }
 
     const response = await api.get(url, {
       headers: {
