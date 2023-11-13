@@ -59,11 +59,13 @@ function SingleSelect({
   index: number;
   type: "selectValue" | "value" | "column" | "condition";
   item: IFilter;
-  getOptions: (currentItem: IFilter, index: number) => any;
+  // eslint-disable-next-line react/require-default-props
+  getOptions: ((currentItem: IFilter, index: number) => any) | undefined;
   select: IColumnFilter;
   // eslint-disable-next-line react/require-default-props
   isSearchable?: boolean;
 }): JSX.Element {
+  console.log("🚀 ~ file: index.tsx:67 ~ select:", select);
   const [currentOptions, setCurrentOptions] = useState<IOption[]>(options);
   const [searchValue, setSearchValue] = useState<string>("");
   const debaunceSearchValue = useDebounce(searchValue, 500);
@@ -75,11 +77,11 @@ function SingleSelect({
       });
       setCurrentOptions(filteredOptions);
     }
-    if (debaunceSearchValue) filterOptions(debaunceSearchValue);
+    if (isSearchable && debaunceSearchValue) filterOptions(debaunceSearchValue);
     else {
       setCurrentOptions(options);
     }
-  }, [debaunceSearchValue, options]);
+  }, [debaunceSearchValue, isSearchable, options]);
 
   const ICON_HEADER = useMemo(
     () => ({
@@ -139,6 +141,7 @@ function SingleSelect({
       <SingleSelectValue
         active={!!select?.label}
         onClick={() => setOpenedMenu(true)}
+        isDisabled={!(currentOptions?.length > 0)}
       >
         <div>
           {select.type && getIconByType(select.type as any)}
@@ -162,20 +165,20 @@ function SingleSelect({
             </div>
           )}
           <div className="optionsContainer">
-            {sortSelectedFirst(select, currentOptions).map((opt) => (
+            {sortSelectedFirst(select, currentOptions)?.map((opt) => (
               <Option
                 key={opt.value}
                 onClick={() => {
                   changeValue(opt, index, type);
-                  getOptions(item, index);
+                  if (getOptions !== undefined) getOptions(item, index);
                   setSearchValue("");
                   setCurrentOptions(options);
                   setOpenedMenu(false);
                 }}
-                active={opt.value === select.value}
+                active={opt?.value === select?.value}
               >
-                {getIconByType(opt.type as any)}
-                {opt.label}
+                {getIconByType(opt?.type as any)}
+                {opt?.label}
               </Option>
             ))}
           </div>

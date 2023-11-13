@@ -102,7 +102,7 @@ export const FilterCenterContent = styled.div`
 export const Filter = styled.div<{ smallBefore?: boolean; small?: boolean }>`
   display: grid;
   grid-template-columns: ${(props) =>
-    !props.small ? "1fr 1fr 0px 48px" : "1fr 1fr 1fr 47px"};
+    !props.small ? "1fr 1fr 48px" : "1fr 1fr 1fr 48px"};
   padding-left: 24px;
   gap: 16px;
   margin-top: 16px;

@@ -83,7 +83,7 @@ function ConditionFilterComponent({
           index={index}
           type="condition"
           item={item}
-          getOptions={getOptions}
+          getOptions={undefined}
           select={filters[index].condition}
         />
       </FilterItem>

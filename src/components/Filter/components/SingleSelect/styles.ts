@@ -29,7 +29,10 @@ export const ContainerSingleSelect = styled.button<{ openedMenu: boolean }>`
     background-color: #3818d9;
   }
 `;
-export const SingleSelectValue = styled.p<{ active: boolean }>`
+export const SingleSelectValue = styled.p<{
+  active: boolean;
+  isDisabled?: boolean;
+}>`
   display: flex;
   padding: 0 16px;
   height: 48px;
@@ -49,6 +52,8 @@ export const SingleSelectValue = styled.p<{ active: boolean }>`
       stroke: #000;
     }
   }
+  opacity: ${(props) => (props.isDisabled ? "0.5" : "1")};
+  pointer-events: ${(props) => (props.isDisabled ? "none" : "initial")};
 `;
 export const MenuOptions = styled.p`
   width: 100%;
