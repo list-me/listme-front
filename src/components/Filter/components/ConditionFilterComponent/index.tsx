@@ -57,6 +57,7 @@ function ConditionFilterComponent({
       key={item.id}
       smallBefore={index === 0}
       small={!!item.condition.input}
+      trash={filters.length > 1}
     >
       <FilterItem>
         <SingleSelect
@@ -112,9 +113,11 @@ function ConditionFilterComponent({
           )}
         </FilterItem>
       )}
-      <TrashButton onClick={() => removeFilter(filters, index)}>
-        <TrashIcon />
-      </TrashButton>
+      {filters.length > 1 && (
+        <TrashButton onClick={() => removeFilter(filters, index)}>
+          <TrashIcon />
+        </TrashButton>
+      )}
     </Filter>
   );
 }

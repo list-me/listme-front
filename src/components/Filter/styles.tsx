@@ -114,10 +114,20 @@ export const FilterCenterContent = styled.div`
     border: 2px solid transparent;
   }
 `;
-export const Filter = styled.div<{ smallBefore?: boolean; small?: boolean }>`
+export const Filter = styled.div<{
+  smallBefore?: boolean;
+  small?: boolean;
+  trash?: boolean;
+}>`
   display: grid;
   grid-template-columns: ${(props) =>
-    !props.small ? "1fr 1fr 48px" : "1fr 1fr 1fr 48px"};
+    !props.small
+      ? props.trash
+        ? "1fr 1fr 48px"
+        : "1fr 1fr"
+      : props.trash
+      ? "1fr 1fr 1fr 48px"
+      : "1fr 1fr 1fr"};
   padding-left: 24px;
   gap: 16px;
   margin-top: 16px;
