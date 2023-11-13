@@ -66,9 +66,20 @@ function FilterComponent(): JSX.Element {
 
   async function applyFilter(currentConditions: IConditions[]): Promise<any> {
     if (currentConditions[0]) {
-      const conditionsRemovedEmpty = currentConditions.filter((cond) => {
-        return cond?.field;
-      });
+      const conditionsRemovedEmpty = currentConditions
+        .filter((cond) => {
+          return cond?.field;
+        })
+        .map((cond) => {
+          if (cond?.action === "is_empty" || cond?.action === "is_not_empty") {
+            const newCond = {
+              field: cond.field,
+              action: cond.action,
+            };
+            return newCond;
+          }
+          return cond;
+        });
 
       try {
         const headerTableToGetProducts = (await handleGetTemplate(
@@ -86,7 +97,7 @@ function FilterComponent(): JSX.Element {
             conditionsRemovedEmpty,
             operator.value,
           );
-          setConditionsFilter(conditionsRemovedEmpty);
+          setConditionsFilter(conditionsRemovedEmpty as IConditions[]);
           setOpenedFilter(false);
           setFilterStatus(true);
           return product;
