@@ -194,7 +194,7 @@ function FilterComponent(): JSX.Element {
           Filtrar produtos
         </Button>
         <ButtonClearAll onClick={() => setFilters([defaultFilter])}>
-          {filters.length > 0 && (
+          {filters[0]?.condition?.value && (
             <>
               <TrashIcon />
               Limpar todos os filtros
