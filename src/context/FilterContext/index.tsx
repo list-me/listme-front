@@ -78,16 +78,15 @@ export function FilterContextProvider({
 
   const getProducts = useCallback(async (templateId: string, key?: string) => {
     setLoadingOptions(true);
-    const { data } = await productRequests.list(
-      { page: 0, limit: 100, keyword: key },
-      templateId,
-    );
-    setLoadingOptions(false);
+    const { data } = await productRequests
+      .list({ page: 0, limit: 100, keyword: key }, templateId)
+      .finally(() => setLoadingOptions(false));
     return data.products;
   }, []);
 
   function removeFilter(currentFilters: IFilter[], index: number): void {
     const newFilters = currentFilters.filter((_, i) => i !== index);
+
     setFilters(newFilters);
   }
 

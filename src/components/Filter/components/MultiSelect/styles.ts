@@ -109,14 +109,33 @@ export const Option = styled.p<{ active: boolean }>`
     background: #e2e0ff;
   }
 `;
+export const LoadingData = styled.p`
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #495057;
+  border-radius: 8px;
+  text-align: start;
+`;
 export const SearchOption = styled.input`
   border-radius: 8px;
-  background: var(--gray-gray-1, #f1f3f5);
+  background: #f1f3f5;
   height: 45px;
   border: none;
   padding: 12px;
   width: 100%;
   color: #000;
   font-size: 14px;
+  font-weight: 400;
+`;
+export const Alert = styled.p`
+  color: #868e96;
+  text-align: start;
+  font-size: 14px;
+  margin-left: 16px;
   font-weight: 400;
 `;

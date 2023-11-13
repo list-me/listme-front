@@ -16,6 +16,7 @@ function ConditionFilterComponent({
   options,
   optionsToMultiSelect,
   removeFilter,
+  loadingOptions,
 }: IConditionFilterComponent): JSX.Element {
   const [inputValue, setInputValue] = useState<IInputValue>({} as IInputValue);
   const debouncedInputValue = useDebounce(inputValue, 500);
@@ -111,6 +112,7 @@ function ConditionFilterComponent({
               type="selectValue"
               select={selectValue}
               isSearchable
+              loadingOptions={loadingOptions}
             />
           )}
         </FilterItem>

@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, {
   useCallback,
   useEffect,
@@ -11,6 +12,8 @@ import {
   Option,
   SearchOption,
   MultiSelectValue,
+  LoadingData,
+  Alert,
 } from "./styles";
 import { ReactComponent as DownIcon } from "../../../../assets/chevron-down-small.svg";
 import { ReactComponent as TextIcon } from "../../../../assets/icons/headers/text-icon.svg";
@@ -43,6 +46,7 @@ function MultiSelect({
   type,
   isSearchable,
   select,
+  loadingOptions,
 }: {
   options: { value: string; label: string }[];
   placeHolder: string;
@@ -52,6 +56,8 @@ function MultiSelect({
   select: IInputValue;
   // eslint-disable-next-line react/require-default-props
   isSearchable?: boolean;
+  // eslint-disable-next-line react/require-default-props
+  loadingOptions?: boolean;
 }): JSX.Element {
   const idsSelecteds = select?.value?.map(
     (itemSelected: { value: string; label: string }) => {
@@ -161,7 +167,10 @@ function MultiSelect({
             </div>
           )}
           <div className="optionsContainer">
-            {!!currentOptions?.length &&
+            {loadingOptions ? (
+              <LoadingData>Buscando Dados...</LoadingData>
+            ) : (
+              !!currentOptions?.length &&
               currentOptions?.map((opt) => (
                 <Option
                   key={opt?.value}
@@ -172,8 +181,15 @@ function MultiSelect({
                 >
                   {opt?.label}
                 </Option>
-              ))}
+              ))
+            )}
           </div>
+          {currentOptions?.length === 0 && (
+            <Alert>Nenhum item encontrado</Alert>
+          )}
+          {currentOptions?.length === 100 && (
+            <Alert>Mostrando os 100 primeiros</Alert>
+          )}
         </MenuOptions>
       )}
     </ContainerMultiSelect>
