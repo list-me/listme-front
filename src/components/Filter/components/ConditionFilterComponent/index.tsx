@@ -57,8 +57,12 @@ function ConditionFilterComponent({
   }
 
   return (
-    <Filter key={item.id} smallBefore={index === 0}>
-      <FilterItem small={!!item.condition.input} trash={filters.length > 1}>
+    <Filter
+      key={item.id}
+      smallBefore={index === 0}
+      small={!!item.condition.input}
+    >
+      <FilterItem>
         <SingleSelect
           placeHolder="Selecione a coluna"
           options={options}
@@ -71,7 +75,7 @@ function ConditionFilterComponent({
           isSearchable
         />
       </FilterItem>
-      <FilterItem small={!!item.condition.input} trash={filters.length > 1}>
+      <FilterItem>
         <SingleSelect
           placeHolder="Condição"
           options={typesOptions[item.column.type]}
@@ -84,7 +88,7 @@ function ConditionFilterComponent({
         />
       </FilterItem>
       {item.condition.input && (
-        <FilterItem small={!!item.condition.input} trash={filters.length > 1}>
+        <FilterItem>
           {item.condition.input === "text" ? (
             <InputFilter
               type="text"

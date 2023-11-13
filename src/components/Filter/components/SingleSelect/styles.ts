@@ -37,6 +37,7 @@ export const SingleSelectValue = styled.p<{ active: boolean }>`
   margin: 0;
   border-radius: 8px;
   width: 100%;
+  text-align: start;
   > div {
     color: ${(props) => (props.active ? "#000" : "#868e96")};
     font-size: 14px;

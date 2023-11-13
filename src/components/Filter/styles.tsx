@@ -99,8 +99,10 @@ export const FilterCenterContent = styled.div`
     border: 2px solid transparent;
   }
 `;
-export const Filter = styled.div<{ smallBefore?: boolean }>`
-  display: flex;
+export const Filter = styled.div<{ smallBefore?: boolean; small?: boolean }>`
+  display: grid;
+  grid-template-columns: ${(props) =>
+    !props.small ? "1fr 1fr 0px 48px" : "1fr 1fr 1fr 47px"};
   padding-left: 24px;
   gap: 16px;
   margin-top: 16px;
@@ -121,7 +123,9 @@ export const Filter = styled.div<{ smallBefore?: boolean }>`
   }
 `;
 export const FilterItem = styled.div<{ small?: boolean; trash?: boolean }>`
-  width: ${(props) => (props.small ? (props.trash ? "28%" : "31.5%") : "50%")};
+  display: flex;
+  flex-grow: 1;
+  width: auto;
 `;
 export const NewFilter = styled.button<{ filters: IFilter[] }>`
   display: flex;
