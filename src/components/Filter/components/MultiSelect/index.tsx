@@ -127,13 +127,13 @@ function MultiSelect({
     if (!select.value) {
       changeValue({ value: [option], index, typeChange: type });
     } else {
-      const includes = select.value?.some(
-        (selectedOption: any) => selectedOption.value.value === option.value,
-      );
+      const includes = select.value?.some((selectedOption: any) => {
+        return selectedOption.value === option.value;
+      });
 
       if (includes) {
         const updatedOptions = select?.value?.filter(
-          (selectedOption: any) => selectedOption.value.value !== option.value,
+          (selectedOption: any) => selectedOption.value !== option.value,
         );
         changeValue({ value: updatedOptions, index, typeChange: type });
       } else {
