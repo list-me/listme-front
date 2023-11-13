@@ -66,6 +66,10 @@ function FilterComponent(): JSX.Element {
 
   async function applyFilter(currentConditions: IConditions[]): Promise<any> {
     if (currentConditions[0]) {
+      const conditionsRemovedEmpty = currentConditions.filter((cond) => {
+        return cond?.field;
+      });
+
       try {
         const headerTableToGetProducts = (await handleGetTemplate(
           template.id,
@@ -79,10 +83,10 @@ function FilterComponent(): JSX.Element {
             0,
             100,
             "",
-            currentConditions,
+            conditionsRemovedEmpty,
             operator.value,
           );
-          setConditionsFilter(currentConditions);
+          setConditionsFilter(conditionsRemovedEmpty);
           setOpenedFilter(false);
           setFilterStatus(true);
           return product;
