@@ -47,7 +47,7 @@ export interface IFilter {
   column: IColumnFilter;
   condition: { label: string; value: string; input: "text" | "multi" | "" };
   value?: string;
-  selectValue: string[];
+  selectValue: { label: string; value: string }[];
   id: number;
 }
 

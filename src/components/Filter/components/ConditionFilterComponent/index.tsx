@@ -17,7 +17,6 @@ function ConditionFilterComponent({
   optionsToMultiSelect,
   removeFilter,
 }: IConditionFilterComponent): JSX.Element {
-  console.log("🚀 ~ file: index.tsx:20 ~ filters:", filters[index]);
   const [inputValue, setInputValue] = useState<IInputValue>({} as IInputValue);
   const debouncedInputValue = useDebounce(inputValue, 500);
   const [selectValue, setSelectValue] = useState<IInputValue>({
