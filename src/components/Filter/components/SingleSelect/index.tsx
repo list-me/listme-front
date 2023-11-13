@@ -47,6 +47,7 @@ function SingleSelect({
   item,
   getOptions,
   select,
+  isSearchable,
 }: {
   options: IOption[];
   placeHolder: string;
@@ -60,6 +61,7 @@ function SingleSelect({
   item: IFilter;
   getOptions: (currentItem: IFilter, index: number) => any;
   select: IColumnFilter;
+  isSearchable?: boolean;
 }): JSX.Element {
   const [currentOptions, setCurrentOptions] = useState<IOption[]>(options);
   const [searchValue, setSearchValue] = useState<string>("");
@@ -147,15 +149,17 @@ function SingleSelect({
       </SingleSelectValue>
       {openedMenu && (
         <MenuOptions>
-          <div className="searchContainer">
-            <SearchOption
-              placeholder="Busque..."
-              onChange={(e) => setSearchValue(e.target.value)}
-            />
-            <div className="searchIcon">
-              <SearchIcon />
+          {isSearchable && (
+            <div className="searchContainer">
+              <SearchOption
+                placeholder="Busque..."
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+              <div className="searchIcon">
+                <SearchIcon />
+              </div>
             </div>
-          </div>
+          )}
           <div className="optionsContainer">
             {sortSelectedFirst(select, currentOptions).map((opt) => (
               <Option

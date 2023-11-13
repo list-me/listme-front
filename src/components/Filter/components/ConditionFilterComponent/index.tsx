@@ -64,23 +64,21 @@ function ConditionFilterComponent({
           item={item}
           getOptions={getOptions}
           select={filters[index].column}
-        />
-        {/* <SelectFilter
           isSearchable
-          select={
-            filters[index].column.value ? filters[index].column : undefined
-          }
-          onChange={(e) => {
-            changeValue(e, index, "column");
-            getOptions(item, index);
-          }}
-          options={getColumnOptions(options)}
-          placeHolder="Selecione a coluna"
-          small
-        /> */}
+        />
       </FilterItem>
       <FilterItem small={!!item.condition.input} trash={filters.length > 1}>
-        <SelectFilter
+        <SingleSelect
+          placeHolder="Condição"
+          options={typesOptions[item.column.type]}
+          changeValue={changeValue}
+          index={index}
+          type="condition"
+          item={item}
+          getOptions={getOptions}
+          select={filters[index].condition}
+        />
+        {/* <SelectFilter
           isSearchable={false}
           isDisabled={!item.column.type}
           select={
@@ -92,7 +90,7 @@ function ConditionFilterComponent({
           options={typesOptions[item.column.type]}
           placeHolder="Condição"
           small
-        />
+        /> */}
       </FilterItem>
       {item.condition.input && (
         <FilterItem small={!!item.condition.input} trash={filters.length > 1}>
