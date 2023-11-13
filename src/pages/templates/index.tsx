@@ -20,7 +20,7 @@ function Template(): JSX.Element {
 
   useEffect(() => {
     setFilters([defaultFilter]);
-  }, []);
+  }, [defaultFilter, setFilters]);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]): void => {
     setSelectedRowKeys(newSelectedRowKeys);

@@ -108,17 +108,17 @@ function FilterComponent(): JSX.Element {
     }
   }
 
-  function updateFilter(): void {
-    const valuesConditions = conditionsFilter.map((cond) => {
-      return cond?.value;
-    });
-    if (valuesConditions.length > 0 && valuesConditions[0] !== undefined) {
-      const filteredFilter = filters.filter((filt) => {
-        return valuesConditions.includes(filt.value);
-      });
-      setFilters(filteredFilter);
-    }
-  }
+  // function updateFilter(): void {
+  //   const valuesConditions = conditionsFilter.map((cond) => {
+  //     return cond?.value;
+  //   });
+  //   if (valuesConditions.length > 0 && valuesConditions[0] !== undefined) {
+  //     const filteredFilter = filters.filter((filt) => {
+  //       return valuesConditions.includes(filt.value);
+  //     });
+  //     setFilters(filteredFilter);
+  //   }
+  // }
 
   return (
     <ContainerFilter>
@@ -126,7 +126,7 @@ function FilterComponent(): JSX.Element {
         onClick={() => {
           setOpenedFilter(false);
           setConditions(conditionsFilter);
-          updateFilter();
+          // updateFilter();
         }}
       />
       <SidebarFilter>
@@ -136,7 +136,7 @@ function FilterComponent(): JSX.Element {
             onClick={() => {
               setOpenedFilter(false);
               setConditions(conditionsFilter);
-              updateFilter();
+              // updateFilter();
             }}
           >
             <CloseIcon />

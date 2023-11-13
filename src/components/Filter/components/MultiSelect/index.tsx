@@ -22,11 +22,7 @@ import { ReactComponent as RadioIcon } from "../../../../assets/icons/headers/ra
 import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers/relation-icon.svg";
 import { ReactComponent as SearchIcon } from "../../../../assets/search-gray.svg";
 import useOutsideClick from "../../../../hooks/useOnClickOutside/useOnClickOutside";
-import {
-  IColumnFilter,
-  IFilter,
-  IInputValue,
-} from "../../../../context/FilterContext/FilterContextType";
+import { IInputValue } from "../../../../context/FilterContext/FilterContextType";
 import useDebounce from "../../../../hooks/useDebounce/useDebounce";
 
 enum IconType {
@@ -45,23 +41,17 @@ function MultiSelect({
   changeValue,
   index,
   type,
-  // item,
-  // getOptions,
   isSearchable,
   select,
-}: // currentValue,
-{
+}: {
   options: { value: string; label: string }[];
   placeHolder: string;
   changeValue: React.Dispatch<React.SetStateAction<IInputValue>>;
   index: number;
   type: "selectValue" | "value" | "column" | "condition";
-  // item: IFilter;
-  // getOptions: (currentItem: IFilter, index: number) => any;
   select: IInputValue;
   // eslint-disable-next-line react/require-default-props
   isSearchable?: boolean;
-  // currentValue: IInputValue[];
 }): JSX.Element {
   const idsSelecteds = select?.value?.map(
     (itemSelected: { value: string; label: string }) => {
@@ -119,15 +109,15 @@ function MultiSelect({
 
   const [optionsSelected, setOptionsSelected] = useState<
     { value: string; label: string }[]
-  >([]);
+  >(select?.value?.length > 0 ? select.value : []);
 
   function selectOption(option: { value: string; label: string }): void {
-    const includes = optionsSelected.some(
+    const includes = optionsSelected?.some(
       (selectedOption) => selectedOption.value === option.value,
     );
 
     if (includes) {
-      const updatedOptions = optionsSelected.filter(
+      const updatedOptions = optionsSelected?.filter(
         (selectedOption) => selectedOption.value !== option.value,
       );
       setOptionsSelected(updatedOptions);
