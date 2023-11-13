@@ -33,7 +33,6 @@ function FilterComponent(): JSX.Element {
     setFilters,
     defaultFilter,
     changeValue,
-    getOptions,
     optionsToMultiSelect,
     conditions,
     setConditions,
@@ -170,7 +169,6 @@ function FilterComponent(): JSX.Element {
               index={index}
               filters={filters}
               changeValue={changeValue}
-              getOptions={getOptions}
               options={options}
               optionsToMultiSelect={optionsToMultiSelect}
               removeFilter={removeFilter}

@@ -22,10 +22,7 @@ import { ReactComponent as RadioIcon } from "../../../../assets/icons/headers/ra
 import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers/relation-icon.svg";
 import { ReactComponent as SearchIcon } from "../../../../assets/search-gray.svg";
 import useOutsideClick from "../../../../hooks/useOnClickOutside/useOnClickOutside";
-import {
-  IColumnFilter,
-  IFilter,
-} from "../../../../context/FilterContext/FilterContextType";
+import { IColumnFilter } from "../../../../context/FilterContext/FilterContextType";
 import useDebounce from "../../../../hooks/useDebounce/useDebounce";
 
 enum IconType {
@@ -44,8 +41,6 @@ function SingleSelect({
   changeValue,
   index,
   type,
-  item,
-  getOptions,
   select,
   isSearchable,
 }: {
@@ -58,8 +53,6 @@ function SingleSelect({
   ) => void;
   index: number;
   type: "selectValue" | "value" | "column" | "condition";
-  item: IFilter;
-  getOptions: ((currentItem: IFilter, index: number) => any) | undefined;
   select: IColumnFilter;
   // eslint-disable-next-line react/require-default-props
   isSearchable?: boolean;
@@ -148,7 +141,6 @@ function SingleSelect({
                   setOpenedMenu(false);
                   setCurrentOptions(options);
                   setSearchValue("");
-                  if (getOptions !== undefined) getOptions(item, index);
                 }}
                 active={opt?.value === select?.value}
               >

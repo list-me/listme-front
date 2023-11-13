@@ -80,7 +80,7 @@ function MultiSelect({
 
   useEffect(() => {
     function filterOptions(value: string): void {
-      const filteredOptions = currentOptions.filter((fOptions) => {
+      const filteredOptions = currentOptions?.filter((fOptions) => {
         return fOptions.label.toLowerCase().includes(value.toLowerCase());
       });
       if (filteredOptions.length > 0) setCurrentOptions(filteredOptions);
@@ -90,7 +90,7 @@ function MultiSelect({
   }, [debaunceSearchValue]);
 
   useEffect(() => {
-    if (options.length > 0) setCurrentOptions(options);
+    if (options?.length > 0) setCurrentOptions(options);
   }, [options]);
 
   const ICON_HEADER = useMemo(

@@ -12,7 +12,6 @@ function ConditionFilterComponent({
   index,
   filters,
   changeValue,
-  getOptions,
   options,
   optionsToMultiSelect,
   removeFilter,
@@ -68,8 +67,6 @@ function ConditionFilterComponent({
           changeValue={changeValue}
           index={index}
           type="column"
-          item={item}
-          getOptions={getOptions}
           select={filters[index].column}
           isSearchable
         />
@@ -81,8 +78,6 @@ function ConditionFilterComponent({
           changeValue={changeValue}
           index={index}
           type="condition"
-          item={item}
-          getOptions={undefined}
           select={filters[index].condition}
         />
       </FilterItem>

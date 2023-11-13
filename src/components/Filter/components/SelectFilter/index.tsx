@@ -1,18 +1,12 @@
 /* eslint-disable no-nested-ternary */
 import Select from "react-select";
-import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  ContainerSelect,
-  FakePlaceHolder,
-  FakeValue,
-  customStyles,
-} from "./styles";
+import { useEffect, useRef, useState } from "react";
+import { ContainerSelect, FakeValue, customStyles } from "./styles";
 import CustomOption from "../../../Select/components/Option";
 import CustomInputFilter from "../CustomInputFilter";
 import OptionMulti from "../OptionMulti";
 import useDebounce from "../../../../hooks/useDebounce/useDebounce";
 import { useFilterContext } from "../../../../context/FilterContext";
-import useOutsideClick from "../../../../hooks/useOnClickOutside/useOnClickOutside";
 
 const SelectFilter = ({
   select,
