@@ -25,8 +25,12 @@ import { ReactComponent as RadioIcon } from "../../../../assets/icons/headers/ra
 import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers/relation-icon.svg";
 import { ReactComponent as SearchIcon } from "../../../../assets/search-gray.svg";
 import useOutsideClick from "../../../../hooks/useOnClickOutside/useOnClickOutside";
-import { IInputValue } from "../../../../context/FilterContext/FilterContextType";
+import {
+  IFilter,
+  IInputValue,
+} from "../../../../context/FilterContext/FilterContextType";
 import useDebounce from "../../../../hooks/useDebounce/useDebounce";
+import { useFilterContext } from "../../../../context/FilterContext";
 
 enum IconType {
   Text = "text",
@@ -47,6 +51,7 @@ function MultiSelect({
   isSearchable,
   select,
   loadingOptions,
+  item,
 }: {
   options: { value: string; label: string }[];
   placeHolder: string;
@@ -58,6 +63,7 @@ function MultiSelect({
   isSearchable?: boolean;
   // eslint-disable-next-line react/require-default-props
   loadingOptions?: boolean;
+  item: IFilter;
 }): JSX.Element {
   const idsSelecteds = select?.value?.map(
     (itemSelected: { value: string; label: string }) => {
@@ -70,18 +76,22 @@ function MultiSelect({
   const [searchValue, setSearchValue] = useState<string>("");
   const debaunceSearchValue = useDebounce(searchValue, 500);
 
+  const { getOptions } = useFilterContext();
+
   useEffect(() => {
     function filterOptions(value: string): void {
-      const filteredOptions = options.filter((fOptions) => {
+      const filteredOptions = currentOptions.filter((fOptions) => {
         return fOptions.label.toLowerCase().includes(value.toLowerCase());
       });
-      setCurrentOptions(filteredOptions);
+      if (filteredOptions.length > 0) setCurrentOptions(filteredOptions);
+      else getOptions(item, index, debaunceSearchValue, true);
     }
-    if (debaunceSearchValue) filterOptions(debaunceSearchValue);
-    else {
-      setCurrentOptions(options);
-    }
-  }, [debaunceSearchValue, options]);
+    if (debaunceSearchValue.length > 0) filterOptions(debaunceSearchValue);
+  }, [debaunceSearchValue]);
+
+  useEffect(() => {
+    if (options.length > 0) setCurrentOptions(options);
+  }, [options]);
 
   const ICON_HEADER = useMemo(
     () => ({

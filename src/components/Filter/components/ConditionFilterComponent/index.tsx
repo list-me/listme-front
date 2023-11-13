@@ -113,6 +113,7 @@ function ConditionFilterComponent({
               select={selectValue}
               isSearchable
               loadingOptions={loadingOptions}
+              item={item}
             />
           )}
         </FilterItem>
