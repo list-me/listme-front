@@ -18,7 +18,7 @@ function ConditionFilterComponent({
   loadingOptions,
 }: IConditionFilterComponent): JSX.Element {
   const [inputValue, setInputValue] = useState<IInputValue>({} as IInputValue);
-  const debouncedInputValue = useDebounce(inputValue, 500);
+  const debouncedInputValue = useDebounce(inputValue, 250);
   const [selectValue, setSelectValue] = useState<IInputValue>(
     {} as IInputValue,
   );
@@ -26,12 +26,11 @@ function ConditionFilterComponent({
   const debouncedSelectValue = useDebounce(selectValue, 500);
 
   useEffect(() => {
-    if (debouncedInputValue.value)
-      changeValue(
-        debouncedInputValue.value,
-        debouncedInputValue.index,
-        debouncedInputValue.typeChange,
-      );
+    changeValue(
+      debouncedInputValue.value,
+      debouncedInputValue.index,
+      debouncedInputValue.typeChange,
+    );
   }, [changeValue, debouncedInputValue]);
   useEffect(() => {
     if (debouncedSelectValue.value)
