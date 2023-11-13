@@ -3,24 +3,13 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
 import { DropzoneRendererProps } from "./Dropzone";
-import {
-  Container,
-  Image,
-  Loader,
-  Zone,
-  NewContainer,
-  Content,
-  ModalHeader,
-} from "./styles";
+import { Container, Image, NewContainer, Content, ModalHeader } from "./styles";
 import { ImageContextProvider, imageContext } from "../../context/images";
 import { ReactComponent as CloseModalIcon } from "../../assets/close-gray.svg";
 import { ReactComponent as CloseIcon } from "../../assets/close-xsmall-blue.svg";
 import { ReactComponent as AddIcon } from "../../assets/add-gray-large.svg";
 
-import { ReactComponent as FileIcon } from "../../assets/file.svg";
-import { productContext } from "../../context/products";
 import { fileRequests } from "../../services/apis/requests/file";
-import { DEFAULT_FILE_ICON_SRC } from "../../constants/default.styles";
 
 import Modal from "../Modal";
 import { Loading } from "../Loading";

@@ -16,7 +16,12 @@ function customRendererFile(
   value: any,
   hotRef: React.RefObject<HotTable>,
   loadingRef: React.RefObject<HTMLDivElement>,
-  uploadImages: (files: File[], bucketUrl: string) => Promise<void | string[]>,
+  uploadImages: (
+    files: File[],
+    bucketUrl: string,
+    companyId: string,
+    optionals?: { brand?: string; name?: string },
+  ) => Promise<void | string[]>,
   template: any,
 ): void {
   td.className = "file-cell";
@@ -68,9 +73,13 @@ function customRendererFile(
         if (event.dataTransfer?.files.length) {
           const { files } = event.dataTransfer;
           const parsedFiles: Array<File> = Array.from(files);
+
+          console.log({ template, _instance });
+
           const newFiles: Array<string> | void = await uploadImages(
             parsedFiles,
             template.id,
+            template.companyId,
           );
 
           if (newFiles && newFiles.length) {

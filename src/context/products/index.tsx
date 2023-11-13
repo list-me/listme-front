@@ -21,6 +21,7 @@ import {
   ITemplate,
 } from "./product.context";
 import { fileRequests } from "../../services/apis/requests/file";
+import { isCollectionCompany } from "../../utils";
 
 export interface ICustom {
   show?: boolean;
@@ -79,6 +80,8 @@ interface ITypeProductContext {
   uploadImages: (
     files: Array<File>,
     bucketUrl: string,
+    companyId: string,
+    optionals?: { brand?: string; name?: string },
   ) => Promise<Array<string> | void>;
   customFields: ICustomField[];
 }
@@ -136,18 +139,40 @@ export const ProductContextProvider = ({
     fileName: string,
     fileType: string,
     templateId: string,
+    optionals?: { brand?: string; name?: string },
   ): Promise<SignedUrlResponse> => {
-    return fileRequests.getSignedUrl(fileName, fileType, templateId);
+    return fileRequests.getSignedUrl(fileName, fileType, templateId, {
+      brand: optionals?.brand,
+      name: optionals?.name,
+    });
   };
 
   const uploadImages = useCallback(
-    async (files: File[], bucketUrl: string): Promise<string[] | void> => {
+    async (
+      files: File[],
+      bucketUrl: string,
+      companyId: string,
+      optionals?: { brand?: string; name?: string },
+    ): Promise<string[] | void> => {
       try {
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {
           const [fileName, fileType] = file.name.split(".");
 
-          const signedUrl = await getSignedUrl(fileName, fileType, bucketUrl);
+          let signedUrl: SignedUrlResponse;
+          if (
+            isCollectionCompany(companyId) &&
+            optionals?.brand &&
+            optionals?.name
+          ) {
+            signedUrl = await getSignedUrl(fileName, fileType, bucketUrl, {
+              brand: optionals.brand,
+              name: optionals.name,
+            });
+          } else {
+            signedUrl = await getSignedUrl(fileName, fileType, bucketUrl);
+          }
+
           filesNames.push(signedUrl.access_url);
           return fileRequests.uploadFile(file, signedUrl.url);
         });
@@ -161,10 +186,6 @@ export const ProductContextProvider = ({
     },
     [],
   );
-
-  const handleActiveDrag = (): void => {
-    // setIsDragActive(true);
-  };
 
   const handleUpdateTemplate = (_field: any) => {};
 
