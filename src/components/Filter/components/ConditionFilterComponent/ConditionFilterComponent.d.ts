@@ -3,14 +3,14 @@ interface IConditionFilterComponent {
   index: number;
   filters: IFilter[];
   changeValue: (
-    e: any,
+    value: any,
     index: number,
     typeChange: "value" | "column" | "condition" | "selectValue",
   ) => void;
   getOptions: (currentItem: IFilter, index: number) => any;
   typesOptions: ITypes;
   options: IOption[];
-  optionsToMultiSelect: any;
+  optionsToMultiSelect: { value: string; label: string }[][];
   removeFilter: (currentFilters: IFilter[], index: number) => void;
   loadingOptions?: boolean;
 }

@@ -6,11 +6,11 @@ import React, {
   useState,
 } from "react";
 import {
-  ContainerSingleSelect,
+  ContainerMultiSelect,
   MenuOptions,
   Option,
   SearchOption,
-  SingleSelectValue,
+  MultiSelectValue,
 } from "./styles";
 import { ReactComponent as DownIcon } from "../../../../assets/chevron-down-small.svg";
 import { ReactComponent as TextIcon } from "../../../../assets/icons/headers/text-icon.svg";
@@ -25,6 +25,7 @@ import useOutsideClick from "../../../../hooks/useOnClickOutside/useOnClickOutsi
 import {
   IColumnFilter,
   IFilter,
+  IInputValue,
 } from "../../../../context/FilterContext/FilterContextType";
 import useDebounce from "../../../../hooks/useDebounce/useDebounce";
 
@@ -38,33 +39,38 @@ enum IconType {
   Relation = "relation",
 }
 
-function SingleSelect({
+function MultiSelect({
   options,
   placeHolder,
   changeValue,
   index,
   type,
-  item,
-  getOptions,
-  select,
+  // item,
+  // getOptions,
   isSearchable,
-}: {
-  options: IOption[];
+  select,
+}: // currentValue,
+{
+  options: { value: string; label: string }[];
   placeHolder: string;
-  changeValue: (
-    value: any,
-    index: number,
-    typeChange: "selectValue" | "value" | "column" | "condition",
-  ) => void;
+  changeValue: React.Dispatch<React.SetStateAction<IInputValue>>;
   index: number;
   type: "selectValue" | "value" | "column" | "condition";
-  item: IFilter;
-  getOptions: (currentItem: IFilter, index: number) => any;
-  select: IColumnFilter;
+  // item: IFilter;
+  // getOptions: (currentItem: IFilter, index: number) => any;
+  select: IInputValue;
   // eslint-disable-next-line react/require-default-props
   isSearchable?: boolean;
+  // currentValue: IInputValue[];
 }): JSX.Element {
-  const [currentOptions, setCurrentOptions] = useState<IOption[]>(options);
+  const idsSelecteds = select?.value?.map(
+    (itemSelected: { value: string; label: string }) => {
+      return itemSelected.value;
+    },
+  );
+
+  const [currentOptions, setCurrentOptions] =
+    useState<{ value: string; label: string }[]>(options);
   const [searchValue, setSearchValue] = useState<string>("");
   const debaunceSearchValue = useDebounce(searchValue, 500);
 
@@ -111,43 +117,46 @@ function SingleSelect({
     setSearchValue("");
   });
 
-  const sortSelectedFirst = (
-    selected: IColumnFilter,
-    optionsToSorted: IOption[],
-  ): IOption[] => {
-    if (optionsToSorted && optionsToSorted.length > 0) {
-      const sortedOptions = [...optionsToSorted]?.sort((a, b) => {
-        const aIsSelected = selected.value?.includes(a.value);
-        const bIsSelected = selected.value?.includes(b.value);
+  const [optionsSelected, setOptionsSelected] = useState<
+    { value: string; label: string }[]
+  >([]);
 
-        if (aIsSelected && !bIsSelected) {
-          return -1;
-        }
-        if (!aIsSelected && bIsSelected) {
-          return 1;
-        }
-        return 0;
-      });
+  function selectOption(option: { value: string; label: string }): void {
+    const includes = optionsSelected.some(
+      (selectedOption) => selectedOption.value === option.value,
+    );
 
-      return sortedOptions;
+    if (includes) {
+      const updatedOptions = optionsSelected.filter(
+        (selectedOption) => selectedOption.value !== option.value,
+      );
+      setOptionsSelected(updatedOptions);
+    } else {
+      const updatedOptions = [...optionsSelected, option];
+      setOptionsSelected(updatedOptions);
     }
-    return optionsToSorted;
-  };
+  }
+
+  useEffect(() => {
+    changeValue({ value: optionsSelected, index, typeChange: type });
+  }, [changeValue, index, optionsSelected, type]);
 
   return (
-    <ContainerSingleSelect ref={menuRef} openedMenu={openedMenu}>
-      <SingleSelectValue
-        active={!!select?.label}
+    <ContainerMultiSelect ref={menuRef} openedMenu={openedMenu}>
+      <MultiSelectValue
+        active={!!select?.value?.length}
         onClick={() => setOpenedMenu(true)}
       >
         <div>
-          {select.type && getIconByType(select.type as any)}
-          {select?.label || placeHolder}
+          {select.typeChange && getIconByType(select.typeChange as any)}
+          {select?.value?.length
+            ? `Selecionado(s): ${select?.value?.length}`
+            : placeHolder}
         </div>
         <div className="icon">
           <DownIcon />
         </div>
-      </SingleSelectValue>
+      </MultiSelectValue>
       {openedMenu && (
         <MenuOptions>
           {isSearchable && (
@@ -162,27 +171,23 @@ function SingleSelect({
             </div>
           )}
           <div className="optionsContainer">
-            {sortSelectedFirst(select, currentOptions).map((opt) => (
-              <Option
-                key={opt.value}
-                onClick={() => {
-                  changeValue(opt, index, type);
-                  getOptions(item, index);
-                  setSearchValue("");
-                  setCurrentOptions(options);
-                  setOpenedMenu(false);
-                }}
-                active={opt.value === select.value}
-              >
-                {getIconByType(opt.type as any)}
-                {opt.label}
-              </Option>
-            ))}
+            {!!currentOptions?.length &&
+              currentOptions?.map((opt) => (
+                <Option
+                  key={opt?.value}
+                  onClick={() => {
+                    selectOption(opt);
+                  }}
+                  active={idsSelecteds?.includes(opt?.value)}
+                >
+                  {opt?.label}
+                </Option>
+              ))}
           </div>
         </MenuOptions>
       )}
-    </ContainerSingleSelect>
+    </ContainerMultiSelect>
   );
 }
 
-export default SingleSelect;
+export default MultiSelect;

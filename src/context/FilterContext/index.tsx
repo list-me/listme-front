@@ -55,7 +55,7 @@ export function FilterContextProvider({
     ) => {
       setFilters((prevFilters) => {
         const newFilters = [...prevFilters];
-        newFilters[index][typeChange] = value;
+        if (newFilters[index]) newFilters[index][typeChange] = value;
 
         return newFilters;
       });
