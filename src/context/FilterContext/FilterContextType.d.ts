@@ -4,7 +4,11 @@ export interface FilterContextType {
   options: IOption[];
   filters: IFilter[];
   setFilters: React.Dispatch<React.SetStateAction<IFilter[]>>;
-  removeFilter: (currentFilters: IFilter[], index: number) => void;
+  removeFilter: (
+    currentFilters: IFilter[],
+    index: number,
+    type: string,
+  ) => void;
   defaultFilter: IFilter;
   getOptions: (
     currentItem: IFilter,

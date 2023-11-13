@@ -184,10 +184,24 @@ export function FilterContextProvider({
     [],
   );
 
-  function removeFilter(currentFilters: IFilter[], index: number): void {
+  function removeFilter(
+    currentFilters: IFilter[],
+    index: number,
+    type: string,
+  ): void {
     const newFilters = currentFilters.filter((_, i) => i !== index);
-
     setFilters(newFilters);
+    if (
+      type === "radio" ||
+      type === "list" ||
+      type === "checked" ||
+      type === "relation"
+    ) {
+      const newOptMulti = optionsToMultiSelect.filter(
+        (_: any, i: any) => i !== index,
+      );
+      setOptionsToMultiSelect(newOptMulti);
+    }
   }
 
   const options: IOption[] = headerTable

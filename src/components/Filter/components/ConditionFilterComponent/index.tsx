@@ -22,7 +22,6 @@ function ConditionFilterComponent({
   const [selectValue, setSelectValue] = useState<IInputValue>(
     {} as IInputValue,
   );
-
   const debouncedSelectValue = useDebounce(selectValue, 500);
 
   useEffect(() => {
@@ -113,7 +112,12 @@ function ConditionFilterComponent({
         </FilterItem>
       )}
       {filters.length > 1 && (
-        <TrashButton onClick={() => removeFilter(filters, index)}>
+        <TrashButton
+          onClick={() => {
+            console.log(item);
+            removeFilter(filters, index, item.column.type);
+          }}
+        >
           <TrashIcon />
         </TrashButton>
       )}
