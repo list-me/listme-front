@@ -54,7 +54,43 @@ export function FilterContextProvider({
     ) => {
       setFilters((prevFilters) => {
         const newFilters = [...prevFilters];
-        if (newFilters[index]) newFilters[index][typeChange] = value;
+        if (typeChange === "column") {
+          newFilters[index] = {
+            ...newFilters[index],
+            column: value,
+            condition: {
+              label: "",
+              value: "",
+              input: "",
+            },
+            value: "",
+            selectValue: [],
+          };
+        } else if (typeChange === "condition") {
+          newFilters[index] = {
+            ...newFilters[index],
+            column: newFilters[index].column,
+            condition: value,
+            value: "",
+            selectValue: [],
+          };
+        } else if (typeChange === "value") {
+          newFilters[index] = {
+            ...newFilters[index],
+            column: newFilters[index].column,
+            condition: newFilters[index].condition,
+            value,
+            selectValue: [],
+          };
+        } else if (typeChange === "selectValue") {
+          newFilters[index] = {
+            ...newFilters[index],
+            column: newFilters[index].column,
+            condition: newFilters[index].condition,
+            value: "",
+            selectValue: value,
+          };
+        }
 
         return newFilters;
       });
