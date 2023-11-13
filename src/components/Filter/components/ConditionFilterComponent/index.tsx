@@ -19,11 +19,13 @@ function ConditionFilterComponent({
 }: IConditionFilterComponent): JSX.Element {
   const [inputValue, setInputValue] = useState<IInputValue>({} as IInputValue);
   const debouncedInputValue = useDebounce(inputValue, 500);
-  const [selectValue, setSelectValue] = useState<IInputValue>({
-    index,
-    typeChange: "selectValue",
-    value: filters[index].selectValue,
-  } as IInputValue);
+  const [selectValue, setSelectValue] = useState<IInputValue>(
+    {} as IInputValue,
+  );
+
+  useEffect(() => {
+    setSelectValue({} as IInputValue);
+  }, [optionsToMultiSelect[index]]);
 
   const debouncedSelectValue = useDebounce(selectValue, 500);
 

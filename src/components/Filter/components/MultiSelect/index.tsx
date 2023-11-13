@@ -123,29 +123,25 @@ function MultiSelect({
     setSearchValue("");
   });
 
-  const [optionsSelected, setOptionsSelected] = useState<
-    { value: string; label: string }[]
-  >(select?.value?.length > 0 ? select.value : []);
-
   function selectOption(option: { value: string; label: string }): void {
-    const includes = optionsSelected?.some(
-      (selectedOption) => selectedOption.value === option.value,
-    );
-
-    if (includes) {
-      const updatedOptions = optionsSelected?.filter(
-        (selectedOption) => selectedOption.value !== option.value,
-      );
-      setOptionsSelected(updatedOptions);
+    if (!select.value) {
+      changeValue({ value: [option], index, typeChange: type });
     } else {
-      const updatedOptions = [...optionsSelected, option];
-      setOptionsSelected(updatedOptions);
+      const includes = select.value?.some(
+        (selectedOption: any) => selectedOption.value.value === option.value,
+      );
+
+      if (includes) {
+        const updatedOptions = select?.value?.filter(
+          (selectedOption: any) => selectedOption.value.value !== option.value,
+        );
+        changeValue({ value: updatedOptions, index, typeChange: type });
+      } else {
+        const updatedOptions = [...select?.value, option];
+        changeValue({ value: updatedOptions, index, typeChange: type });
+      }
     }
   }
-
-  useEffect(() => {
-    changeValue({ value: optionsSelected, index, typeChange: type });
-  }, [changeValue, index, optionsSelected, type]);
 
   return (
     <ContainerMultiSelect ref={menuRef} openedMenu={openedMenu}>

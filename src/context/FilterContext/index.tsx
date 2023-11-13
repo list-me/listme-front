@@ -149,6 +149,7 @@ export function FilterContextProvider({
             value: "",
             selectValue: [],
           };
+          getOptions(newFilters[index], index);
         } else if (typeChange === "condition") {
           newFilters[index] = {
             ...newFilters[index],
@@ -174,7 +175,7 @@ export function FilterContextProvider({
             selectValue: value,
           };
         }
-        getOptions(newFilters[index], index);
+
         return newFilters;
       });
     },
