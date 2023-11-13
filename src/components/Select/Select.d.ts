@@ -14,6 +14,11 @@ interface ISelect {
   small?: boolean;
   isSearchable?: boolean;
   DropDownComponent?: () => JSX.Element;
+  isDisabled?: boolean;
+  isMulti?: boolean;
+  item?: IFilter;
+  index?: index;
+  loadingOptions?: boolean;
 }
 
 type Styles = {

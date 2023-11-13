@@ -22,6 +22,7 @@ import {
 } from "./product.context";
 import { fileRequests } from "../../services/apis/requests/file";
 import { isCollectionCompany } from "../../utils";
+import { IConditions } from "../FilterContext/FilterContextType";
 
 export interface ICustom {
   show?: boolean;
@@ -84,6 +85,8 @@ interface ITypeProductContext {
     optionals?: { brand?: string; name?: string },
   ) => Promise<Array<string> | void>;
   customFields: ICustomField[];
+  conditionsFilter: IConditions[];
+  setConditionsFilter: React.Dispatch<React.SetStateAction<IConditions[]>>;
 }
 
 interface SignedUrlResponse {
@@ -110,6 +113,9 @@ export const ProductContextProvider = ({
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [filter, setFilter] = useState<string | undefined>(undefined);
   const [total, setTotal] = useState<number>(0);
+  const [conditionsFilter, setConditionsFilter] = useState<IConditions[]>([
+    {},
+  ] as IConditions[]);
 
   const COMPONENT_CELL_PER_TYPE: ICustomCellType = useMemo(
     () => ({
@@ -218,10 +224,14 @@ export const ProductContextProvider = ({
       page: number = 0,
       limit: number = 100,
       keyword: string = "",
+      conditions: IConditions[] | undefined = undefined,
+      operator?: string,
     ) => {
       const { data }: { data: IProductsRequest } = await productRequests.list(
         { page, limit, keyword },
         templateId,
+        conditions,
+        operator,
       );
 
       const productFields: {
@@ -229,30 +239,35 @@ export const ProductContextProvider = ({
         id: string;
         created_at: string;
       }[] = [];
-      data?.products?.forEach((item) => {
-        const object: { [key: string]: string | string[] } = {};
-        item.fields.forEach((field) => {
-          const currentField = templateFields.find((e) => e.data === field.id);
+      if (data.products.length) {
+        data?.products?.forEach((item) => {
+          const object: { [key: string]: string | string[] } = {};
+          if (item?.fields?.length) {
+            item?.fields?.forEach((field) => {
+              const currentField = templateFields.find(
+                (e) => e.data === field.id,
+              );
 
-          if (currentField && field.value) {
-            const test = !COMPONENT_CELL_PER_TYPE[
-              currentField?.type?.toUpperCase()
-            ]
-              ? field?.value[0]
-              : field?.value;
+              if (currentField && field.value) {
+                const test = !COMPONENT_CELL_PER_TYPE[
+                  currentField?.type?.toUpperCase()
+                ]
+                  ? field?.value[0]
+                  : field?.value;
 
-            object[field?.id] = test;
+                object[field?.id] = test;
+              }
+            });
           }
+          const toProductFields = {
+            ...object,
+            id: item.id,
+            created_at: item.created_at,
+          };
+
+          productFields.push(toProductFields);
         });
-
-        const toProductFields = {
-          ...object,
-          id: item.id,
-          created_at: item.created_at,
-        };
-
-        productFields.push(toProductFields);
-      });
+      }
 
       setProducts(productFields);
       setTotal(data?.total);
@@ -730,6 +745,8 @@ export const ProductContextProvider = ({
     uploadImages,
     setTotal,
     customFields,
+    conditionsFilter,
+    setConditionsFilter,
   };
 
   return (

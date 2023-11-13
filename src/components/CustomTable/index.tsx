@@ -36,6 +36,9 @@ import {
   IHeader,
   IProductToTable,
 } from "../../context/products/product.context";
+import Filter from "../Filter";
+import { useFilterContext } from "../../context/FilterContext";
+import NotFound from "./components/NotFound";
 
 registerAllModules();
 registerAllEditors();
@@ -64,7 +67,10 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     setTotal,
     uploadImages,
     handleFreeze,
+    conditionsFilter,
   } = useProductContext();
+
+  const { openedFilter } = useFilterContext();
 
   const [cols, setCols] = useState<ICol[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -243,7 +249,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         if (data) {
           data.products?.forEach((item: any) => {
             const object: any = {};
-            item.fields.forEach((field: any) => {
+            item?.fields?.forEach((field: any) => {
               const currentField = headerTable.find(
                 (e: any) => e.data == field.id,
               );
@@ -311,6 +317,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           handleDeleteColumn(Number(currentCell.order));
         }}
       />
+      {openedFilter && <Filter />}
       <>
         <Content>
           <HeaderFilters
@@ -354,6 +361,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             setIsOpen={setIsOpen}
             handleFreeze={handleFreeze}
           />
+          {!!conditionsFilter.length && products.length < 1 && <NotFound />}
         </Container>
         <div ref={loadingRef} style={{ display: "none" }}>
           <LoadingFetch />
