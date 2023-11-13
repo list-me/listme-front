@@ -44,6 +44,16 @@ function ConditionFilterComponent({
       );
   }, [changeValue, debouncedSelectValue]);
 
+  function getColumnOptions(cOptions: IOption[]): IOption[] {
+    const filtersNameColumn = filters.map((filt) => {
+      return filt.column.label;
+    });
+    const filteredOptionsColumn = cOptions.filter((op) => {
+      return !filtersNameColumn.includes(op.label);
+    });
+    return filteredOptionsColumn;
+  }
+
   return (
     <Filter
       key={item.id}
@@ -53,7 +63,7 @@ function ConditionFilterComponent({
       <FilterItem>
         <SingleSelect
           placeHolder="Selecione a coluna"
-          options={options}
+          options={getColumnOptions(options)}
           changeValue={changeValue}
           index={index}
           type="column"
