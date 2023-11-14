@@ -45,6 +45,10 @@ function FilterComponent(): JSX.Element {
     setOptionsToMultiSelect,
     openedFilter,
   } = useFilterContext();
+  console.log(
+    "🚀 ~ file: index.tsx:48 ~ FilterComponent ~ conditions:",
+    conditions,
+  );
 
   const {
     handleGetTemplate,
@@ -67,23 +71,27 @@ function FilterComponent(): JSX.Element {
   ];
 
   async function applyFilter(currentConditions: IConditions[]): Promise<any> {
-    if (currentConditions[0]) {
-      const conditionsRemovedEmpty = currentConditions
-        .filter((cond) => {
-          return cond?.field;
-        })
-        .map((cond) => {
-          if (cond?.action === "is_empty" || cond?.action === "is_not_empty") {
-            const newCond = {
-              field: cond.field,
-              action: cond.action,
-            };
-            return newCond;
-          }
-          return cond;
-        });
+    console.log(
+      "🚀 ~ file: index.tsx:70 ~ applyFilter ~ currentConditions:",
+      currentConditions,
+    );
+    const conditionsRemovedEmpty = currentConditions
+      .filter((cond) => {
+        return cond?.field && cond?.action;
+      })
+      .map((cond) => {
+        if (cond?.action === "is_empty" || cond?.action === "is_not_empty") {
+          const newCond = {
+            field: cond.field,
+            action: cond.action,
+          };
+          return newCond;
+        }
+        return cond;
+      });
 
-      try {
+    try {
+      if (conditionsRemovedEmpty.length > 0) {
         const headerTableToGetProducts = (await handleGetTemplate(
           template.id,
         )) as IHeaderTable[];
@@ -98,30 +106,28 @@ function FilterComponent(): JSX.Element {
             "",
             conditionsRemovedEmpty,
             operator.value,
-          );
-          setConditionsFilter(conditionsRemovedEmpty as IConditions[]);
-          setOpenedFilter(false);
-          setFilterStatus(true);
+          ).then(() => {
+            setConditionsFilter(conditionsRemovedEmpty as IConditions[]);
+            setOpenedFilter(false);
+            setFilterStatus(true);
+          });
           return product;
         }
-        return null;
-      } catch (error) {
-        console.error(error);
-        toast.error(
-          "Ocorreu um erro com sua solicitação de produtos, tente novamente",
-        );
-        return null;
+      } else {
+        const id = window.location.pathname.substring(10);
+        if (id) {
+          setTimeout(() => {
+            handleRedirectAndGetProducts(id).then(() => {});
+            setOpenedFilter(false);
+          }, 0);
+        }
       }
-    } else {
-      const id = window.location.pathname.substring(10);
-      if (id) {
-        setTimeout(() => {
-          handleRedirectAndGetProducts(id).then(() => {});
-        }, 0);
-      }
-      setConditionsFilter([null]);
-      setOpenedFilter(false);
-      setFilterStatus(true);
+      return null;
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        "Ocorreu um erro com sua solicitação de produtos, tente novamente",
+      );
       return null;
     }
   }
