@@ -1,10 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Filter, FilterItem, InputFilter, TrashButton } from "../../styles";
 import { ReactComponent as TrashIcon } from "../../../../assets/trash-filter.svg";
-import {
-  IFilter,
-  IInputValue,
-} from "../../../../context/FilterContext/FilterContextType";
+import { IInputValue } from "../../../../context/FilterContext/FilterContextType";
 import useDebounce from "../../../../hooks/useDebounce/useDebounce";
 import SingleSelect from "../SingleSelect";
 import MultiSelect from "../MultiSelect";
@@ -66,19 +63,6 @@ function ConditionFilterComponent({
     }
   }, [filters]);
 
-  const getColumnOptions = useCallback(
-    (cOptions: IOption[], currentFilters: IFilter[]) => {
-      const filtersNameColumn = currentFilters.map((filt) => {
-        return filt?.column?.label;
-      });
-      const filteredOptionsColumn = cOptions.filter((op) => {
-        return !filtersNameColumn.includes(op.label);
-      });
-      return filteredOptionsColumn;
-    },
-    [],
-  );
-
   return (
     <Filter
       key={item.id}
@@ -89,7 +73,7 @@ function ConditionFilterComponent({
       <FilterItem>
         <SingleSelect
           placeHolder="Selecione a coluna"
-          options={getColumnOptions(options, filters)}
+          options={options}
           changeValue={changeValue}
           index={index}
           type="column"
@@ -143,7 +127,7 @@ function ConditionFilterComponent({
       {filters.length > 1 && (
         <TrashButton
           onClick={() => {
-            removeFilter(filters, index, item.column.type);
+            removeFilter(filters, index);
           }}
         >
           <TrashIcon />

@@ -200,6 +200,7 @@ function FilterComponent(): JSX.Element {
                 ...prev,
                 { ...defaultFilter, id: filters.length + 1 },
               ]);
+              setOptionsToMultiSelect((prev: any) => [...prev, null]);
             }}
           >
             <NewFilterPlus />
@@ -212,7 +213,7 @@ function FilterComponent(): JSX.Element {
         <ButtonClearAll
           onClick={() => {
             setFilters([defaultFilter]);
-            setOptionsToMultiSelect([]);
+            setOptionsToMultiSelect([null]);
           }}
         >
           {filters.some((filter) => filter.column && filter.column.value) && (
