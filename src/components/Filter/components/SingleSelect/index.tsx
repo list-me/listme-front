@@ -115,7 +115,7 @@ function SingleSelect({
     >
       <SingleSelectValue
         active={!!select?.label}
-        onClick={() => setOpenedMenu(true)}
+        onClick={() => setOpenedMenu((prev) => !prev)}
       >
         <div>
           {select.type && getIconByType(select.type as any)}

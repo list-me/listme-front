@@ -159,7 +159,7 @@ function MultiSelect({
     <ContainerMultiSelect ref={menuRef} openedMenu={openedMenu}>
       <MultiSelectValue
         active={!!select?.value?.length}
-        onClick={() => setOpenedMenu(true)}
+        onClick={() => setOpenedMenu((prev) => !prev)}
       >
         <div>
           {select.typeChange && getIconByType(select.typeChange as any)}
