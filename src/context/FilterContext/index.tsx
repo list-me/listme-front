@@ -162,8 +162,6 @@ export function FilterContextProvider({
             ...newFilters[index],
             column: newFilters[index]?.column,
             condition: value,
-            value: "",
-            selectValue: [],
           };
         } else if (typeChange === "value") {
           newFilters[index] = {
