@@ -45,10 +45,6 @@ function FilterComponent(): JSX.Element {
     setOptionsToMultiSelect,
     openedFilter,
   } = useFilterContext();
-  console.log(
-    "🚀 ~ file: index.tsx:48 ~ FilterComponent ~ conditions:",
-    conditions,
-  );
 
   const {
     handleGetTemplate,
@@ -110,6 +106,7 @@ function FilterComponent(): JSX.Element {
           return product;
         }
       } else {
+        setConditionsFilter([{}] as IConditions[]);
         const id = window.location.pathname.substring(10);
         if (id) {
           setTimeout(() => {

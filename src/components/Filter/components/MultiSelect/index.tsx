@@ -89,16 +89,44 @@ function MultiSelect({
   const { getOptions } = useFilterContext();
 
   const initialOptions = useMemo(() => options, []);
+
+  const removeDuplicates = (
+    list: {
+      value: string;
+      label: string;
+    }[],
+  ): {
+    value: string;
+    label: string;
+  }[] => {
+    const uniqueValues: {
+      [key: string]: {
+        value: string;
+        label: string;
+      };
+    } = {};
+    list.forEach((rItem) => {
+      uniqueValues[rItem.value] = rItem;
+    });
+    return Object.values(uniqueValues);
+  };
+
   useEffect(() => {
     function filterOptions(value: string): void {
-      const filteredOptions = currentOptions?.filter((fOptions) => {
+      const filteredOptions = removeDuplicates([
+        ...currentOptions,
+        ...initialOptions,
+      ])?.filter((fOptions) => {
         return fOptions.label.toLowerCase().includes(value.toLowerCase());
       });
       if (filteredOptions.length > 0) setCurrentOptions(filteredOptions);
       else getOptions(item, index, debaunceSearchValue, true);
     }
     if (debaunceSearchValue.length > 0) filterOptions(debaunceSearchValue);
-    else setCurrentOptions(initialOptions);
+    else
+      setCurrentOptions(
+        removeDuplicates([...currentOptions, ...initialOptions]),
+      );
   }, [debaunceSearchValue]);
 
   useEffect(() => {
@@ -159,7 +187,7 @@ function MultiSelect({
     <ContainerMultiSelect ref={menuRef} openedMenu={openedMenu}>
       <MultiSelectValue
         active={!!select?.value?.length}
-        onClick={() => setOpenedMenu(true)}
+        onClick={() => setOpenedMenu((prev) => !prev)}
       >
         <div>
           {select.typeChange && getIconByType(select.typeChange as any)}

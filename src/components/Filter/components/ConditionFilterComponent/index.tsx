@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Filter, FilterItem, InputFilter, TrashButton } from "../../styles";
 import { ReactComponent as TrashIcon } from "../../../../assets/trash-filter.svg";
 import { IInputValue } from "../../../../context/FilterContext/FilterContextType";
