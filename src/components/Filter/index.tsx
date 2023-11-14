@@ -177,7 +177,7 @@ function FilterComponent(): JSX.Element {
                 small
               />
             </FilterLogicSelectContainer>
-            critérios
+            critérios.
           </FilterLogic>
           {filters.map((item, index) => (
             <ConditionFilterComponent

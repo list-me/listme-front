@@ -77,11 +77,12 @@ export const Temp: React.FC<IProps> = ({
       </Item>
       <ButtonFilter
         filterActive={filterStatus && !!conditionsFilter[0]?.action}
+        onClick={() => setOpenedFilter(true)}
       >
         {filterStatus && !!conditionsFilter[0]?.action && (
           <CountFilter>{conditionsFilter.length}</CountFilter>
         )}
-        <Item onClick={() => setOpenedFilter(true)}>
+        <Item>
           <FilterIcon />
           Filtrar
         </Item>
