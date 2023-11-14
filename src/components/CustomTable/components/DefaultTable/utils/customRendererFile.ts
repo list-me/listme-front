@@ -116,7 +116,9 @@ function customRendererFile(
           lastDotIndex + 1,
         );
 
-        if (!["jpg", "jpeg", "png", "thumb", "svg"].includes(fileType)) {
+        if (
+          !["jpg", "jpeg", "png", "thumb", "svg", "webp"].includes(fileType)
+        ) {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           imageSource = DocumentIcon;
         }
@@ -140,7 +142,9 @@ function customRendererFile(
             lastDotIndex + 1,
           );
 
-          if (!["jpg", "jpeg", "png", "thumb", "svg"].includes(fileType)) {
+          if (
+            !["jpg", "jpeg", "png", "thumb", "svg", "webp"].includes(fileType)
+          ) {
             imageSource = DocumentIcon;
           }
 

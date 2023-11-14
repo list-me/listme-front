@@ -188,7 +188,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                     return (
                       <Content>
                         <Image key={index}>
-                          {!["jpg", "jpeg", "png", "thumb"].includes(
+                          {!["jpg", "jpeg", "png", "thumb", "webp"].includes(
                             fileType,
                           ) ? (
                             <>
