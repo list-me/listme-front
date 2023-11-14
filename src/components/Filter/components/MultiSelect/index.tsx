@@ -88,6 +88,7 @@ function MultiSelect({
 
   const { getOptions } = useFilterContext();
 
+  const initialOptions = useMemo(() => options, []);
   useEffect(() => {
     function filterOptions(value: string): void {
       const filteredOptions = currentOptions?.filter((fOptions) => {
@@ -97,6 +98,7 @@ function MultiSelect({
       else getOptions(item, index, debaunceSearchValue, true);
     }
     if (debaunceSearchValue.length > 0) filterOptions(debaunceSearchValue);
+    else setCurrentOptions(initialOptions);
   }, [debaunceSearchValue]);
 
   useEffect(() => {
