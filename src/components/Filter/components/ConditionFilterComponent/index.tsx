@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Filter, FilterItem, InputFilter, TrashButton } from "../../styles";
 import { ReactComponent as TrashIcon } from "../../../../assets/trash-filter.svg";
-import { IInputValue } from "../../../../context/FilterContext/FilterContextType";
+import {
+  IFilter,
+  IInputValue,
+} from "../../../../context/FilterContext/FilterContextType";
 import useDebounce from "../../../../hooks/useDebounce/useDebounce";
 import SingleSelect from "../SingleSelect";
 import MultiSelect from "../MultiSelect";
@@ -24,15 +27,23 @@ function ConditionFilterComponent({
   );
   const debouncedSelectValue = useDebounce(selectValue, 500);
 
+  const [clearStateFlag, setClearStateFlag] = useState(true);
+  const isChangeFromFilters = useRef(false);
+
   useEffect(() => {
-    changeValue(
-      debouncedInputValue.value,
-      debouncedInputValue.index,
-      debouncedInputValue.typeChange,
-    );
+    if (clearStateFlag && !isChangeFromFilters.current)
+      changeValue(
+        debouncedInputValue.value,
+        debouncedInputValue.index,
+        debouncedInputValue.typeChange,
+      );
   }, [changeValue, debouncedInputValue]);
   useEffect(() => {
-    if (debouncedSelectValue.value)
+    if (
+      debouncedSelectValue.value &&
+      clearStateFlag &&
+      !isChangeFromFilters.current
+    )
       changeValue(
         debouncedSelectValue.value,
         debouncedSelectValue.index,
@@ -40,27 +51,45 @@ function ConditionFilterComponent({
       );
   }, [changeValue, debouncedSelectValue]);
 
-  function getColumnOptions(cOptions: IOption[]): IOption[] {
-    const filtersNameColumn = filters.map((filt) => {
-      return filt.column.label;
-    });
-    const filteredOptionsColumn = cOptions.filter((op) => {
-      return !filtersNameColumn.includes(op.label);
-    });
-    return filteredOptionsColumn;
-  }
+  useEffect(() => {
+    setClearStateFlag(true);
+  }, [inputValue, selectValue]);
+
+  useEffect(() => {
+    if (filters.length === 1 && !filters[0].column.value) {
+      setClearStateFlag(() => false);
+      isChangeFromFilters.current = true;
+      setInputValue({} as IInputValue);
+      setSelectValue({} as IInputValue);
+    } else {
+      isChangeFromFilters.current = false;
+    }
+  }, [filters]);
+
+  const getColumnOptions = useCallback(
+    (cOptions: IOption[], currentFilters: IFilter[]) => {
+      const filtersNameColumn = currentFilters.map((filt) => {
+        return filt?.column?.label;
+      });
+      const filteredOptionsColumn = cOptions.filter((op) => {
+        return !filtersNameColumn.includes(op.label);
+      });
+      return filteredOptionsColumn;
+    },
+    [],
+  );
 
   return (
     <Filter
       key={item.id}
       smallBefore={index === 0}
-      small={!!item.condition.input}
+      small={!!item?.condition?.input}
       trash={filters.length > 1}
     >
       <FilterItem>
         <SingleSelect
           placeHolder="Selecione a coluna"
-          options={getColumnOptions(options)}
+          options={getColumnOptions(options, filters)}
           changeValue={changeValue}
           index={index}
           type="column"
@@ -114,7 +143,6 @@ function ConditionFilterComponent({
       {filters.length > 1 && (
         <TrashButton
           onClick={() => {
-            console.log(item);
             removeFilter(filters, index, item.column.type);
           }}
         >

@@ -42,6 +42,7 @@ function FilterComponent(): JSX.Element {
     setOperator,
     setFilterStatus,
     loadingOptions,
+    setOptionsToMultiSelect,
   } = useFilterContext();
 
   const {
@@ -194,12 +195,12 @@ function FilterComponent(): JSX.Element {
           ))}
           <NewFilter
             filters={filters}
-            onClick={() =>
+            onClick={() => {
               setFilters((prev) => [
                 ...prev,
                 { ...defaultFilter, id: filters.length + 1 },
-              ])
-            }
+              ]);
+            }}
           >
             <NewFilterPlus />
             Nova condição
@@ -208,8 +209,13 @@ function FilterComponent(): JSX.Element {
         <Button onClickModal={() => applyFilter(conditions)}>
           Filtrar produtos
         </Button>
-        <ButtonClearAll onClick={() => setFilters([defaultFilter])}>
-          {filters[0]?.condition?.value && (
+        <ButtonClearAll
+          onClick={() => {
+            setFilters([defaultFilter]);
+            setOptionsToMultiSelect([]);
+          }}
+        >
+          {filters.some((filter) => filter.column && filter.column.value) && (
             <>
               <TrashIcon />
               Limpar todos os filtros
