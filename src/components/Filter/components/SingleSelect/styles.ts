@@ -1,6 +1,9 @@
 import styled from "styled-components";
 
-export const ContainerSingleSelect = styled.button<{ openedMenu: boolean }>`
+export const ContainerSingleSelect = styled.button<{
+  openedMenu: boolean;
+  isDisabled: boolean;
+}>`
   height: 48px;
   width: 100%;
   border-radius: 8px;
@@ -28,6 +31,9 @@ export const ContainerSingleSelect = styled.button<{ openedMenu: boolean }>`
   *::-webkit-scrollbar-thumb:hover {
     background-color: #3818d9;
   }
+
+  opacity: ${(props) => (props.isDisabled ? "0.5" : "1")};
+  pointer-events: ${(props) => (props.isDisabled ? "none" : "initial")};
 `;
 export const SingleSelectValue = styled.p<{
   active: boolean;

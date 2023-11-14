@@ -43,6 +43,7 @@ function SingleSelect({
   type,
   select,
   isSearchable,
+  isDisabled,
 }: {
   options: IOption[];
   placeHolder: string;
@@ -56,6 +57,8 @@ function SingleSelect({
   select: IColumnFilter;
   // eslint-disable-next-line react/require-default-props
   isSearchable?: boolean;
+  // eslint-disable-next-line react/require-default-props
+  isDisabled: boolean;
 }): JSX.Element {
   const [currentOptions, setCurrentOptions] = useState<IOption[]>(options);
   const [searchValue, setSearchValue] = useState<string>("");
@@ -105,7 +108,11 @@ function SingleSelect({
   });
 
   return (
-    <ContainerSingleSelect ref={menuRef} openedMenu={openedMenu}>
+    <ContainerSingleSelect
+      ref={menuRef}
+      openedMenu={openedMenu}
+      isDisabled={isDisabled}
+    >
       <SingleSelectValue
         active={!!select?.label}
         onClick={() => setOpenedMenu(true)}

@@ -225,23 +225,29 @@ export function FilterContextProvider({
           };
           return converted;
         }
-        const selecteds: string[] = filter?.selectValue?.map((item: any) => {
-          return item.value;
-        });
+        if (filter.condition.input === "multi") {
+          const selecteds: string[] = filter?.selectValue?.map((item: any) => {
+            return item.value;
+          });
 
-        const converted = {
-          field: filter.column.value,
-          action: filter.condition.value,
-          value: selecteds,
-        };
-        return converted;
+          const converted = {
+            field: filter.column.value,
+            action: filter.condition.value,
+            value: selecteds,
+          };
+          return converted;
+        }
+        if (filter.condition.input === "") {
+          const converted = {
+            field: filter.column.value,
+            action: filter.condition.value,
+          };
+          return converted;
+        }
       });
       if (toConditions.length) setConditions(toConditions as IConditions[]);
     }
-    if (filters[0]?.condition.value) applyConditions();
-    else {
-      setConditions([]);
-    }
+    applyConditions();
   }, [filters]);
 
   const value = {
