@@ -78,10 +78,12 @@ function ConditionFilterComponent({
           type="column"
           select={filters[index].column}
           isSearchable
+          isDisabled={false}
         />
       </FilterItem>
       <FilterItem>
         <SingleSelect
+          isDisabled={!filters[index].column.value}
           placeHolder="Condição"
           options={typesOptions[item.column.type]}
           changeValue={changeValue}
