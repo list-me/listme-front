@@ -42,6 +42,7 @@ function FilterComponent(): JSX.Element {
     setOperator,
     setFilterStatus,
     loadingOptions,
+    setOptionsToMultiSelect,
   } = useFilterContext();
 
   const {
@@ -208,7 +209,12 @@ function FilterComponent(): JSX.Element {
         <Button onClickModal={() => applyFilter(conditions)}>
           Filtrar produtos
         </Button>
-        <ButtonClearAll onClick={() => setFilters([defaultFilter])}>
+        <ButtonClearAll
+          onClick={() => {
+            setFilters([defaultFilter]);
+            setOptionsToMultiSelect([]);
+          }}
+        >
           {filters[0]?.condition?.value && (
             <>
               <TrashIcon />

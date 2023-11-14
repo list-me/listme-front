@@ -38,7 +38,7 @@ export function FilterContextProvider({
 
   const [openedFilter, setOpenedFilter] = useState(false);
   const [filters, setFilters] = useState([...[defaultFilter]]);
-  const [optionsToMultiSelect, setOptionsToMultiSelect] = useState<any>([{}]);
+  const [optionsToMultiSelect, setOptionsToMultiSelect] = useState<any>([]);
 
   const [operator, setOperator] = useState<IOperator>({
     label: "Todos os",
@@ -219,7 +219,11 @@ export function FilterContextProvider({
   useEffect(() => {
     function applyConditions(): any {
       const toConditions = filters.map((filter) => {
-        if (filter?.value) {
+        console.log(
+          "🚀 ~ file: index.tsx:244 ~ toConditions ~ filter:",
+          filter,
+        );
+        if (filter.condition.input === "text") {
           const converted = {
             field: filter.column.value,
             action: filter.condition.value,
@@ -227,23 +231,20 @@ export function FilterContextProvider({
           };
           return converted;
         }
-        if (filter?.selectValue) {
-          const selecteds: string[] = filter?.selectValue?.map((item: any) => {
-            return item.value;
-          });
+        const selecteds: string[] = filter?.selectValue?.map((item: any) => {
+          return item.value;
+        });
 
-          const converted = {
-            field: filter.column.value,
-            action: filter.condition.value,
-            value: selecteds,
-          };
-          return converted;
-        }
-        return null;
+        const converted = {
+          field: filter.column.value,
+          action: filter.condition.value,
+          value: selecteds,
+        };
+        return converted;
       });
-      if (toConditions.length) setConditions(toConditions);
+      if (toConditions.length) setConditions(toConditions as IConditions[]);
     }
-    if (filters[0]?.id) applyConditions();
+    if (filters[0]?.condition.value) applyConditions();
     else {
       setConditions([]);
     }
@@ -267,6 +268,7 @@ export function FilterContextProvider({
     filterStatus,
     setFilterStatus,
     loadingOptions,
+    setOptionsToMultiSelect,
   };
 
   return (

@@ -29,6 +29,7 @@ export interface FilterContextType {
   filterStatus: boolean;
   setFilterStatus: React.Dispatch<React.SetStateAction<boolean>>;
   loadingOptions: boolean;
+  setOptionsToMultiSelect: React.Dispatch<any>;
 }
 
 interface ITypes {

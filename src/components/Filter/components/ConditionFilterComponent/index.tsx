@@ -40,6 +40,13 @@ function ConditionFilterComponent({
       );
   }, [changeValue, debouncedSelectValue]);
 
+  useEffect(() => {
+    if (filters.length === 1 && !filters[0].column.value) {
+      setInputValue({} as IInputValue);
+      setSelectValue({} as IInputValue);
+    }
+  }, [filters]);
+
   function getColumnOptions(cOptions: IOption[]): IOption[] {
     const filtersNameColumn = filters.map((filt) => {
       return filt.column.label;
