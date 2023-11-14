@@ -195,12 +195,12 @@ function FilterComponent(): JSX.Element {
           ))}
           <NewFilter
             filters={filters}
-            onClick={() =>
+            onClick={() => {
               setFilters((prev) => [
                 ...prev,
                 { ...defaultFilter, id: filters.length + 1 },
-              ])
-            }
+              ]);
+            }}
           >
             <NewFilterPlus />
             Nova condição
@@ -215,7 +215,7 @@ function FilterComponent(): JSX.Element {
             setOptionsToMultiSelect([]);
           }}
         >
-          {filters[0]?.condition?.value && (
+          {filters.some((filter) => filter.column && filter.column.value) && (
             <>
               <TrashIcon />
               Limpar todos os filtros

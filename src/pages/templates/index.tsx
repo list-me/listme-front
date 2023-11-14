@@ -19,6 +19,7 @@ function Template(): JSX.Element {
   const { setFilters, defaultFilter, setFilterStatus } = useFilterContext();
 
   useEffect(() => {
+
     setFilters([defaultFilter]);
     setFilterStatus(false);
   }, [defaultFilter, setFilterStatus, setFilters]);

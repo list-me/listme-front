@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import {
@@ -71,65 +72,68 @@ export function FilterContextProvider({
     return data.products;
   }, []);
 
-  const getOptions = async (
-    currentItem: IFilter,
-    index: number,
-    key?: string,
-    search?: boolean,
-  ): Promise<any> => {
-    const { type } = currentItem?.column;
-    if (type === "radio" || type === "list" || type === "checked") {
-      const id = window.location.pathname.substring(10);
-      const response: ITemplate = await templateRequests.get(id);
-      const field = response?.fields?.fields?.find((tField: any) => {
-        return tField?.id === currentItem?.column?.value;
-      });
+  const getOptions = useCallback(
+    async (
+      currentItem: IFilter,
+      index: number,
+      key?: string,
+      search?: boolean,
+    ) => {
+      const { type } = currentItem?.column;
 
-      const optionsToView = field?.options?.map((option: any) => {
-        return { value: option, label: option };
-      });
-
-      setOptionsToMultiSelect((prev: any) => {
-        const newOptions = [...prev];
-        newOptions[index] = optionsToView;
-        return newOptions;
-      });
-    }
-
-    if (type === "relation") {
-      if (typeof currentItem.column.optionsList[0] !== "string") {
-        const { templateId, field } = currentItem.column.optionsList[0];
-        const productsToSelect = await getProducts(templateId, key);
-
-        const productFields: any = [];
-        productsToSelect.forEach((product: any) => {
-          product.fields.forEach((pField: any) => {
-            const newField = {
-              itemId: product.id,
-              ...pField,
-            };
-
-            if (pField.id === field) productFields.push(newField);
-          });
+      if (type === "radio" || type === "list" || type === "checked") {
+        const id = window.location.pathname.substring(10);
+        const response: ITemplate = await templateRequests.get(id);
+        const field = response?.fields?.fields?.find((tField: any) => {
+          return tField?.id === currentItem?.column?.value;
         });
 
-        const optionsToView = productFields.map((option: any) => {
-          return {
-            value: option.itemId,
-            label: option.value[0],
-          };
+        const optionsToView = field?.options?.map((option: any) => {
+          return { value: option, label: option };
         });
         setOptionsToMultiSelect((prev: any) => {
           const newOptions = [...prev];
-          newOptions[index] = removeRepeatedObjects(
-            search ? [...optionsToView, ...prev[index]] : optionsToView,
-            "value",
-          );
+          newOptions[index] = optionsToView;
           return newOptions;
         });
       }
-    }
-  };
+
+      if (type === "relation") {
+        if (typeof currentItem.column.optionsList[0] !== "string") {
+          const { templateId, field } = currentItem.column.optionsList[0];
+          const productsToSelect = await getProducts(templateId, key);
+
+          const productFields: any = [];
+          productsToSelect.forEach((product: any) => {
+            product.fields.forEach((pField: any) => {
+              const newField = {
+                itemId: product.id,
+                ...pField,
+              };
+
+              if (pField.id === field) productFields.push(newField);
+            });
+          });
+
+          const optionsToView = productFields.map((option: any) => {
+            return {
+              value: option.itemId,
+              label: option.value[0],
+            };
+          });
+          setOptionsToMultiSelect((prev: any) => {
+            const newOptions = [...prev];
+            newOptions[index] = removeRepeatedObjects(
+              search ? [...optionsToView, ...prev[index]] : optionsToView,
+              "value",
+            );
+            return newOptions;
+          });
+        }
+      }
+    },
+    [getProducts, removeRepeatedObjects],
+  );
 
   const changeValue = useCallback(
     (
@@ -155,7 +159,7 @@ export function FilterContextProvider({
         } else if (typeChange === "condition") {
           newFilters[index] = {
             ...newFilters[index],
-            column: newFilters[index].column,
+            column: newFilters[index]?.column,
             condition: value,
             value: "",
             selectValue: [],
@@ -163,16 +167,16 @@ export function FilterContextProvider({
         } else if (typeChange === "value") {
           newFilters[index] = {
             ...newFilters[index],
-            column: newFilters[index].column,
-            condition: newFilters[index].condition,
+            column: newFilters[index]?.column,
+            condition: newFilters[index]?.condition,
             value,
             selectValue: [],
           };
         } else if (typeChange === "selectValue") {
           newFilters[index] = {
             ...newFilters[index],
-            column: newFilters[index].column,
-            condition: newFilters[index].condition,
+            column: newFilters[index]?.column,
+            condition: newFilters[index]?.condition,
             value: "",
             selectValue: value,
           };
@@ -181,7 +185,7 @@ export function FilterContextProvider({
         return newFilters;
       });
     },
-    [],
+    [getOptions],
   );
 
   function removeFilter(
@@ -190,6 +194,7 @@ export function FilterContextProvider({
     type: string,
   ): void {
     const newFilters = currentFilters.filter((_, i) => i !== index);
+
     setFilters(newFilters);
     if (
       type === "radio" ||
@@ -204,25 +209,23 @@ export function FilterContextProvider({
     }
   }
 
-  const options: IOption[] = headerTable
-    .map((item: any) => {
-      const newItem = {
-        value: item.data,
-        label: item.title,
-        type: item.type,
-        optionsList: item.options,
-      };
-      return newItem;
-    })
-    .filter((item) => item.value);
+  const options = useMemo(() => {
+    return headerTable
+      .map((item: any) => {
+        const newItem = {
+          value: item.data,
+          label: item.title,
+          type: item.type,
+          optionsList: item.options,
+        };
+        return newItem;
+      })
+      .filter((item) => item.value);
+  }, [headerTable]);
 
   useEffect(() => {
     function applyConditions(): any {
       const toConditions = filters.map((filter) => {
-        console.log(
-          "🚀 ~ file: index.tsx:244 ~ toConditions ~ filter:",
-          filter,
-        );
         if (filter.condition.input === "text") {
           const converted = {
             field: filter.column.value,
@@ -249,6 +252,8 @@ export function FilterContextProvider({
       setConditions([]);
     }
   }, [filters]);
+
+  console.log("oioioi");
 
   const value = {
     openedFilter,
