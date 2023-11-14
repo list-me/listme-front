@@ -317,7 +317,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           handleDeleteColumn(Number(currentCell.order));
         }}
       />
-      {openedFilter && <Filter />}
+      <Filter />
       <>
         <Content>
           <HeaderFilters

@@ -2,14 +2,17 @@
 import styled from "styled-components";
 import { IFilter } from "../../context/FilterContext/FilterContextType";
 
-export const ContainerFilter = styled.div`
+export const ContainerFilter = styled.div<{ openedFilter: boolean }>`
   width: 100%;
   height: 100vh;
   position: fixed;
   z-index: 9;
-  background: rgba(0, 0, 0, 0.32);
+  background: ${(props) =>
+    props.openedFilter ? "rgba(0, 0, 0, 0.32)" : "none"};
   display: flex;
   justify-content: flex-end;
+  pointer-events: ${(props) => (props.openedFilter ? "initial" : "none")};
+  transition: background 0.5s ease-in-out;
 `;
 export const CloseButtonTransparent = styled.button`
   background: transparent;
@@ -32,8 +35,8 @@ export const ButtonClearAll = styled.button`
     stroke: #3818d9;
   }
 `;
-
-export const SidebarFilter = styled.div`
+const widthWindow = window.innerWidth;
+export const SidebarFilter = styled.div<{ openedFilter: boolean }>`
   min-width: 45% !important;
   height: 100%;
   padding: 32px;
@@ -42,17 +45,9 @@ export const SidebarFilter = styled.div`
   border-radius: 8px 0px 0px 8px;
   display: flex;
   flex-direction: column;
-  transform: translateX(100%);
-  animation: slideIn 0.15s forwards;
-
-  @keyframes slideIn {
-    from {
-      transform: translateX(100%);
-    }
-    to {
-      transform: translateX(0);
-    }
-  }
+  position: relative;
+  right: -${(props) => (props.openedFilter ? "0px" : `${widthWindow / 2}px`)};
+  transition: right 0.5s ease-in-out;
 `;
 export const HeaderFilter = styled.div`
   display: flex;
