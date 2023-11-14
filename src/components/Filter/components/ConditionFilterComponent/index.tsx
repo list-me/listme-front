@@ -143,7 +143,7 @@ function ConditionFilterComponent({
       {filters.length > 1 && (
         <TrashButton
           onClick={() => {
-            removeFilter(filters, index, item.column.type);
+            removeFilter(filters, index);
           }}
         >
           <TrashIcon />
