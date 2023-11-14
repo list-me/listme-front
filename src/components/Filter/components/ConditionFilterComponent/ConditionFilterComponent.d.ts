@@ -9,10 +9,6 @@ interface IConditionFilterComponent {
   ) => void;
   options: IOption[];
   optionsToMultiSelect: { value: string; label: string }[][];
-  removeFilter: (
-    currentFilters: IFilter[],
-    index: number,
-    type: string,
-  ) => void;
+  removeFilter: (currentFilters: IFilter[], index: number) => void;
   loadingOptions?: boolean;
 }

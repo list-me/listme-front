@@ -39,7 +39,8 @@ export function FilterContextProvider({
 
   const [openedFilter, setOpenedFilter] = useState(false);
   const [filters, setFilters] = useState([...[defaultFilter]]);
-  const [optionsToMultiSelect, setOptionsToMultiSelect] = useState<any>([]);
+
+  const [optionsToMultiSelect, setOptionsToMultiSelect] = useState<any>([null]);
 
   const [operator, setOperator] = useState<IOperator>({
     label: "Todos os",
@@ -188,25 +189,17 @@ export function FilterContextProvider({
     [getOptions],
   );
 
-  function removeFilter(
-    currentFilters: IFilter[],
-    index: number,
-    type: string,
-  ): void {
-    const newFilters = currentFilters.filter((_, i) => i !== index);
-
+  function removeFilter(currentFilters: IFilter[], index: number): void {
+    const newFilters = currentFilters
+      .filter((_, i) => i !== index)
+      .map((item, newIndex: number) => {
+        return { ...item, id: newIndex };
+      });
     setFilters(newFilters);
-    if (
-      type === "radio" ||
-      type === "list" ||
-      type === "checked" ||
-      type === "relation"
-    ) {
-      const newOptMulti = optionsToMultiSelect.filter(
-        (_: any, i: any) => i !== index,
-      );
-      setOptionsToMultiSelect(newOptMulti);
-    }
+    const newOptMulti = optionsToMultiSelect.filter(
+      (_: any, i: any) => i !== index,
+    );
+    setOptionsToMultiSelect(newOptMulti);
   }
 
   const options = useMemo(() => {
@@ -252,8 +245,6 @@ export function FilterContextProvider({
       setConditions([]);
     }
   }, [filters]);
-
-  console.log("oioioi");
 
   const value = {
     openedFilter,
