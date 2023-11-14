@@ -71,10 +71,6 @@ function FilterComponent(): JSX.Element {
   ];
 
   async function applyFilter(currentConditions: IConditions[]): Promise<any> {
-    console.log(
-      "🚀 ~ file: index.tsx:70 ~ applyFilter ~ currentConditions:",
-      currentConditions,
-    );
     const conditionsRemovedEmpty = currentConditions
       .filter((cond) => {
         return cond?.field && cond?.action;
