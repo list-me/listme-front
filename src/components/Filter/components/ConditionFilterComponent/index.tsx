@@ -23,7 +23,6 @@ function ConditionFilterComponent({
     {} as IInputValue,
   );
   const debouncedSelectValue = useDebounce(selectValue, 500);
-  console.log("");
   const [clearStateFlag, setClearStateFlag] = useState(true);
   const isChangeFromFilters = useRef(false);
 
@@ -54,6 +53,7 @@ function ConditionFilterComponent({
 
   useEffect(() => {
     if (filters.length === 1 && !filters[0].column.value) {
+      console.log("oi");
       setClearStateFlag(() => false);
       isChangeFromFilters.current = true;
       setInputValue({} as IInputValue);
