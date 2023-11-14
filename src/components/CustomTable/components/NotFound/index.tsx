@@ -47,11 +47,14 @@ const NotFound: React.FC = () => {
       <TextNotFound>
         Explore outras opções de filtro para encontrar o que você procura
       </TextNotFound>
-      <ButtonFilter filterActive={!!conditionsFilter[0]?.action}>
+      <ButtonFilter
+        filterActive={!!conditionsFilter[0]?.action}
+        onClick={() => setOpenedFilter(true)}
+      >
         {!!conditionsFilter[0]?.action && (
           <CountFilter>{conditionsFilter.length}</CountFilter>
         )}
-        <Item onClick={() => setOpenedFilter(true)}>
+        <Item>
           <FilterIcon />
           Filtrar
         </Item>

@@ -28,7 +28,7 @@ const typesOptions: ITypes = {
       input: "text",
     },
     {
-      label: "Está preenchido(não está em branco)",
+      label: "Está preenchido (não está em branco)",
       value: "is_not_empty",
       input: "",
     },
