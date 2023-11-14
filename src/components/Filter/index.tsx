@@ -43,6 +43,7 @@ function FilterComponent(): JSX.Element {
     setFilterStatus,
     loadingOptions,
     setOptionsToMultiSelect,
+    openedFilter,
   } = useFilterContext();
 
   const {
@@ -144,15 +145,17 @@ function FilterComponent(): JSX.Element {
   }
 
   return (
-    <ContainerFilter>
-      <CloseButtonTransparent
-        onClick={() => {
-          setOpenedFilter(false);
-          setConditions(conditionsFilter);
-          updateFilter();
-        }}
-      />
-      <SidebarFilter>
+    <ContainerFilter openedFilter={openedFilter}>
+      {openedFilter && (
+        <CloseButtonTransparent
+          onClick={() => {
+            setOpenedFilter(false);
+            setConditions(conditionsFilter);
+            updateFilter();
+          }}
+        />
+      )}
+      <SidebarFilter openedFilter={openedFilter}>
         <HeaderFilter>
           <TitleFilter>Filtrar por</TitleFilter>
           <CloseButton
