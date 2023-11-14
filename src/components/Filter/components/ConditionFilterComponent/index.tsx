@@ -23,7 +23,7 @@ function ConditionFilterComponent({
     {} as IInputValue,
   );
   const debouncedSelectValue = useDebounce(selectValue, 500);
-
+  console.log("");
   const [clearStateFlag, setClearStateFlag] = useState(true);
   const isChangeFromFilters = useRef(false);
 
