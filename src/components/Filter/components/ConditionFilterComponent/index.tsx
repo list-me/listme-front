@@ -53,7 +53,6 @@ function ConditionFilterComponent({
 
   useEffect(() => {
     if (filters.length === 1 && !filters[0].column.value) {
-      console.log("oi");
       setClearStateFlag(() => false);
       isChangeFromFilters.current = true;
       setInputValue({} as IInputValue);
