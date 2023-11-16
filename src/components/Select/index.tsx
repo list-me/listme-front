@@ -59,7 +59,6 @@ const SelectComponent = ({
           options={options}
           styles={customStyles({ small }) as any}
           placeholder={isSearchable && isFocused ? "Digite aqui" : placeHolder}
-          menuPosition="fixed"
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         />

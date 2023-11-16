@@ -19,6 +19,7 @@ export const AddColumn = styled.div`
 
 export const Container = styled.div`
   overflow: hidden;
+  position: relative;
   height: 79vh !important;
   /* Arquivo CSS */
   .hot-table .corner {

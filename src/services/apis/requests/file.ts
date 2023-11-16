@@ -23,17 +23,20 @@ export const fileRequests = {
     fileName: string,
     fileType: string,
     templateId: string,
+    optionals?: { brand?: string; name?: string },
   ): Promise<SignedUrlResponse> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
+    let url: string = `template/signed-url?file_type=${fileType}&template_id=${templateId}&file_name=${fileName}`;
 
-    const response = await api.get(
-      `template/signed-url?fileType=${fileType}&templateId=${templateId}&fileName=${fileName}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    if (optionals?.brand && optionals?.name) {
+      url = `template/signed-url?file_type=${fileType}&template_id=${templateId}&file_name=${fileName}&brand=${optionals.brand}&name=${optionals.name}`;
+    }
+
+    const response = await api.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
 
     return response.data;
   },

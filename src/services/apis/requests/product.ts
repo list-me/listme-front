@@ -2,6 +2,7 @@
 import { AxiosResponse } from "axios";
 import { api } from "../api";
 import { STORAGE } from "../../../constants/localStorage";
+import { IConditions } from "../../../context/FilterContext/FilterContextType";
 
 interface IPagination {
   page?: number;
@@ -13,16 +14,25 @@ export const productRequests = {
   list: async (
     { page = 0, limit = 200, keyword }: IPagination,
     templateId?: string,
+    conditions?: IConditions[] | undefined,
+    operator?: string,
   ): Promise<AxiosResponse> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
-    const response = await api.get(
-      `/products/?template_id=${templateId}&key=${keyword}&limit=${limit}&offset=${page}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+
+    const requestData = {
+      template_id: templateId,
+      key: keyword || undefined,
+      limit,
+      conditions,
+      operator,
+      offset: page,
+    };
+
+    const response = await api.post(`/products/filter`, requestData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
 
     return response;
   },

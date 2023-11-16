@@ -2,7 +2,13 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
 
-import { ButtonCustom, Contents, Item } from "./styles";
+import {
+  ButtonCustom,
+  ButtonFilter,
+  Contents,
+  CountFilter,
+  Item,
+} from "./styles";
 import { ReactComponent as ChevronDownIcon } from "../../assets/chevron-down.svg";
 import { ReactComponent as EyeOffIcon } from "../../assets/eye-off.svg";
 import { ReactComponent as FilterIcon } from "../../assets/filter.svg";
@@ -12,9 +18,10 @@ import { ReactComponent as MenuIcon } from "../../assets/menu.svg";
 import DropdownMenu from "../RepDropdownMenu";
 import { Input } from "../Input";
 import Modal from "../Modal";
-import { productContext } from "../../context/products";
+import { productContext, useProductContext } from "../../context/products";
 import Button from "../Button";
 import { motion, AnimatePresence } from "framer-motion";
+import { useFilterContext } from "../../context/FilterContext";
 
 interface IProps {
   options?: any[];
@@ -25,6 +32,8 @@ export const Temp: React.FC<IProps> = ({
   options,
   handleSearch = () => {},
 }) => {
+  const { setOpenedFilter, filterStatus } = useFilterContext();
+  const { conditionsFilter } = useProductContext();
   const iconRef = useRef(null);
   const searchRef = useRef(null);
 
@@ -36,9 +45,6 @@ export const Temp: React.FC<IProps> = ({
     open: { x: 0, opacity: 1 },
     closed: { x: "-100%", opacity: 0, transition: { duration: 1 } },
   };
-  // const handleCustomChange = debounce((newValue: string) => {
-  //   handleSetFilter(newValue);
-  // }, 200);
 
   useEffect(() => {
     window.addEventListener("keydown", function (e) {
@@ -69,10 +75,18 @@ export const Temp: React.FC<IProps> = ({
         Colunas Ocultas
         <ChevronDownIcon ref={iconRef} />
       </Item>
-      <Item>
-        <FilterIcon />
-        Filtrar
-      </Item>
+      <ButtonFilter
+        filterActive={filterStatus && !!conditionsFilter[0]?.action}
+        onClick={() => setOpenedFilter(true)}
+      >
+        {filterStatus && !!conditionsFilter[0]?.action && (
+          <CountFilter>{conditionsFilter.length}</CountFilter>
+        )}
+        <Item>
+          <FilterIcon />
+          Filtrar
+        </Item>
+      </ButtonFilter>
       <Item ref={searchRef}>
         <SearchIcon onClick={() => setOnSearch(!onSearch)} />
         <AnimatePresence>
