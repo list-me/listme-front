@@ -222,10 +222,16 @@ const RelationComponent: React.FC<PropsRelation> = ({
 
   const listItems = (items: any[], relTemplate: any): void => {
     if (relTemplate.options) {
+      const selfId: string = dataProvider[row]
+        ? dataProvider[row]["id"]
+        : undefined;
       const fields: any[] = [];
       const allFields: any[] = [];
+
       items.forEach((product: any) => {
         const currentIds = currentProducts?.map((e) => e.id);
+        if (selfId === product.id) return;
+
         if (currentIds && !currentIds.includes(product.id)) {
           const props: any = {};
 
