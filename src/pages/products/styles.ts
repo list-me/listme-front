@@ -347,6 +347,55 @@ export const Container = styled.div`
       position: relative;
     }
 
+    .checked-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 45px;
+      width: fit-content;
+      height: 30px;
+
+      background: #f8f9fa;
+      border-radius: 24px;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .checked-item-warn {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 45px;
+      width: fit-content;
+      height: 30px;
+
+      border-radius: 24px;
+      background: #fffaeb;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      position: relative;
+    }
+
     .hover-container-info {
       display: flex;
       position: relative;
