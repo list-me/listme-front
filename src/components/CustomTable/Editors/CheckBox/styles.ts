@@ -26,7 +26,7 @@ export const Container = styled.div`
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background-color: #3818d9 !important;
+    background-color: ${({ theme }) => theme.colors.primary} !important;
   }
 `;
 
@@ -59,7 +59,8 @@ export const Option = styled.div<{ isChecked?: boolean }>`
   font-family: ${({ theme }) => theme.fonts.default};
   font-size: ${({ theme }) => theme.fonts.sizes.small};
 
-  color: ${({ isChecked }) => (!isChecked ? "black" : "#3818d9")};
+  color: ${({ isChecked, theme }) =>
+    !isChecked ? theme.colors.fourth : theme.colors.primary};
 
   &:hover {
     cursor: pointer;

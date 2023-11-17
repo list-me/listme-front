@@ -4,12 +4,8 @@ import styled from "styled-components";
 export const Container = styled.div`
   width: 100%;
 
-  /* font-family: "Satoshi Bold", sans-serif; */
   font-style: normal;
-  /* font-weight: 700; */
-  font-size: 14px;
-  line-height: 150%;
-
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -22,16 +18,16 @@ export const Container = styled.div`
   }
 
   .ant-radio-wrapper.ant-radio-wrapper-checked {
-    font-family: "Satoshi Bold", sans-serif !important;
-    color: #3818d9 !important;
+    font-family: ${({ theme }) => theme.fonts.family.bold};
+    color: ${({ theme }) => theme.colors.primary} !important;
 
     .ant-radio-inner {
-      background: white !important;
-      border: 2.4px solid #3818d9 !important;
+      background: ${({ theme }) => theme.colors.secondary} !important;
+      border: 2.4px solid ${({ theme }) => theme.colors.primary} !important;
     }
 
     .ant-radio-inner::after {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 `;

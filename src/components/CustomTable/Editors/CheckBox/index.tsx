@@ -52,7 +52,6 @@ class CheckBoxEditor extends BaseEditorComponent<
     if (event.key === "Enter") {
       if (target) {
         this.handleChange(target.value);
-        // this.finishEditing();
         this.close();
       }
 
@@ -62,13 +61,11 @@ class CheckBoxEditor extends BaseEditorComponent<
     }
 
     if (["Tab", " "].includes(event.key)) {
-      // this.finishEditing();
       this.close();
       this.navigateToNextRightCell();
     }
 
     if (["Escape"].includes(event.key)) {
-      // this.finishEditing();
       this.close();
     }
   };
@@ -191,8 +188,8 @@ class CheckBoxEditor extends BaseEditorComponent<
           {this.props.options.map((option: string, index: number) => {
             const isChecked =
               typeof this.state.newValue === "string"
-                ? this.state.newValue.split(",").includes(option)
-                : this.state.newValue.includes(option);
+                ? this.state.newValue.split(",")?.includes(option)
+                : this.state.newValue?.includes(option);
 
             return (
               <Option key={index} isChecked={isChecked}>
