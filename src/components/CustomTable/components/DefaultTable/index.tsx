@@ -7,6 +7,7 @@ import { renderToString } from "react-dom/server";
 import { FileEditor } from "../../Editors/File";
 import DropdownEditor from "../../Editors/Dropdown";
 import RadioEditor from "../../Editors/Radio";
+import CheckBoxEditor from "../../Editors/CheckBox";
 import RelationEditor from "../../Editors/Relation";
 import { ReactComponent as DropDownIcon } from "../../../../assets/chevron-down.svg";
 import { ReactComponent as TextIcon } from "../../../../assets/icons/headers/text-icon.svg";
@@ -37,6 +38,7 @@ import AlertTooltip from "./components/AlertTooltip";
 import customRendererDropdownComponent from "./components/customRendererDropdownComponent";
 import { useFilterContext } from "../../../../context/FilterContext";
 import { useProductContext } from "../../../../context/products";
+import customRendererCheckedComponent from "./components/customRendererCheckedComponent";
 
 function DefaultTable({
   hotRef,
@@ -194,6 +196,28 @@ function DefaultTable({
     },
     [columns, svgStringDropDown],
   );
+  const customRendererChecked = useCallback(
+    (
+      _instance: Handsontable,
+      td: HTMLTableCellElement,
+      _row: number,
+      col: number,
+      _prop: string | number,
+      value: string | string[],
+    ): void => {
+      if (cols) {
+        // eslint-disable-next-line no-param-reassign
+        td.innerHTML = customRendererCheckedComponent({
+          columns,
+          col,
+          value,
+          svgStringDropDown,
+          setAlertTooltip,
+        });
+      }
+    },
+    [columns, svgStringDropDown],
+  );
 
   const customRendererFileCallBack = useCallback(
     (
@@ -309,6 +333,7 @@ function DefaultTable({
       return maxOrder;
     }, -Infinity);
   }
+  console.log("🚀 ~ file: index.tsx:323 ~ cols:", cols);
 
   return (
     <>
@@ -430,6 +455,23 @@ function DefaultTable({
                 renderer={customRendererRadio}
               >
                 <RadioEditor
+                  hot-editor
+                  options={[...col.options, ""]}
+                  editorColumnScope={0}
+                />
+              </HotColumn>
+            );
+          }
+          if (col.isCustom && col.type === "checked") {
+            return (
+              <HotColumn
+                width={col.width}
+                _columnIndex={+col.order}
+                data={col.data}
+                key={col.order + col.data}
+                renderer={customRendererChecked}
+              >
+                <CheckBoxEditor
                   hot-editor
                   options={[...col.options, ""]}
                   editorColumnScope={0}
