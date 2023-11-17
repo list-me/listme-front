@@ -150,10 +150,13 @@ class CheckBoxEditor extends BaseEditorComponent<
   }
 
   handleChange(value: string): void {
-    const newValue =
+    const currentValues =
       typeof this.state.newValue === "string"
         ? this.state.newValue.split(",")
         : this.state.newValue;
+
+    const newValue = currentValues.filter((item: string) => item.length > 0);
+
     const valueIndex = newValue.indexOf(value);
 
     let updatedValue: string[];

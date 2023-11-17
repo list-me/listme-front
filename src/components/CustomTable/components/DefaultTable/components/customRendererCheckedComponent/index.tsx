@@ -23,6 +23,9 @@ function customRendererCheckedComponent({
 
   const radioClass = itemCorrect ? "checked-item" : "checked-item-warn";
 
+  // @ts-ignore
+  const valueToView = value?.join(", ");
+
   const element = `
   <div class=${radioClass} >
     ${
@@ -33,9 +36,9 @@ function customRendererCheckedComponent({
     </div>`
         : ""
     }
-    ${value ?? ""}
+    ${valueToView ?? ""}
     ${svgStringDropDown}
-  </div>`;
+    </div>`;
 
   (window as any).yourSetAlertTooltip = setAlertTooltip;
 
