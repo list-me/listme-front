@@ -189,7 +189,11 @@ class CheckBoxEditor extends BaseEditorComponent<
       >
         <Container>
           {this.props.options.map((option: string, index: number) => {
-            const isChecked = this.state.newValue?.includes(option);
+            const isChecked =
+              typeof this.state.newValue === "string"
+                ? this.state.newValue.split(",").includes(option)
+                : this.state.newValue.includes(option);
+
             return (
               <Option key={index} isChecked={isChecked}>
                 <Label>
