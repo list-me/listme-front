@@ -473,7 +473,7 @@ function DefaultTable({
               >
                 <CheckBoxEditor
                   hot-editor
-                  options={[...col.options, ""]}
+                  options={[...col.options]}
                   editorColumnScope={0}
                 />
               </HotColumn>

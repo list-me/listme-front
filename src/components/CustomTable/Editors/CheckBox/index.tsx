@@ -19,14 +19,18 @@ class CheckBoxEditor extends BaseEditorComponent<
     super(props);
 
     this.state = {
-      value: [""],
-      newValue: "",
+      value: [],
+      newValue: [],
       radioRefs: this.props.options.map(() =>
         React.createRef<HTMLInputElement>(),
       ),
       currentIndex: 0,
     };
 
+    console.log(
+      "🚀 ~ file: index.tsx:27 ~ constructor ~ this.props.options:",
+      this.props.options,
+    );
     this.containerStyle = {
       display: "none",
       position: "absolute",
@@ -94,7 +98,7 @@ class CheckBoxEditor extends BaseEditorComponent<
   }
 
   getValue(): string[] {
-    return [this.state.newValue];
+    return this.state.newValue;
   }
 
   open(): void {
@@ -150,7 +154,18 @@ class CheckBoxEditor extends BaseEditorComponent<
   }
 
   handleChange(value: string): void {
-    this.setValue(value);
+    const { newValue } = this.state;
+    const currentIndex = newValue.indexOf(value);
+
+    if (currentIndex === -1) {
+      // @ts-ignore
+      this.setState({ newValue: [...newValue, value] as string[] });
+    } else {
+      // @ts-ignore
+      const updatedValue = newValue.filter((val) => val !== value) as string[];
+      // @ts-ignore
+      this.setState({ newValue: updatedValue });
+    }
   }
 
   handleSelectOption(index: number): void {
@@ -177,7 +192,7 @@ class CheckBoxEditor extends BaseEditorComponent<
       >
         <Container>
           {this.props.options.map((option: string, index: number) => {
-            const isChecked = option === this.state.newValue;
+            const isChecked = this.state.newValue.includes(option);
             return (
               <Option
                 key={index}
