@@ -27,10 +27,6 @@ class CheckBoxEditor extends BaseEditorComponent<
       currentIndex: 0,
     };
 
-    console.log(
-      "🚀 ~ file: index.tsx:27 ~ constructor ~ this.props.options:",
-      this.props.options,
-    );
     this.containerStyle = {
       display: "none",
       position: "absolute",
@@ -154,24 +150,22 @@ class CheckBoxEditor extends BaseEditorComponent<
   }
 
   handleChange(value: string): void {
-    const { newValue } = this.state;
-    const currentIndex = newValue.indexOf(value);
+    const newValue =
+      typeof this.state.newValue === "string"
+        ? this.state.newValue.split(",")
+        : this.state.newValue;
+    const valueIndex = newValue.indexOf(value);
 
-    if (currentIndex === -1) {
-      // @ts-ignore
-      this.setState({ newValue: [...newValue, value] as string[] });
+    let updatedValue: string[];
+
+    if (valueIndex === -1) {
+      updatedValue = [...newValue, value];
     } else {
-      // @ts-ignore
-      const updatedValue = newValue.filter((val) => val !== value) as string[];
-      // @ts-ignore
-      this.setState({ newValue: updatedValue });
+      updatedValue = newValue.filter((val: any) => val !== value);
     }
-  }
 
-  handleSelectOption(index: number): void {
-    const item = this.state.radioRefs[index].current as HTMLInputElement;
-    this.setValue(item.value);
-    item.focus();
+    // @ts-ignore
+    this.setState({ newValue: updatedValue.length ? updatedValue : [""] });
   }
 
   stopMousedownPropagation(e: any): void {
@@ -192,21 +186,19 @@ class CheckBoxEditor extends BaseEditorComponent<
       >
         <Container>
           {this.props.options.map((option: string, index: number) => {
-            const isChecked = this.state.newValue.includes(option);
+            const isChecked = this.state.newValue?.includes(option);
             return (
-              <Option
-                key={index}
-                isChecked={isChecked}
-                onClick={() => this.handleSelectOption(index)}
-              >
-                <Input
-                  type="checkbox"
-                  value={option}
-                  checked={isChecked}
-                  onChange={(e) => this.handleChange(e.target.value)}
-                  ref={this.state.radioRefs[index]}
-                />
-                <Label>{option}</Label>
+              <Option key={index} isChecked={isChecked}>
+                <Label>
+                  <Input
+                    type="checkbox"
+                    value={option}
+                    checked={isChecked}
+                    onChange={(e) => this.handleChange(e.target.value)}
+                    ref={this.state.radioRefs[index]}
+                  />
+                  {option}
+                </Label>
               </Option>
             );
           })}

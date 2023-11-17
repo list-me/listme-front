@@ -34,6 +34,9 @@ export const Label = styled.label`
   font-family: inherit;
   color: inherit;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   top: 3px;
   height: 20px;
   margin: 0;
@@ -49,7 +52,6 @@ export const Option = styled.div<{ isChecked?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.5rem;
   padding: 0.25rem 0;
 
   height: 25px;
@@ -65,8 +67,6 @@ export const Option = styled.div<{ isChecked?: boolean }>`
 `;
 
 export const Input = styled.input`
-  margin-top: 2px;
-
   &:hover {
     cursor: pointer;
   }

@@ -333,7 +333,6 @@ function DefaultTable({
       return maxOrder;
     }, -Infinity);
   }
-  console.log("🚀 ~ file: index.tsx:323 ~ cols:", cols);
 
   return (
     <>
