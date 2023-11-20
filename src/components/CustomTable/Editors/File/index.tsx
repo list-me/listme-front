@@ -2,11 +2,9 @@
 /* eslint-disable import/prefer-default-export */
 import React, { ReactNode, createRef } from "react";
 import { BaseEditorComponent } from "@handsontable/react";
-import { toast } from "react-toastify";
 import { FileProps, FileState } from "./File.d";
 import Dropzone from "../../../Dropzone";
 import { productContext } from "../../../../context/products";
-import { isEquivalent } from "../../../../utils";
 
 export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
   rootRef = createRef<HTMLDivElement>();
@@ -134,6 +132,9 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
 
                 this.TD.setAttribute("data-new-value", JSON.stringify(images));
               }}
+              instance={this.hotInstance}
+              companyId={this.props.companyId}
+              row={this.row}
             />
           ) : (
             <></>

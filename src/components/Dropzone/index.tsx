@@ -22,6 +22,9 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   field,
   onCancel,
   onSuccess,
+  instance,
+  row,
+  companyId,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -36,7 +39,36 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     if (acceptedFiles.length > 0) {
       setLoading(true);
       try {
-        const newFiles = await uploadImages(acceptedFiles, templateId);
+        const optionals = {
+          brand: "",
+          name: "",
+        };
+
+        if (templateId === "8956d969-d769-4f09-8736-e0b4d73b3e3d") {
+          const brand = instance.getDataAtRowProp(row, "730291");
+
+          optionals.brand = brand?.length ? brand[0]?.id : undefined;
+          optionals.name = instance.getDataAtRowProp(row, "474091");
+        }
+
+        if (templateId === "a13f5317-d855-4766-9063-c916f4d90b83") {
+          const brand = instance.getDataAtRowProp(row, "956614");
+          optionals.brand = brand?.length ? brand[0]?.id : undefined;
+          optionals.name = instance.getDataAtRowProp(row, "889711");
+        }
+
+        if (templateId === "23625c16-ca24-48d7-9f4d-d00364c66d8b") {
+          const brand = instance.getDataAtRowProp(row, "771752");
+          optionals.brand = brand?.length ? brand[0]?.id : undefined;
+          optionals.name = instance.getDataAtRowProp(row, "993384");
+        }
+
+        const newFiles = await uploadImages(
+          acceptedFiles,
+          templateId,
+          companyId,
+          optionals,
+        );
 
         if (newFiles) {
           setItems((prev) => [...prev, ...newFiles]);

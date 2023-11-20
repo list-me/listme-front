@@ -1,11 +1,13 @@
 import { createContext, useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import {
+  FileOptional,
   ImageContext,
   ImageContextProps,
   SignedUrlResponse,
 } from "./image.context.d";
 import { fileRequests } from "../../services/apis/requests/file";
+import { isCollectionCompany } from "../../utils";
 
 const imageContext = createContext<ImageContext>({
   uploadImages: async (): Promise<string[]> => [""],
@@ -20,18 +22,38 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
     fileName: string,
     fileType: string,
     templateId: string,
+    optionals?: FileOptional,
   ): Promise<SignedUrlResponse> => {
-    return fileRequests.getSignedUrl(fileName, fileType, templateId);
+    return fileRequests.getSignedUrl(fileName, fileType, templateId, optionals);
   };
 
   const uploadImages = useCallback(
-    async (files: File[], url: string): Promise<string[] | void> => {
+    async (
+      files: File[],
+      templateId: string,
+      companyId: string,
+      optionals?: FileOptional,
+    ): Promise<string[] | void> => {
       try {
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {
           const [fileName, fileType] = file.name.split(".");
 
-          const signedUrl = await getSignedUrl(fileName, fileType, url);
+          let signedUrl: SignedUrlResponse;
+          if (isCollectionCompany(companyId)) {
+            if (!optionals?.brand || !optionals?.name) {
+              // eslint-disable-next-line @typescript-eslint/no-throw-literal
+              throw "Marca e Nome devem estar preenchidos";
+            }
+
+            signedUrl = await getSignedUrl(fileName, fileType, templateId, {
+              brand: optionals.brand,
+              name: optionals.name,
+            });
+          } else {
+            signedUrl = await getSignedUrl(fileName, fileType, templateId);
+          }
+
           filesNames.push(signedUrl.access_url);
           return fileRequests.uploadFile(file, signedUrl.url);
         });
@@ -39,7 +61,11 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
         await Promise.all(uploadPromises);
         return filesNames;
       } catch (error) {
-        throw new Error("Ocorreu um erro ao realizar o upload dos arquivos");
+        if (typeof error === "string") {
+          toast.warning(error);
+        } else {
+          throw new Error("Ocorreu um erro ao realizar o upload dos arquivos");
+        }
       }
     },
     [],
