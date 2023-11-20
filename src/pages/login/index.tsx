@@ -22,6 +22,7 @@ import { authRequests } from "../../services/apis/requests/auth";
 import { ROUTES } from "../../constants/routes";
 import { STORAGE } from "../../constants/localStorage";
 import { Loading } from "../../components/Loading";
+import PublicListList from "../../components/FromTo/components/PublicList/PublicListList";
 
 function Login(): JSX.Element {
   const [keepLoggedIn, setKeepLoggedIn] = useState<boolean>(false);
@@ -60,6 +61,7 @@ function Login(): JSX.Element {
 
   return (
     <Background>
+      {/* <PublicListList /> */}
       <LogoContainer>
         <LogoSVG />
       </LogoContainer>
