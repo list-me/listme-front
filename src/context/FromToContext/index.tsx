@@ -48,7 +48,7 @@ export function FromToContextProvider({
   const [selectedLinkFields, setSelectedLinkFields] = useState<{
     [key: string]: IOption;
   }>({});
-
+  const [stepType, setStepType] = useState<"fromTo" | "publicList">("fromTo");
   const [csvResponse, setCsvResponse] = useState<ICSVResponse>(
     {} as ICSVResponse,
   );
@@ -181,6 +181,8 @@ export function FromToContextProvider({
     setSelectedLinkFields,
     csvResponse,
     toClean,
+    stepType,
+    setStepType,
   };
 
   return (

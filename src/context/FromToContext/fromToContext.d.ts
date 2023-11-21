@@ -46,6 +46,8 @@ export interface FromToContextType {
   >;
   csvResponse: ICSVResponse;
   toClean: () => void;
+  stepType: "fromTo" | "publicList";
+  setStepType: React.Dispatch<React.SetStateAction<"fromTo" | "publicList">>;
 }
 
 export interface CSVRow {

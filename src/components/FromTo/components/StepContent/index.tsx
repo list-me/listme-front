@@ -6,23 +6,23 @@ import ImportConfiguration from "../ImportConfiguration";
 import { useFromToContext } from "../../../../context/FromToContext";
 import ImportOptions from "../ImportOptions";
 import LinkFields from "../LinkFields";
+import PublicListList from "../PublicList/PublicListList";
 
 function StepContent(): JSX.Element {
-  const { currentStep } = useFromToContext();
+  const { currentStep, stepType } = useFromToContext();
 
   return (
     <StepContentContainer>
       {currentStep === 0 && <InitialStep />}
-      {currentStep === 1 && <ImportFile />}
-      {currentStep === 2 && (
-        // <LoadingSpinner
-        //   text="Carregando tabela..."
-        //   subText="Quase lá... Estamos organizando seus arquivos"
-        // />
+      {currentStep === 1 &&
+        (stepType === "fromTo" ? <ImportFile /> : <PublicListList />)}
+      {currentStep === 2 && stepType === "fromTo" ? (
         <ImportConfiguration />
+      ) : (
+        <></>
       )}
-      {currentStep === 3 && <ImportOptions />}
-      {currentStep === 4 && <LinkFields />}
+      {currentStep === 3 && stepType === "fromTo" ? <ImportOptions /> : <></>}
+      {currentStep === 4 && stepType === "fromTo" ? <LinkFields /> : <></>}
     </StepContentContainer>
   );
 }
