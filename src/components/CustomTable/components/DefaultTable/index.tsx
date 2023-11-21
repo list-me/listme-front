@@ -452,6 +452,7 @@ function DefaultTable({
                   editorColumnScope={0}
                   templateId={template.id}
                   dataProvider={products}
+                  companyId={template.companyId}
                 />
               </HotColumn>
             );

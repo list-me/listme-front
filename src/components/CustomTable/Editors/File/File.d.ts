@@ -1,5 +1,6 @@
 type FileProps = {
   templateId: string;
+  companyId: string;
   dataProvider: Array<any>;
   changeLoading?: (isLoading: boolean, row?: number, column?: number) => void;
 };
