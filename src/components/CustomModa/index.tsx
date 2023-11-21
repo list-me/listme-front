@@ -265,7 +265,6 @@ export const PersonalModal = ({
                 type: data?.type,
               }}
               onFinish={(fields) => {
-                console.log("debug");
                 if (!fields.type) fields.type = type;
                 if (
                   fields.type == "relation" &&
@@ -300,7 +299,6 @@ export const PersonalModal = ({
                   );
                   return;
                 }
-                console.log("🚀 ~ file: index.tsx:295 ~ fields:", fields);
 
                 handleUpdateTemplate(fields).then((response) => {
                   if (response) {
