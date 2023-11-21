@@ -383,7 +383,7 @@ export const ProductContextProvider = ({
       const fields = buildProduct(value);
 
       if (isNew) {
-        await productRequests.update({ id: productId, fields });
+        const test = await productRequests.update({ id: productId, fields });
         toast.success("Produto atualizado com sucesso");
       } else {
         const newProduct = {

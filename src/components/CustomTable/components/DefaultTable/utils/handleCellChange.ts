@@ -1,6 +1,8 @@
 import Handsontable from "handsontable";
 import { isEquivalent } from "../../../../../utils";
 
+let previousCellValue: any;
+
 const handleCellChange: any = async (
   changes: any,
   hotInstance: Handsontable | null | undefined,
@@ -45,6 +47,9 @@ const handleCellChange: any = async (
       customChanges[0][2] !== customChanges[0][3] &&
       dataProvider.length
     ) {
+      // eslint-disable-next-line prefer-destructuring
+      previousCellValue = customChanges[0][2];
+
       try {
         if (!isNew) setIsTableLocked(true);
         const id = await handleSave(
@@ -61,6 +66,12 @@ const handleCellChange: any = async (
           const updated = dataProvider;
           updated[customChanges[0][0]].id = id;
           setDataProvider(updated);
+        } else if (previousCellValue !== undefined) {
+          // eslint-disable-next-line no-param-reassign
+          dataProvider[customChanges[0][0]][customChanges[0][1]] =
+            previousCellValue;
+
+          setDataProvider([...dataProvider]);
         }
       } finally {
         if (!isNew) setIsTableLocked(false);
