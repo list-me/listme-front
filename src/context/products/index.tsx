@@ -384,7 +384,6 @@ export const ProductContextProvider = ({
 
       if (isNew) {
         const test = await productRequests.update({ id: productId, fields });
-        console.log("🚀 ~ file: index.tsx:387 ~ test:", test);
         toast.success("Produto atualizado com sucesso");
       } else {
         const newProduct = {
@@ -402,7 +401,6 @@ export const ProductContextProvider = ({
         return newItem;
       }
     } catch (error: any) {
-      console.log("veio no erro");
       const message =
         typeof error?.response?.data?.message === "object"
           ? error?.response?.data?.message[0]
