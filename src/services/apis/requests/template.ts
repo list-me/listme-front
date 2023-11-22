@@ -6,26 +6,19 @@ interface IPagination {
   page?: number;
   limit?: number;
   is_public?: boolean;
+  sort?: string;
+  name?: string;
 }
 
 // eslint-disable-next-line import/prefer-default-export
 export const templateRequests = {
-  list: async ({
-    page = 0,
-    limit = 20,
-    is_public = false,
-  }: IPagination): Promise<any> => {
+  list: async ({ page = 0, limit = 20 }: IPagination): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
-    const response = await api.get(
-      is_public
-        ? `/templates?offset=${page}&limit=${limit}&is_public=${is_public}`
-        : `/templates?offset=${page}&limit=${limit}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    const response = await api.get(`/templates?offset=${page}&limit=${limit}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
 
     return response?.data?.templates
       ?.sort((lastItem: any, nextItem: any) => {
@@ -40,6 +33,30 @@ export const templateRequests = {
         return 0;
       })
       .map((item: any, index: number) => ({ order: index + 1, ...item }));
+  },
+  listPublicList: async ({
+    page = 0,
+    limit = 20,
+    is_public = false,
+    sort = "",
+    name = "",
+  }: IPagination): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.get(
+      `/templates?offset=${page}&limit=${limit}${
+        is_public && `&is_public=true`
+      }${sort && `&sort=${sort}`}${name && `&name=${name}`}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response?.data?.templates?.map((item: any, index: number) => ({
+      order: index + 1,
+      ...item,
+    }));
   },
   get: async (id: string): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);

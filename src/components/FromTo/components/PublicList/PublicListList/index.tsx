@@ -14,6 +14,7 @@ import { templateRequests } from "../../../../../services/apis/requests/template
 import formatDate from "../../../utils/formatDate";
 
 import PaginationTablePublicListListComponent from "./components/PaginationTablePublicListList";
+import useDebounce from "../../../../../hooks/useDebounce/useDebounce";
 
 const PublicListList: React.FC = () => {
   const columns = [
@@ -83,6 +84,15 @@ const PublicListList: React.FC = () => {
   ];
 
   const [templates, setTemplates] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectFilter, setSelectFilter] = useState({
+    label: "Mais recente",
+    value: "created_at",
+  });
+  const [searchText, setSearchText] = useState("");
+  const currentList = templates?.length ? splitIntoSublists(templates, 7) : [];
+  const debouncedInputValue = useDebounce(searchText, 250);
+
   function splitIntoSublists<T>(list: T[], sublistSize: number): T[][] {
     const sublists: T[][] = [];
     for (let i = 0; i < list.length; i += sublistSize) {
@@ -91,17 +101,16 @@ const PublicListList: React.FC = () => {
     }
     return sublists;
   }
-  const currentList = templates?.length ? splitIntoSublists(templates, 7) : [];
 
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const handleGetTemplates = ({
+  const handleGetTemplates = async ({
     page,
     limit,
     is_public,
-  }: IPaginationTemplate): void => {
-    templateRequests
-      .list({ limit, page, is_public })
+    sort,
+    name,
+  }: IPaginationTemplate): Promise<void> => {
+    await templateRequests
+      .listPublicList({ limit, page, is_public, sort, name })
       .then((response) => {
         setTemplates(response);
       })
@@ -112,15 +121,27 @@ const PublicListList: React.FC = () => {
   };
 
   useEffect(() => {
-    handleGetTemplates({ page: 0, limit: 1000, is_public: true });
-  }, []);
+    handleGetTemplates({
+      page: 0,
+      limit: 1000,
+      is_public: true,
+      sort: selectFilter.value,
+      name: debouncedInputValue,
+    });
+  }, [debouncedInputValue, selectFilter.value]);
 
   return (
     <ContainerPublicListList>
       <SidebarPublicListListComponent />
       <ContentPublicListList>
-        <HeaderPublicListListComponent />
-        <SearchPublicListListComponent />
+        <HeaderPublicListListComponent
+          selectFilter={selectFilter}
+          setSelectFilter={setSelectFilter}
+        />
+        <SearchPublicListListComponent
+          searchText={searchText}
+          setSearchText={setSearchText}
+        />
         <ContainerTablePublicListList>
           <CustomTable
             columns={columns}

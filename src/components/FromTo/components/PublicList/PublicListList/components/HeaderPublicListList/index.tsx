@@ -6,27 +6,39 @@ import {
 } from "./styles";
 import SelectComponent from "../../../../../../Select";
 
-// import { Container } from './styles';
-
-const HeaderPublicListListComponent: React.FC = () => {
+function HeaderPublicListListComponent({
+  selectFilter,
+  setSelectFilter,
+}: {
+  selectFilter: {
+    label: string;
+    value: string;
+  };
+  setSelectFilter: React.Dispatch<
+    React.SetStateAction<{
+      label: string;
+      value: string;
+    }>
+  >;
+}): JSX.Element {
   return (
     <HeaderPublicListList>
       <TitlePublicListList>Lists públicas</TitlePublicListList>
       <CotainerSelectPublicListList>
         <SelectComponent
           small
-          select={{ label: "Mais recente", value: "Mais recente" }}
-          onChange={() => ""}
+          select={selectFilter}
+          onChange={(e) => setSelectFilter(e)}
           options={[
-            { label: "Mais recente", value: "Mais recente" },
-            { label: "Ordem alfabética", value: "Ordem alfabética" },
+            { label: "Mais recente", value: "created_at" },
+            { label: "Ordem alfabética", value: "name" },
             {
               label: "Preço: Maior para Menor",
-              value: "Preço: Maior para Menor",
+              value: "amount_desc",
             },
             {
               label: "Preço: Menor para Maior",
-              value: "Preço: Menor para Maior",
+              value: "amount_asc",
             },
           ]}
           placeHolder=""
@@ -34,6 +46,6 @@ const HeaderPublicListListComponent: React.FC = () => {
       </CotainerSelectPublicListList>
     </HeaderPublicListList>
   );
-};
+}
 
 export default HeaderPublicListListComponent;
