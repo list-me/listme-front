@@ -5,14 +5,21 @@ import { ITemplate } from "../../../context/products/product.context";
 interface IPagination {
   page?: number;
   limit?: number;
+  is_public?: boolean;
 }
 
 // eslint-disable-next-line import/prefer-default-export
 export const templateRequests = {
-  list: async ({ page = 0, limit = 20 }: IPagination): Promise<any> => {
+  list: async ({
+    page = 0,
+    limit = 20,
+    is_public = false,
+  }: IPagination): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.get(
-      `/templates/?offset=${page}&limit=${limit}`,
+      is_public
+        ? `/templates?offset=${page}&limit=${limit}&is_public=${is_public}`
+        : `/templates?offset=${page}&limit=${limit}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

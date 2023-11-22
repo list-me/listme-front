@@ -1,20 +1,12 @@
 import styled from "styled-components";
 
-export const ContainerPublicListList = styled.div`
-  width: 1170px;
-  height: 773px;
-  padding: 0px, 40px, 0px, 40px;
-  border-radius: 8px;
-  background: ${({ theme }) => theme.colors.secondary};
-`;
-
 export const SidebarPublicListList = styled.div`
   width: 272px;
   height: 100%;
   padding: 45px 40px;
   border-right: 2px solid #e8ebed;
 `;
-export const HeaderPublicListList = styled.h5`
+export const HeaderSidebarPublicListList = styled.h5`
   color: ${({ theme }) => theme.colors.fourth};
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.xmedium};
@@ -35,11 +27,11 @@ export const ItemSidebarPublicListList = styled.div`
 
   @keyframes pulse {
     25% {
-      transform: rotate(30deg);
+      transform: rotate(15deg);
     }
 
     75% {
-      transform: rotate(-30deg);
+      transform: rotate(-15deg);
     }
   }
 `;
