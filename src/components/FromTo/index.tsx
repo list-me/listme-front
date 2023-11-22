@@ -24,7 +24,6 @@ function FromTo(): JSX.Element | null {
     { title: "Importar arquivo de produtos", stepTitle: "Opç. de import." },
     { title: "Importar arquivo de produtos", stepTitle: "Vincular campos" },
   ];
-  console.log("🚀 ~ file: index.tsx:31 ~ FromTo ~ stepType:", stepType);
   if (!fromToIsOpened) return null;
   return (
     <ContainerFromTo>
