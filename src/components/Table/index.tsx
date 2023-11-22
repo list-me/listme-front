@@ -90,7 +90,12 @@ function CustomTable(props: any): JSX.Element {
         rowSelection={props.rowSelection}
         onRow={(record, _rowIndex) => {
           return {
-            onClick: () => navigate(`${ROUTES.PRODUCTS}/${record.id}`),
+            onClick: () => {
+              // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+              props.disabledOnClick
+                ? ""
+                : navigate(`${ROUTES.PRODUCTS}/${record.id}`);
+            },
           };
         }}
       />

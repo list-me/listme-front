@@ -46,6 +46,26 @@ export const ContainerTablePublicListList = styled.div`
   .ant-pagination {
     display: none;
   }
+  .containerLinkIcon {
+    display: flex;
+    justify-content: center;
+    margin-right: 2rem;
+  }
+  .boxLinkIcon {
+    padding: 8px;
+    border-radius: 4px;
+    background: ${({ theme }) => theme.colors.focus.primary};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    :hover {
+      background: ${({ theme }) => theme.colors.primary};
+      path {
+        stroke: ${({ theme }) => theme.colors.focus.primary};
+      }
+    }
+  }
 `;
 
 export const ContentPublicListList = styled.div`
