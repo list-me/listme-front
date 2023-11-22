@@ -19,13 +19,10 @@ export const ItemSidebarPublicListList = styled.div`
   gap: 10px;
   margin-bottom: 16px;
   cursor: pointer;
-  transition: left 0.75s ease-in-out;
   :hover {
     svg {
       animation: pulse 0.75s;
     }
-    position: relative;
-    left: 1rem;
   }
 
   @keyframes pulse {
