@@ -9,10 +9,8 @@ import { useFromToContext } from "../../../../../../../context/FromToContext";
 
 function TablePublicListList({
   currentList,
-  currentPage,
 }: {
-  currentList: never[][];
-  currentPage: number;
+  currentList: never[];
 }): JSX.Element {
   const navigate = useNavigate();
   const { setFromToIsOpened } = useFromToContext();
@@ -84,7 +82,7 @@ function TablePublicListList({
     <ContainerTablePublicListList>
       <CustomTable
         columns={columns}
-        dataProvider={currentList[currentPage - 1]}
+        dataProvider={currentList}
         size="large"
         disabledOnClick
       />

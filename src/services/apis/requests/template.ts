@@ -57,10 +57,13 @@ export const templateRequests = {
       },
     );
 
-    return response?.data?.templates?.map((item: any, index: number) => ({
-      order: index + 1,
-      ...item,
-    }));
+    return {
+      data: response?.data?.templates?.map((item: any, index: number) => ({
+        order: index + 1,
+        ...item,
+      })),
+      total: response?.data?.total,
+    };
   },
   get: async (id: string): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
