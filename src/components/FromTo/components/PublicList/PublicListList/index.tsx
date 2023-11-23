@@ -15,10 +15,7 @@ import { useFromToContext } from "../../../../../context/FromToContext";
 function PublicListList(): JSX.Element {
   const { templates, setTemplates } = useFromToContext();
   const [currentPage, setCurrentPage] = useState(1);
-  console.log(
-    "🚀 ~ file: index.tsx:18 ~ PublicListList ~ currentPage:",
-    currentPage,
-  );
+
   const [selectFilter, setSelectFilter] = useState({
     label: "Mais recente",
     value: "created_at",
