@@ -149,6 +149,7 @@ export function FromToContextProvider({
     setSelectedLinkFields({});
     setValuesImportConfiguration(initialValuesImportConfiguration);
     setValuesImportOptions(initialValuesImportOptions);
+    setStepType("fromTo");
   }
 
   useEffect(() => {

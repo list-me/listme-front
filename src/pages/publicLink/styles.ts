@@ -57,18 +57,6 @@ export const RightContent = styled.div`
       margin: 0 0 0 10px;
     }
   }
-  .linkButton {
-    margin-right: 9px;
-    svg {
-      width: 20px;
-      height: 20px;
-      margin: 0 0 0 10px;
-    }
-
-    path {
-      stroke: white;
-    }
-  }
 `;
 
 export const Header = styled.header`
