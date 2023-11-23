@@ -43,7 +43,7 @@ import NotFound from "./components/NotFound";
 registerAllModules();
 registerAllEditors();
 
-const CustomTable: React.FC<CustomTableProps> = ({ publicLink }) => {
+const CustomTable: React.FC<CustomTableProps> = () => {
   const hotRef = useRef<HotTable>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
   const {
@@ -321,7 +321,6 @@ const CustomTable: React.FC<CustomTableProps> = ({ publicLink }) => {
       <>
         <Content>
           <HeaderFilters
-            publicLink={publicLink}
             template={template}
             // @ts-ignore
             headerTable={headerTable}

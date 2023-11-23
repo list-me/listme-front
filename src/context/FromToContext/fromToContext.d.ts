@@ -48,6 +48,8 @@ export interface FromToContextType {
   toClean: () => void;
   stepType: "fromTo" | "publicList";
   setStepType: React.Dispatch<React.SetStateAction<"fromTo" | "publicList">>;
+  templates: never[];
+  setTemplates: React.Dispatch<React.SetStateAction<never[]>>;
 }
 
 export interface CSVRow {

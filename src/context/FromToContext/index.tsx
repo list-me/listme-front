@@ -41,6 +41,7 @@ export function FromToContextProvider({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
+  const [templates, setTemplates] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<CSVRow[]>([]);
   const [currentFile, setCurrentFile] = useState<File>();
@@ -150,6 +151,7 @@ export function FromToContextProvider({
     setValuesImportConfiguration(initialValuesImportConfiguration);
     setValuesImportOptions(initialValuesImportOptions);
     setStepType("fromTo");
+    setTemplates([]);
   }
 
   useEffect(() => {
@@ -184,6 +186,8 @@ export function FromToContextProvider({
     toClean,
     stepType,
     setStepType,
+    templates,
+    setTemplates,
   };
 
   return (

@@ -36,6 +36,25 @@ export const productRequests = {
 
     return response;
   },
+  listPublic: async (
+    { page = 0, limit = 200 }: IPagination,
+    templateId?: string,
+  ): Promise<AxiosResponse> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+
+    const response = await api.get(
+      `/products/public?${templateId && `&templateId=${templateId}`}${
+        limit && `&limit=${limit}`
+      }${page && `&offset=${page}`}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response;
+  },
   save: async (product: any): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.post(`/product`, product, {

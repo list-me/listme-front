@@ -3,5 +3,6 @@ export const ROUTES = {
 
   TEMPLATES: "/templates",
   PRODUCTS: "/products",
+  PRODUCTSPUBLIC: "/products/public",
   LOGIN: "/login",
 };

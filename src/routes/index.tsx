@@ -6,7 +6,7 @@ import PrivateRoutes from "./PrivateRoutes";
 import Login from "../pages/login";
 import { PublicRoute } from "./PublicRoute";
 import { Products } from "../pages/products";
-import { PublicLink } from "../pages/publicLink";
+import { ProductsPublic } from "../pages/productsPublic";
 
 export function Router(): JSX.Element {
   return (
@@ -18,7 +18,7 @@ export function Router(): JSX.Element {
         <Route path="/" element={<PrivateRoutes />}>
           <Route path="/templates" element={<Template />} />
           <Route path="/products/:id" element={<Products />} />
-          <Route path="/products/public-link/:id" element={<PublicLink />} />
+          <Route path="/products/public/:id" element={<ProductsPublic />} />
         </Route>
       </Routes>
     </Suspense>
