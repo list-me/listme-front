@@ -23,9 +23,6 @@ function customRendererCheckedComponent({
 
   const radioClass = itemCorrect ? "checked-item" : "checked-item-warn";
 
-  // @ts-ignore
-  const valueToView = value ? value?.join(", ") : value;
-
   const element = `
   <div class=${radioClass} >
     ${
@@ -36,7 +33,7 @@ function customRendererCheckedComponent({
     </div>`
         : ""
     }
-    ${valueToView ?? ""}
+    ${value ?? ""}
     ${svgStringDropDown}
     </div>`;
 
