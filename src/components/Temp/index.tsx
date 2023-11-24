@@ -26,11 +26,13 @@ import { useFilterContext } from "../../context/FilterContext";
 interface IProps {
   options?: any[];
   handleSearch: Function;
+  publicList?: boolean;
 }
 
 export const Temp: React.FC<IProps> = ({
   options,
   handleSearch = () => {},
+  publicList,
 }) => {
   const { setOpenedFilter, filterStatus } = useFilterContext();
   const { conditionsFilter } = useProductContext();
@@ -66,11 +68,15 @@ export const Temp: React.FC<IProps> = ({
         isOpen={isOpen}
         colHeaders={options ?? []}
       />
-      <Item>
+      <Item isDisabled={publicList}>
         <MenuIcon />
         Visualização
       </Item>
-      <Item ref={iconRef} onClick={() => setIsOpen(!isOpen)}>
+      <Item
+        isDisabled={publicList}
+        ref={iconRef}
+        onClick={() => setIsOpen(!isOpen)}
+      >
         <EyeOffIcon />
         Colunas Ocultas
         <ChevronDownIcon ref={iconRef} />

@@ -2,8 +2,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { toast } from "react-toastify";
-import { Container, Content } from "./styles";
-import Table from "../../components/CustomTable";
 import { Loading } from "../../components/Loading";
 import { productRequests } from "../../services/apis/requests/product";
 import { templateRequests } from "../../services/apis/requests/template";
@@ -14,6 +12,7 @@ import {
   IProductToTable,
 } from "../../context/products/product.context";
 import ProductsPublicTable from "../../components/FromTo/components/PublicList/ProductsPublicTable";
+import { Container, Content } from "../products/styles";
 
 export const ProductsPublic: React.FC = () => {
   const COMPONENT_CELL_PER_TYPE: ICustomCellType = useMemo(
@@ -29,6 +28,7 @@ export const ProductsPublic: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [products, setProducts] = useState<IProductToTable[]>();
+  const [template, setTemplate] = useState<IProductToTable[]>();
   const [colHeaders, setColHeaders] = useState<IProductToTable[]>();
 
   function getColHeaders(responseTemplates: any): void {
@@ -58,6 +58,8 @@ export const ProductsPublic: React.FC = () => {
     async (templateId: string) => {
       try {
         const responseTemplate = await templateRequests.get(templateId);
+
+        setTemplate(responseTemplate);
         getColHeaders(responseTemplate);
 
         const { data: dataProducts }: any = await productRequests.listPublic(
@@ -130,7 +132,14 @@ export const ProductsPublic: React.FC = () => {
           {isLoading ? (
             <Loading />
           ) : (
-            products && colHeaders && <ProductsPublicTable />
+            products &&
+            colHeaders && (
+              <ProductsPublicTable
+                template={template}
+                data={products}
+                colHeaders={colHeaders}
+              />
+            )
           )}
         </Container>
       </Content>
