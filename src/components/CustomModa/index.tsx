@@ -176,7 +176,7 @@ export const PersonalModal = ({
     if (isUpdate) {
       templateUpdated = template.fields.fields.map((item: any) => {
         if (item.id === data.id) {
-          data.options = option.length;
+          data.options = option;
           data.type = type;
           data.name = name;
           data.title = title;
@@ -301,13 +301,15 @@ export const PersonalModal = ({
                 }
 
                 handleUpdateTemplate(fields).then((response) => {
-                  const newColumn = {
-                    ...fields,
-                    data: response[response?.length - 1]?.id,
-                    options: fields.option,
-                  };
-                  onClickModal();
-                  onUpdate(newColumn, response);
+                  if (response) {
+                    const newColumn = {
+                      ...fields,
+                      data: response[response?.length - 1]?.id,
+                      options: fields.option,
+                    };
+                    onClickModal();
+                    onUpdate(newColumn, response);
+                  }
                 });
 
                 const id = window.location.pathname.substring(10);
