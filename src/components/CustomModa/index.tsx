@@ -309,15 +309,14 @@ export const PersonalModal = ({
                     };
                     onClickModal();
                     onUpdate(newColumn, response);
+                    const id = window.location.pathname.substring(10);
+                    if (id) {
+                      setTimeout(() => {
+                        handleRedirectAndGetProducts(id).then(() => {});
+                      }, 0);
+                    }
                   }
                 });
-
-                const id = window.location.pathname.substring(10);
-                if (id) {
-                  setTimeout(() => {
-                    handleRedirectAndGetProducts(id).then(() => {});
-                  }, 0);
-                }
               }}
             >
               <div className="encapsulator">
