@@ -65,6 +65,10 @@ const getStyledContent = (
   valueToVisible: string | number | undefined,
   isRequired: boolean,
 ): string => {
+  console.log(
+    "🚀 ~ file: getStyledContent.tsx:68 ~ valueToVisible:",
+    valueToVisible,
+  );
   return `
     <div style="${valueToVisible !== "+" ? BASE_STYLES : PLUS_BASE_STYLES}">
       <div style="${FLEX_GAP_STYLE}">

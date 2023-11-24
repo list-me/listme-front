@@ -1,4 +1,11 @@
-import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { HotTable, HotColumn } from "@handsontable/react";
 import { toast } from "react-toastify";
 import Handsontable from "handsontable";
@@ -323,6 +330,7 @@ function DefaultTable({
     },
     [ICON_HEADER],
   );
+
   const styledHeader = useCallback(
     (column: number, TH: HTMLTableHeaderCellElement): void => {
       const colData = template?.fields?.fields.find(
@@ -334,7 +342,6 @@ function DefaultTable({
       const valueToVisible =
         columnHeaderValue !== " " ? columnHeaderValue : "+";
       const iconType = getIconByType(colData?.type);
-
       TH.innerHTML = getStyledContent(iconType, valueToVisible, isRequired);
     },
     [getIconByType, headerTable, hotRef, template?.fields?.fields],
@@ -358,7 +365,6 @@ function DefaultTable({
   }
 
   const [productsToView, setproductsToView] = useState<IProductToTable[]>([]);
-  console.log("🚀 ~ file: index.tsx:340 ~ productsToView:", productsToView);
 
   useEffect(() => {
     if (isPublic) {
