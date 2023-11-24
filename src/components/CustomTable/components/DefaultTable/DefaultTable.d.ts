@@ -43,4 +43,5 @@ export interface IDefaultTable {
   setCurrentCell: React.Dispatch<any>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleFreeze: any;
+  isPublic?: boolean;
 }

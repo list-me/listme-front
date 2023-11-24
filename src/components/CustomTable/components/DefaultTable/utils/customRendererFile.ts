@@ -128,11 +128,15 @@ function customRendererFile(
     }
   };
 
-  if (typeof value === "string" && value.length) {
+  if (
+    typeof value === "string" &&
+    value !== "valor censurado" &&
+    value.length
+  ) {
     value = JSON.parse(value);
   }
 
-  if (value?.length) {
+  if (value?.length && value !== "valor censurado") {
     td.innerHTML = value
       .map((url: string) => {
         let imageSource: string = url;

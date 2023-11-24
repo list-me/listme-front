@@ -39,6 +39,7 @@ import customRendererDropdownComponent from "./components/customRendererDropdown
 import { useFilterContext } from "../../../../context/FilterContext";
 import { useProductContext } from "../../../../context/products";
 import customRendererCheckedComponent from "./components/customRendererCheckedComponent";
+import { IProductToTable } from "../../../../context/products/product.context";
 
 function DefaultTable({
   hotRef,
@@ -69,6 +70,7 @@ function DefaultTable({
   setIsOpen,
   hidden,
   handleFreeze,
+  isPublic,
 }: IDefaultTable): JSX.Element {
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
   const [openAlertTooltip, setAlertTooltip] = useState(false);
@@ -274,10 +276,31 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
-      if (typeof value === "string" && value.length) value = JSON.parse(value);
+      if (typeof value === "string" && value !== "valor censurado")
+        value = JSON.parse(value);
 
       const totalItems = value ? value.length : 0;
-      td.innerHTML = `<div class="tag-content">${totalItems} Items relacionados</div>`;
+      td.innerHTML =
+        value === "valor censurado"
+          ? `<div class="tag-content" id='blur'>valor censurado</div>`
+          : `<div class="tag-content">${totalItems} Items relacionados</div>`;
+    },
+    [],
+  );
+  const customRendererDefault = useCallback(
+    (
+      instance: Handsontable,
+      td: HTMLTableCellElement,
+      row: number,
+      col: number,
+      prop: string | number,
+      value: any,
+    ): void => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+      } else {
+        td.innerHTML = value;
+      }
     },
     [],
   );
@@ -334,6 +357,28 @@ function DefaultTable({
     }, -Infinity);
   }
 
+  const [productsToView, setproductsToView] = useState<IProductToTable[]>([]);
+  console.log("🚀 ~ file: index.tsx:340 ~ productsToView:", productsToView);
+
+  useEffect(() => {
+    if (isPublic) {
+      if (!headerTable.length || !products.length) return;
+
+      const colsId = headerTable.map((item) => item.data);
+      const censoredProducts = products.map((product) => {
+        const modifiedProduct = { ...product };
+
+        colsId.slice(1).forEach((colId) => {
+          modifiedProduct[colId] = "valor censurado";
+        });
+
+        return modifiedProduct;
+      });
+
+      setproductsToView(censoredProducts as IProductToTable[]);
+    } else setproductsToView(products);
+  }, [headerTable, isPublic, products]);
+
   return (
     <>
       {openAlertTooltip && <AlertTooltip setAlertTooltip={setAlertTooltip} />}
@@ -344,11 +389,12 @@ function DefaultTable({
         ref={hotRef}
         colHeaders={colHeaders}
         columns={cols}
-        data={products}
+        data={productsToView}
         hiddenColumns={{ columns: hidden }}
         manualColumnResize
         manualColumnMove
         rowHeaders
+        checkedTemplate
         rowHeights="52px"
         licenseKey="non-commercial-and-evaluation"
         fixedColumnsLeft={getMaxOrderForFrozen(cols) + 1}
@@ -528,6 +574,7 @@ function DefaultTable({
               _columnIndex={+col.order}
               data={col.data}
               key={col.order + col.data}
+              renderer={customRendererDefault}
             />
           );
         })}

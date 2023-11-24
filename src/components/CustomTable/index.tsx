@@ -361,6 +361,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
             setCurrentCell={setCurrentCell}
             setIsOpen={setIsOpen}
             handleFreeze={handleFreeze}
+            isPublic={isPublic}
           />
           {!!conditionsFilter.length && products.length < 1 && <NotFound />}
         </Container>
