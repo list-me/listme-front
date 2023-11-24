@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import { useState } from "react";
 import { HotTable } from "@handsontable/react";
 import {
   Container,
@@ -20,7 +20,7 @@ import { ReactComponent as HelpIcon } from "../../../../../assets/help.svg";
 import EditableText from "../../../../EditableText";
 import Button from "../../../../Button";
 import { Temp } from "../../../../Temp";
-import { BoxHotTablePublic, ContainerProductsPublicTable } from "./styles";
+import { ContainerProductsPublicTable } from "./styles";
 
 function ProductsPublicTable({
   template,
@@ -32,43 +32,6 @@ function ProductsPublicTable({
   colHeaders: any;
 }): JSX.Element {
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
-  // const hotRef = useRef();
-
-  // const ICON_HEADER = useMemo(
-  //   () => ({
-  //     [IconType.Text]: <TextIcon />,
-  //     [IconType.Paragraph]: <ParagraphIcon />,
-  //     [IconType.Checked]: <CheckedIcon />,
-  //     [IconType.List]: <DropdownIcon />,
-  //     [IconType.File]: <FileIcon />,
-  //     [IconType.Radio]: <RadioIcon />,
-  //     [IconType.Relation]: <RelationIcon />,
-  //   }),
-  //   [],
-  // );
-  // const getIconByType = useCallback(
-  //   (type: IconType): ReactElement => {
-  //     return ICON_HEADER[type];
-  //   },
-  //   [ICON_HEADER],
-  // );
-
-  // const styledHeader = useCallback(
-  //   (column: number, TH: HTMLTableHeaderCellElement): void => {
-  //     const colData = template?.fields?.fields.find(
-  //       (item: any) => item.id === headerTable[column]?.data,
-  //     );
-  //     const { required: isRequired } = colData || {};
-  //     const columnHeaderValue =
-  //       hotRef.current?.hotInstance?.getColHeader(column);
-  //     const valueToVisible =
-  //       columnHeaderValue !== " " ? columnHeaderValue : "+";
-  //     const iconType = getIconByType(colData?.type);
-
-  //     TH.innerHTML = getStyledContent(iconType, valueToVisible, isRequired);
-  //   },
-  //   [getIconByType, headerTable, hotRef, template?.fields?.fields],
-  // );
 
   return (
     <ContainerProductsPublicTable>
@@ -89,7 +52,6 @@ function ProductsPublicTable({
             height="52px"
             width="331px"
             className="secondButton linkButton"
-            // onClick={handleAddProductClick}
           >
             Vincular List completa (R$ 400)
             <LinkIcon />
@@ -110,7 +72,6 @@ function ProductsPublicTable({
       </Filters>
       <Container>
         <HotTable
-          // ref={hotRef}
           licenseKey="non-commercial-and-evaluation"
           data={data}
           colHeaders={colHeaders}
@@ -119,7 +80,6 @@ function ProductsPublicTable({
           rowHeights="52px"
           height="100vh"
           autoColumnSize
-          // afterGetColHeader={styledHeader}
         />
       </Container>
     </ContainerProductsPublicTable>
