@@ -26,13 +26,13 @@ import { useFilterContext } from "../../context/FilterContext";
 interface IProps {
   options?: any[];
   handleSearch: Function;
-  publicList?: boolean;
+  isPublic?: boolean;
 }
 
 export const Temp: React.FC<IProps> = ({
   options,
   handleSearch = () => {},
-  publicList,
+  isPublic,
 }) => {
   const { setOpenedFilter, filterStatus } = useFilterContext();
   const { conditionsFilter } = useProductContext();
@@ -68,12 +68,12 @@ export const Temp: React.FC<IProps> = ({
         isOpen={isOpen}
         colHeaders={options ?? []}
       />
-      <Item isDisabled={publicList}>
+      <Item isDisabled={isPublic}>
         <MenuIcon />
         Visualização
       </Item>
       <Item
-        isDisabled={publicList}
+        isDisabled={isPublic}
         ref={iconRef}
         onClick={() => setIsOpen(!isOpen)}
       >

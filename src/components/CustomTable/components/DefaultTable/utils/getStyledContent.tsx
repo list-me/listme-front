@@ -62,9 +62,9 @@ const ICON_STYLE = `
 
 const getStyledContent = (
   iconType: any,
-  valueToVisible: string,
+  valueToVisible: string | number | undefined,
   isRequired: boolean,
-) => {
+): string => {
   return `
     <div style="${valueToVisible !== "+" ? BASE_STYLES : PLUS_BASE_STYLES}">
       <div style="${FLEX_GAP_STYLE}">

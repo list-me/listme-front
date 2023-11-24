@@ -231,7 +231,12 @@ export const ProductContextProvider = ({
       conditions: IConditions[] | undefined = undefined,
       operator?: string,
     ) => {
-      const { data }: { data: IProductsRequest } = await productRequests.list(
+      const url = window.location.href;
+      const isPublic = url.includes("public");
+      const requestFunction = isPublic
+        ? productRequests.listPublic
+        : productRequests.list;
+      const { data }: { data: IProductsRequest } = await requestFunction(
         { page, limit, keyword },
         templateId,
         conditions,
@@ -317,7 +322,9 @@ export const ProductContextProvider = ({
 
       headersCell = [...headerTitles, " "];
       setColHeaders(headersCell);
+
       const toHeaderTable = [...sortedHeaders, {} as IHeader];
+
       setHeaderTable(toHeaderTable);
       setHidden(
         sortedHeaders
