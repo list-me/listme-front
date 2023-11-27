@@ -49,7 +49,7 @@ export const productRequests = {
   update: async ({ id, fields }: any): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.patch(
-      `/product/${id}`,
+      `/prodct/${id}`,
       { fields },
       {
         headers: {
