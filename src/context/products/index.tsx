@@ -383,23 +383,25 @@ export const ProductContextProvider = ({
       const fields = buildProduct(value);
 
       if (isNew) {
-        const test = await productRequests.update({ id: productId, fields });
-        toast.success("Produto atualizado com sucesso");
-      } else {
-        const newProduct = {
+        const response = await productRequests.update({
           id: productId,
-          templateId: window.location.pathname.substring(10),
-          is_public: true,
           fields,
-        };
-        let newItem;
-
-        const product = await handlePost(newProduct);
-        newItem = product.id;
-
-        toast.success("Produto cadastrado com sucesso");
-        return newItem;
+        });
+        console.log("🚀 ~ file: index.tsx:390 ~ response:", response);
+        toast.success("Produto atualizado com sucesso");
+        return response;
       }
+      const newProduct = {
+        id: productId,
+        templateId: window.location.pathname.substring(10),
+        is_public: true,
+        fields,
+      };
+
+      const product = await handlePost(newProduct);
+
+      toast.success("Produto cadastrado com sucesso");
+      return product;
     } catch (error: any) {
       const message =
         typeof error?.response?.data?.message === "object"
