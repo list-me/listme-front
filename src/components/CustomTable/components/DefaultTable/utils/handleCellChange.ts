@@ -40,7 +40,6 @@ const handleCellChange: any = async (
           setDataProvider(updated);
         }
       } catch {
-        console.log("error");
         // eslint-disable-next-line no-param-reassign
         dataProvider[customChanges[0][0]][customChanges[0][1]] =
           previousCellValue;
@@ -66,7 +65,6 @@ const handleCellChange: any = async (
           isNew,
           dataProvider[customChanges[0][0]]?.id,
         );
-        console.log("🚀 ~ file: handleCellChange.ts:61 ~ response2:", response);
         if (
           response.id &&
           /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(

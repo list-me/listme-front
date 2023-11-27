@@ -387,7 +387,6 @@ export const ProductContextProvider = ({
           id: productId,
           fields,
         });
-        console.log("🚀 ~ file: index.tsx:390 ~ response:", response);
         toast.success("Produto atualizado com sucesso");
         return response;
       }
