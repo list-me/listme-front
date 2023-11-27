@@ -76,7 +76,6 @@ const handleCellChange: any = async (
           setDataProvider(updated);
         }
       } catch {
-        console.log("error");
         // eslint-disable-next-line no-param-reassign
         dataProvider[customChanges[0][0]][customChanges[0][1]] =
           previousCellValue;
