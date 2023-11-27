@@ -15,11 +15,14 @@ const handleCellChange: any = async (
   if (changes !== null && changes.length && !isTableLocked && hotInstance) {
     const isNew = !!dataProvider[changes[0][0]].id;
     const customChanges = changes as Handsontable.CellChange[];
+
     if (
       typeof customChanges[0][2] === "object" &&
       typeof customChanges[0][3] === "object" &&
       !isEquivalent(customChanges[0][2], customChanges[0][3])
     ) {
+      // eslint-disable-next-line prefer-destructuring
+      previousCellValue = customChanges[0][2];
       try {
         if (!isNew) setIsTableLocked(true);
         const id = await handleSave(
@@ -36,7 +39,19 @@ const handleCellChange: any = async (
           const updated = dataProvider;
           updated[customChanges[0][0]].id = id;
           setDataProvider(updated);
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          dataProvider[customChanges[0][0]][customChanges[0][1]] =
+            previousCellValue;
+
+          setDataProvider([...dataProvider]);
         }
+      } catch {
+        // eslint-disable-next-line no-param-reassign
+        dataProvider[customChanges[0][0]][customChanges[0][1]] =
+          previousCellValue;
+
+        setDataProvider([...dataProvider]);
       } finally {
         if (!isNew) setIsTableLocked(false);
         console.log("BF");
@@ -66,13 +81,19 @@ const handleCellChange: any = async (
           const updated = dataProvider;
           updated[customChanges[0][0]].id = id;
           setDataProvider(updated);
-        } else if (previousCellValue !== undefined) {
+        } else {
           // eslint-disable-next-line no-param-reassign
           dataProvider[customChanges[0][0]][customChanges[0][1]] =
             previousCellValue;
 
           setDataProvider([...dataProvider]);
         }
+      } catch {
+        // eslint-disable-next-line no-param-reassign
+        dataProvider[customChanges[0][0]][customChanges[0][1]] =
+          previousCellValue;
+
+        setDataProvider([...dataProvider]);
       } finally {
         if (!isNew) setIsTableLocked(false);
       }

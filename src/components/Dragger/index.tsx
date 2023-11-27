@@ -20,10 +20,10 @@ export const Dragger: React.FC<IDraggerProps> = ({
   return (
     <Container>
       {options.map((item, index) => {
-        const fieldName = "option" + index;
+        const fieldName = `option${item}`;
 
         return (
-          <Content key={index}>
+          <Content key={fieldName}>
             <Form.Item
               wrapperCol={{ flex: "auto" }}
               label={index + 1}
@@ -74,9 +74,10 @@ export const Dragger: React.FC<IDraggerProps> = ({
                   return;
                 }
 
-                const newState = [...options];
-                newState.splice(index, 1);
-                setOptions(newState);
+                const updatedOptions = [...options];
+                updatedOptions.splice(index, 1);
+
+                setOptions(updatedOptions);
               }}
             >
               <TrashIcon />

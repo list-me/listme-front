@@ -17,7 +17,6 @@ class CheckBoxEditor extends BaseEditorComponent<
 
   constructor(props: any) {
     super(props);
-
     this.state = {
       value: [],
       newValue: [],
@@ -25,6 +24,7 @@ class CheckBoxEditor extends BaseEditorComponent<
         React.createRef<HTMLInputElement>(),
       ),
       currentIndex: 0,
+      options: this.props.options,
     };
 
     this.containerStyle = {
@@ -121,7 +121,6 @@ class CheckBoxEditor extends BaseEditorComponent<
     cellProperties: any,
   ): void {
     super.prepare(row, col, prop, td, originalValue, cellProperties);
-
     let value: string;
     if (originalValue) {
       value =
@@ -152,7 +151,9 @@ class CheckBoxEditor extends BaseEditorComponent<
         ? this.state.newValue.split(",")
         : this.state.newValue;
 
-    const newValue = currentValues.filter((item: string) => item.length > 0);
+    const newValue = currentValues.filter(
+      (item: string) => item.length > 0 && this.state.options.includes(item),
+    );
 
     const valueIndex = newValue.indexOf(value);
 
