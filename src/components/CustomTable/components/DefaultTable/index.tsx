@@ -332,27 +332,6 @@ function DefaultTable({
     [ICON_HEADER],
   );
 
-  const styledHeader = useCallback(
-    (column: number, TH: HTMLTableHeaderCellElement): void => {
-      const colData = template?.fields?.fields.find(
-        (item: any) => item.id === headerTable[column]?.data,
-      );
-      const { required: isRequired } = colData || {};
-      const columnHeaderValue =
-        hotRef.current?.hotInstance?.getColHeader(column);
-      const valueToVisible =
-        columnHeaderValue !== " " ? columnHeaderValue : "+";
-      const iconType = getIconByType(colData?.type);
-      TH.innerHTML = getStyledContent(
-        iconType,
-        valueToVisible,
-        isRequired,
-        isPublic,
-      );
-    },
-    [getIconByType, headerTable, hotRef, isPublic, template?.fields?.fields],
-  );
-
   const [dropDownStatus, setDropDownStatus] = useState<IDropDownStatus>({
     type: "none",
     coordX: 0,
@@ -392,6 +371,8 @@ function DefaultTable({
   }, [headerTable, isPublic, products]);
 
   const [rowsSelected, setRowsSelected] = useState<string[]>([]);
+  console.log("🚀 ~ file: index.tsx:374 ~ rowsSelected:", rowsSelected);
+
   const [allRowsSelected, setAllRowsSelected] = useState<boolean>(false);
 
   const toggleRowSelection = useCallback(
@@ -418,7 +399,7 @@ function DefaultTable({
     ) => {
       const stringRow = String(row);
 
-      const isChecked = allRowsSelected || rowsSelected.includes(stringRow);
+      const isChecked = rowsSelected.includes(stringRow);
 
       const checkboxContainer = document.createElement("div");
       checkboxContainer.style.width = "100%";
@@ -440,7 +421,51 @@ function DefaultTable({
       td.innerHTML = "";
       td.appendChild(checkboxContainer);
     },
-    [allRowsSelected, rowsSelected, toggleRowSelection],
+    [rowsSelected, toggleRowSelection],
+  );
+
+  function changeAllRowsSelected(): void {
+    const newState = !allRowsSelected;
+    setAllRowsSelected(newState);
+    if (newState) {
+      const newRowsSelected: string[] = [];
+      products.forEach((_item, index) => {
+        newRowsSelected.push(String(index));
+      });
+      setRowsSelected(newRowsSelected);
+    } else {
+      setRowsSelected([]);
+    }
+  }
+
+  const styledHeader = useCallback(
+    (column: number, TH: HTMLTableHeaderCellElement): void => {
+      const colData = template?.fields?.fields.find(
+        (item: any) => item.id === headerTable[column]?.data,
+      );
+      const { required: isRequired } = colData || {};
+      const columnHeaderValue =
+        hotRef.current?.hotInstance?.getColHeader(column);
+      const valueToVisible =
+        columnHeaderValue !== " " ? columnHeaderValue : "+";
+      const iconType = getIconByType(colData?.type);
+      TH.innerHTML = getStyledContent(
+        iconType,
+        valueToVisible,
+        isRequired,
+        changeAllRowsSelected,
+        allRowsSelected,
+        isPublic,
+      );
+    },
+    [
+      allRowsSelected,
+      getIconByType,
+      headerTable,
+      hotRef,
+      isPublic,
+      template?.fields?.fields,
+    ],
   );
 
   return (

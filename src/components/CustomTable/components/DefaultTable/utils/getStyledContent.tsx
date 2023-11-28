@@ -67,10 +67,15 @@ const getStyledContent = (
   iconType: any,
   valueToVisible: string | number | undefined,
   isRequired: boolean,
+  changeAllRowsSelected: () => void,
+  allRowsSelected: boolean,
   isPublic?: boolean,
 ): string => {
+  (window as any).changeAllRowsSelected = changeAllRowsSelected;
   if (valueToVisible === "checkPublic") {
-    return `<input type='checkbox' style='${CHECKBOX_STYLE}' />`;
+    return `<input type='checkbox' style='${CHECKBOX_STYLE}' onclick="window.changeAllRowsSelected()" ${
+      allRowsSelected ? "checked" : ""
+    } />`;
   }
   return `
     <div style="${valueToVisible !== "+" ? BASE_STYLES : PLUS_BASE_STYLES}">
