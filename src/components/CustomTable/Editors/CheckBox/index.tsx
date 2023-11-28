@@ -24,7 +24,6 @@ class CheckBoxEditor extends BaseEditorComponent<
         React.createRef<HTMLInputElement>(),
       ),
       currentIndex: 0,
-      options: this.props.options,
     };
 
     this.containerStyle = {
@@ -152,7 +151,7 @@ class CheckBoxEditor extends BaseEditorComponent<
         : this.state.newValue;
 
     const newValue = currentValues.filter(
-      (item: string) => item.length > 0 && this.state.options.includes(item),
+      (item: string) => item.length > 0 && this.props.options.includes(item),
     );
 
     const valueIndex = newValue.indexOf(value);

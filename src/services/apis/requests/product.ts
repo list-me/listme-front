@@ -58,7 +58,7 @@ export const productRequests = {
       },
     );
 
-    return response.data;
+    return response;
   },
   delete: async (id: string): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
