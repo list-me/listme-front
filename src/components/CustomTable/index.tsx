@@ -304,6 +304,34 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
     handleMountColumns();
   }, [handleMountColumns]);
 
+  const checkToHeaderTable = {
+    title: "Check",
+    data: "000000",
+    className: "htLeft htMiddle",
+    type: "checkPublic",
+    required: false,
+    options: [""],
+    order: "-1",
+    hidden: false,
+    width: "300px",
+    frozen: false,
+  };
+
+  const checkToColHeaders = "checkPublic";
+  const checkToCols = {
+    title: "Check",
+    data: "000000",
+    className: "htLeft htMiddle",
+    type: "checkPublic",
+    required: false,
+    options: [""],
+    order: "-1",
+    hidden: false,
+    width: "300px",
+    frozen: false,
+    isCustom: false,
+    bucket_url: "",
+  };
   return (
     <>
       <Confirmation
@@ -323,6 +351,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
           <HeaderFilters
             isPublic={isPublic}
             template={template}
+            total={total}
             // @ts-ignore
             headerTable={headerTable}
             handleGetProductFiltered={handleGetProductFiltered}
@@ -333,9 +362,14 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
           <DefaultTable
             key={colHeaders.join()}
             hotRef={hotRef}
-            colHeaders={colHeaders}
+            cols={isPublic ? [checkToCols, ...cols] : cols}
+            colHeaders={
+              isPublic ? [checkToColHeaders, ...colHeaders] : colHeaders
+            }
+            headerTable={
+              isPublic ? [checkToHeaderTable, ...headerTable] : headerTable
+            }
             setColHeaders={setColHeaders}
-            cols={cols}
             products={products}
             setProducts={setProducts}
             handleDelete={handleDelete}
@@ -354,7 +388,6 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
             uploadImages={uploadImages}
             page={page}
             setPage={setPage}
-            headerTable={headerTable}
             currentKeyword={currentKeyword}
             handleNewColumn={handleNewColumn}
             handleHidden={handleHidden}

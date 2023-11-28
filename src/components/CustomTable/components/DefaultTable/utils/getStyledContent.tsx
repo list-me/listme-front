@@ -59,16 +59,19 @@ const ICON_STYLE = `
   align-items: center;
   pointer-events: none;
 `;
+const CHECKBOX_STYLE = `
+ height: 100%;
+`;
 
 const getStyledContent = (
   iconType: any,
   valueToVisible: string | number | undefined,
   isRequired: boolean,
+  isPublic?: boolean,
 ): string => {
-  console.log(
-    "🚀 ~ file: getStyledContent.tsx:68 ~ valueToVisible:",
-    valueToVisible,
-  );
+  if (valueToVisible === "checkPublic") {
+    return `<input type='checkbox' style='${CHECKBOX_STYLE}' />`;
+  }
   return `
     <div style="${valueToVisible !== "+" ? BASE_STYLES : PLUS_BASE_STYLES}">
       <div style="${FLEX_GAP_STYLE}">
@@ -80,7 +83,7 @@ const getStyledContent = (
       <div style="${FLEX_GAP_STYLE}">
         ${isRequired ? `<p style="${REQUIRED_STYLE}">Obrigatório</p>` : ""}
         ${
-          valueToVisible && valueToVisible !== "+"
+          !isPublic && valueToVisible && valueToVisible !== "+"
             ? `<button style="${SVG_STYLE}" class="dropDown">
                 <div style="${ICON_STYLE}">${svgStringDropDownSmall}</div>
               </button>`

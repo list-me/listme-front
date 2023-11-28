@@ -7,6 +7,7 @@ export const ContainerPublicListList = styled.div`
   border-radius: 8px;
   background: ${({ theme }) => theme.colors.secondary};
   display: flex;
+  max-height: 90vh;
 `;
 
 export const ContentPublicListList = styled.div`

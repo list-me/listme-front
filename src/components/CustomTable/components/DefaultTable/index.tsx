@@ -47,6 +47,7 @@ import { useFilterContext } from "../../../../context/FilterContext";
 import { useProductContext } from "../../../../context/products";
 import customRendererCheckedComponent from "./components/customRendererCheckedComponent";
 import { IProductToTable } from "../../../../context/products/product.context";
+import Cart from "./components/Cart";
 
 function DefaultTable({
   hotRef,
@@ -342,9 +343,14 @@ function DefaultTable({
       const valueToVisible =
         columnHeaderValue !== " " ? columnHeaderValue : "+";
       const iconType = getIconByType(colData?.type);
-      TH.innerHTML = getStyledContent(iconType, valueToVisible, isRequired);
+      TH.innerHTML = getStyledContent(
+        iconType,
+        valueToVisible,
+        isRequired,
+        isPublic,
+      );
     },
-    [getIconByType, headerTable, hotRef, template?.fields?.fields],
+    [getIconByType, headerTable, hotRef, isPublic, template?.fields?.fields],
   );
 
   const [dropDownStatus, setDropDownStatus] = useState<IDropDownStatus>({
@@ -374,7 +380,7 @@ function DefaultTable({
       const censoredProducts = products.map((product) => {
         const modifiedProduct = { ...product };
 
-        colsId.slice(1).forEach((colId) => {
+        colsId.slice(2).forEach((colId) => {
           modifiedProduct[colId] = "valor censurado";
         });
 
@@ -385,13 +391,65 @@ function DefaultTable({
     } else setproductsToView(products);
   }, [headerTable, isPublic, products]);
 
+  const [rowsSelected, setRowsSelected] = useState<string[]>([]);
+  const [allRowsSelected, setAllRowsSelected] = useState<boolean>(false);
+
+  const toggleRowSelection = useCallback(
+    (row: string) => {
+      setAllRowsSelected(false);
+      const isSelected = rowsSelected.includes(row);
+      const updatedSelection = isSelected
+        ? rowsSelected.filter((selectedRow) => selectedRow !== row)
+        : rowsSelected.concat(row);
+
+      setRowsSelected(updatedSelection);
+    },
+    [rowsSelected, setRowsSelected],
+  );
+
+  const customCheckboxRenderer = useCallback(
+    (
+      instance: Handsontable,
+      td: HTMLTableCellElement,
+      row: number,
+      _col: number,
+      _prop: string | number,
+      _value: any,
+    ) => {
+      const stringRow = String(row);
+
+      const isChecked = allRowsSelected || rowsSelected.includes(stringRow);
+
+      const checkboxContainer = document.createElement("div");
+      checkboxContainer.style.width = "100%";
+      checkboxContainer.style.height = "50px";
+      checkboxContainer.style.display = "flex";
+      checkboxContainer.style.alignItems = "center";
+      checkboxContainer.style.justifyContent = "center";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = isChecked;
+
+      checkbox.addEventListener("change", () => {
+        toggleRowSelection(stringRow);
+      });
+
+      checkboxContainer.appendChild(checkbox);
+
+      td.innerHTML = "";
+      td.appendChild(checkboxContainer);
+    },
+    [allRowsSelected, rowsSelected, toggleRowSelection],
+  );
+
   return (
     <>
       {openAlertTooltip && <AlertTooltip setAlertTooltip={setAlertTooltip} />}
 
       <HotTable
         className="hot-table"
-        readOnly={isTableLocked}
+        readOnly={isPublic || isTableLocked}
         ref={hotRef}
         colHeaders={colHeaders}
         columns={cols}
@@ -399,7 +457,7 @@ function DefaultTable({
         hiddenColumns={{ columns: hidden }}
         manualColumnResize
         manualColumnMove
-        rowHeaders
+        rowHeaders={!isPublic}
         checkedTemplate
         rowHeights="52px"
         licenseKey="non-commercial-and-evaluation"
@@ -413,7 +471,7 @@ function DefaultTable({
         afterColumnMove={afterColumnMoveCallback}
         afterGetColHeader={styledHeader}
         afterColumnResize={async (newSize: number, column: number) => {
-          await handleResize(column, newSize, template);
+          if (!isPublic) await handleResize(column, newSize, template);
         }}
         afterOnCellMouseUp={(event: any, coords, _TD) => {
           const limitWidth = window.innerWidth - 350;
@@ -422,7 +480,7 @@ function DefaultTable({
 
           const clickedElementClassList = event.target.classList;
           const correctElement = clickedElementClassList.contains("dropDown");
-          if (colHeaders.length - 1 === coords.col) {
+          if (!isPublic && colHeaders.length - 1 === coords.col) {
             setTimeout(() => {
               setDropDownStatus({
                 type: "new",
@@ -478,9 +536,13 @@ function DefaultTable({
         afterChange={afterChangeCallback}
       >
         {cols.map((col, _index: number) => {
+          if (col.type === "checkPublic") {
+            return <HotColumn width={50} renderer={customCheckboxRenderer} />;
+          }
           if (col.isCustom && col.type === "list") {
             return (
               <HotColumn
+                readOnly
                 width={col.width}
                 _columnIndex={+col.order}
                 data={col.data}
@@ -585,7 +647,7 @@ function DefaultTable({
           );
         })}
       </HotTable>
-
+      {isPublic && <Cart itemsTotal={rowsSelected.length} />}
       <HeaderDropDown
         dropDownStatus={dropDownStatus}
         setDropDownStatus={setDropDownStatus}

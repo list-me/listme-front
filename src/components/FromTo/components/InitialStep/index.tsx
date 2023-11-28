@@ -37,14 +37,14 @@ function InitialStep(): JSX.Element {
       </ul>
       <ContainerActions>
         <CardAction>
-          <img src={guitar} alt="Vincular List pública" />
+          <img src={guitar} alt="Vincular lista pública" />
           <ButtonAction
             onClick={() => {
               setCurrentStep((prev) => prev + 1);
               setStepType("publicList");
             }}
           >
-            Vincular List pública
+            Vincular lista pública
           </ButtonAction>
         </CardAction>
         <CardAction>
