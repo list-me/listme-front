@@ -241,7 +241,10 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
     loadingRef.current!.style.display = "block";
     setCurrentKeyword(() => keyword);
     productRequests
-      .list({ keyword, limit: 100 }, window.location.pathname.substring(10))
+      .list(
+        { keyword, limit: 100 },
+        window.location.pathname.substring(isPublic ? 17 : 10),
+      )
       .then((response) => {
         const productFields: any[] = [];
 

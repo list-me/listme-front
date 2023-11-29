@@ -1,16 +1,7 @@
 /* eslint-disable import/prefer-default-export */
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { toast } from "react-toastify";
 import { Loading } from "../../components/Loading";
-import { productRequests } from "../../services/apis/requests/product";
-import { templateRequests } from "../../services/apis/requests/template";
-import {
-  ICustomCellType,
-  IField,
-  IHeader,
-  IProductToTable,
-} from "../../context/products/product.context";
 import ProductsPublicTable from "../../components/FromTo/components/PublicList/ProductsPublicTable";
 import { Container, Content } from "../products/styles";
 import { useProductContext } from "../../context/products";

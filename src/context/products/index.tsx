@@ -280,6 +280,7 @@ export const ProductContextProvider = ({
 
       setProducts(productFields);
       setTotal(data?.total);
+
       return { productFields, headerTable };
     },
     [COMPONENT_CELL_PER_TYPE],

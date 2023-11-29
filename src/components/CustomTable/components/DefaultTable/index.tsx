@@ -162,6 +162,7 @@ function DefaultTable({
       currentKeyword,
       conditionsFilter,
       operator,
+      isPublic,
     );
   };
 
@@ -371,7 +372,6 @@ function DefaultTable({
   }, [headerTable, isPublic, products]);
 
   const [rowsSelected, setRowsSelected] = useState<string[]>([]);
-  console.log("🚀 ~ file: index.tsx:374 ~ rowsSelected:", rowsSelected);
 
   const [allRowsSelected, setAllRowsSelected] = useState<boolean>(false);
 
