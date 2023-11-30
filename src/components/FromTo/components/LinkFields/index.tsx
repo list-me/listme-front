@@ -21,6 +21,7 @@ import FinishedStep from "../FinishedStep";
 import LoadingSpinner from "../LoadingSpinner";
 import isEmptyObject from "../../../../utils/isEmptyObject";
 import { ReactComponent as PlusIcon } from "../../../../assets/plus-fromto.svg";
+import LinkFieldsComponents from "./components/LinkFieldsComponents";
 
 function LinkFields(): JSX.Element {
   const iconRef = useRef(null);
@@ -48,6 +49,7 @@ function LinkFields(): JSX.Element {
   } = useFromToContext();
 
   const { setCurrentStep, colHeadersToPreviewTable, data } = useFromToContext();
+  console.log("🚀 ~ file: index.tsx:51 ~ LinkFields ~ data:", data);
 
   function setNewColumn(newColumn: any, templateUpdated: any): void {
     // eslint-disable-next-line no-param-reassign
@@ -205,41 +207,7 @@ function LinkFields(): JSX.Element {
       ) : (
         <></>
       )}
-      <HeaderLinkFields>
-        <ColumnTitleLinkFields>Origem</ColumnTitleLinkFields>
-        <ColumnTitleLinkFields>Destino</ColumnTitleLinkFields>
-      </HeaderLinkFields>
-      <ContentLinkFields>
-        {colHeadersToPreviewTable?.map((item) => (
-          <ContentRowLinkFields key={item}>
-            <Origin title={item} example={data[0][item]} />
-            <ContainerSelectText>
-              <SelectComponent
-                select={selectedLinkFields[item] || null}
-                onChange={(value) => handleSelectChange(item, value)}
-                options={options}
-                placeHolder="Selecione"
-                small
-                isSearchable
-                fixedOptions={fixedOptions}
-                DropDownComponent={() => (
-                  <DropdownMenu
-                    isOpen
-                    icoRef={iconRef}
-                    openModal={(e) => {
-                      setIsOpenDropDown(!isOpenDropDown);
-                      setIsOpenModal(!isOpenModal);
-                      setDataToModal({ type: e?.type });
-                    }}
-                    options={newColumnOptions}
-                    setIsOpen={() => setIsOpenDropDown(false)}
-                  />
-                )}
-              />
-            </ContainerSelectText>
-          </ContentRowLinkFields>
-        ))}
-      </ContentLinkFields>
+      <LinkFieldsComponents />
       <BoxButtons>
         <NavigationButton
           abort

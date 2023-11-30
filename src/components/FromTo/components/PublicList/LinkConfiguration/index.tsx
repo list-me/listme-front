@@ -13,7 +13,7 @@ import { BoxButtons, NavigationButton } from "../../NavigationButton/styles";
 import { ReactComponent as PlusIcon } from "../../../../../assets/plus-fromto.svg";
 
 function LinkConfiguration(): JSX.Element {
-  const { setFromToIsOpened } = useFromToContext();
+  const { setFromToIsOpened, setCurrentStep } = useFromToContext();
 
   const [currentValue, setCurrentValue] = useState<{
     label: string;
@@ -71,7 +71,10 @@ function LinkConfiguration(): JSX.Element {
               <PlusIcon />
               Voltar
             </NavigationButton>
-            <NavigationButton disabled={!currentValue.value}>
+            <NavigationButton
+              disabled={!currentValue.value}
+              onClick={() => setCurrentStep(3)}
+            >
               <PlusIcon />
               Avançar
             </NavigationButton>
