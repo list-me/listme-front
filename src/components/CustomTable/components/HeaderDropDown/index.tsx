@@ -19,7 +19,6 @@ function HeaderDropDown({
   colHeaders,
   setColHeaders,
   handleNewColumn,
-  hotRef,
   handleHidden,
   headerTable,
   setCurrentCell,
@@ -34,7 +33,6 @@ function HeaderDropDown({
   colHeaders: string[];
   setColHeaders: React.Dispatch<React.SetStateAction<string[]>>;
   handleNewColumn: Function;
-  hotRef: React.RefObject<HotTable>;
   handleHidden: Function;
   headerTable: IHeaderTable[];
   setCurrentCell: React.Dispatch<any>;
@@ -139,10 +137,15 @@ function HeaderDropDown({
                 order: String(columns.length + 1),
                 width: "300",
               };
-
               const newPosition = [...columns, newColumn];
+              console.log("🚀 ~ file: index.tsx:144 ~ columns:", columns);
               newPosition.splice(newPosition.length - 2, 1);
               newPosition.push({});
+              console.log(
+                "🚀 ~ file: index.tsx:146 ~ newPosition:",
+                newPosition,
+              );
+
               setColumns(newPosition);
 
               const contentHeaders = columns.map((item) => item?.title);
@@ -150,6 +153,10 @@ function HeaderDropDown({
               contentHeaders.push(newColumn?.title);
               contentHeaders.push(" ");
               setColHeaders(contentHeaders);
+              console.log(
+                "🚀 ~ file: index.tsx:154 ~ contentHeaders:",
+                contentHeaders,
+              );
               handleNewColumn(newColumn, templateUpdated);
             }}
           />

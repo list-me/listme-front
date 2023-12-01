@@ -59,6 +59,13 @@ export const PersonalModal = ({
   template,
   onUpdate,
 }: PropsModal) => {
+  const url = window.location.href;
+  const isPublic = url.includes("public");
+
+  const { targetTemplatePublic } = useProductContext();
+
+  const currentTemplate = isPublic ? targetTemplatePublic : template;
+
   const [title, setTitle] = useState<string>(data?.title ?? "");
   const [type, setType] = useState<string>(data?.type);
   const [required, setRequired] = useState<boolean>(data?.required ?? false);
@@ -174,7 +181,7 @@ export const PersonalModal = ({
     let newField: any;
 
     if (isUpdate) {
-      templateUpdated = template.fields.fields.map((item: any) => {
+      templateUpdated = currentTemplate.fields.fields.map((item: any) => {
         if (item.id === data.id) {
           data.options = option;
           data.type = type;
@@ -188,7 +195,7 @@ export const PersonalModal = ({
         return item;
       });
     } else {
-      templateUpdated.push(...template.fields.fields);
+      templateUpdated.push(...currentTemplate.fields.fields);
       newField = {
         id: Math.floor(100000 + Math.random() * 900000).toString(),
         type,
@@ -211,7 +218,11 @@ export const PersonalModal = ({
     });
 
     try {
-      await templateRequests.update(template?.id, { fields: templateUpdated });
+      // lembrete
+
+      await templateRequests.update(currentTemplate?.id, {
+        fields: templateUpdated,
+      });
       toast.success("Template atualizado com sucesso");
       return templateUpdated;
     } catch (error) {
@@ -237,8 +248,6 @@ export const PersonalModal = ({
       setEnable(true);
     }
   }, [options]);
-
-  const { handleRedirectAndGetProducts } = useProductContext();
 
   return (
     <>
@@ -311,13 +320,6 @@ export const PersonalModal = ({
                     onUpdate(newColumn, response);
                   }
                 });
-
-                const id = window.location.pathname.substring(10);
-                if (id) {
-                  setTimeout(() => {
-                    handleRedirectAndGetProducts(id).then(() => {});
-                  }, 0);
-                }
               }}
             >
               <div className="encapsulator">
@@ -404,7 +406,7 @@ export const PersonalModal = ({
                   ) : data?.type == "relation" ? (
                     <RelationForm
                       value={data}
-                      currentFields={template.fields.fields}
+                      currentFields={currentTemplate.fields.fields}
                       handleChangeOptions={handleChangeOptions}
                     />
                   ) : (

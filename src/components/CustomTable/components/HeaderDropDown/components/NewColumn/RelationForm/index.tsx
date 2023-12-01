@@ -77,7 +77,7 @@ export function RelationForm({
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleState = (e: RadioChangeEvent) => {
-    const { value } = e.target;
+    const currentValue = e.target.value;
 
     if (!template.length) {
       setTemplateId("");
@@ -95,14 +95,17 @@ export function RelationForm({
       });
     }
 
-    setTemplateRelation(value);
+    setTemplateRelation(currentValue);
   };
 
-  const handleChangeTemplate = async (templateId: string): Promise<void> => {
+  const handleChangeTemplate = async (
+    currentTemplateId: string,
+  ): Promise<void> => {
     setIsLoading(true);
+    console.log("veio nessa merda");
     try {
-      templateRequests.get(templateId).then((template) => {
-        const customFields = template.fields.fields
+      templateRequests.get(currentTemplateId).then((temp) => {
+        const customFields = temp.fields.fields
           .filter((e: any) => e.type !== "relation")
           .map((field: any) => {
             return {
@@ -131,8 +134,8 @@ export function RelationForm({
     }
 
     if (value && Object.keys(value).length > 1) {
-      const options = value.options[0] as unknown as RelationOptions;
-      setLimit(options.limit);
+      const currentOptions = value.options[0] as unknown as RelationOptions;
+      setLimit(currentOptions.limit);
 
       if (getTemplateRelation(value?.options) === OPTIONS_TEMPLATE.OTHER) {
         handleChangeTemplate(getTemplateId(value.options)).then();

@@ -2,7 +2,6 @@ import React, {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -87,6 +86,15 @@ interface ITypeProductContext {
   customFields: ICustomField[];
   conditionsFilter: IConditions[];
   setConditionsFilter: React.Dispatch<React.SetStateAction<IConditions[]>>;
+  targetTemplatePublic: ITemplate | undefined;
+  setTargetTemplatePublic: React.Dispatch<
+    React.SetStateAction<ITemplate | undefined>
+  >;
+  targetHeaderTable: IHeader[];
+  setTargetHeaderTable: React.Dispatch<React.SetStateAction<IHeader[]>>;
+  targetColHeaders: string[];
+  setTargetColHeaders: React.Dispatch<React.SetStateAction<string[]>>;
+  isPublic: boolean;
 }
 
 interface SignedUrlResponse {
@@ -103,6 +111,8 @@ export const ProductContextProvider = ({
 }: {
   children: React.ReactNode;
 }): JSX.Element => {
+  const url = window.location.href;
+  const isPublic = url.includes("public");
   const [products, setProducts] = useState<IProductToTable[]>([]);
   const [template, setTemplate] = useState<ITemplate>();
   const [headerTable, setHeaderTable] = useState<IHeader[]>([]);
@@ -117,6 +127,11 @@ export const ProductContextProvider = ({
     {},
   ] as IConditions[]);
 
+  const [targetTemplatePublic, setTargetTemplatePublic] = useState<ITemplate>();
+  const [targetHeaderTable, setTargetHeaderTable] = useState<IHeader[]>([]);
+  const [targetColHeaders, setTargetColHeaders] = useState<string[]>([]);
+
+  console.log("🚀 ~ file: index.tsx:132 ~ targetColHeaders:", targetColHeaders);
   const COMPONENT_CELL_PER_TYPE: ICustomCellType = useMemo(
     () => ({
       RADIO: "radio",
@@ -201,12 +216,6 @@ export const ProductContextProvider = ({
 
   const handleDelete = (product: any) => {
     try {
-      const currentProducts = filteredData.filter((itemProduct: any) => {
-        if (itemProduct.id !== product.id) {
-          return itemProduct;
-        }
-      });
-
       productRequests
         .delete(product.id)
         .then((_response: any) => {
@@ -231,8 +240,6 @@ export const ProductContextProvider = ({
       conditions: IConditions[] | undefined = undefined,
       operator?: string,
     ) => {
-      const url = window.location.href;
-      const isPublic = url.includes("public");
       const requestFunction = isPublic
         ? productRequests.listPublic
         : productRequests.list;
@@ -391,7 +398,7 @@ export const ProductContextProvider = ({
       const fields = buildProduct(value);
 
       if (isNew) {
-        const test = await productRequests.update({ id: productId, fields });
+        await productRequests.update({ id: productId, fields });
         toast.success("Produto atualizado com sucesso");
       } else {
         const newProduct = {
@@ -624,11 +631,12 @@ export const ProductContextProvider = ({
   };
 
   const handleNewColumn = (col: any, fields: any[]) => {
-    const newTemplate = template;
+    const newTemplate = isPublic ? targetTemplatePublic : template;
     // @ts-ignore
     newTemplate.fields.fields = fields;
-    setTemplate(newTemplate);
-
+    if (isPublic) {
+      setTargetTemplatePublic(newTemplate);
+    } else setTemplate(newTemplate);
     setCustomFields((prev) => [
       ...prev,
       {
@@ -639,11 +647,12 @@ export const ProductContextProvider = ({
         id: col?.data,
       },
     ]);
-
     const newPosition = [...headerTable, col];
     newPosition.splice(newPosition.length - 2, 1);
     newPosition.push({});
-    setHeaderTable(newPosition);
+    if (isPublic) {
+      setTargetHeaderTable(newPosition);
+    } else setHeaderTable(newPosition);
   };
 
   const handleFilter = (word: string): any[] => {
@@ -759,6 +768,13 @@ export const ProductContextProvider = ({
     customFields,
     conditionsFilter,
     setConditionsFilter,
+    targetTemplatePublic,
+    setTargetTemplatePublic,
+    targetHeaderTable,
+    setTargetHeaderTable,
+    targetColHeaders,
+    setTargetColHeaders,
+    isPublic,
   };
 
   return (
