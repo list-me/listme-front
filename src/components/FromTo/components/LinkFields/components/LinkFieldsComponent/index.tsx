@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import {
   ColumnTitleLinkFields,
+  ContainerCheckBox,
   ContainerSelectText,
   ContentLinkFields,
   ContentRowLinkFields,
@@ -12,6 +13,8 @@ import { DropdownMenu } from "../../../../../DropdownMenu";
 import newColumnOptions from "../../../../../../utils/newColumnOptions";
 import { PersonalModal } from "../../../../../CustomModa";
 import { useProductContext } from "../../../../../../context/products";
+import { useFromToContext } from "../../../../../../context/FromToContext";
+import CheckboxCustom from "../../../../../Checkbox";
 
 function LinkFieldsComponent({
   colHeadersToPreviewTable,
@@ -58,6 +61,7 @@ function LinkFieldsComponent({
     setTargetHeaderTable,
     setTargetColHeaders,
   } = useProductContext();
+  const { currentLinkConfigurationValue } = useFromToContext();
 
   const url = window.location.href;
   const isPublic = url.includes("public");
@@ -105,10 +109,18 @@ function LinkFieldsComponent({
       <HeaderLinkFields>
         <ColumnTitleLinkFields>Origem</ColumnTitleLinkFields>
         <ColumnTitleLinkFields>Destino</ColumnTitleLinkFields>
+        {currentLinkConfigurationValue.value === "keepProductsLinked" && (
+          <ColumnTitleLinkFields>Manter vínculo</ColumnTitleLinkFields>
+        )}
       </HeaderLinkFields>
       <ContentLinkFields>
         {colHeadersToPreviewTable?.map((item) => (
-          <ContentRowLinkFields key={item}>
+          <ContentRowLinkFields
+            key={item}
+            checkColumn={
+              currentLinkConfigurationValue.value === "keepProductsLinked"
+            }
+          >
             <Origin title={item} example={example(item) || undefined} />
             <ContainerSelectText>
               <SelectComponent
@@ -134,6 +146,11 @@ function LinkFieldsComponent({
                 )}
               />
             </ContainerSelectText>
+            {currentLinkConfigurationValue.value === "keepProductsLinked" && (
+              <ContainerCheckBox>
+                <CheckboxCustom onChange={() => ""} label="" />
+              </ContainerCheckBox>
+            )}
           </ContentRowLinkFields>
         ))}
       </ContentLinkFields>

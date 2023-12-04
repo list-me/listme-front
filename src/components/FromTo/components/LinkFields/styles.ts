@@ -50,13 +50,20 @@ export const ContentLinkFields = styled.div`
     background-color: ${({ theme }) => theme.colors.primary} !important;
   }
 `;
-export const ContentRowLinkFields = styled.div`
-  display: flex;
+export const ContentRowLinkFields = styled.div<{ checkColumn?: boolean }>`
+  display: grid;
   width: 100%;
+  grid-template-columns: ${(props) =>
+    props.checkColumn ? "33% 33% 33%" : "50% 50%"};
 `;
 
 export const ContainerSelectText = styled.div`
   width: 100%;
+`;
+export const ContainerCheckBox = styled.div`
+  width: 100%;
+  justify-content: center;
+  display: flex;
 `;
 
 export const WarnAlert = styled.p`

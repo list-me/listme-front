@@ -12,6 +12,7 @@ import {
   CSVRow,
   FromToContextType,
   ICSVResponse,
+  ILinkConfigurationValue,
   IValuesImportConfiguration,
   IValuesImportOptions,
 } from "./fromToContext";
@@ -53,6 +54,12 @@ export function FromToContextProvider({
   const [csvResponse, setCsvResponse] = useState<ICSVResponse>(
     {} as ICSVResponse,
   );
+  const [currentLinkConfigurationValue, setCurrentLinkConfigurationValue] =
+    useState<ILinkConfigurationValue>({
+      value: "",
+      label: "",
+      description: "",
+    });
 
   const colHeadersToPreviewTable = useMemo((): string[] | null => {
     if (data[0]) return Object.keys(data[0]);
@@ -188,6 +195,8 @@ export function FromToContextProvider({
     setStepType,
     templates,
     setTemplates,
+    currentLinkConfigurationValue,
+    setCurrentLinkConfigurationValue,
   };
 
   return (

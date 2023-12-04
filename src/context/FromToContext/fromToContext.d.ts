@@ -50,8 +50,17 @@ export interface FromToContextType {
   setStepType: React.Dispatch<React.SetStateAction<"fromTo" | "publicList">>;
   templates: never[];
   setTemplates: React.Dispatch<React.SetStateAction<never[]>>;
+  currentLinkConfigurationValue: ILinkConfigurationValue;
+  setCurrentLinkConfigurationValue: React.Dispatch<
+    React.SetStateAction<ILinkConfigurationValue>
+  >;
 }
 
+export interface ILinkConfigurationValue {
+  label: string;
+  description: string;
+  value: string;
+}
 export interface CSVRow {
   [key: string]: string | number;
 }
