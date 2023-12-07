@@ -102,7 +102,6 @@ export function RelationForm({
     currentTemplateId: string,
   ): Promise<void> => {
     setIsLoading(true);
-    console.log("veio nessa merda");
     try {
       templateRequests.get(currentTemplateId).then((temp) => {
         const customFields = temp.fields.fields

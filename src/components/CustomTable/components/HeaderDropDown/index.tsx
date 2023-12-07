@@ -138,13 +138,8 @@ function HeaderDropDown({
                 width: "300",
               };
               const newPosition = [...columns, newColumn];
-              console.log("🚀 ~ file: index.tsx:144 ~ columns:", columns);
               newPosition.splice(newPosition.length - 2, 1);
               newPosition.push({});
-              console.log(
-                "🚀 ~ file: index.tsx:146 ~ newPosition:",
-                newPosition,
-              );
 
               setColumns(newPosition);
 
@@ -153,10 +148,7 @@ function HeaderDropDown({
               contentHeaders.push(newColumn?.title);
               contentHeaders.push(" ");
               setColHeaders(contentHeaders);
-              console.log(
-                "🚀 ~ file: index.tsx:154 ~ contentHeaders:",
-                contentHeaders,
-              );
+
               handleNewColumn(newColumn, templateUpdated);
             }}
           />

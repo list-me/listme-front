@@ -52,7 +52,6 @@ export const productRequests = {
         },
       },
     );
-    console.log("🚀 ~ file: product.ts:56 ~ response:", response);
 
     return response;
   },

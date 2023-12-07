@@ -373,6 +373,12 @@ function DefaultTable({
 
   const [rowsSelected, setRowsSelected] = useState<string[]>([]);
 
+  const selectedProductsId = useMemo(() => {
+    return rowsSelected.map((item) => {
+      return products[+item].id;
+    });
+  }, [products, rowsSelected]);
+
   const [allRowsSelected, setAllRowsSelected] = useState<boolean>(false);
 
   const toggleRowSelection = useCallback(

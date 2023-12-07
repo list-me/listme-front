@@ -131,7 +131,6 @@ export const ProductContextProvider = ({
   const [targetHeaderTable, setTargetHeaderTable] = useState<IHeader[]>([]);
   const [targetColHeaders, setTargetColHeaders] = useState<string[]>([]);
 
-  console.log("🚀 ~ file: index.tsx:132 ~ targetColHeaders:", targetColHeaders);
   const COMPONENT_CELL_PER_TYPE: ICustomCellType = useMemo(
     () => ({
       RADIO: "radio",

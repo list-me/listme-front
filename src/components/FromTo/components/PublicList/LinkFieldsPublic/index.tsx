@@ -21,10 +21,12 @@ function LinkFieldsPublic(): JSX.Element {
     selectedLinkFields,
     setSelectedLinkFields,
     setCurrentStep,
-    finishFromTo,
   } = useFromToContext();
-  const { template, headerTable, colHeaders, targetTemplatePublic } =
-    useProductContext();
+  console.log(
+    "🚀 ~ file: index.tsx:26 ~ LinkFieldsPublic ~ selectedLinkFields:",
+    selectedLinkFields,
+  );
+  const { headerTable, colHeaders, targetTemplatePublic } = useProductContext();
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [optionsToVerify, setOptionsToVerify] = useState<string[]>([]);
@@ -147,10 +149,11 @@ function LinkFieldsPublic(): JSX.Element {
           <NavigationButton
             disabled={isEmptyObject(selectedLinkFields) || verifyAllIgnore()}
             onClick={async () => {
-              setLoading(true);
-              const result = await finishFromTo();
-              setLoading(false);
-              if (result) setFinisehdContent(true);
+              // setLoading(true);
+              // finalizar
+              // const result = await finishFromTo();
+              // setLoading(false);
+              // if (result) setFinisehdContent(true);
             }}
           >
             <PlusIcon />
