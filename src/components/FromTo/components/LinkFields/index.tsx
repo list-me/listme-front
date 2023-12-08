@@ -41,7 +41,7 @@ function LinkFields(): JSX.Element {
     copyArray.pop();
 
     const allIgnore = copyArray.every((item) => {
-      return valuesToVerify.includes(item.data.toString());
+      return valuesToVerify.includes(item?.data?.toString());
     });
     if (allIgnore) {
       colHeadersToPreviewTable!.forEach((itemcolHeadersToPreviewTable) => {
