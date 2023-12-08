@@ -99,7 +99,7 @@ export const Label = styled.span<{ isItem?: boolean }>`
 
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-weight: ${({ isItem }) => (isItem === true ? 700 : 400)};
-  font-size: ${({ theme }) => theme.fonts.sizes.xxxsmall};
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
   color: ${({ theme, isItem }) =>
     isItem === true ? theme.colors.fourth : theme.colors.tertiary};
   line-height: 150%;
