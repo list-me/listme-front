@@ -9,12 +9,17 @@ export const ContainerLinkFields = styled.div`
 
 export const HeaderLinkFields = styled.div`
   display: flex;
+
   padding-bottom: 13px;
   border-bottom: 1px solid #eee;
 `;
 
 export const ColumnTitleLinkFields = styled.p`
   width: 50%;
+  display: flex;
+  margin: 0%;
+  gap: 4px;
+  align-items: center;
   color: ${({ theme }) => theme.colors.grayscale.primary};
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
@@ -23,6 +28,50 @@ export const ColumnTitleLinkFields = styled.p`
     background-color: blue !important;
     border-radius: 6px;
     border: 3px solid red !important;
+  }
+`;
+export const AlertLinkFields = styled.div`
+  stroke: #868e96;
+  path {
+    stroke: #868e96;
+    :nth-child(2) {
+      stroke: none;
+      fill: #868e96;
+    }
+  }
+  display: flex;
+  position: relative;
+
+  > div {
+    display: none;
+    position: absolute;
+    width: 380px;
+    height: 112px;
+    background: rgba(0, 0, 0, 0.75);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #fff;
+    bottom: -122px;
+    border-radius: 6px;
+    z-index: 10;
+    padding: 8px 16px;
+    align-items: center;
+    justify-content: center;
+    left: -350px;
+    ::before {
+      content: "";
+      position: absolute;
+      top: -20px;
+      right: 12px;
+      border: 10px solid transparent;
+      border-bottom-color: rgba(0, 0, 0, 0.75);
+    }
+  }
+  :hover {
+    > div {
+      display: flex;
+    }
   }
 `;
 export const ContentLinkFields = styled.div`

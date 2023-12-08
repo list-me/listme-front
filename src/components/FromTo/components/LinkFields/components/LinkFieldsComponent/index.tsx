@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Checkbox } from "antd";
 import {
+  AlertLinkFields,
   ColumnTitleLinkFields,
   ContainerCheckBox,
   ContainerSelectText,
@@ -15,6 +16,7 @@ import newColumnOptions from "../../../../../../utils/newColumnOptions";
 import { PersonalModal } from "../../../../../CustomModa";
 import { useProductContext } from "../../../../../../context/products";
 import { useFromToContext } from "../../../../../../context/FromToContext";
+import { ReactComponent as InfoIcon } from "../../../../../../assets/info.svg";
 
 function LinkFieldsComponent({
   colHeadersToPreviewTable,
@@ -117,7 +119,17 @@ function LinkFieldsComponent({
         <ColumnTitleLinkFields>Origem</ColumnTitleLinkFields>
         <ColumnTitleLinkFields>Destino</ColumnTitleLinkFields>
         {currentLinkConfigurationValue.value === "keepProductsLinked" && (
-          <ColumnTitleLinkFields>Manter vínculo</ColumnTitleLinkFields>
+          <ColumnTitleLinkFields>
+            Manter vínculo
+            <AlertLinkFields>
+              <InfoIcon />
+              <div>
+                Só os criadores atualizam os produtos. Você verá todas as
+                atualizações deles. Se quiser editar os campos e não receber
+                atualizações posteriormente, desmarque essa opção.
+              </div>
+            </AlertLinkFields>
+          </ColumnTitleLinkFields>
         )}
       </HeaderLinkFields>
       <ContentLinkFields>
