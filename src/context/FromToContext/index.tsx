@@ -42,6 +42,8 @@ export function FromToContextProvider({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
+  const { products, colHeaders } = useProductContext();
+
   const [templates, setTemplates] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<CSVRow[]>([]);
@@ -64,15 +66,21 @@ export function FromToContextProvider({
     if (data[0]) return Object.keys(data[0]);
     return null;
   }, [data]);
-  const [checkedList, setCheckedList] = useState<boolean[]>(
-    () =>
-      colHeadersToPreviewTable?.map(() => {
-        return true;
-      }) || [false],
-  );
-  const [rowsSelected, setRowsSelected] = useState<string[]>([]);
 
-  const { products } = useProductContext();
+  const [checkedList, setCheckedList] = useState<boolean[]>([false]);
+
+  useEffect(() => {
+    if (colHeaders && colHeaders?.length > 1) {
+      const copyColHeaders = [...colHeaders];
+      copyColHeaders.pop();
+      const checksToChekedList = copyColHeaders?.map(() => {
+        return currentLinkConfigurationValue.value === "keepProductsLinked";
+      });
+      setCheckedList(checksToChekedList);
+    }
+  }, [colHeaders, currentLinkConfigurationValue.value]);
+
+  const [rowsSelected, setRowsSelected] = useState<string[]>([]);
 
   const [allRowsSelected, setAllRowsSelected] = useState<boolean>(false);
   const selectedProductsId = useMemo(() => {

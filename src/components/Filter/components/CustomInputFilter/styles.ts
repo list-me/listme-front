@@ -3,8 +3,8 @@ import styled from "styled-components";
 // eslint-disable-next-line import/prefer-default-export
 export const CustomInputFilterContainer = styled.div`
   color: #000;
-  font-size: ${({ theme }) => theme.fonts.sizes.small};
-  font-weight: ${({ theme }) => theme.fonts.weights.regular};
+  font-size: 14px;
+  font-weight: 400;
   height: 100%;
   width: initial;
   display: flex;
