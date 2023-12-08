@@ -82,6 +82,7 @@ export const Temp: React.FC<IProps> = ({
         <ChevronDownIcon ref={iconRef} />
       </Item>
       <ButtonFilter
+        isDisabled={isPublic}
         filterActive={filterStatus && !!conditionsFilter[0]?.action}
         onClick={() => setOpenedFilter(true)}
       >
