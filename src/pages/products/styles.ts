@@ -122,7 +122,7 @@ export const Container = styled.div`
   }
 
   .handsontable .wtHolder::-webkit-scrollbar-thumb:hover {
-    background-color: #3818d9 !important;
+    background-color: ${({ theme }) => theme.colors.primary} !important;
   }
 
   .menuContext {
@@ -197,7 +197,7 @@ export const Container = styled.div`
 
         font-family: ${({ theme }) => theme.fonts.family.default};
         font-size: ${({ theme }) => theme.fonts.sizes.small};
-        color: #868e96;
+        color: ${({ theme }) => theme.colors.tertiary};
         font-weight: ${({ theme }) => theme.fonts.weights.regular};
         line-height: 150%;
 

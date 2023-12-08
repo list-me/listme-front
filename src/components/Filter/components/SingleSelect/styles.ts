@@ -49,7 +49,7 @@ export const SingleSelectValue = styled.p<{
   text-align: start;
   > div {
     color: ${(props) => (props.active ? "#000" : "#868e96")};
-    font-size: 14px;
+    font-size: ${({ theme }) => theme.fonts.sizes.small};
     font-weight: ${({ theme }) => theme.fonts.weights.regular};
     display: flex;
     align-items: center;
@@ -127,6 +127,6 @@ export const SearchOption = styled.input`
   padding: 12px;
   width: 100%;
   color: #000;
-  font-size: 14px;
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
   font-weight: ${({ theme }) => theme.fonts.weights.regular};
 `;

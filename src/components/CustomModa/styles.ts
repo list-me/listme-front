@@ -86,7 +86,7 @@ export const Description = styled.h2`
   font-weight: ${({ theme }) => theme.fonts.weights.regular};
   font-size: 16px;
   line-height: 150%;
-  color: #868e96;
+  color: ${({ theme }) => theme.colors.tertiary};
 
   flex: none;
   order: 1;
@@ -94,7 +94,7 @@ export const Description = styled.h2`
   /* flex-grow: 0; */
 
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-    font-size: 14px;
+    font-size: ${({ theme }) => theme.fonts.sizes.small};
   }
 `;
 
@@ -159,20 +159,20 @@ export const Footer = styled.div`
 
   .ant-switch-inner {
     &:hover {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 
   .ant-switch-handle::before {
     &:hover {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 
   .ant-switch-checked {
-    background: #3818d9;
+    background: ${({ theme }) => theme.colors.primary};
     &:hover {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 `;
@@ -312,20 +312,20 @@ export const Item = styled.span`
 
   .ant-switch-inner {
     &:hover {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 
   .ant-switch-handle::before {
     &:hover {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 
   .ant-switch-checked {
-    background: #3818d9;
+    background: ${({ theme }) => theme.colors.primary};
     &:hover {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 `;
@@ -442,7 +442,7 @@ export const Principal = styled.button`
   width: 183px;
   height: 52px;
 
-  background: #3818d9;
+  background: ${({ theme }) => theme.colors.primary};
   border-radius: 6px;
 
   border: none;

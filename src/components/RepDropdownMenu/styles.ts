@@ -44,9 +44,9 @@ export const Container = styled.div<IStyleProps>`
     font-family: "Satoshi Regular", sans-serif;
     font-style: normal;
     font-weight: ${({ theme }) => theme.fonts.weights.regular};
-    font-size: 14px;
+    font-size: ${({ theme }) => theme.fonts.sizes.small};
     line-height: 150%;
-    color: #868e96;
+    color: ${({ theme }) => theme.colors.tertiary};
   }
 
   .ant-input-group-addon {
@@ -72,7 +72,9 @@ export const Container = styled.div<IStyleProps>`
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background-color: #3818d9 !important; /* cor do botão da barra de rolagem quando hover */
+      background-color: ${({ theme }) =>
+        theme.colors
+          .primary} !important; /* cor do botão da barra de rolagem quando hover */
     }
   }
 `;
@@ -99,6 +101,8 @@ export const Line = styled.div`
 
 export const SwitchCustom = styled(Switch)`
   &.ant-switch-checked {
-    background-color: #3818d9 !important; // Altere a cor de fundo do switch quando está ativado
+    background-color: ${({ theme }) =>
+      theme.colors
+        .primary} !important; // Altere a cor de fundo do switch quando está ativado
   }
 `;

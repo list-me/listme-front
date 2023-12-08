@@ -183,18 +183,18 @@ export const Item = styled.div`
   font-family: "Satoshi regular", sans-serif;
   font-style: normal;
   font-weight: ${({ theme }) => theme.fonts.weights.regular};
-  font-size: 14px;
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
   line-height: 150%;
 
   &:hover {
     cursor: pointer;
-    background: #3818d9;
+    background: ${({ theme }) => theme.colors.primary};
     color: white;
   }
 
   &:focus {
     cursor: pointer;
-    background: #3818d9;
+    background: ${({ theme }) => theme.colors.primary};
     color: white;
   }
 `;
@@ -207,7 +207,7 @@ export const Footer = styled.span`
   align-items: center;
 
   font-weight: ${({ theme }) => theme.fonts.weights.regular};
-  font-size: 14px;
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
   line-height: 19px;
   color: #495057;
 

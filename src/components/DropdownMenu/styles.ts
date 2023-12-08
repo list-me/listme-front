@@ -55,7 +55,7 @@ export const Item = styled.span<{ isLast?: boolean }>`
   align-items: center;
 
   font-weight: ${({ theme }) => theme.fonts.weights.regular};
-  font-size: 14px;
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
   line-height: 19px;
 
   svg {

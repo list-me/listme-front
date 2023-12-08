@@ -22,7 +22,7 @@ export const Item = styled.div`
   font-family: "Satoshi regular", sans-serif;
   font-style: normal;
   font-weight: ${({ theme }) => theme.fonts.weights.regular};
-  font-size: 14px;
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
   line-height: 150%;
 
   &:hover {

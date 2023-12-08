@@ -24,14 +24,14 @@ export const ContainerCartText = styled.div`
   gap: 27px;
 `;
 export const CartCount = styled.p`
-  color: #868e96;
+  color: ${({ theme }) => theme.colors.tertiary};
   font-size: 16px;
   margin: 0;
   font-weight: 500;
 `;
 export const CartValue = styled.p`
   margin: 0;
-  color: #868e96;
+  color: ${({ theme }) => theme.colors.tertiary};
   font-size: 16px;
   font-weight: 500;
   position: relative;
@@ -57,7 +57,7 @@ export const CartButton = styled.button`
   padding: 0 16px;
   border: none;
   background: var(--primary-main, #3818d9);
-  color: #fff;
+  color: ${({ theme }) => theme.colors.secondary};
   font-size: 11px;
   font-weight: 700;
   :disabled {

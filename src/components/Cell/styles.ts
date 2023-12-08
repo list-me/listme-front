@@ -19,8 +19,8 @@ export const Container = styled.div`
     align-items: center;
 
     font-family: "Satoshi Regular", sans-serif;
-    font-size: 14px;
-    color: #868e96;
+    font-size: ${({ theme }) => theme.fonts.sizes.small};
+    color: ${({ theme }) => theme.colors.tertiary};
     font-weight: ${({ theme }) => theme.fonts.weights.regular};
     line-height: 150%;
 

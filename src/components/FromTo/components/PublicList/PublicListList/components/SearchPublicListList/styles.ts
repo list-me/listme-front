@@ -4,7 +4,7 @@ export const SearchPublicListList = styled.input`
   width: 100%;
   margin: 0;
   height: 53px;
-  background: #f3f4f6;
+  background: ${({ theme }) => theme.colors.background.default};
   border-radius: 8px;
   padding: 16px;
   border: none;

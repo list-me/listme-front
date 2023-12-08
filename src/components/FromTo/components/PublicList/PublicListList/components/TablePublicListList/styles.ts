@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+// eslint-disable-next-line import/prefer-default-export
 export const ContainerTablePublicListList = styled.div`
   border-radius: 8px;
   overflow: hidden;

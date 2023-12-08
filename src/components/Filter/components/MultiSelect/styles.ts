@@ -39,7 +39,7 @@ export const MultiSelectValue = styled.p<{ active: boolean }>`
   width: 100%;
   > div {
     color: ${(props) => (props.active ? "#000" : "#868e96")};
-    font-size: 14px;
+    font-size: ${({ theme }) => theme.fonts.sizes.small};
     font-weight: ${({ theme }) => theme.fonts.weights.regular};
     display: flex;
     align-items: center;
@@ -129,13 +129,13 @@ export const SearchOption = styled.input`
   padding: 12px;
   width: 100%;
   color: #000;
-  font-size: 14px;
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
   font-weight: ${({ theme }) => theme.fonts.weights.regular};
 `;
 export const Alert = styled.p`
-  color: #868e96;
+  color: ${({ theme }) => theme.colors.tertiary};
   text-align: start;
-  font-size: 14px;
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
   margin-left: 16px;
   font-weight: ${({ theme }) => theme.fonts.weights.regular};
 `;

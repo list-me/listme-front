@@ -196,7 +196,7 @@ export const SuspenseMenu = styled.div<{ width: string; top: string }>`
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background-color: #3818d9 !important;
+    background-color: ${({ theme }) => theme.colors.primary} !important;
   }
 `;
 

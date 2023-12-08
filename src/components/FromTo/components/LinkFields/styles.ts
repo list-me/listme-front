@@ -45,9 +45,8 @@ export const AlertLinkFields = styled.div`
   > div {
     font-size: ${({ theme }) => theme.fonts.sizes.normal};
     font-weight: ${({ theme }) => theme.fonts.weights.regular};
-    font-weight: ${({ theme }) => theme.fonts.weights.regular};
-    color: #fff;
-    color: #fff;
+
+    color: ${({ theme }) => theme.colors.secondary};
 
     display: none;
     position: absolute;

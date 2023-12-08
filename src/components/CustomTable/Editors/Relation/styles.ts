@@ -218,7 +218,7 @@ export const Content = styled.div`
 
     .ant-table-cell {
       font-family: "Satoshi Regular", sans-serif;
-      font-size: 14px;
+      font-size: ${({ theme }) => theme.fonts.sizes.small};
       font-weight: ${({ theme }) => theme.fonts.weights.regular};
 
       overflow: hidden;
@@ -303,7 +303,7 @@ export const Button = styled.button`
   width: 183px;
   height: 52px;
 
-  background: #3818d9;
+  background: ${({ theme }) => theme.colors.primary};
   border-radius: 6px;
 
   border: none;

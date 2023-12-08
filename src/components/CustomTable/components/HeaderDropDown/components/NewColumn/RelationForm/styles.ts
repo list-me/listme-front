@@ -164,7 +164,7 @@ export const Content = styled.div`
   }
 
   .label {
-    font-size: 14px;
+    font-size: ${({ theme }) => theme.fonts.sizes.small};
     margin-bottom: 1px;
   }
 
@@ -176,15 +176,15 @@ export const Content = styled.div`
 
   .ant-radio-wrapper.ant-radio-wrapper-checked {
     font-family: "Satoshi Bold", sans-serif !important;
-    color: #3818d9 !important;
+    color: ${({ theme }) => theme.colors.primary} !important;
 
     .ant-radio-inner {
-      background: white !important;
-      border: 2.4px solid #3818d9 !important;
+      background: ${({ theme }) => theme.colors.secondary} !important;
+      border: 2.4px solid ${({ theme }) => theme.colors.primary} !important;
     }
 
     .ant-radio-inner::after {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 `;
@@ -222,7 +222,7 @@ export const Button = styled.button`
   width: 183px;
   height: 52px;
 
-  background: #3818d9;
+  background: ${({ theme }) => theme.colors.primary};
   border-radius: 6px;
 
   border: none;

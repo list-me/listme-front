@@ -102,9 +102,9 @@ export const CountFilter = styled.div`
   width: 20px;
   height: 20px;
   padding: 4px;
-  background: #3818d9;
+  background: ${({ theme }) => theme.colors.primary};
   position: absolute;
-  color: #fff;
+  color: ${({ theme }) => theme.colors.secondary};
   font-size: 12px;
   font-weight: 700;
   display: flex;
