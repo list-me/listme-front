@@ -54,7 +54,7 @@ function CustomTable(props: any): JSX.Element {
       Math.round(tableContainerContent / constants.rowHeight) -
       constants.marginError;
 
-    const newPageSize = Math.max(3, countRows);
+    const newPageSize = props.isPublic ? 7 : Math.max(3, countRows);
 
     setPageSize(newPageSize);
     return newPageSize;

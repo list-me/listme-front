@@ -79,6 +79,10 @@ function DefaultTable({
   hidden,
   handleFreeze,
   isPublic,
+  allRowsSelected,
+  setAllRowsSelected,
+  rowsSelected,
+  setRowsSelected,
 }: IDefaultTable): JSX.Element {
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
   const [openAlertTooltip, setAlertTooltip] = useState(false);
@@ -371,27 +375,19 @@ function DefaultTable({
     } else setproductsToView(products);
   }, [headerTable, isPublic, products]);
 
-  const [rowsSelected, setRowsSelected] = useState<string[]>([]);
-
-  const selectedProductsId = useMemo(() => {
-    return rowsSelected.map((item) => {
-      return products[+item].id;
-    });
-  }, [products, rowsSelected]);
-
-  const [allRowsSelected, setAllRowsSelected] = useState<boolean>(false);
-
   const toggleRowSelection = useCallback(
     (row: string) => {
-      setAllRowsSelected(false);
-      const isSelected = rowsSelected.includes(row);
-      const updatedSelection = isSelected
-        ? rowsSelected.filter((selectedRow) => selectedRow !== row)
-        : rowsSelected.concat(row);
+      if (rowsSelected && setRowsSelected && setAllRowsSelected) {
+        setAllRowsSelected(false);
+        const isSelected = rowsSelected.includes(row);
+        const updatedSelection = isSelected
+          ? rowsSelected.filter((selectedRow) => selectedRow !== row)
+          : rowsSelected.concat(row);
 
-      setRowsSelected(updatedSelection);
+        setRowsSelected(updatedSelection);
+      }
     },
-    [rowsSelected, setRowsSelected],
+    [rowsSelected, setAllRowsSelected, setRowsSelected],
   );
 
   const customCheckboxRenderer = useCallback(
@@ -405,7 +401,7 @@ function DefaultTable({
     ) => {
       const stringRow = String(row);
 
-      const isChecked = rowsSelected.includes(stringRow);
+      const isChecked = rowsSelected?.includes(stringRow);
 
       const checkboxContainer = document.createElement("div");
       checkboxContainer.style.width = "100%";
@@ -416,7 +412,7 @@ function DefaultTable({
 
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
-      checkbox.checked = isChecked;
+      checkbox.checked = isChecked || false;
 
       checkbox.addEventListener("change", () => {
         toggleRowSelection(stringRow);
@@ -431,16 +427,18 @@ function DefaultTable({
   );
 
   function changeAllRowsSelected(): void {
-    const newState = !allRowsSelected;
-    setAllRowsSelected(newState);
-    if (newState) {
-      const newRowsSelected: string[] = [];
-      products.forEach((_item, index) => {
-        newRowsSelected.push(String(index));
-      });
-      setRowsSelected(newRowsSelected);
-    } else {
-      setRowsSelected([]);
+    if (setRowsSelected && setAllRowsSelected) {
+      const newState = !allRowsSelected;
+      setAllRowsSelected(newState);
+      if (newState) {
+        const newRowsSelected: string[] = [];
+        products.forEach((_item, index) => {
+          newRowsSelected.push(String(index));
+        });
+        setRowsSelected(newRowsSelected);
+      } else {
+        setRowsSelected([]);
+      }
     }
   }
 
@@ -678,7 +676,7 @@ function DefaultTable({
           );
         })}
       </HotTable>
-      {isPublic && <Cart itemsTotal={rowsSelected.length} />}
+      {isPublic && <Cart itemsTotal={rowsSelected?.length || 0} />}
       <HeaderDropDown
         dropDownStatus={dropDownStatus}
         setDropDownStatus={setDropDownStatus}

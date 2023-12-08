@@ -60,11 +60,26 @@ export function FromToContextProvider({
       label: "",
       description: "",
     });
-
   const colHeadersToPreviewTable = useMemo((): string[] | null => {
     if (data[0]) return Object.keys(data[0]);
     return null;
   }, [data]);
+  const [checkedList, setCheckedList] = useState<boolean[]>(
+    () =>
+      colHeadersToPreviewTable?.map(() => {
+        return true;
+      }) || [false],
+  );
+  const [rowsSelected, setRowsSelected] = useState<string[]>([]);
+
+  const { products } = useProductContext();
+
+  const [allRowsSelected, setAllRowsSelected] = useState<boolean>(false);
+  const selectedProductsId = useMemo(() => {
+    return rowsSelected.map((item) => {
+      return products[+item].id;
+    });
+  }, [products, rowsSelected]);
 
   const [valuesImportConfiguration, setValuesImportConfiguration] =
     useState<IValuesImportConfiguration>(initialValuesImportConfiguration);
@@ -197,6 +212,13 @@ export function FromToContextProvider({
     setTemplates,
     currentLinkConfigurationValue,
     setCurrentLinkConfigurationValue,
+    checkedList,
+    setCheckedList,
+    rowsSelected,
+    setRowsSelected,
+    allRowsSelected,
+    setAllRowsSelected,
+    selectedProductsId,
   };
 
   return (

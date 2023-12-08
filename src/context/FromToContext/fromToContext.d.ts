@@ -54,6 +54,13 @@ export interface FromToContextType {
   setCurrentLinkConfigurationValue: React.Dispatch<
     React.SetStateAction<ILinkConfigurationValue>
   >;
+  checkedList: boolean[];
+  setCheckedList: React.Dispatch<React.SetStateAction<boolean[]>>;
+  rowsSelected: string[];
+  setRowsSelected: React.Dispatch<React.SetStateAction<string[]>>;
+  allRowsSelected: boolean;
+  setAllRowsSelected: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedProductsId: string[];
 }
 
 export interface ILinkConfigurationValue {

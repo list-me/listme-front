@@ -68,7 +68,7 @@ const getStyledContent = (
   valueToVisible: string | number | undefined,
   isRequired: boolean,
   changeAllRowsSelected: () => void,
-  allRowsSelected: boolean,
+  allRowsSelected?: boolean,
   isPublic?: boolean,
 ): string => {
   (window as any).changeAllRowsSelected = changeAllRowsSelected;

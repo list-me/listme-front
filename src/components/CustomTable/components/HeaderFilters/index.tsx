@@ -50,7 +50,8 @@ function HeaderFilters({
   });
 
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
-  const { setFromToIsOpened, setCurrentStep, setStepType } = useFromToContext();
+  const { setFromToIsOpened, setCurrentStep, setStepType, setAllRowsSelected } =
+    useFromToContext();
   return (
     <>
       <Header>
@@ -80,6 +81,7 @@ function HeaderFilters({
                 setStepType("publicList");
                 setCurrentStep(2);
                 setFromToIsOpened(true);
+                setAllRowsSelected(true);
               }}
             >
               Vincular lista completa ({totalPrice})
