@@ -76,7 +76,7 @@ export const Container = styled.div<{ type: string }>`
 
     font-family: "Satoshi Regular", sans-serif;
     font-style: normal;
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     font-size: 12.8px;
     line-height: 150%;
     color: #212529;
@@ -182,7 +182,7 @@ export const Item = styled.div`
 
   font-family: "Satoshi regular", sans-serif;
   font-style: normal;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   font-size: 14px;
   line-height: 150%;
 
@@ -206,7 +206,7 @@ export const Footer = styled.span`
   display: flex;
   align-items: center;
 
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   font-size: 14px;
   line-height: 19px;
   color: #495057;

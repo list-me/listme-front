@@ -4,7 +4,7 @@ import styled from "styled-components";
 export const CustomInputFilterContainer = styled.div`
   color: #000;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   height: 100%;
   width: initial;
   display: flex;

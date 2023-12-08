@@ -37,7 +37,7 @@ export const Content = styled.div`
     background-color: ${({ theme }) => theme.colors.grayscale.eleventh};
     font-family: ${({ theme }) => theme.fonts.family.default};
     font-size: ${({ theme }) => theme.fonts.sizes.normal};
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     line-height: 150%;
 
     :before {
@@ -56,7 +56,7 @@ export const Content = styled.div`
   .ant-table-cell {
     font-family: ${({ theme }) => theme.fonts.family.default};
     font-size: ${({ theme }) => theme.fonts.sizes.normal};
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
 
     height: 56px;
 
@@ -78,7 +78,7 @@ export const Content = styled.div`
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
     .ant-table-thead .ant-table-cell {
       font-size: ${({ theme }) => theme.fonts.sizes.normal};
-      font-weight: 400;
+      font-weight: ${({ theme }) => theme.fonts.weights.regular};
       line-height: 150%;
 
       :before {

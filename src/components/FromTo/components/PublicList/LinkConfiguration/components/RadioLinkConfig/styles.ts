@@ -71,5 +71,5 @@ export const Description = styled.p`
   margin-top: 10px;
   color: #868e96;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
 `;

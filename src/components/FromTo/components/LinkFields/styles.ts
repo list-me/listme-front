@@ -31,27 +31,29 @@ export const ColumnTitleLinkFields = styled.p`
   }
 `;
 export const AlertLinkFields = styled.div`
-  stroke: #868e96;
+  stroke: ${({ theme }) => theme.colors.grayscale.fourth};
   path {
-    stroke: #868e96;
+    stroke: ${({ theme }) => theme.colors.grayscale.fourth};
     :nth-child(2) {
       stroke: none;
-      fill: #868e96;
+      fill: ${({ theme }) => theme.colors.grayscale.fourth};
     }
   }
   display: flex;
   position: relative;
 
   > div {
+    font-size: ${({ theme }) => theme.fonts.sizes.normal};
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
+    color: #fff;
+    color: #fff;
+
     display: none;
     position: absolute;
     width: 380px;
     height: 112px;
     background: rgba(0, 0, 0, 0.75);
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 24px;
-    color: #fff;
     bottom: -122px;
     border-radius: 6px;
     z-index: 10;

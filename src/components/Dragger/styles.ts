@@ -47,7 +47,7 @@ export const Content = styled.div`
     label {
       font-family: "Satoshi Regular", sans-serif;
       font-style: normal;
-      font-weight: 400;
+      font-weight: ${({ theme }) => theme.fonts.weights.regular};
       font-size: 12px !important;
       line-height: 150%;
       color: #212529;

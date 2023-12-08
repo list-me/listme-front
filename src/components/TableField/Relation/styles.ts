@@ -196,7 +196,7 @@ export const Content = styled.div`
     label {
       font-family: "Satoshi Regular", sans-serif;
       font-style: normal;
-      font-weight: 400;
+      font-weight: ${({ theme }) => theme.fonts.weights.regular};
       font-size: 16px;
     }
 
@@ -204,7 +204,7 @@ export const Content = styled.div`
       background-color: #f8f9fa;
       font-family: "Satoshi Regular", sans-serif;
       font-size: 16px;
-      font-weight: 400;
+      font-weight: ${({ theme }) => theme.fonts.weights.regular};
       line-height: 150%;
 
       height: 56px;
@@ -219,7 +219,7 @@ export const Content = styled.div`
     .ant-table-cell {
       font-family: "Satoshi Regular", sans-serif;
       font-size: 14px;
-      font-weight: 400;
+      font-weight: ${({ theme }) => theme.fonts.weights.regular};
 
       overflow: hidden;
 

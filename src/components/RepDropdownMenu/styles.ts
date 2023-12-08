@@ -43,7 +43,7 @@ export const Container = styled.div<IStyleProps>`
 
     font-family: "Satoshi Regular", sans-serif;
     font-style: normal;
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     font-size: 14px;
     line-height: 150%;
     color: #868e96;
@@ -86,7 +86,7 @@ export const Line = styled.div`
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.small};
   font-style: normal;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   line-height: 14px;
   text-align: center;
 

@@ -21,7 +21,7 @@ export const Item = styled.div`
 
   font-family: "Satoshi regular", sans-serif;
   font-style: normal;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   font-size: 14px;
   line-height: 150%;
 

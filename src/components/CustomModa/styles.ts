@@ -38,7 +38,7 @@ export const Container = styled.div`
       label {
         font-family: "Satoshi Regular", sans-serif;
         font-style: normal;
-        font-weight: 400;
+        font-weight: ${({ theme }) => theme.fonts.weights.regular};
         font-size: 16px;
         line-height: 150%;
         color: #212529;
@@ -83,7 +83,7 @@ export const Title = styled.h1`
 export const Description = styled.h2`
   font-family: "Satoshi Regular", sans-serif;
   font-style: normal;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   font-size: 16px;
   line-height: 150%;
   color: #868e96;
@@ -221,7 +221,7 @@ export const InputContainer = styled.div`
   .ant-input {
     font-family: "Satoshi Regular", sans-serif;
     font-style: normal;
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     font-size: 16px !important;
     line-height: 150%;
     color: #212529;
@@ -256,7 +256,7 @@ export const InputContainer = styled.div`
   .ant-select-selector {
     font-family: "Satoshi Regular", sans-serif;
     font-style: normal;
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     font-size: 16px !important;
     line-height: 150%;
     color: #212529;
@@ -285,7 +285,7 @@ export const InputContainer = styled.div`
   .ant-select-open {
     font-family: "Satoshi Regular", sans-serif !important;
     font-style: normal;
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     font-size: 16px;
     line-height: 150%;
     color: #212529 Impo !important;

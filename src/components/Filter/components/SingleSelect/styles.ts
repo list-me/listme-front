@@ -50,7 +50,7 @@ export const SingleSelectValue = styled.p<{
   > div {
     color: ${(props) => (props.active ? "#000" : "#868e96")};
     font-size: 14px;
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     display: flex;
     align-items: center;
     gap: 8px;
@@ -107,7 +107,7 @@ export const Option = styled.p<{ active: boolean }>`
   gap: 8px;
   padding: 8px;
   font-size: 16px;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   background: ${(props) => (props.active ? "#e2e0ff" : "initial")};
   color: ${(props) => (props.active ? "#3818D9" : "#495057")};
   border-radius: 8px;
@@ -128,5 +128,5 @@ export const SearchOption = styled.input`
   width: 100%;
   color: #000;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
 `;
