@@ -65,12 +65,9 @@ function LinkFieldsPublic(): JSX.Element {
           body.append("all", "true");
         } else {
           body.append("all", "false");
-          const idsCSV = selectedProductsId
-            .map((id) => {
-              return `${id}\n`;
-            })
-            .join("");
-          body.append("items", idsCSV);
+          const idsCSV = selectedProductsId.map((id) => `${id}\n`).join("");
+          const blobCSV = new Blob([idsCSV], { type: "text/csv" });
+          body.append("items", blobCSV);
         }
         body.append("template_id", response.id);
         const responseLink = await productRequests.postLink(body);
