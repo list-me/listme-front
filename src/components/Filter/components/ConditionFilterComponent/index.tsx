@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Filter, FilterItem, InputFilter, TrashButton } from "../../styles";
 import { ReactComponent as TrashIcon } from "../../../../assets/trash-filter.svg";
 import { IInputValue } from "../../../../context/FilterContext/FilterContextType";
@@ -63,6 +63,24 @@ function ConditionFilterComponent({
     }
   }, [filters]);
 
+  const sortByLabel = (
+    array: { value: string; label: string }[],
+  ): { value: string; label: string }[] => {
+    if (!Array.isArray(array) || array.length === 0) {
+      return [];
+    }
+
+    const sortedArray = [...array].sort((a, b) =>
+      a.label.localeCompare(b.label),
+    );
+
+    return sortedArray;
+  };
+
+  const optionsToMultiSelectToView = useMemo(() => {
+    return sortByLabel(optionsToMultiSelect[index]);
+  }, [index, optionsToMultiSelect]);
+
   return (
     <Filter
       key={item.id}
@@ -73,7 +91,7 @@ function ConditionFilterComponent({
       <FilterItem>
         <SingleSelect
           placeHolder="Selecione a coluna"
-          options={options}
+          options={sortByLabel(options)}
           changeValue={changeValue}
           index={index}
           type="column"
@@ -112,7 +130,7 @@ function ConditionFilterComponent({
             />
           ) : (
             <MultiSelect
-              options={optionsToMultiSelect[index] as any}
+              options={optionsToMultiSelectToView as any}
               placeHolder="Selecione"
               changeValue={setSelectValue}
               index={index}

@@ -182,7 +182,29 @@ function MultiSelect({
       }
     }
   }
+  function updateOptions(
+    currentIdsSelecteds: any,
+    opts: {
+      value: string;
+      label: string;
+    }[],
+  ): {
+    value: string;
+    label: string;
+  }[] {
+    if (currentIdsSelecteds && currentIdsSelecteds.length > 0) {
+      const selectedOptions = opts.filter((opt) =>
+        currentIdsSelecteds.includes(opt.value),
+      );
 
+      const unselectedOptions = opts.filter(
+        (opt) => !currentIdsSelecteds.includes(opt.value),
+      );
+
+      return [...selectedOptions, ...unselectedOptions];
+    }
+    return options;
+  }
   return (
     <ContainerMultiSelect ref={menuRef} openedMenu={openedMenu}>
       <MultiSelectValue
@@ -216,8 +238,8 @@ function MultiSelect({
             {loadingOptions ? (
               <LoadingData>Buscando Dados...</LoadingData>
             ) : (
-              !!currentOptions?.length &&
-              currentOptions?.map((opt) => (
+              !!updateOptions(idsSelecteds, currentOptions)?.length &&
+              updateOptions(idsSelecteds, currentOptions)?.map((opt) => (
                 <Option
                   key={opt?.value}
                   onClick={() => {
