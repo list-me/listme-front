@@ -218,8 +218,6 @@ export const PersonalModal = ({
     });
 
     try {
-      // lembrete
-
       await templateRequests.update(currentTemplate?.id, {
         fields: templateUpdated,
       });

@@ -289,7 +289,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
             total={total}
             setTotal={setTotal}
             template={template}
-            // renderHeaderComponent={renderHeaderComponent}
             hidden={hidden}
             handleResize={handleResize}
             columns={headerTable}
