@@ -43,7 +43,13 @@ import NotFound from "./components/NotFound";
 registerAllModules();
 registerAllEditors();
 
-const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
+const CustomTable: React.FC<CustomTableProps> = ({
+  isPublic,
+  allRowsSelected,
+  setAllRowsSelected,
+  rowsSelected,
+  setRowsSelected,
+}) => {
   const hotRef = useRef<HotTable>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
   const {
@@ -137,111 +143,15 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
     }
   };
 
-  const renderHeaderComponent = useCallback(
-    (column: number, TH: HTMLTableHeaderCellElement) => {
-      if (TH.querySelector(".customHeader") && column === -1) {
-        TH.replaceChildren("");
-        return;
-      }
-
-      const existent = TH.querySelector(".customHeader");
-      if (existent) {
-        unmountComponentAtNode(existent);
-        const myComponent = document.createElement("div");
-        myComponent.className = "customHeader";
-
-        const col = template?.fields?.fields.find((item: any) => {
-          if (item.id === headerTable[column]?.data) {
-            return item;
-          }
-        });
-
-        if (colHeaders[column] === " ") {
-          ReactDOM.createRoot(myComponent).render(
-            <NewColumn
-              template={template}
-              setNewColumn={(newColumn: any, templateUpdated: any) => {
-                newColumn = {
-                  ...newColumn,
-                  className: "htLeft htMiddle",
-                  frozen: false,
-                  hidden: false,
-                  order: String(headerTable.length + 1),
-                  width: "300",
-                };
-
-                const newPosition = [...headerTable, newColumn];
-                newPosition.splice(newPosition.length - 2, 1);
-                newPosition.push({});
-                setHeaderTable(newPosition);
-
-                const contentHeaders = headerTable.map((item) => item?.title);
-                contentHeaders.splice(headerTable.length - 1, 1);
-                contentHeaders.push(newColumn?.title);
-                contentHeaders.push(" ");
-                setColHeaders(contentHeaders);
-                handleNewColumn(newColumn, templateUpdated);
-              }}
-            />,
-          );
-        } else {
-          ReactDOM.createRoot(myComponent).render(
-            <Cell
-              label={colHeaders[column]}
-              column={col}
-              template={template}
-              handleHidden={() => {
-                return handleHidden(column, template, true);
-              }}
-              handleFrozen={() => {
-                const freezePlugins =
-                  hotRef.current!.hotInstance?.getPlugin("manualColumnFreeze");
-
-                if (freezePlugins) {
-                  freezePlugins?.freezeColumn(1);
-                  hotRef.current!.hotInstance?.render();
-                }
-                return true;
-              }}
-              // @ts-ignore
-              freeze={!!headerTable[column]?.frozen}
-              handleSort={() => {}}
-              handleDeleteColumn={() => {
-                col.order = column.toString();
-                setCurrentCell(col);
-                setIsOpen(!isOpen);
-              }}
-            />,
-          );
-        }
-
-        TH.replaceChildren(myComponent);
-        return;
-      }
-
-      const myComponent = document.createElement("div");
-      myComponent.className = "customHeader";
-
-      TH.replaceChildren(myComponent);
-    },
-    [
-      headerTable,
-      colHeaders,
-      handleHidden,
-      handleNewColumn,
-      headerTable,
-      isOpen,
-      setColHeaders,
-      template,
-    ],
-  );
-
   const [currentKeyword, setCurrentKeyword] = useState("");
   const handleGetProductFiltered = (keyword: string): void => {
     loadingRef.current!.style.display = "block";
     setCurrentKeyword(() => keyword);
     productRequests
-      .list({ keyword, limit: 100 }, window.location.pathname.substring(10))
+      .list(
+        { keyword, limit: 100 },
+        window.location.pathname.substring(isPublic ? 17 : 10),
+      )
       .then((response) => {
         const productFields: any[] = [];
 
@@ -304,6 +214,34 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
     handleMountColumns();
   }, [handleMountColumns]);
 
+  const checkToHeaderTable = {
+    title: "Check",
+    data: "000000",
+    className: "htLeft htMiddle",
+    type: "checkPublic",
+    required: false,
+    options: [""],
+    order: "-1",
+    hidden: false,
+    width: "300px",
+    frozen: false,
+  };
+
+  const checkToColHeaders = "checkPublic";
+  const checkToCols = {
+    title: "Check",
+    data: "000000",
+    className: "htLeft htMiddle",
+    type: "checkPublic",
+    required: false,
+    options: [""],
+    order: "-1",
+    hidden: false,
+    width: "300px",
+    frozen: false,
+    isCustom: false,
+    bucket_url: "",
+  };
   return (
     <>
       <Confirmation
@@ -323,6 +261,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
           <HeaderFilters
             isPublic={isPublic}
             template={template}
+            total={total}
             // @ts-ignore
             headerTable={headerTable}
             handleGetProductFiltered={handleGetProductFiltered}
@@ -333,9 +272,14 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
           <DefaultTable
             key={colHeaders.join()}
             hotRef={hotRef}
-            colHeaders={colHeaders}
+            cols={isPublic ? [checkToCols, ...cols] : cols}
+            colHeaders={
+              isPublic ? [checkToColHeaders, ...colHeaders] : colHeaders
+            }
+            headerTable={
+              isPublic ? [checkToHeaderTable, ...headerTable] : headerTable
+            }
             setColHeaders={setColHeaders}
-            cols={cols}
             products={products}
             setProducts={setProducts}
             handleDelete={handleDelete}
@@ -345,7 +289,6 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
             total={total}
             setTotal={setTotal}
             template={template}
-            renderHeaderComponent={renderHeaderComponent}
             hidden={hidden}
             handleResize={handleResize}
             columns={headerTable}
@@ -354,7 +297,6 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
             uploadImages={uploadImages}
             page={page}
             setPage={setPage}
-            headerTable={headerTable}
             currentKeyword={currentKeyword}
             handleNewColumn={handleNewColumn}
             handleHidden={handleHidden}
@@ -362,6 +304,10 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
             setIsOpen={setIsOpen}
             handleFreeze={handleFreeze}
             isPublic={isPublic}
+            allRowsSelected={allRowsSelected}
+            setAllRowsSelected={setAllRowsSelected}
+            rowsSelected={rowsSelected}
+            setRowsSelected={setRowsSelected}
           />
           {!!conditionsFilter.length && products.length < 1 && <NotFound />}
         </Container>

@@ -138,7 +138,7 @@ export const TemplateLabel = styled.span`
   label {
     font-family: ${({ theme }) => theme.fonts.family.default};
     font-size: ${({ theme }) => theme.fonts.sizes.normal};
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     line-height: 20px;
   }
 
@@ -196,7 +196,7 @@ export const Information = styled.label`
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.small};
   color: ${({ theme }) => theme.colors.tertiary};
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
 `;
 
 export const SectionTitle = styled.h3<{ isHeader?: boolean; weight?: number }>`

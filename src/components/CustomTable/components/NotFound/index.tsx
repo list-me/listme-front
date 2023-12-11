@@ -30,7 +30,7 @@ export const H2NotFound = styled.h2`
 `;
 export const TextNotFound = styled.p`
   margin: 0;
-  color: #868e96;
+  color: ${({ theme }) => theme.colors.tertiary};
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
   font-weight: ${({ theme }) => theme.fonts.weights.regular};

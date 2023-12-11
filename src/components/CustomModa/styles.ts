@@ -38,7 +38,7 @@ export const Container = styled.div`
       label {
         font-family: "Satoshi Regular", sans-serif;
         font-style: normal;
-        font-weight: 400;
+        font-weight: ${({ theme }) => theme.fonts.weights.regular};
         font-size: 16px;
         line-height: 150%;
         color: #212529;
@@ -83,10 +83,10 @@ export const Title = styled.h1`
 export const Description = styled.h2`
   font-family: "Satoshi Regular", sans-serif;
   font-style: normal;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   font-size: 16px;
   line-height: 150%;
-  color: #868e96;
+  color: ${({ theme }) => theme.colors.tertiary};
 
   flex: none;
   order: 1;
@@ -94,7 +94,7 @@ export const Description = styled.h2`
   /* flex-grow: 0; */
 
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-    font-size: 14px;
+    font-size: ${({ theme }) => theme.fonts.sizes.small};
   }
 `;
 
@@ -159,20 +159,20 @@ export const Footer = styled.div`
 
   .ant-switch-inner {
     &:hover {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 
   .ant-switch-handle::before {
     &:hover {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 
   .ant-switch-checked {
-    background: #3818d9;
+    background: ${({ theme }) => theme.colors.primary};
     &:hover {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 `;
@@ -221,7 +221,7 @@ export const InputContainer = styled.div`
   .ant-input {
     font-family: "Satoshi Regular", sans-serif;
     font-style: normal;
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     font-size: 16px !important;
     line-height: 150%;
     color: #212529;
@@ -256,7 +256,7 @@ export const InputContainer = styled.div`
   .ant-select-selector {
     font-family: "Satoshi Regular", sans-serif;
     font-style: normal;
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     font-size: 16px !important;
     line-height: 150%;
     color: #212529;
@@ -285,7 +285,7 @@ export const InputContainer = styled.div`
   .ant-select-open {
     font-family: "Satoshi Regular", sans-serif !important;
     font-style: normal;
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     font-size: 16px;
     line-height: 150%;
     color: #212529 Impo !important;
@@ -312,20 +312,20 @@ export const Item = styled.span`
 
   .ant-switch-inner {
     &:hover {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 
   .ant-switch-handle::before {
     &:hover {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 
   .ant-switch-checked {
-    background: #3818d9;
+    background: ${({ theme }) => theme.colors.primary};
     &:hover {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 `;
@@ -442,7 +442,7 @@ export const Principal = styled.button`
   width: 183px;
   height: 52px;
 
-  background: #3818d9;
+  background: ${({ theme }) => theme.colors.primary};
   border-radius: 6px;
 
   border: none;

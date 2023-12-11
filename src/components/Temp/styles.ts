@@ -54,7 +54,7 @@ export const ButtonCustom = styled.button<{ width: string; height: string }>`
   font-family: ${({ theme }) => theme.fonts.family.bold};
   font-size: ${({ theme }) => theme.fonts.sizes.small};
   font-style: normal;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   letter-spacing: 0.5px;
   text-align: center;
 
@@ -89,6 +89,7 @@ export const ButtonCustom = styled.button<{ width: string; height: string }>`
 
 export const ButtonFilter = styled.div<{
   filterActive: boolean;
+  isDisabled?: boolean;
 }>`
   display: flex;
   border: ${(props) => props.filterActive && "1px solid  #3818D9"};
@@ -97,14 +98,16 @@ export const ButtonFilter = styled.div<{
   border-radius: 4px;
   position: relative;
   cursor: pointer;
+  pointer-events: ${(props) => (props.isDisabled ? "none" : "initial")};
+  opacity: ${(props) => (props.isDisabled ? "0.5" : "initial")};
 `;
 export const CountFilter = styled.div`
   width: 20px;
   height: 20px;
   padding: 4px;
-  background: #3818d9;
+  background: ${({ theme }) => theme.colors.primary};
   position: absolute;
-  color: #fff;
+  color: ${({ theme }) => theme.colors.secondary};
   font-size: 12px;
   font-weight: 700;
   display: flex;

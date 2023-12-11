@@ -19,10 +19,10 @@ export interface IDefaultTable {
   total: number;
   setTotal: React.Dispatch<React.SetStateAction<number>>;
   template: any;
-  renderHeaderComponent: (
-    column: number,
-    TH: HTMLTableHeaderCellElement,
-  ) => void;
+  // renderHeaderComponent: (
+  //   column: number,
+  //   TH: HTMLTableHeaderCellElement,
+  // ) => void;
   hidden: number[];
   handleResize: Function;
   columns: IHeader[];
@@ -44,4 +44,8 @@ export interface IDefaultTable {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleFreeze: any;
   isPublic?: boolean;
+  allRowsSelected?: boolean;
+  setAllRowsSelected?: React.Dispatch<React.SetStateAction<boolean>>;
+  rowsSelected?: string[];
+  setRowsSelected?: React.Dispatch<React.SetStateAction<string[]>>;
 }

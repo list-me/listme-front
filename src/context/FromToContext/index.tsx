@@ -12,6 +12,7 @@ import {
   CSVRow,
   FromToContextType,
   ICSVResponse,
+  ILinkConfigurationValue,
   IValuesImportConfiguration,
   IValuesImportOptions,
 } from "./fromToContext";
@@ -41,6 +42,8 @@ export function FromToContextProvider({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
+  const { products, colHeaders } = useProductContext();
+
   const [templates, setTemplates] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<CSVRow[]>([]);
@@ -53,11 +56,38 @@ export function FromToContextProvider({
   const [csvResponse, setCsvResponse] = useState<ICSVResponse>(
     {} as ICSVResponse,
   );
-
+  const [currentLinkConfigurationValue, setCurrentLinkConfigurationValue] =
+    useState<ILinkConfigurationValue>({
+      value: "",
+      label: "",
+      description: "",
+    });
   const colHeadersToPreviewTable = useMemo((): string[] | null => {
     if (data[0]) return Object.keys(data[0]);
     return null;
   }, [data]);
+
+  const [checkedList, setCheckedList] = useState<boolean[]>([false]);
+
+  useEffect(() => {
+    if (colHeaders && colHeaders?.length > 1) {
+      const copyColHeaders = [...colHeaders];
+      copyColHeaders.pop();
+      const checksToChekedList = copyColHeaders?.map(() => {
+        return currentLinkConfigurationValue.value === "keepProductsLinked";
+      });
+      setCheckedList(checksToChekedList);
+    }
+  }, [colHeaders, currentLinkConfigurationValue.value]);
+
+  const [rowsSelected, setRowsSelected] = useState<string[]>([]);
+
+  const [allRowsSelected, setAllRowsSelected] = useState<boolean>(false);
+  const selectedProductsId = useMemo(() => {
+    return rowsSelected.map((item) => {
+      return products[+item].id;
+    });
+  }, [products, rowsSelected]);
 
   const [valuesImportConfiguration, setValuesImportConfiguration] =
     useState<IValuesImportConfiguration>(initialValuesImportConfiguration);
@@ -152,6 +182,15 @@ export function FromToContextProvider({
     setValuesImportOptions(initialValuesImportOptions);
     setStepType("fromTo");
     setTemplates([]);
+    setFromToIsOpened(false);
+    setCurrentLinkConfigurationValue({
+      value: "",
+      label: "",
+      description: "",
+    });
+    setCheckedList([false]);
+    setRowsSelected([]);
+    setAllRowsSelected(false)
   }
 
   useEffect(() => {
@@ -188,6 +227,15 @@ export function FromToContextProvider({
     setStepType,
     templates,
     setTemplates,
+    currentLinkConfigurationValue,
+    setCurrentLinkConfigurationValue,
+    checkedList,
+    setCheckedList,
+    rowsSelected,
+    setRowsSelected,
+    allRowsSelected,
+    setAllRowsSelected,
+    selectedProductsId,
   };
 
   return (

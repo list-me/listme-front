@@ -7,7 +7,7 @@ export const Content = styled.div`
   label {
     font-family: "Satoshi Regular", sans-serif;
     font-style: normal;
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     font-size: 10px;
   }
 
@@ -57,7 +57,7 @@ export const Content = styled.div`
     .ant-select-selector {
       font-family: "Satoshi Regular", sans-serif;
       font-style: normal;
-      font-weight: 400;
+      font-weight: ${({ theme }) => theme.fonts.weights.regular};
       font-size: 14px !important;
       line-height: 150%;
       color: #212529;
@@ -79,7 +79,7 @@ export const Content = styled.div`
     .ant-select-open {
       font-family: "Satoshi Regular", sans-serif !important;
       font-style: normal;
-      font-weight: 400;
+      font-weight: ${({ theme }) => theme.fonts.weights.regular};
       font-size: 16px;
       line-height: 150%;
       color: #212529 !important;
@@ -99,7 +99,7 @@ export const Content = styled.div`
 
     font-family: "Satoshi Regular", sans-serif;
     font-style: normal;
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     font-size: 10px;
 
     .ant-form-item-label {
@@ -118,7 +118,7 @@ export const Content = styled.div`
     .ant-select-selector {
       font-family: "Satoshi Regular", sans-serif;
       font-style: normal;
-      font-weight: 400;
+      font-weight: ${({ theme }) => theme.fonts.weights.regular};
       font-size: 14px !important;
       line-height: 150%;
       color: #212529;
@@ -144,7 +144,7 @@ export const Content = styled.div`
     .ant-select-open {
       font-family: "Satoshi Regular", sans-serif !important;
       font-style: normal;
-      font-weight: 400;
+      font-weight: ${({ theme }) => theme.fonts.weights.regular};
       font-size: 10px !important;
       color: #212529 !important;
 
@@ -164,7 +164,7 @@ export const Content = styled.div`
   }
 
   .label {
-    font-size: 14px;
+    font-size: ${({ theme }) => theme.fonts.sizes.small};
     margin-bottom: 1px;
   }
 
@@ -176,15 +176,15 @@ export const Content = styled.div`
 
   .ant-radio-wrapper.ant-radio-wrapper-checked {
     font-family: "Satoshi Bold", sans-serif !important;
-    color: #3818d9 !important;
+    color: ${({ theme }) => theme.colors.primary} !important;
 
     .ant-radio-inner {
-      background: white !important;
-      border: 2.4px solid #3818d9 !important;
+      background: ${({ theme }) => theme.colors.secondary} !important;
+      border: 2.4px solid ${({ theme }) => theme.colors.primary} !important;
     }
 
     .ant-radio-inner::after {
-      background: #3818d9;
+      background: ${({ theme }) => theme.colors.primary};
     }
   }
 `;
@@ -222,7 +222,7 @@ export const Button = styled.button`
   width: 183px;
   height: 52px;
 
-  background: #3818d9;
+  background: ${({ theme }) => theme.colors.primary};
   border-radius: 6px;
 
   border: none;
@@ -273,6 +273,6 @@ export const PrimaryButton = styled.button`
 export const CustomNumber = styled(InputNumber)`
   font-family: "Satoshi Regular", sans-serif;
   font-style: normal;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   font-size: 13px;
 `;

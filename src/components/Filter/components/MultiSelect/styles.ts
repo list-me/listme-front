@@ -39,8 +39,8 @@ export const MultiSelectValue = styled.p<{ active: boolean }>`
   width: 100%;
   > div {
     color: ${(props) => (props.active ? "#000" : "#868e96")};
-    font-size: 14px;
-    font-weight: 400;
+    font-size: ${({ theme }) => theme.fonts.sizes.small};
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     display: flex;
     align-items: center;
     gap: 8px;
@@ -97,7 +97,7 @@ export const Option = styled.p<{ active: boolean }>`
   gap: 8px;
   padding: 8px;
   font-size: 16px;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   background: ${(props) => (props.active ? "#e2e0ff" : "initial")};
   color: ${(props) => (props.active ? "#3818D9" : "#495057")};
   border-radius: 8px;
@@ -116,7 +116,7 @@ export const LoadingData = styled.p`
   gap: 8px;
   padding: 8px;
   font-size: 16px;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   color: #495057;
   border-radius: 8px;
   text-align: start;
@@ -129,13 +129,13 @@ export const SearchOption = styled.input`
   padding: 12px;
   width: 100%;
   color: #000;
-  font-size: 14px;
-  font-weight: 400;
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
 `;
 export const Alert = styled.p`
-  color: #868e96;
+  color: ${({ theme }) => theme.colors.tertiary};
   text-align: start;
-  font-size: 14px;
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
   margin-left: 16px;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
 `;

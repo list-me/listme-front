@@ -11,6 +11,7 @@ import { templateRequests } from "../../services/apis/requests/template";
 import TemplateDefault from "../../components/TemplateDefault";
 import { IPaginationTemplate } from "./templates";
 import { useFilterContext } from "../../context/FilterContext";
+import formatDate from "../../components/FromTo/utils/formatDate";
 
 function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
@@ -100,6 +101,11 @@ function Template(): JSX.Element {
       dataIndex: "created_at",
       width: "13%",
       align: "center",
+      render: (_: any, record: any) => {
+        return (
+          <span className="grayText">{formatDate(record.created_at)}</span>
+        );
+      },
     },
     {
       title: "Última edição",
@@ -107,6 +113,11 @@ function Template(): JSX.Element {
       dataIndex: "updated_at",
       width: "15%",
       align: "center",
+      render: (_: any, record: any) => {
+        return (
+          <span className="grayText">{formatDate(record.updated_at)}</span>
+        );
+      },
     },
     {
       title: "Visibilidade",

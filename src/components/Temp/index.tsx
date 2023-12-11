@@ -82,6 +82,7 @@ export const Temp: React.FC<IProps> = ({
         <ChevronDownIcon ref={iconRef} />
       </Item>
       <ButtonFilter
+        isDisabled={isPublic}
         filterActive={filterStatus && !!conditionsFilter[0]?.action}
         onClick={() => setOpenedFilter(true)}
       >
@@ -115,7 +116,10 @@ export const Temp: React.FC<IProps> = ({
                 handleCustomChange={setFilter}
                 background
                 onPressEnter={() =>
-                  handleSearch(filter, window.location.pathname.substring(10))
+                  handleSearch(
+                    filter,
+                    window.location.pathname.substring(isPublic ? 17 : 10),
+                  )
                 }
                 height="39px"
               />
@@ -123,7 +127,10 @@ export const Temp: React.FC<IProps> = ({
                 height="37px"
                 width="85px"
                 onClick={() =>
-                  handleSearch(filter, window.location.pathname.substring(10))
+                  handleSearch(
+                    filter,
+                    window.location.pathname.substring(isPublic ? 17 : 10),
+                  )
                 }
               >
                 Buscar

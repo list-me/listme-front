@@ -37,6 +37,8 @@ export const NavigationButton = styled.button<{
   :disabled {
     opacity: 0.7;
     filter: initial;
+    color: #ced4da;
+    background: #f1f3f5;
   }
 
   svg {

@@ -4,9 +4,8 @@ import styled from "styled-components";
 export const Container = styled.div`
   width: 100%;
 
-  /* font-family: "Satoshi Bold", sans-serif; */
   font-style: normal;
-  /* font-weight: 700; */
+  font-weight: 700;
   font-size: ${({ theme }) => theme.fonts.sizes.small};
   line-height: 150%;
 
@@ -21,6 +20,9 @@ export const Container = styled.div`
     align-items: start;
   }
 
+  .ant-radio-wrapper {
+    font-family: "Satoshi Bold", sans-serif !important;
+  }
   .ant-radio-wrapper.ant-radio-wrapper-checked {
     font-family: "Satoshi Bold", sans-serif !important;
     color: ${({ theme }) => theme.colors.primary} !important;
@@ -40,9 +42,7 @@ export const StyledRadio = styled(Radio)`
   color: red;
 
   &.ant-radio-wrapper {
-    /* Cor do marcador */
     .ant-radio-input:focus + .ant-radio-inner {
-      /* border-color: red; */
     }
     .ant-radio-checked .ant-radio-inner {
       border-color: green;
@@ -52,11 +52,25 @@ export const StyledRadio = styled(Radio)`
       background-color: brown;
     }
 
-    /* Tamanho do botão de opção */
     .ant-radio-inner {
       width: 20px;
       height: 20px;
       border-radius: 50%;
     }
   }
+`;
+export const ContainerOption = styled.div<{ isActive?: boolean }>`
+  border-radius: 8px;
+  border: ${(props) =>
+    props.isActive ? "1px solid #3818d9" : "1px solid #dee2e6"};
+  padding: 12px;
+  cursor: pointer;
+`;
+export const Description = styled.p`
+  margin: 0;
+  margin-top: 10px;
+  color: ${({ theme }) => theme.colors.tertiary};
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
+
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
 `;

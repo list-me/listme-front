@@ -11,7 +11,7 @@ export const Container = styled.section`
       font-family: ${({ theme }) => theme.fonts.family.default};
       font-size: ${({ theme }) => theme.fonts.sizes.normal};
       color: ${({ theme }) => theme.colors.fourth};
-      font-weight: 400;
+      font-weight: ${({ theme }) => theme.fonts.weights.regular};
       line-height: 150%;
     }
 
@@ -26,7 +26,7 @@ export const Description = styled.div`
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
   color: ${({ theme }) => theme.colors.fourth};
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
 
   margin-bottom: 24px;
 `;

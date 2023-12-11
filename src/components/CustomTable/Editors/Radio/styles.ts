@@ -26,7 +26,7 @@ export const Container = styled.div`
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background-color: #3818d9 !important;
+    background-color: ${({ theme }) => theme.colors.primary} !important;
   }
 `;
 

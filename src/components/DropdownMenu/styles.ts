@@ -43,7 +43,7 @@ export const SuspenseMenu = styled.div`
 export const Item = styled.span<{ isLast?: boolean }>`
   font-family: "Satoshi Regular", sans-serif;
   font-style: normal;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   font-size: 16px;
   line-height: 19px;
   color: ${({ isLast }) => (isLast ? "red" : "#495057")};
@@ -54,8 +54,8 @@ export const Item = styled.span<{ isLast?: boolean }>`
   display: flex;
   align-items: center;
 
-  font-weight: 400;
-  font-size: 14px;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
   line-height: 19px;
 
   svg {

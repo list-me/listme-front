@@ -35,7 +35,7 @@ export const Label = styled.span`
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
 
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   line-height: 150%;
 
   text-align: center;

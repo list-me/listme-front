@@ -55,9 +55,11 @@ function PublicListList(): JSX.Element {
   );
 
   useEffect(() => {
+    const windowHeight = window.innerHeight - 431;
+    const count = Math.floor(windowHeight / 57);
     handleGetTemplates({
       page: currentPage - 1,
-      limit: 7,
+      limit: count,
       is_public: true,
       sort: selectFilter.value,
       name: debouncedInputValue,

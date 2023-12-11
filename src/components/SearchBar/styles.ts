@@ -49,7 +49,7 @@ export const ButtonCustom = styled.button<{ width: string; height: string }>`
   font-family: ${({ theme }) => theme.fonts.family.bold};
   font-size: ${({ theme }) => theme.fonts.sizes.xxxsmall};
   font-style: normal;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   /* letter-spacing: 0.5px; */
   text-align: center;
 

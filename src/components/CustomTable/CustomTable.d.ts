@@ -24,6 +24,10 @@ interface CustomTableProps {
   addProducts?: () => void;
   children?: any;
   isPublic?: boolean;
+  allRowsSelected?: boolean;
+  setAllRowsSelected?: React.Dispatch<React.SetStateAction<boolean>>;
+  rowsSelected?: string[];
+  setRowsSelected?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 interface ICustomColumns {

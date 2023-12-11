@@ -73,7 +73,7 @@ export const FilterLogic = styled.div`
   width: 100%;
   padding: 16px;
   height: 64px;
-  background: #f3f4f6;
+  background: ${({ theme }) => theme.colors.background.default};
   border-radius: 4px;
   display: flex;
   gap: 8px;

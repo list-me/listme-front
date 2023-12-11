@@ -67,7 +67,7 @@ const handleCellChange: any = async (
           updated[customChanges[0][0]].id = id;
           setDataProvider(updated);
         } else if (previousCellValue !== undefined) {
-          // eslint-disable-next-line no-param-reassign
+          // @ts-ignore
           dataProvider[customChanges[0][0]][customChanges[0][1]] =
             previousCellValue;
 

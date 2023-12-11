@@ -14,7 +14,7 @@ export const ErrorMessage = styled.div<{ position: { x: number; y: number } }>`
   background-color: rgba(0, 0, 0, 0.88);
   border-radius: 6px;
   p {
-    color: #fff;
+    color: ${({ theme }) => theme.colors.secondary};
     display: flex;
     font-family: ${({ theme }) => theme.fonts.family.default};
     font-size: ${({ theme }) => theme.fonts.sizes.normal};

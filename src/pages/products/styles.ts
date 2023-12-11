@@ -122,7 +122,7 @@ export const Container = styled.div`
   }
 
   .handsontable .wtHolder::-webkit-scrollbar-thumb:hover {
-    background-color: #3818d9 !important;
+    background-color: ${({ theme }) => theme.colors.primary} !important;
   }
 
   .menuContext {
@@ -197,8 +197,8 @@ export const Container = styled.div`
 
         font-family: ${({ theme }) => theme.fonts.family.default};
         font-size: ${({ theme }) => theme.fonts.sizes.small};
-        color: #868e96;
-        font-weight: 400;
+        color: ${({ theme }) => theme.colors.tertiary};
+        font-weight: ${({ theme }) => theme.fonts.weights.regular};
         line-height: 150%;
 
         .infos {
@@ -233,7 +233,7 @@ export const Container = styled.div`
     font-family: ${({ theme }) => theme.fonts.family.default} !important;
     font-size: ${({ theme }) => theme.fonts.sizes.small} !important;
     color: #495057 !important;
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     line-height: 150%;
 
     display: flex;
@@ -259,7 +259,7 @@ export const Container = styled.div`
       font-family: ${({ theme }) => theme.fonts.family.default};
       font-size: ${({ theme }) => theme.fonts.sizes.small};
       color: #495057;
-      font-weight: 400;
+      font-weight: ${({ theme }) => theme.fonts.weights.regular};
       line-height: 150%;
 
       padding-top: 16px;
@@ -511,7 +511,7 @@ export const Line = styled.div`
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.small};
   font-style: normal;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   line-height: 14px;
   text-align: center;
 

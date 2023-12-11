@@ -60,7 +60,7 @@ export const StyledCheckbox = styled(Checkbox)`
     height: 16px;
     border: 2px solid #1890ff;
     border-radius: 4px;
-    background-color: #fff;
+    background-color: ${({ theme }) => theme.colors.secondary};
   }
 
   &:checked + span::after {

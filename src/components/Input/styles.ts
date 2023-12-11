@@ -28,7 +28,7 @@ export const Container = styled.div`
   .ant-form-item-explain {
     font-family: ${({ theme }) => theme.fonts.family.default};
     font-size: ${({ theme }) => theme.fonts.sizes.small};
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
     line-height: 150%;
   }
 `;
@@ -56,7 +56,7 @@ export const InputCustom = styled(Input)<IPropStyle>`
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.small};
   color: #495057;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
   line-height: 150%;
 
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {

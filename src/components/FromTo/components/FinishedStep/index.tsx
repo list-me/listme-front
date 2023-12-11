@@ -93,7 +93,7 @@ function FinishedStep({
   return (
     <ContainerFinishedStep>
       <ContentFinishedStep>
-        <img src={configView.icon[typeFinished]} alt="Vincular List pública" />
+        <img src={configView.icon[typeFinished]} alt="Vincular lista pública" />
         <TitleFinishedStep>{configView.title[typeFinished]}</TitleFinishedStep>
         <TextFinishedStep>{configView.text[typeFinished]}</TextFinishedStep>
       </ContentFinishedStep>
