@@ -40,7 +40,7 @@ const handleCellChange: any = async (
           setDataProvider(updated);
         }
       } catch {
-        // eslint-disable-next-line no-param-reassign
+        // @ts-ignore
         dataProvider[customChanges[0][0]][customChanges[0][1]] =
           previousCellValue;
 
@@ -76,7 +76,7 @@ const handleCellChange: any = async (
           setDataProvider(updated);
         }
       } catch {
-        // eslint-disable-next-line no-param-reassign
+        // @ts-ignore
         dataProvider[customChanges[0][0]][customChanges[0][1]] =
           previousCellValue;
 
