@@ -95,6 +95,35 @@ function DefaultTable({
     changes: Handsontable.CellChange[] | null,
     source: string,
   ): Promise<void> => {
+    if (changes) {
+      const before = changes[0][2];
+      const after = changes[0][3];
+      if (
+        changes?.length &&
+        typeof before === "string" &&
+        typeof after === "string"
+      ) {
+        const { length } = after;
+        const customChanges = changes as Handsontable.CellChange[];
+        const copyProducts = [...products];
+        // @ts-ignore
+        copyProducts[customChanges[0][0]][customChanges[0][1]] = before;
+        setProducts([...copyProducts]);
+        const currentColumn: any = cols.find(
+          (item) => item.data === changes[0][1],
+        );
+        if (length > currentColumn?.limitText) {
+          toast.warn(
+            <div>
+              Limite de caracteres da coluna &quot;
+              <strong>{currentColumn?.title}</strong>
+              &quot; excedido
+            </div>,
+          );
+          return;
+        }
+      }
+    }
     if (source === "CopyPaste.paste") return;
 
     if (hotRef.current) {
@@ -280,6 +309,24 @@ function DefaultTable({
       td.innerHTML = `<div class="tag-content">${totalItems} Items relacionados</div>`;
     },
     [],
+  );
+  const customRendererDefault = useCallback(
+    (
+      instance: Handsontable,
+      td: HTMLTableCellElement,
+      row: number,
+      col: number,
+      prop: string | number,
+      value: any,
+    ): void => {
+      if (value?.length > (cols[col] as any).limitText) {
+        td.style.border = "1px solid #F1BC02";
+      } else {
+        td.style.border = "";
+      }
+      td.innerHTML = value;
+    },
+    [cols],
   );
 
   const ICON_HEADER = useMemo(
@@ -528,6 +575,7 @@ function DefaultTable({
               _columnIndex={+col.order}
               data={col.data}
               key={col.order + col.data}
+              renderer={customRendererDefault}
             />
           );
         })}

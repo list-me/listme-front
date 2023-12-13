@@ -60,6 +60,12 @@ export const PersonalModal = ({
   onUpdate,
 }: PropsModal) => {
   const [title, setTitle] = useState<string>(data?.title ?? "");
+  const [limitStatus, setLimitStatus] = useState<boolean>(
+    data?.limitStatus ?? false,
+  );
+  const [limit, setLimit] = useState<number>(
+    limitStatus ? data?.limit ?? 0 : 256,
+  );
   const [type, setType] = useState<string>(data?.type);
   const [required, setRequired] = useState<boolean>(data?.required ?? false);
   const [isUpdate] = useState<boolean>(data?.id);
@@ -408,6 +414,52 @@ export const PersonalModal = ({
                     />
                   ) : (
                     <></>
+                  )}
+                  {(data.type === "paragraph" || data.type === "text") && (
+                    <>
+                      <Form.Item
+                        label="Definir limite máximo de caracteres"
+                        name="limitStatus"
+                        style={{
+                          display: "flex",
+                          marginBottom: "2px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            marginLeft: "68px",
+                          }}
+                        >
+                          <Switch
+                            size="small"
+                            onChange={() => setLimitStatus(!limitStatus)}
+                            checked={limitStatus}
+                          />
+                        </div>
+                      </Form.Item>
+                      <Form.Item
+                        wrapperCol={{ flex: "auto" }}
+                        name="limit"
+                        style={{ marginBottom: "6px" }}
+                      >
+                        <Input
+                          value={limit}
+                          style={{
+                            height: "64px",
+                            border: "1px solid #DEE2E6",
+                          }}
+                          disabled={!limitStatus}
+                          type="number"
+                          min={0}
+                          onChange={(e) => {
+                            e.preventDefault();
+
+                            setLimit(+e.target.value);
+                          }}
+                          placeholder="Ex.: 10"
+                        />
+                      </Form.Item>
+                    </>
                   )}
                 </InputContainer>
                 {MULTI_SELECT.includes(data?.type) ? (
