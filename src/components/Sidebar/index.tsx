@@ -58,13 +58,14 @@ function Sidebar(): JSX.Element {
     return <Loading />;
   }
 
-  const options = [
+  const options: IFuntions[] = [
     {
       order: "0",
       label: "Lists",
       value: "templates",
       icon: <TemplateIcon />,
       to: ROUTES.TEMPLATES,
+      action: () => "",
     },
   ];
 
@@ -130,6 +131,7 @@ function Sidebar(): JSX.Element {
               position="center"
               key={item.order}
               isItem
+              onClick={() => handleClick(item)}
               isActive={handleGetCurrentActiveButton(item)}
             >
               <Icon>{item.icon}</Icon>
@@ -142,7 +144,7 @@ function Sidebar(): JSX.Element {
             <Shape
               key={item.order}
               onClick={() => handleClick(item)}
-              isActive={window.location.pathname.toLowerCase() === item.label}
+              isActive={handleGetCurrentActiveButton(item)}
             >
               <Icon> {item.icon} </Icon>
               <Label> {item.label} </Label>
