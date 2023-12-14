@@ -1,5 +1,5 @@
 import MyDropzone from "../DropZone";
-import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
+import { BoxButtons, NavigationButton } from "../../../NavigationButton/styles";
 import { ContainerImportFile } from "./styles";
 import { useFromToContext } from "../../../../context/FromToContext";
 

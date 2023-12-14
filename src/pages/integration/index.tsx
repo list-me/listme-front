@@ -5,8 +5,13 @@ import { Content, TitlePage } from "../templates/styles";
 import { CardsContainerIntegration, ContainerIntegration } from "./styles";
 import InlineMenu from "../../components/Integration/InlineMenu";
 import IntegrationCard from "../../components/Integration/IntegrationCard";
+import StepModal from "../../components/StepModal";
+import DefaultInput from "../../components/DefaultInput";
+import StepModalsContents from "../../components/Integration/StepModalsContents";
 
 function Integration(): JSX.Element {
+  const [fromToIsOpened, setFromToIsOpened] = useState(true);
+
   const { setFilters, defaultFilter, setFilterStatus, setConditions } =
     useFilterContext();
 
@@ -37,11 +42,34 @@ function Integration(): JSX.Element {
             setMenuActivated={setMenuActivated}
           />
           <CardsContainerIntegration>
-            <IntegrationCard done={false} />
-            <IntegrationCard done />
+            <IntegrationCard
+              done={false}
+              onClickPrimaryButtonDone={() => ""}
+              onClickSecondaryButtonDone={() => ""}
+              onClickNotDone={() => {
+                setFromToIsOpened(true);
+              }}
+            />
+            <IntegrationCard
+              done
+              onClickPrimaryButtonDone={() => ""}
+              onClickSecondaryButtonDone={() => ""}
+              onClickNotDone={() => setFromToIsOpened(true)}
+            />
           </CardsContainerIntegration>
         </ContainerIntegration>
       </Content>
+
+      <StepModal
+        title="Integrando com Nexaas"
+        setFromToIsOpened={setFromToIsOpened}
+        fromToIsOpened={fromToIsOpened}
+        stepMode={false}
+        stepsArray={[]}
+        large={false}
+      >
+        <StepModalsContents />
+      </StepModal>
     </TemplateDefault>
   );
 }

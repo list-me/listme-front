@@ -4,7 +4,17 @@ import HeaderIntegrationCard from "./components/HeaderIntegrationCard";
 import ContentIntegrationCard from "./components/ContentIntegrationCard";
 import ActionsIntegrationCard from "./components/ActionsIntegrationCard";
 
-function IntegrationCard({ done }: { done: boolean }): JSX.Element {
+function IntegrationCard({
+  done,
+  onClickPrimaryButtonDone,
+  onClickSecondaryButtonDone,
+  onClickNotDone,
+}: {
+  done: boolean;
+  onClickPrimaryButtonDone: () => void;
+  onClickSecondaryButtonDone: () => void;
+  onClickNotDone: () => void;
+}): JSX.Element {
   // oq tem de state tem q ser fora daqui no futuro
   const [isActivated, setIsActivated] = useState(false);
   return (
@@ -17,7 +27,12 @@ function IntegrationCard({ done }: { done: boolean }): JSX.Element {
         title="Nexaas"
         description="Com a integração Nexaas, simplificamos processos e potencializamos a eficiência do seu negócio. Conecte-se ao sucesso!"
       />
-      <ActionsIntegrationCard done={done} />
+      <ActionsIntegrationCard
+        done={done}
+        onClickPrimaryButtonDone={onClickPrimaryButtonDone}
+        onClickSecondaryButtonDone={onClickSecondaryButtonDone}
+        onClickNotDone={onClickNotDone}
+      />
     </ContainerIntegrationCard>
   );
 }
