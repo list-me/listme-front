@@ -37,7 +37,8 @@ function Integration(): JSX.Element {
             setMenuActivated={setMenuActivated}
           />
           <CardsContainerIntegration>
-            <IntegrationCard />
+            <IntegrationCard done={false} />
+            <IntegrationCard done />
           </CardsContainerIntegration>
         </ContainerIntegration>
       </Content>
