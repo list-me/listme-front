@@ -1,33 +1,42 @@
 import { useState } from "react";
-import DefaultInput from "../../../../DefaultInput";
 import { NavigationButton } from "../../../../NavigationButton/styles";
 import { ReactComponent as PlusIcon } from "../../../../../assets/plus-fromto.svg";
 import Anchor from "../../../../Anchor";
+import SelectComponent from "../../../../Select";
+import { BoxDualSwitch, LabelSwitchBox } from "./styles";
+import DualSwitch from "../../../DualSwitch";
 
-function StepTwo(): JSX.Element {
-  const [valueProdApi, setValueProdApi] = useState("");
-  const [valueHomologApi, setValueHomologApi] = useState("");
+function StepTwo({
+  setCurrentStep,
+}: {
+  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
+}): JSX.Element {
+  const [company, setCompany] = useState("op1");
   return (
     <>
-      <DefaultInput
-        label="Chave de API (Produção)"
-        type="text"
-        value={valueProdApi}
-        changeValue={setValueProdApi}
-        required
-        placeHolder="Insira a chave aqui"
+      <SelectComponent
+        select={company}
+        onChange={setCompany}
+        options={[
+          { label: "op1", value: "op1" },
+          { label: "op2", value: "op2" },
+          { label: "op3", value: "op3" },
+          { label: "op4", value: "op4" },
+        ]}
+        placeHolder="Selecione"
+        labelText="Empresa"
       />
-      <DefaultInput
-        label="Chave de API (Homologação)"
-        type="text"
-        value={valueHomologApi}
-        changeValue={setValueHomologApi}
-        required
-        placeHolder="Insira a chave aqui"
-      />
+      <div>
+        <LabelSwitchBox>
+          Qual ambiente você deseja integrar?<span>*</span>
+        </LabelSwitchBox>
+        <BoxDualSwitch>
+          <DualSwitch />
+        </BoxDualSwitch>
+      </div>
       <Anchor link="" text="Como integrar com a Nexass" />
       <div style={{ display: "flex", gap: "16px" }}>
-        <NavigationButton prev abort>
+        <NavigationButton prev abort onClick={() => setCurrentStep(1)}>
           <PlusIcon />
           Voltar
         </NavigationButton>

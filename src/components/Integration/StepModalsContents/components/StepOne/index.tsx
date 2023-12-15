@@ -4,7 +4,11 @@ import { NavigationButton } from "../../../../NavigationButton/styles";
 import { ReactComponent as PlusIcon } from "../../../../../assets/plus-fromto.svg";
 import Anchor from "../../../../Anchor";
 
-function StepOne(): JSX.Element {
+function StepOne({
+  setCurrentStep,
+}: {
+  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
+}): JSX.Element {
   const [valueProdApi, setValueProdApi] = useState("");
   const [valueHomologApi, setValueHomologApi] = useState("");
   return (
@@ -26,7 +30,7 @@ function StepOne(): JSX.Element {
         placeHolder="Insira a chave aqui"
       />
       <Anchor link="" text="Como integrar com a Nexass" />
-      <NavigationButton>
+      <NavigationButton onClick={() => setCurrentStep(2)}>
         <PlusIcon />
         Continuar
       </NavigationButton>

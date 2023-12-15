@@ -10,7 +10,7 @@ import DefaultInput from "../../components/DefaultInput";
 import StepModalsContents from "../../components/Integration/StepModalsContents";
 
 function Integration(): JSX.Element {
-  const [fromToIsOpened, setFromToIsOpened] = useState(true);
+  const [fromToIsOpened, setFromToIsOpened] = useState(false);
 
   const { setFilters, defaultFilter, setFilterStatus, setConditions } =
     useFilterContext();
