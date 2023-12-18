@@ -409,8 +409,6 @@ export const ProductContextProvider = ({
   ): Promise<any> => {
     try {
       const fields = buildProduct(value);
-      console.log("🚀 ~ file: index.tsx:419 ~ productId:", productId);
-
       if (isNew) {
         const response = await productRequests.update({
           id: productId,
