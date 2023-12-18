@@ -11,6 +11,9 @@ export const ItemInlineMenu = styled.button<{ isActivated?: boolean }>`
   border-radius: 8px;
   padding: 16px;
   border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 
   background: ${(props) =>
     props.isActivated ? props.theme.colors.secondary : "none"};

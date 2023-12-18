@@ -25,10 +25,14 @@ function Integration(): JSX.Element {
     "seeAll" | "active" | "inactive"
   >("seeAll");
 
-  const menus = [
-    { value: "seeAll", label: "Ver todos" },
-    { value: "active", label: "Ativos" },
-    { value: "inactive", label: "Inativos" },
+  const menus: {
+    value: string;
+    label: string;
+    status: "incomplete" | "done" | "";
+  }[] = [
+    { value: "seeAll", label: "Ver todos", status: "" },
+    { value: "active", label: "Ativos", status: "" },
+    { value: "inactive", label: "Inativos", status: "" },
   ];
 
   return (

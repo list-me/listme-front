@@ -1,3 +1,4 @@
+import InfoAlert from "../InfoAlert";
 import {
   InputDefaultInput,
   LabelDefaultInput,
@@ -11,6 +12,8 @@ function DefaultInput({
   changeValue,
   required,
   placeHolder,
+  alertTitle,
+  alertContent,
 }: {
   label: string;
   type: string;
@@ -18,12 +21,15 @@ function DefaultInput({
   changeValue: (value: string) => void;
   required: boolean;
   placeHolder: string;
+  alertTitle: string;
+  alertContent: string;
 }): JSX.Element {
   return (
     <LabelDefaultInput>
       <LabelTextDefaultInput>
         {label}
         <span>{required && "*"}</span>
+        <InfoAlert title={alertTitle} content={alertContent} />
       </LabelTextDefaultInput>
       <InputDefaultInput
         type={type}

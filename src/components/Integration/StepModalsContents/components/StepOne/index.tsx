@@ -20,6 +20,8 @@ function StepOne({
         changeValue={setValueProdApi}
         required
         placeHolder="Insira a chave aqui"
+        alertTitle="Lorem Ipsum"
+        alertContent="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
       />
       <DefaultInput
         label="Chave de API (Homologação)"
@@ -28,6 +30,8 @@ function StepOne({
         changeValue={setValueHomologApi}
         required
         placeHolder="Insira a chave aqui"
+        alertTitle="Lorem Ipsum"
+        alertContent="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
       />
       <Anchor link="" text="Como integrar com a Nexass" />
       <NavigationButton onClick={() => setCurrentStep(2)}>

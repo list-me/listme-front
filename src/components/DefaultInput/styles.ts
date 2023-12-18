@@ -6,11 +6,12 @@ export const LabelDefaultInput = styled.label`
   gap: 8px;
 `;
 export const LabelTextDefaultInput = styled.p`
+  display: flex;
   margin: 0;
   color: ${({ theme }) => theme.colors.grayscale.primary};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
   font-weight: ${({ theme }) => theme.fonts.weights.bold};
-  span {
+  > span {
     color: #f15757;
   }
 `;
