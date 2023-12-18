@@ -185,7 +185,7 @@ export const Container = styled.div`
 
         font-family: ${({ theme }) => theme.fonts.family.default};
         font-size: ${({ theme }) => theme.fonts.sizes.small};
-        color: #868e96;
+        color: ${({ theme }) => theme.colors.tertiary};
         font-weight: 400;
         line-height: 150%;
 
