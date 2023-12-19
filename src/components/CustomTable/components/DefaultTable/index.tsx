@@ -380,18 +380,49 @@ function DefaultTable({
       return maxOrder;
     }, -Infinity);
   }
+  console.log(products);
+
+  const childs = [
+    {
+      748083: "one",
+      id: "f57a91d1-85f3-4b69-b40b-9b2e9357e143",
+      created_at: "2023-10-15T08:21:45.932Z",
+    },
+    {
+      748083: "two",
+      id: "7c8f5c6b-2fc6-4783-9f1f-0dd8a12b01c5",
+      created_at: "2023-11-28T14:37:59.541Z",
+    },
+    {
+      748083: "three",
+      id: "f3e8be1a-655c-434f-847d-92174a6b2bb6",
+      created_at: "2023-12-03T18:45:20.723Z",
+    },
+    {
+      748083: "four",
+      id: "82ef3e80-14ab-4142-80cc-91bca5deff9a",
+      created_at: "2023-12-30T22:10:11.819Z",
+    },
+  ];
+
+  const productsToView = products.map((item, index) => {
+    if (index === 0) return { ...item, __children: childs };
+    return item;
+  });
 
   return (
     <>
       {openAlertTooltip && <AlertTooltip setAlertTooltip={setAlertTooltip} />}
 
       <HotTable
+        nestedRows
+        bindRowsWithHeaders
         className="hot-table"
         readOnly={isTableLocked}
         ref={hotRef}
         colHeaders={colHeaders}
         columns={cols}
-        data={products}
+        data={productsToView}
         hiddenColumns={{ columns: hidden }}
         manualColumnResize
         manualColumnMove
