@@ -70,8 +70,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     conditionsFilter,
   } = useProductContext();
 
-  const { openedFilter } = useFilterContext();
-
   const [cols, setCols] = useState<ICol[]>([]);
   const [page, setPage] = useState<number>(1);
 
