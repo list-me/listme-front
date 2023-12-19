@@ -22,6 +22,9 @@ export const LabelSelect = styled.label`
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
   font-weight: ${({ theme }) => theme.fonts.weights.bold};
+  span {
+    color: #f15757;
+  }
 `;
 
 export const customStyles = ({ small }: { small?: boolean }): Styles => ({

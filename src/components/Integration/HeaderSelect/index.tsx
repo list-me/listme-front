@@ -6,6 +6,7 @@ function HeaderSelect({
   label,
   placeHolder,
   options,
+  required,
 }: {
   headerSelectValue: {
     value: string;
@@ -23,6 +24,7 @@ function HeaderSelect({
     label: string;
     value: string;
   }[];
+  required: boolean;
 }): JSX.Element {
   return (
     <SelectComponent
@@ -33,6 +35,7 @@ function HeaderSelect({
       inline
       labelText={label}
       placeHolder={placeHolder}
+      required={required}
     />
   );
 }

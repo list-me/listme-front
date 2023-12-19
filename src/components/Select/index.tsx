@@ -16,6 +16,7 @@ const SelectComponent = ({
   fixedOptions,
   DropDownComponent,
   inline,
+  required,
 }: ISelect): JSX.Element => {
   const DropdownWithProps = makeDropdownIndicator({ isSearchable });
 
@@ -27,7 +28,12 @@ const SelectComponent = ({
 
   return (
     <ContainerSelect inline={inline}>
-      {labelText && <LabelSelect htmlFor={labelText}>{labelText}</LabelSelect>}
+      {labelText && (
+        <LabelSelect htmlFor={labelText}>
+          {labelText}
+          {required && <span>*</span>}
+        </LabelSelect>
+      )}
       {fixedOptions ? (
         <Select
           className="react-select"

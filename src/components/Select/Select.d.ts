@@ -20,6 +20,7 @@ interface ISelect {
   index?: index;
   loadingOptions?: boolean;
   inline?: boolean;
+  required?: boolean;
 }
 
 type Styles = {

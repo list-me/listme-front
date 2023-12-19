@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import TemplateDefault from "../../components/TemplateDefault";
 import { useFilterContext } from "../../context/FilterContext";
-import { Content, TitlePage } from "../templates/styles";
+import { TitlePage } from "../templates/styles";
 import {
   ContainerContent,
   ContainerIntegration,
@@ -14,6 +14,8 @@ import NewFeature from "../../components/Integration/NewFeature";
 import IntegrationNavigate from "../../components/Integration/IntegrationNavigate";
 import DualSwitch from "../../components/Integration/DualSwitch";
 import OptionalItems from "../../components/Integration/OptionalItems";
+import Menus from "../../utils/Integration/Menus";
+import FormIntegration from "../../components/Integration/FormIntegration";
 
 function Integration(): JSX.Element {
   const { setFilters, defaultFilter, setFilterStatus, setConditions } =
@@ -95,10 +97,12 @@ function Integration(): JSX.Element {
             <HeaderSelect
               headerSelectValue={headerSelectValue}
               setHeaderSelectValue={setHeaderSelectValue}
-              label={`Selecione o catálogo de "Características”*`}
+              label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
               placeHolder="Selecione"
               options={headerOptions}
+              required
             />
+            <FormIntegration stepValue={menuActivated} />
             <OptionalItems />
           </ContainerIntegration>
         </ContentIntegration>
