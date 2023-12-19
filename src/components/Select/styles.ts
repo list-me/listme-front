@@ -1,17 +1,19 @@
 import styled from "styled-components";
 import themeStyle from "../../styles/theme";
 
-export const ContainerSelect = styled.div`
+export const ContainerSelect = styled.div<{ inline?: boolean }>`
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: ${(props) => (props.inline ? "row" : "column")};
+  align-items: ${(props) => (props.inline ? "center" : "none")};
+  gap: ${(props) => (props.inline ? "38px" : "8px")};
   width: 100%;
-  input {
+  > div {
     color: ${({ theme }) => theme.colors.grayscale.primary} !important;
     font-family: ${({ theme }) => theme.fonts.family.default} !important;
     font-size: 16px !important;
     font-weight: ${({ theme }) => theme.fonts.weights.bold} !important;
     width: initial !important;
+    flex-grow: ${(props) => (props.inline ? "1" : "initial")};
   }
 `;
 

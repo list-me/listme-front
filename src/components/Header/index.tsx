@@ -48,16 +48,18 @@ export function Header({
         onClickModal={() => setModalIsOpen(!modalIsOpen)}
       />
       <Container>
-        <IntegrationBreadCrumb>
-          <ButtonPrev>
-            <ArrowLeft />
-          </ButtonPrev>
-          <TitlePage>Integrações</TitlePage>
-          <ChevronIcon>
-            <Chevron />
-          </ChevronIcon>
-          <CurrentProduct>Nexass</CurrentProduct>
-        </IntegrationBreadCrumb>
+        {hasIntegrationAndId && (
+          <IntegrationBreadCrumb>
+            <ButtonPrev>
+              <ArrowLeft />
+            </ButtonPrev>
+            <TitlePage>Integrações</TitlePage>
+            <ChevronIcon>
+              <Chevron />
+            </ChevronIcon>
+            <CurrentProduct>Nexass</CurrentProduct>
+          </IntegrationBreadCrumb>
+        )}
         <RightContent>
           {!hasIntegrationAndId && (
             <Button

@@ -13,3 +13,15 @@ export const CardsContainerIntegration = styled.div`
   flex-wrap: wrap;
   gap: 20px;
 `;
+export const TitleSwitchContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+`;
+export const ContainerContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 32px;
+`;
+export const ContentIntegration = styled.div``;

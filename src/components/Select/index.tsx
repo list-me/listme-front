@@ -15,6 +15,7 @@ const SelectComponent = ({
   isSearchable,
   fixedOptions,
   DropDownComponent,
+  inline,
 }: ISelect): JSX.Element => {
   const DropdownWithProps = makeDropdownIndicator({ isSearchable });
 
@@ -25,10 +26,11 @@ const SelectComponent = ({
   const optionsToView = fixedOptions ? [...options, ...fixedOptions] : options;
 
   return (
-    <ContainerSelect>
+    <ContainerSelect inline={inline}>
       {labelText && <LabelSelect htmlFor={labelText}>{labelText}</LabelSelect>}
       {fixedOptions ? (
         <Select
+          className="react-select"
           isSearchable={isSearchable}
           value={select}
           onChange={(selectedOption) => onChange(selectedOption as string)}

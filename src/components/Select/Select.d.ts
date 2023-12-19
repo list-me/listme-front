@@ -19,6 +19,7 @@ interface ISelect {
   item?: IFilter;
   index?: index;
   loadingOptions?: boolean;
+  inline?: boolean;
 }
 
 type Styles = {
