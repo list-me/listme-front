@@ -7,6 +7,7 @@ import {
   TitleColumn,
 } from "./styles";
 import SelectComponent from "../../../Select";
+import InfoAlert from "../../../InfoAlert";
 
 function DefaultForm({
   leftColumnName,
@@ -22,6 +23,11 @@ function DefaultForm({
     catalog: boolean;
     field: boolean;
     required: boolean;
+    info?: string;
+    alert?: {
+      title?: string;
+      content?: string;
+    };
   }[];
 }): JSX.Element {
   const arrayColumns = [leftColumnName, centerColumnName, rightColumnName];
@@ -37,7 +43,12 @@ function DefaultForm({
                 {index === 0 && (
                   <KeyText>
                     {item.key}
-                    {item.required && <span>*</span>}
+                    {item.required && <span className="required">*</span>}
+                    {item.info && <span className="info">{item.info}</span>}
+                    <InfoAlert
+                      title={item.alert?.title || ""}
+                      content={item.alert?.content || ""}
+                    />
                   </KeyText>
                 )}
                 {index === 1 && (

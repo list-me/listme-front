@@ -31,7 +31,13 @@ export const KeyText = styled.p`
   font-size: 16px;
   font-weight: 400;
   margin: 0;
-  span {
+  .required {
     color: #f15757;
+  }
+  .info {
+    color: #868e96;
+    font-size: 16px;
+    font-weight: 400;
+    margin-left: 4px;
   }
 `;

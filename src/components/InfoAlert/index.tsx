@@ -13,10 +13,12 @@ function InfoAlert({
 
   return (
     <ContainerInfoAlert isActive={isActive}>
-      <AlertIcon
-        onMouseEnter={() => setIsActive(true)}
-        onMouseLeave={() => setIsActive(false)}
-      />
+      {(title || content) && (
+        <AlertIcon
+          onMouseEnter={() => setIsActive(true)}
+          onMouseLeave={() => setIsActive(false)}
+        />
+      )}
       {isActive && (
         <ContentInfoAlert>
           {title && <p>{title}</p>}
