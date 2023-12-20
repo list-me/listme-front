@@ -29,5 +29,5 @@ export const ItemInlineMenu = styled.button<{ isActivated?: boolean }>`
       : props.theme.fonts.weights.regular};
 
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
-  transition: 0.4s all ease-in-out;
+  transition: 0.3s all ease-in-out;
 `;

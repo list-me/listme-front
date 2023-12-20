@@ -4,6 +4,7 @@ import DefaultForm from "../DefaultForm";
 import IntegrationNavigate from "../../IntegrationNavigate";
 import products from "../../../../utils/Integration/Nexaas/products";
 import OptionalItems from "../../OptionalItems";
+import { IMenuActivated } from "../../../../pages/companyIntegration/companyIntegration";
 
 const ContainerNavigate = styled.div`
   > div {
@@ -16,7 +17,11 @@ const ContainerMore = styled.div`
   }
 `;
 
-function ProductsForm(): JSX.Element {
+function ProductsForm({
+  setMenuActivated,
+}: {
+  setMenuActivated: React.Dispatch<React.SetStateAction<IMenuActivated>>;
+}): JSX.Element {
   const [moreActive, setMoreActive] = useState(false);
 
   return (
@@ -39,7 +44,13 @@ function ProductsForm(): JSX.Element {
         </ContainerMore>
       )}
       <ContainerNavigate>
-        <IntegrationNavigate />
+        <IntegrationNavigate
+          nextMenu={{
+            value: "SKUConfiguration",
+            label: "Config. de SKU",
+          }}
+          setNextMenu={setMenuActivated}
+        />
       </ContainerNavigate>
     </>
   );

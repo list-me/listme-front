@@ -11,10 +11,10 @@ import {
 import HeaderSelect from "../../components/Integration/HeaderSelect";
 import InlineMenu from "../../components/Integration/InlineMenu";
 import DualSwitch from "../../components/Integration/DualSwitch";
-import OptionalItems from "../../components/Integration/OptionalItems";
 import Menus from "../../utils/Integration/Menus";
 import FormIntegration from "../../components/Integration/FormIntegration";
 import { useIntegration } from "../../context/IntegrationContext";
+import { IMenuActivated } from "./companyIntegration";
 
 function Integration(): JSX.Element {
   const { setFilters, defaultFilter, setFilterStatus, setConditions } =
@@ -30,13 +30,8 @@ function Integration(): JSX.Element {
     setFilterStatus(false);
   }, [defaultFilter, setConditions, setFilterStatus, setFilters]);
 
-  const [menuActivated, setMenuActivated] = useState<
-    | "BrandConfiguration"
-    | "CategoryConfiguration"
-    | "FeatureConfiguration"
-    | "ProductConfiguration"
-    | "SKUConfiguration"
-  >("BrandConfiguration");
+  const [menuActivated, setMenuActivated] =
+    useState<IMenuActivated>("BrandConfiguration");
 
   const menus: {
     value: string;
@@ -111,7 +106,10 @@ function Integration(): JSX.Element {
               options={headerOptions}
               required
             />
-            <FormIntegration stepValue={menuActivated} />
+            <FormIntegration
+              stepValue={menuActivated}
+              setMenuActivated={setMenuActivated}
+            />
           </ContainerIntegration>
         </ContentIntegration>
       </ContainerContent>

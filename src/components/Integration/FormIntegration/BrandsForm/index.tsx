@@ -3,6 +3,7 @@ import styled from "styled-components";
 import DefaultForm from "../DefaultForm";
 import brand from "../../../../utils/Integration/Nexaas/brand";
 import IntegrationNavigate from "../../IntegrationNavigate";
+import { IMenuActivated } from "../../../../pages/companyIntegration/companyIntegration";
 
 const ContainerNavigate = styled.div`
   > div {
@@ -10,7 +11,11 @@ const ContainerNavigate = styled.div`
   }
 `;
 
-function BrandsForm(): JSX.Element {
+function BrandsForm({
+  setMenuActivated,
+}: {
+  setMenuActivated: React.Dispatch<React.SetStateAction<IMenuActivated>>;
+}): JSX.Element {
   return (
     <>
       <DefaultForm
@@ -20,7 +25,13 @@ function BrandsForm(): JSX.Element {
         dataForm={brand}
       />
       <ContainerNavigate>
-        <IntegrationNavigate />
+        <IntegrationNavigate
+          nextMenu={{
+            value: "CategoryConfiguration",
+            label: "Config. de Categorias",
+          }}
+          setNextMenu={setMenuActivated}
+        />
       </ContainerNavigate>
     </>
   );
