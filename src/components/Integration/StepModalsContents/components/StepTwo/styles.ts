@@ -6,6 +6,7 @@ export const LabelSwitchBox = styled.p`
   color: #212529;
   font-size: 16px;
   font-weight: 700;
+  display: flex;
   span {
     color: #f15757;
   }

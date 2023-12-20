@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   ButtonPrev,
   ChevronIcon,
@@ -19,12 +19,15 @@ import { templateRequests } from "../../services/apis/requests/template";
 import { IPaginationTemplate } from "../../pages/templates/templates";
 import { ReactComponent as ArrowLeft } from "../../assets/arrow-left.svg";
 import { ReactComponent as Chevron } from "../../assets/chevron-down.svg";
+import { ROUTES } from "../../constants/routes";
 
 export function Header({
   handleGetTemplates,
 }: {
   handleGetTemplates: ({ page, limit }: IPaginationTemplate) => void;
 }): JSX.Element {
+  const navigate = useNavigate();
+
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const { id } = useParams(); // Obtém o parâmetro 'id' da URL
 
@@ -50,14 +53,18 @@ export function Header({
       <Container>
         {hasIntegrationAndId && (
           <IntegrationBreadCrumb>
-            <ButtonPrev>
+            <ButtonPrev
+              onClick={() => {
+                navigate(ROUTES.INTEGRATION);
+              }}
+            >
               <ArrowLeft />
             </ButtonPrev>
             <TitlePage>Integrações</TitlePage>
             <ChevronIcon>
               <Chevron />
             </ChevronIcon>
-            <CurrentProduct>Nexass</CurrentProduct>
+            <CurrentProduct>Nexaas</CurrentProduct>
           </IntegrationBreadCrumb>
         )}
         <RightContent>

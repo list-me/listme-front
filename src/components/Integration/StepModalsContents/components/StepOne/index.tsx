@@ -1,16 +1,16 @@
-import { useState } from "react";
 import DefaultInput from "../../../../DefaultInput";
 import { NavigationButton } from "../../../../NavigationButton/styles";
 import { ReactComponent as PlusIcon } from "../../../../../assets/plus-fromto.svg";
 import Anchor from "../../../../Anchor";
+import { useIntegration } from "../../../../../context/IntegrationContext";
 
 function StepOne({
   setCurrentStep,
 }: {
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
 }): JSX.Element {
-  const [valueProdApi, setValueProdApi] = useState("");
-  const [valueHomologApi, setValueHomologApi] = useState("");
+  const { valueProdApi, setValueProdApi, valueHomologApi, setValueHomologApi } =
+    useIntegration();
   return (
     <>
       <DefaultInput
@@ -33,7 +33,7 @@ function StepOne({
         alertTitle="Lorem Ipsum"
         alertContent="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
       />
-      <Anchor link="" text="Como integrar com a Nexass" />
+      <Anchor link="" text="Como integrar com a Nexaas" />
       <NavigationButton onClick={() => setCurrentStep(2)}>
         <PlusIcon />
         Continuar

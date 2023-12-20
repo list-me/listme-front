@@ -10,12 +10,11 @@ import {
 } from "./styles";
 import HeaderSelect from "../../components/Integration/HeaderSelect";
 import InlineMenu from "../../components/Integration/InlineMenu";
-import NewFeature from "../../components/Integration/NewFeature";
-import IntegrationNavigate from "../../components/Integration/IntegrationNavigate";
 import DualSwitch from "../../components/Integration/DualSwitch";
 import OptionalItems from "../../components/Integration/OptionalItems";
 import Menus from "../../utils/Integration/Menus";
 import FormIntegration from "../../components/Integration/FormIntegration";
+import { useIntegration } from "../../context/IntegrationContext";
 
 function Integration(): JSX.Element {
   const { setFilters, defaultFilter, setFilterStatus, setConditions } =
@@ -77,6 +76,12 @@ function Integration(): JSX.Element {
     { label: "op3", value: "op3" },
     { label: "op4", value: "op4" },
   ];
+  const { environment, setEnvironment } = useIntegration();
+
+  const dualOptions = [
+    { label: "Homologação", value: "HOMOLOG" },
+    { label: "Produção", value: "PROD" },
+  ];
 
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
@@ -86,7 +91,11 @@ function Integration(): JSX.Element {
             <TitlePage>
               <span>Integrando com a</span> Nexaas
             </TitlePage>
-            <DualSwitch />
+            <DualSwitch
+              value={environment}
+              options={dualOptions}
+              setValue={setEnvironment as any}
+            />
           </TitleSwitchContainer>
           <ContainerIntegration>
             <InlineMenu
@@ -103,11 +112,8 @@ function Integration(): JSX.Element {
               required
             />
             <FormIntegration stepValue={menuActivated} />
-            <OptionalItems />
           </ContainerIntegration>
         </ContentIntegration>
-        <NewFeature />
-        <IntegrationNavigate />
       </ContainerContent>
     </TemplateDefault>
   );

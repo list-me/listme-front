@@ -22,6 +22,7 @@ export const LabelSelect = styled.label`
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
   font-weight: ${({ theme }) => theme.fonts.weights.bold};
+  display: flex;
   span {
     color: #f15757;
   }

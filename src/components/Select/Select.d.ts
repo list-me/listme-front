@@ -21,6 +21,8 @@ interface ISelect {
   loadingOptions?: boolean;
   inline?: boolean;
   required?: boolean;
+  infoTitle?: string;
+  infoContent?: string;
 }
 
 type Styles = {

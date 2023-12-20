@@ -380,7 +380,6 @@ function DefaultTable({
       return maxOrder;
     }, -Infinity);
   }
-  console.log(products);
 
   const childs = [
     {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import TemplateDefault from "../../components/TemplateDefault";
 import { useFilterContext } from "../../context/FilterContext";
 import { Content, TitlePage } from "../templates/styles";
@@ -6,12 +7,10 @@ import { CardsContainerIntegration, ContainerIntegration } from "./styles";
 import InlineMenu from "../../components/Integration/InlineMenu";
 import IntegrationCard from "../../components/Integration/IntegrationCard";
 import StepModal from "../../components/StepModal";
-import DefaultInput from "../../components/DefaultInput";
 import StepModalsContents from "../../components/Integration/StepModalsContents";
+import { ROUTES } from "../../constants/routes";
 
 function Integration(): JSX.Element {
-  const [fromToIsOpened, setFromToIsOpened] = useState(false);
-
   const { setFilters, defaultFilter, setFilterStatus, setConditions } =
     useFilterContext();
 
@@ -19,7 +18,11 @@ function Integration(): JSX.Element {
     setConditions([]);
     setFilters([defaultFilter]);
     setFilterStatus(false);
-  }, [defaultFilter, setConditions, setFilterStatus, setFilters]);
+  }, []);
+
+  const navigate = useNavigate();
+
+  const [fromToIsOpened, setFromToIsOpened] = useState(false);
 
   const [menuActivated, setMenuActivated] = useState<
     "seeAll" | "active" | "inactive"
@@ -34,6 +37,9 @@ function Integration(): JSX.Element {
     { value: "active", label: "Ativos", status: "" },
     { value: "inactive", label: "Inativos", status: "" },
   ];
+
+  // aqui tem q ser alterado pra se comportar de acordo com a api
+  const [isActive, setIsActive] = useState(false);
 
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
@@ -53,12 +59,18 @@ function Integration(): JSX.Element {
               onClickNotDone={() => {
                 setFromToIsOpened(true);
               }}
+              isActive={isActive}
+              setIsActive={setIsActive}
             />
             <IntegrationCard
               done
-              onClickPrimaryButtonDone={() => ""}
+              onClickPrimaryButtonDone={() =>
+                navigate(`${ROUTES.INTEGRATION}/oi`)
+              }
               onClickSecondaryButtonDone={() => ""}
               onClickNotDone={() => setFromToIsOpened(true)}
+              isActive={!isActive}
+              setIsActive={setIsActive}
             />
           </CardsContainerIntegration>
         </ContainerIntegration>

@@ -1,28 +1,26 @@
-import { useState } from "react";
 import { ContainerIntegrationCard } from "./styles";
 import HeaderIntegrationCard from "./components/HeaderIntegrationCard";
 import ContentIntegrationCard from "./components/ContentIntegrationCard";
 import ActionsIntegrationCard from "./components/ActionsIntegrationCard";
 
 function IntegrationCard({
+  isActive,
+  setIsActive,
   done,
   onClickPrimaryButtonDone,
   onClickSecondaryButtonDone,
   onClickNotDone,
 }: {
+  isActive: boolean;
+  setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
   done: boolean;
   onClickPrimaryButtonDone: () => void;
   onClickSecondaryButtonDone: () => void;
   onClickNotDone: () => void;
 }): JSX.Element {
-  // oq tem de state tem q ser fora daqui no futuro
-  const [isActivated, setIsActivated] = useState(false);
   return (
     <ContainerIntegrationCard>
-      <HeaderIntegrationCard
-        isActivated={isActivated}
-        setIsActivated={setIsActivated}
-      />
+      <HeaderIntegrationCard isActive={isActive} setIsActive={setIsActive} />
       <ContentIntegrationCard
         title="Nexaas"
         description="Com a integração Nexaas, simplificamos processos e potencializamos a eficiência do seu negócio. Conecte-se ao sucesso!"

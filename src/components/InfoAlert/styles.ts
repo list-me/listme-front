@@ -12,6 +12,7 @@ export const ContainerInfoAlert = styled.div<{ isActive: boolean }>`
           : props.theme.colors.tertiary};
     }
   }
+  z-index: 9000;
 `;
 export const ContentInfoAlert = styled.div`
   position: absolute;
@@ -28,7 +29,7 @@ export const ContentInfoAlert = styled.div`
     margin: 0;
   }
   span {
-    color: #d1d3d6;
+    color: #d1d3d6 !important;
     font-size: 16px;
     font-weight: 400;
     margin: 0;

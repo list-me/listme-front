@@ -4,6 +4,7 @@ import { ContainerSelect, LabelSelect, customStyles } from "./styles";
 import makeDropdownIndicator from "./components/DropdownIndicator";
 import CustomMenuList from "./components/Options";
 import CustomOption from "./components/Option";
+import InfoAlert from "../InfoAlert";
 
 const SelectComponent = ({
   select,
@@ -17,6 +18,8 @@ const SelectComponent = ({
   DropDownComponent,
   inline,
   required,
+  infoTitle,
+  infoContent,
 }: ISelect): JSX.Element => {
   const DropdownWithProps = makeDropdownIndicator({ isSearchable });
 
@@ -30,8 +33,13 @@ const SelectComponent = ({
     <ContainerSelect inline={inline}>
       {labelText && (
         <LabelSelect htmlFor={labelText}>
-          {labelText}
-          {required && <span>*</span>}
+          <div>
+            {labelText}
+            {required && <span>*</span>}
+          </div>
+          {(infoTitle || infoContent) && (
+            <InfoAlert title={infoTitle || ""} content={infoContent || ""} />
+          )}
         </LabelSelect>
       )}
       {fixedOptions ? (

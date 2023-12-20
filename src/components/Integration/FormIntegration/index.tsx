@@ -1,31 +1,18 @@
-import brand from "../../../utils/Integration/Nexaas/brand";
-import categories from "../../../utils/Integration/Nexaas/categories";
-import products from "../../../utils/Integration/Nexaas/products";
-import DefaultForm from "./DefaultForm";
+import BrandsForm from "./BrandsForm";
+import CategoriesForm from "./CategoriesForm";
+import ProductsForm from "./ProductsForm";
 
 function FormIntegration({
   stepValue,
 }: {
   stepValue: string;
 }): JSX.Element | null {
-  const toDataForm: { [key: string]: any } = {
-    BrandConfiguration: brand,
-    CategoryConfiguration: categories,
-    FeatureConfiguration: null,
-    ProductConfiguration: products,
-    SKUConfiguration: null,
-  };
+  //   FeatureConfiguration: null,
+  //   SKUConfiguration: null,
 
-  const currentDataForm = toDataForm[stepValue];
-  if (currentDataForm)
-    return (
-      <DefaultForm
-        leftColumnName="Propriedades de payloads Nexaas"
-        centerColumnName="Catálogo ListMe"
-        rightColumnName="Campo ListMe"
-        dataForm={currentDataForm}
-      />
-    );
+  if (stepValue === "BrandConfiguration") return <BrandsForm />;
+  if (stepValue === "CategoryConfiguration") return <CategoriesForm />;
+  if (stepValue === "ProductConfiguration") return <ProductsForm />;
   return null;
 }
 

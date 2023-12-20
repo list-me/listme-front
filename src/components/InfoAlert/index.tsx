@@ -19,8 +19,8 @@ function InfoAlert({
       />
       {isActive && (
         <ContentInfoAlert>
-          <p>{title}</p>
-          <span>{content}</span>
+          {title && <p>{title}</p>}
+          {content && <span>{content}</span>}
         </ContentInfoAlert>
       )}
     </ContainerInfoAlert>

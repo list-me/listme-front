@@ -8,17 +8,17 @@ import {
 import logoMock from "../../mock/logoIntegration.png";
 
 function HeaderIntegrationCard({
-  isActivated,
-  setIsActivated,
+  isActive,
+  setIsActive,
 }: {
-  isActivated: boolean;
-  setIsActivated: React.Dispatch<React.SetStateAction<boolean>>;
+  isActive: boolean;
+  setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
   return (
     <ContainerHeaderIntegrationCard>
       <img src={logoMock} alt="logo" />
       <SwitchContainer>
-        <SwitchLabel>{isActivated ? "Ativo" : "Inativo"}</SwitchLabel>
+        <SwitchLabel>{isActive ? "Ativo" : "Inativo"}</SwitchLabel>
         <ConfigProvider
           theme={{
             token: {
@@ -29,8 +29,8 @@ function HeaderIntegrationCard({
           <Switch
             style={{ width: "30px !important", height: "20px !important" }}
             className="customSwitch"
-            checked={isActivated}
-            onClick={() => setIsActivated(!isActivated)}
+            checked={isActive}
+            onClick={() => setIsActive(!isActive)}
           />
         </ConfigProvider>
       </SwitchContainer>
