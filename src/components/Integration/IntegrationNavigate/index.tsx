@@ -15,24 +15,28 @@ import { IMenuActivated } from "../../../pages/companyIntegration/companyIntegra
 function IntegrationNavigate({
   nextMenu,
   setNextMenu,
+  external,
 }: {
   nextMenu: {
     value: IMenuActivated;
     label: string;
-  };
+  } | null;
   setNextMenu: React.Dispatch<React.SetStateAction<IMenuActivated>>;
+  external: boolean;
 }): JSX.Element {
   return (
-    <ContainerIntegrationNavigate>
+    <ContainerIntegrationNavigate external={external}>
       <ClearButtonIntegration>
         <ClearIcon />
         Limpar configurações de Características
       </ClearButtonIntegration>
       <RightButtons>
-        <NextButton onClick={() => setNextMenu(nextMenu.value)}>
-          {nextMenu.label}
-          <RightArrowIcon />
-        </NextButton>
+        {nextMenu !== null && (
+          <NextButton onClick={() => setNextMenu(nextMenu.value)}>
+            {nextMenu.label}
+            <RightArrowIcon />
+          </NextButton>
+        )}
         <SaveButton>
           <NavigationButton>Salvar</NavigationButton>
         </SaveButton>

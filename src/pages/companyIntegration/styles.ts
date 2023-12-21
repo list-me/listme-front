@@ -25,3 +25,8 @@ export const ContainerContent = styled.div`
   padding: 32px;
 `;
 export const ContentIntegration = styled.div``;
+export const BoxesIntegration = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;

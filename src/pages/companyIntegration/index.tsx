@@ -3,6 +3,7 @@ import TemplateDefault from "../../components/TemplateDefault";
 import { useFilterContext } from "../../context/FilterContext";
 import { TitlePage } from "../templates/styles";
 import {
+  BoxesIntegration,
   ContainerContent,
   ContainerIntegration,
   ContentIntegration,
@@ -15,6 +16,7 @@ import Menus from "../../utils/Integration/Menus";
 import FormIntegration from "../../components/Integration/FormIntegration";
 import { useIntegration } from "../../context/IntegrationContext";
 import { IMenuActivated } from "./companyIntegration";
+import IntegrationNavigate from "../../components/Integration/IntegrationNavigate";
 
 function Integration(): JSX.Element {
   const { setFilters, defaultFilter, setFilterStatus, setConditions } =
@@ -78,6 +80,28 @@ function Integration(): JSX.Element {
     { label: "Produção", value: "PROD" },
   ];
 
+  const nextMenu: {
+    [key: string]: { value: IMenuActivated; label: string } | null;
+  } = {
+    CategoryConfiguration: {
+      value: "FeatureConfiguration",
+      label: "Config. de Características",
+    },
+    BrandConfiguration: {
+      value: "CategoryConfiguration",
+      label: "Config. de Categorias",
+    },
+    ProductConfiguration: {
+      value: "SKUConfiguration",
+      label: "Config. de SKU",
+    },
+    FeatureConfiguration: {
+      value: "ProductConfiguration",
+      label: "Config. de Produtos",
+    },
+    SKUConfiguration: null,
+  };
+
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
       <ContainerContent>
@@ -92,25 +116,45 @@ function Integration(): JSX.Element {
               setValue={setEnvironment as any}
             />
           </TitleSwitchContainer>
-          <ContainerIntegration>
-            <InlineMenu
-              menus={menus}
-              menuActivated={menuActivated}
-              setMenuActivated={setMenuActivated}
+          <BoxesIntegration>
+            <ContainerIntegration>
+              <InlineMenu
+                menus={menus}
+                menuActivated={menuActivated}
+                setMenuActivated={setMenuActivated}
+              />
+              <HeaderSelect
+                headerSelectValue={headerSelectValue}
+                setHeaderSelectValue={setHeaderSelectValue}
+                label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
+                placeHolder="Selecione"
+                options={headerOptions}
+                required
+              />
+              <FormIntegration menuActivated={menuActivated} />
+              <IntegrationNavigate
+                external={false}
+                nextMenu={nextMenu[menuActivated]}
+                setNextMenu={setMenuActivated}
+              />
+            </ContainerIntegration>
+            <ContainerIntegration>
+              <HeaderSelect
+                headerSelectValue={headerSelectValue}
+                setHeaderSelectValue={setHeaderSelectValue}
+                label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
+                placeHolder="Selecione"
+                options={headerOptions}
+                required
+              />
+              <FormIntegration menuActivated={menuActivated} />
+            </ContainerIntegration>
+            <IntegrationNavigate
+              external
+              nextMenu={nextMenu[menuActivated]}
+              setNextMenu={setMenuActivated}
             />
-            <HeaderSelect
-              headerSelectValue={headerSelectValue}
-              setHeaderSelectValue={setHeaderSelectValue}
-              label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
-              placeHolder="Selecione"
-              options={headerOptions}
-              required
-            />
-            <FormIntegration
-              stepValue={menuActivated}
-              setMenuActivated={setMenuActivated}
-            />
-          </ContainerIntegration>
+          </BoxesIntegration>
         </ContentIntegration>
       </ContainerContent>
     </TemplateDefault>

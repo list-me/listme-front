@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-export const ContainerIntegrationNavigate = styled.div`
-  padding: 24px 32px;
+export const ContainerIntegrationNavigate = styled.div<{ external: boolean }>`
+  padding: ${(props) => (props.external ? "24px 32px" : "0px")};
   border-radius: 8px;
   background: #fff;
   display: flex;
