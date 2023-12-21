@@ -35,7 +35,11 @@ export const ButtonClearAll = styled.button`
     stroke: #3818d9;
   }
 `;
-const widthWindow = window.innerWidth;
+let widthWindow = window.innerWidth;
+
+window.addEventListener("resize", () => {
+  widthWindow = window.innerWidth;
+});
 export const SidebarFilter = styled.div<{ openedFilter: boolean }>`
   min-width: 45% !important;
   height: 100%;
@@ -46,8 +50,10 @@ export const SidebarFilter = styled.div<{ openedFilter: boolean }>`
   display: flex;
   flex-direction: column;
   position: relative;
-  right: -${(props) => (props.openedFilter ? "0px" : `${widthWindow / 2}px`)};
-  transition: right 0.5s ease-in-out;
+  /* right: -${(props) =>
+    props.openedFilter ? "0px" : `${widthWindow / 2}px`}; */
+  right: -${(props) => (props.openedFilter ? "0px" : `${widthWindow}px`)};
+  transition: right 0.375s ease-in-out;
 `;
 export const HeaderFilter = styled.div`
   display: flex;
