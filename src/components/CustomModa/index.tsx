@@ -18,6 +18,7 @@ import {
   AddNew,
   ButtonContainer2,
   Footer,
+  CharacterLimitContainer,
 } from "./styles";
 import { ReactComponent as ChevronDownIcon } from "../../assets/chevron-down-small.svg";
 import { ReactComponent as TrashIcon } from "../../assets/trash-icon.svg";
@@ -26,6 +27,7 @@ import { ReactComponent as PlusIcon } from "../../assets/plus-small.svg";
 import { templateRequests } from "../../services/apis/requests/template";
 import { RelationForm } from "../CustomTable/components/HeaderDropDown/components/NewColumn/RelationForm";
 import { useProductContext } from "../../context/products";
+import DefaultLimits from "../../utils/DefaultLimits";
 
 interface PropsModal {
   isOpen: boolean;
@@ -51,6 +53,7 @@ type Field = {
   option: string[] | Options[];
   required: boolean;
 };
+type DataType = "text" | "paragraph";
 
 export const PersonalModal = ({
   isOpen,
@@ -62,6 +65,14 @@ export const PersonalModal = ({
   const [title, setTitle] = useState<string>(data?.title ?? "");
   const [type, setType] = useState<string>(data?.type);
   const [required, setRequired] = useState<boolean>(data?.required ?? false);
+  // @ts-ignore
+  const initialLimit =
+    data?.limit || DefaultLimits[data?.type]?.default || null;
+
+  const [characterLimit, setCharacterLimit] = useState<number>(initialLimit);
+
+  const [activeCharacterLimit, setActiveCharacterLimit] =
+    useState<boolean>(false);
   const [isUpdate] = useState<boolean>(data?.id);
   const [draggerOptions, setDraggerOptions] = useState<any[]>(
     data?.options ?? [""],
@@ -181,6 +192,7 @@ export const PersonalModal = ({
           data.name = name;
           data.title = title;
           data.required = required;
+          data.limit = characterLimit;
           item = data;
           return item;
         }
@@ -194,6 +206,7 @@ export const PersonalModal = ({
         type,
         title,
         name,
+        limit: characterLimit,
         options: option,
         required,
         is_public: false,
@@ -210,8 +223,18 @@ export const PersonalModal = ({
       delete item.hidden;
     });
 
+    const newFields = templateUpdated.map((item: any) => {
+      if (item.limit) {
+        return item;
+      }
+      const newObj = { ...item, limit: DefaultLimits[item.type].default };
+      return newObj;
+    });
+
+    const newTemplates = { fields: newFields };
+
     try {
-      await templateRequests.update(template?.id, { fields: templateUpdated });
+      await templateRequests.update(template?.id, newTemplates);
       toast.success("Template atualizado com sucesso");
       return templateUpdated;
     } catch (error) {
@@ -263,6 +286,7 @@ export const PersonalModal = ({
                 title,
                 name: data?.name,
                 type: data?.type,
+                limit: characterLimit,
               }}
               onFinish={(fields) => {
                 if (!fields.type) fields.type = type;
@@ -272,6 +296,26 @@ export const PersonalModal = ({
                 ) {
                   toast.warn("O campo para exibição não pode ser vazio");
                   return;
+                }
+                if (activeCharacterLimit) {
+                  if (isNaN(characterLimit)) {
+                    toast.warn(
+                      "O campo de limite de caracteres contém um valor invalido",
+                    );
+                    return;
+                  }
+                  if (!characterLimit) {
+                    toast.warn(
+                      "O campo de limite de caracteres não pode ser vazio",
+                    );
+                    return;
+                  }
+                  if (!characterLimit) {
+                    toast.warn(
+                      "O campo de limite de caracteres não pode ser menor do que 0",
+                    );
+                    return;
+                  }
                 }
 
                 const customOptions: any[] = [];
@@ -390,6 +434,12 @@ export const PersonalModal = ({
                         value={type}
                         removeIcon
                         onChange={(e: string) => {
+                          if (e === "text") {
+                            setCharacterLimit(100);
+                          }
+                          if (e === "paragraph") {
+                            setCharacterLimit(512);
+                          }
                           setType(e);
                         }}
                         placeholder="Informe o tipo do campo"
@@ -409,7 +459,55 @@ export const PersonalModal = ({
                   ) : (
                     <></>
                   )}
+                  {["text", "paragraph"].includes(data?.type) && (
+                    <CharacterLimitContainer>
+                      <Form.Item
+                        wrapperCol={{ flex: "auto" }}
+                        colon={false}
+                        label={
+                          <div className="label-content">
+                            <span>Definir limite máximo de caracteres:</span>
+                            <Switch
+                              checked={activeCharacterLimit}
+                              size="small"
+                              onChange={(e) => setActiveCharacterLimit(e)}
+                            />
+                          </div>
+                        }
+                        name="limit"
+                        style={{
+                          marginBottom: "6px",
+                          position: "relative",
+                        }}
+                      >
+                        <Input
+                          type="number"
+                          min={0}
+                          max={DefaultLimits[data.type].max}
+                          disabled={!activeCharacterLimit}
+                          style={{
+                            height: "64px",
+                            border: "1px solid #DEE2E6",
+                          }}
+                          value={characterLimit}
+                          onChange={(e) => {
+                            e.preventDefault();
+                            const inputValue = +e.target.value;
+                            const maxLimit = DefaultLimits[data.type].max;
+
+                            if (inputValue > maxLimit) {
+                              setCharacterLimit(maxLimit);
+                            } else {
+                              setCharacterLimit(inputValue);
+                            }
+                          }}
+                          placeholder="Ex.: 10"
+                        />
+                      </Form.Item>
+                    </CharacterLimitContainer>
+                  )}
                 </InputContainer>
+
                 {MULTI_SELECT.includes(data?.type) ? (
                   <div className="dragger">
                     <p>Opções</p>

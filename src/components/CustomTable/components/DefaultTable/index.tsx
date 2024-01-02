@@ -39,6 +39,7 @@ import customRendererDropdownComponent from "./components/customRendererDropdown
 import { useFilterContext } from "../../../../context/FilterContext";
 import { useProductContext } from "../../../../context/products";
 import customRendererCheckedComponent from "./components/customRendererCheckedComponent";
+import DefaultLimits from "../../../../utils/DefaultLimits";
 
 function DefaultTable({
   hotRef,
@@ -95,19 +96,37 @@ function DefaultTable({
     changes: Handsontable.CellChange[] | null,
     source: string,
   ): Promise<void> => {
-    if (source === "CopyPaste.paste") return;
+    if (changes) {
+      const currentColumnId = changes[0][1];
+      const newValue = changes[0][3];
 
-    if (hotRef.current) {
-      const { hotInstance } = hotRef.current;
-      await handleCellChange(
-        changes,
-        hotInstance,
-        isTableLocked,
-        setIsTableLocked,
-        handleSave,
-        products,
-        setProducts,
-      );
+      const currentColumn = cols.find((item) => item.data === currentColumnId);
+
+      if (currentColumn?.title) {
+        const limit =
+          currentColumn.limit || DefaultLimits[currentColumn.type].default;
+
+        if (newValue.length > limit) {
+          toast.warn(`Limite excedido em "${currentColumn.title}"`);
+          return;
+        }
+
+        if (source === "CopyPaste.paste") return;
+
+        if (hotRef.current) {
+          const { hotInstance } = hotRef.current;
+
+          await handleCellChange(
+            changes,
+            hotInstance,
+            isTableLocked,
+            setIsTableLocked,
+            handleSave,
+            products,
+            setProducts,
+          );
+        }
+      }
     }
   };
 
@@ -261,6 +280,29 @@ function DefaultTable({
         svgStringDropDown,
         setAlertTooltip,
       });
+    },
+    [cols, svgStringDropDown],
+  );
+  const customRendererText = useCallback(
+    (
+      _instance: Handsontable,
+      td: HTMLTableCellElement,
+      _row: number,
+      col: number,
+      _prop: string | number,
+      value: string | string[],
+    ): void => {
+      const colType = cols[col].type;
+      const maxLength = DefaultLimits[colType].max;
+      const textValue = value as string;
+
+      td.style.border = "";
+
+      if (textValue?.length > maxLength) {
+        td.style.border = "2px solid #F1BC02";
+      }
+
+      td.innerHTML = textValue;
     },
     [cols, svgStringDropDown],
   );
@@ -426,6 +468,17 @@ function DefaultTable({
         afterChange={afterChangeCallback}
       >
         {cols.map((col, _index: number) => {
+          if (col?.type === "text" || col?.type === "paragraph") {
+            return (
+              <HotColumn
+                width={col.width}
+                _columnIndex={+col.order}
+                data={col.data}
+                key={col.order + col.data}
+                renderer={customRendererText}
+              />
+            );
+          }
           if (col.isCustom && col.type === "list") {
             return (
               <HotColumn

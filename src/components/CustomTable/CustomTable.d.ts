@@ -47,6 +47,7 @@ interface ICol {
   width: string;
   frozen: boolean;
   bucket_url: string;
+  limit: number;
 }
 
 export type {
