@@ -18,6 +18,7 @@ import { ReactComponent as FileIcon } from "../../../../assets/icons/headers/fil
 import { ReactComponent as RadioIcon } from "../../../../assets/icons/headers/radio-icon.svg";
 import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers/relation-icon.svg";
 import { ReactComponent as NumericIcon } from "../../../../assets/numeric-icon.svg";
+import { ReactComponent as DecimalIcon } from "../../../../assets/decimal-icon.svg";
 import { IDefaultTable } from "./DefaultTable";
 import handleCellChange from "./utils/handleCellChange";
 import handleBeforeCopy from "./utils/handleBeforeCopy";
@@ -367,6 +368,7 @@ function DefaultTable({
       [IconType.Radio]: <RadioIcon />,
       [IconType.Relation]: <RelationIcon />,
       [IconType.Numeric]: <NumericIcon />,
+      [IconType.Decimal]: <DecimalIcon />,
     }),
     [],
   );

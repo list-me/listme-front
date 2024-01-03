@@ -118,6 +118,7 @@ export const PersonalModal = ({
     checked: "Definir o limite máximo de opções selecionadas:",
     file: "Definir o limite máximo de imagens:",
     numeric: "Definir o limite máximo de caracteres:",
+    decimal: "Definir o limite máximo de caracteres:",
   };
 
   const textOptions = [
@@ -181,6 +182,10 @@ export const PersonalModal = ({
     numeric: {
       label: "Campo de números inteiros",
       description: "Adicione uma entrada de números inteiros",
+    },
+    decimal: {
+      label: "Campo de números decimais",
+      description: "Adicione um campo para envio de preços ou outros tipos",
     },
   };
 
@@ -428,7 +433,9 @@ export const PersonalModal = ({
                     />
                   </Form.Item>
                   {!MULTI_SELECT.includes(data?.type) &&
-                  !["relation", "file", "numeric"].includes(data?.type) ? (
+                  !["relation", "file", "numeric", "decimal"].includes(
+                    data?.type,
+                  ) ? (
                     <Form.Item
                       wrapperCol={{ flex: "auto" }}
                       label="Escolha o tipo de valor"
@@ -471,9 +478,14 @@ export const PersonalModal = ({
                   ) : (
                     <></>
                   )}
-                  {["text", "paragraph", "check", "file", "numeric"].includes(
-                    data?.type,
-                  ) && (
+                  {[
+                    "text",
+                    "paragraph",
+                    "check",
+                    "file",
+                    "numeric",
+                    "decimal",
+                  ].includes(data?.type) && (
                     <CharacterLimitContainer>
                       <Form.Item
                         wrapperCol={{ flex: "auto" }}

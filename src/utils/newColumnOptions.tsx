@@ -5,6 +5,7 @@ import { ReactComponent as ListIcon } from "../assets/list-icon.svg";
 import { ReactComponent as FileIcon } from "../assets/file-icon.svg";
 import { ReactComponent as LinkIcon } from "../assets/link-gray-sm.svg";
 import { ReactComponent as NumericIcon } from "../assets/numeric-icon.svg";
+import { ReactComponent as DecimalIcon } from "../assets/decimal-icon.svg";
 
 export default [
   {
@@ -32,6 +33,11 @@ export default [
     label: "Números inteiros",
     icon: <NumericIcon />,
     type: "numeric",
+  },
+  {
+    label: "Números decimais",
+    icon: <DecimalIcon />,
+    type: "decimal",
   },
   {
     label: "Arquivo",
