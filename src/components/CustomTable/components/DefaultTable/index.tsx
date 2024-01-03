@@ -17,6 +17,7 @@ import { ReactComponent as DropdownIcon } from "../../../../assets/icons/headers
 import { ReactComponent as FileIcon } from "../../../../assets/icons/headers/file-icon.svg";
 import { ReactComponent as RadioIcon } from "../../../../assets/icons/headers/radio-icon.svg";
 import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers/relation-icon.svg";
+import { ReactComponent as NumericIcon } from "../../../../assets/numeric-icon.svg";
 import { IDefaultTable } from "./DefaultTable";
 import handleCellChange from "./utils/handleCellChange";
 import handleBeforeCopy from "./utils/handleBeforeCopy";
@@ -323,6 +324,22 @@ function DefaultTable({
     [cols, svgStringDropDown],
   );
 
+  const customRendererNumeric = useCallback(
+    (
+      _instance: Handsontable,
+      td: HTMLTableCellElement,
+      _row: number,
+      col: number,
+      _prop: string | number,
+      value: string | string[],
+    ): void => {
+      const numericValue = value as string;
+
+      td.innerHTML = numericValue;
+    },
+    [svgStringDropDown],
+  );
+
   const customRendererRelation = useCallback(
     (
       instance: Handsontable,
@@ -349,6 +366,7 @@ function DefaultTable({
       [IconType.File]: <FileIcon />,
       [IconType.Radio]: <RadioIcon />,
       [IconType.Relation]: <RelationIcon />,
+      [IconType.Numeric]: <NumericIcon />,
     }),
     [],
   );
@@ -588,6 +606,18 @@ function DefaultTable({
                   field={col.options[0].field}
                 />
               </HotColumn>
+            );
+          }
+
+          if (col.type === "numeric") {
+            return (
+              <HotColumn
+                width={col.width}
+                _columnIndex={+col.order}
+                data={col.data}
+                key={col.order + col.data}
+                renderer={customRendererNumeric}
+              />
             );
           }
 

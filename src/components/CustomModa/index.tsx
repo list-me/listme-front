@@ -117,6 +117,7 @@ export const PersonalModal = ({
     paragraph: "Definir o limite máximo de caracteres:",
     checked: "Definir o limite máximo de opções selecionadas:",
     file: "Definir o limite máximo de imagens:",
+    numeric: "Definir o limite máximo de caracteres:",
   };
 
   const textOptions = [
@@ -177,6 +178,10 @@ export const PersonalModal = ({
       label: "Conexão entre produtos",
       description: "Adicione um campo de relacionamento entre produtos",
     },
+    numeric: {
+      label: "Campo de números inteiros",
+      description: "Adicione uma entrada de números inteiros",
+    },
   };
 
   const MULTI_SELECT = ["checked", "radio", "list"];
@@ -194,7 +199,7 @@ export const PersonalModal = ({
     if (isUpdate) {
       templateUpdated = template.fields.fields.map((item: any) => {
         if (item.id === data.id) {
-          data.options = option;
+          data.options = option || [""];
           data.type = type;
           data.name = name;
           data.title = title;
@@ -214,7 +219,7 @@ export const PersonalModal = ({
         title,
         name,
         limit: characterLimit,
-        options: option,
+        options: option || [""],
         required,
         is_public: false,
         help_text: "This fiedl will help you to make a new product register",
@@ -423,7 +428,7 @@ export const PersonalModal = ({
                     />
                   </Form.Item>
                   {!MULTI_SELECT.includes(data?.type) &&
-                  !["relation", "file"].includes(data?.type) ? (
+                  !["relation", "file", "numeric"].includes(data?.type) ? (
                     <Form.Item
                       wrapperCol={{ flex: "auto" }}
                       label="Escolha o tipo de valor"
@@ -466,7 +471,7 @@ export const PersonalModal = ({
                   ) : (
                     <></>
                   )}
-                  {["text", "paragraph", "check", "file"].includes(
+                  {["text", "paragraph", "check", "file", "numeric"].includes(
                     data?.type,
                   ) && (
                     <CharacterLimitContainer>
