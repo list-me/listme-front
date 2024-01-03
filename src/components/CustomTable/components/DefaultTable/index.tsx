@@ -233,6 +233,14 @@ function DefaultTable({
           svgStringDropDown,
           setAlertTooltip,
         });
+
+        const colType = columns[col]?.type;
+        const maxLength = columns[col].limit || DefaultLimits[colType].max;
+
+        td.style.border = "";
+        if (value?.length > maxLength) {
+          td.style.border = "2px solid #F1BC02";
+        }
       }
     },
     [columns, svgStringDropDown],
@@ -293,7 +301,7 @@ function DefaultTable({
       value: string | string[],
     ): void => {
       const colType = cols[col].type;
-      const maxLength = DefaultLimits[colType].max;
+      const maxLength = cols[col].limit || DefaultLimits[colType].max;
       const textValue = value as string;
 
       td.style.border = "";

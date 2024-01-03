@@ -16,15 +16,15 @@ const DefaultLimits: FieldConfigMap = {
     max: 550,
     default: 255,
   },
-  checked: {
-    max: 100,
-    default: 50,
-  },
   list: {
-    max: 100,
-    default: 50,
+    max: 1,
+    default: 1,
   },
   radio: {
+    max: 1,
+    default: 1,
+  },
+  checked: {
     max: 100,
     default: 50,
   },

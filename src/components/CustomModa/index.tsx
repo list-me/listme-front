@@ -506,6 +506,55 @@ export const PersonalModal = ({
                       </Form.Item>
                     </CharacterLimitContainer>
                   )}
+                  {["checked"].includes(data?.type) && (
+                    <CharacterLimitContainer>
+                      <Form.Item
+                        wrapperCol={{ flex: "auto" }}
+                        colon={false}
+                        label={
+                          <div className="label-content">
+                            <span>
+                              Definir limite máximo de opções selecionadas:
+                            </span>
+                            <Switch
+                              checked={activeCharacterLimit}
+                              size="small"
+                              onChange={(e) => setActiveCharacterLimit(e)}
+                            />
+                          </div>
+                        }
+                        name="limit"
+                        style={{
+                          marginBottom: "6px",
+                          position: "relative",
+                        }}
+                      >
+                        <Input
+                          type="number"
+                          min={0}
+                          max={DefaultLimits[data.type].max}
+                          disabled={!activeCharacterLimit}
+                          style={{
+                            height: "64px",
+                            border: "1px solid #DEE2E6",
+                          }}
+                          value={characterLimit}
+                          onChange={(e) => {
+                            e.preventDefault();
+                            const inputValue = +e.target.value;
+                            const maxLimit = DefaultLimits[data.type].max;
+
+                            if (inputValue > maxLimit) {
+                              setCharacterLimit(maxLimit);
+                            } else {
+                              setCharacterLimit(inputValue);
+                            }
+                          }}
+                          placeholder="Ex.: 10"
+                        />
+                      </Form.Item>
+                    </CharacterLimitContainer>
+                  )}
                 </InputContainer>
 
                 {MULTI_SELECT.includes(data?.type) ? (
@@ -514,27 +563,8 @@ export const PersonalModal = ({
                     <Form.Item name="options" className="onDragger">
                       <Dragger
                         options={draggerOptions}
-                        setOptions={(values: any) => setDraggerOptions(values)}
-                        handleOnDrop={(info: any) => {
-                          const { node, dragNode } = info;
-                          const newTreeData = [...draggerOptions];
-                          const dragNodeIndex = newTreeData.findIndex(
-                            (n: any) => n.key === dragNode.key,
-                          );
-                          newTreeData.splice(dragNodeIndex, 1);
-                          const targetIndex = node
-                            ? newTreeData.findIndex(
-                                (n: any) => n.key === node.key,
-                              )
-                            : 0;
-                          const dropPosition =
-                            info.dropPosition - Number(info.dropToGap);
-                          const newIndex =
-                            dropPosition === -1 ? targetIndex : targetIndex + 1;
-                          const { title, key, value } = dragNode;
-                          const newNode = { title, key, value };
-                          newTreeData.splice(newIndex, 0, newNode);
-                          // setDraggerOptions(newTreeData);
+                        setOptions={(e: any) => {
+                          setDraggerOptions(e);
                         }}
                         form={form}
                       />
