@@ -112,6 +112,13 @@ export const PersonalModal = ({
 
   const [form] = Form.useForm();
 
+  const limitText: { [key: string]: string } = {
+    text: "Definir o limite máximo de caracteres:",
+    paragraph: "Definir o limite máximo de caracteres:",
+    checked: "Definir o limite máximo de opções selecionadas:",
+    file: "Definir o limite máximo de imagens:",
+  };
+
   const textOptions = [
     {
       label: "Texto curto",
@@ -459,63 +466,16 @@ export const PersonalModal = ({
                   ) : (
                     <></>
                   )}
-                  {["text", "paragraph"].includes(data?.type) && (
+                  {["text", "paragraph", "check", "file"].includes(
+                    data?.type,
+                  ) && (
                     <CharacterLimitContainer>
                       <Form.Item
                         wrapperCol={{ flex: "auto" }}
                         colon={false}
                         label={
                           <div className="label-content">
-                            <span>Definir limite máximo de caracteres:</span>
-                            <Switch
-                              checked={activeCharacterLimit}
-                              size="small"
-                              onChange={(e) => setActiveCharacterLimit(e)}
-                            />
-                          </div>
-                        }
-                        name="limit"
-                        style={{
-                          marginBottom: "6px",
-                          position: "relative",
-                        }}
-                      >
-                        <Input
-                          type="number"
-                          min={0}
-                          max={DefaultLimits[data.type].max}
-                          disabled={!activeCharacterLimit}
-                          style={{
-                            height: "64px",
-                            border: "1px solid #DEE2E6",
-                          }}
-                          value={characterLimit}
-                          onChange={(e) => {
-                            e.preventDefault();
-                            const inputValue = +e.target.value;
-                            const maxLimit = DefaultLimits[data.type].max;
-
-                            if (inputValue > maxLimit) {
-                              setCharacterLimit(maxLimit);
-                            } else {
-                              setCharacterLimit(inputValue);
-                            }
-                          }}
-                          placeholder="Ex.: 10"
-                        />
-                      </Form.Item>
-                    </CharacterLimitContainer>
-                  )}
-                  {["checked"].includes(data?.type) && (
-                    <CharacterLimitContainer>
-                      <Form.Item
-                        wrapperCol={{ flex: "auto" }}
-                        colon={false}
-                        label={
-                          <div className="label-content">
-                            <span>
-                              Definir limite máximo de opções selecionadas:
-                            </span>
+                            <span>{limitText[data.type]}</span>
                             <Switch
                               checked={activeCharacterLimit}
                               size="small"

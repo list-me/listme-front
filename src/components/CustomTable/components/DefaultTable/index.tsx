@@ -267,6 +267,14 @@ function DefaultTable({
         uploadImages,
         template,
       );
+
+      const colType = columns[col]?.type;
+      const maxLength = columns[col].limit || DefaultLimits[colType].max;
+
+      td.style.border = "";
+      if (value?.length > maxLength) {
+        td.style.border = "2px solid #F1BC02";
+      }
     },
     [hotRef, loadingRef, template, uploadImages],
   );
