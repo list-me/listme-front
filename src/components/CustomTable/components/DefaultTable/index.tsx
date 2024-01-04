@@ -374,10 +374,12 @@ function DefaultTable({
       };
 
       ReactDOM.render(
-        <Switch
-          checked={value?.length > 0 && value[0] === "true"}
-          onChange={handleChange}
-        />,
+        <div className="boolean-switch-cell">
+          <Switch
+            checked={value?.length > 0 && value[0] === "true"}
+            onChange={handleChange}
+          />
+        </div>,
         td,
       );
     },
