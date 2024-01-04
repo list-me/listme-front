@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 import Handsontable from "handsontable";
 import { CellValue, RangeType } from "handsontable/common";
 import { renderToString } from "react-dom/server";
+import { Switch } from "antd";
+import ReactDOM from "react-dom";
 import { FileEditor } from "../../Editors/File";
 import DropdownEditor from "../../Editors/Dropdown";
 import RadioEditor from "../../Editors/Radio";
@@ -102,14 +104,12 @@ function DefaultTable({
     if (changes) {
       const currentColumnId = changes[0][1];
       const newValue = changes[0][3];
-
       const currentColumn = cols.find((item) => item.data === currentColumnId);
-
       if (currentColumn?.title) {
         const limit =
           currentColumn.limit || DefaultLimits[currentColumn.type].default;
 
-        if (newValue.length > limit) {
+        if (currentColumn.type !== "boolean" && newValue.length > limit) {
           toast.warn(`Limite excedido em "${currentColumn.title}"`);
           return;
         }
@@ -355,6 +355,31 @@ function DefaultTable({
 
       const totalItems = value ? value.length : 0;
       td.innerHTML = `<div class="tag-content">${totalItems} Items relacionados</div>`;
+    },
+    [],
+  );
+  const customRendererBoolean = useCallback(
+    (
+      instance: Handsontable,
+      td: HTMLTableCellElement,
+      row: number,
+      col: number,
+      prop: string | number,
+      value: any,
+    ): void => {
+      const handleChange = (checked: boolean): void => {
+        const newValue = [`${checked}`];
+
+        instance.setDataAtCell(row, col, newValue);
+      };
+
+      ReactDOM.render(
+        <Switch
+          checked={value?.length > 0 && value[0] === "true"}
+          onChange={handleChange}
+        />,
+        td,
+      );
     },
     [],
   );
@@ -610,6 +635,19 @@ function DefaultTable({
                   field={col.options[0].field}
                 />
               </HotColumn>
+            );
+          }
+          if (col.type === "boolean") {
+            return (
+              <HotColumn
+                _columnIndex={+col.order}
+                data={col.data}
+                width={col.width}
+                key={col.order + col.data}
+                // eslint-disable-next-line react/jsx-no-bind
+                renderer={customRendererBoolean}
+                readOnly
+              />
             );
           }
 

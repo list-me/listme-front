@@ -124,6 +124,9 @@ export const ProductContextProvider = ({
       CHECKED: "checkbox",
       FILE: "file",
       RELATION: "relation",
+      NUMERIC: "numeric",
+      DECIMAL: "decimal",
+      BOOLEAN: "boolean",
     }),
     [],
   );
