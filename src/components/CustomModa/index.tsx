@@ -187,6 +187,10 @@ export const PersonalModal = ({
       label: "Campo de números decimais",
       description: "Adicione um campo para envio de preços ou outros tipos",
     },
+    boolean: {
+      label: "Booleano",
+      description: "Adicione um campo do tipo booleano",
+    },
   };
 
   const MULTI_SELECT = ["checked", "radio", "list"];
@@ -433,9 +437,13 @@ export const PersonalModal = ({
                     />
                   </Form.Item>
                   {!MULTI_SELECT.includes(data?.type) &&
-                  !["relation", "file", "numeric", "decimal"].includes(
-                    data?.type,
-                  ) ? (
+                  ![
+                    "relation",
+                    "file",
+                    "numeric",
+                    "decimal",
+                    "boolean",
+                  ].includes(data?.type) ? (
                     <Form.Item
                       wrapperCol={{ flex: "auto" }}
                       label="Escolha o tipo de valor"

@@ -19,6 +19,7 @@ import { ReactComponent as RadioIcon } from "../../../../assets/icons/headers/ra
 import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers/relation-icon.svg";
 import { ReactComponent as NumericIcon } from "../../../../assets/numeric-icon.svg";
 import { ReactComponent as DecimalIcon } from "../../../../assets/decimal-icon.svg";
+import { ReactComponent as BooleanIcon } from "../../../../assets/boolean-icon.svg";
 import { IDefaultTable } from "./DefaultTable";
 import handleCellChange from "./utils/handleCellChange";
 import handleBeforeCopy from "./utils/handleBeforeCopy";
@@ -369,6 +370,7 @@ function DefaultTable({
       [IconType.Relation]: <RelationIcon />,
       [IconType.Numeric]: <NumericIcon />,
       [IconType.Decimal]: <DecimalIcon />,
+      [IconType.Boolean]: <BooleanIcon />,
     }),
     [],
   );

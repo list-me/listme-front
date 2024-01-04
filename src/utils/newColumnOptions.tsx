@@ -6,6 +6,7 @@ import { ReactComponent as FileIcon } from "../assets/file-icon.svg";
 import { ReactComponent as LinkIcon } from "../assets/link-gray-sm.svg";
 import { ReactComponent as NumericIcon } from "../assets/numeric-icon.svg";
 import { ReactComponent as DecimalIcon } from "../assets/decimal-icon.svg";
+import { ReactComponent as BooleanIcon } from "../assets/boolean-icon.svg";
 
 export default [
   {
@@ -48,5 +49,10 @@ export default [
     label: "Relacionamento",
     icon: <LinkIcon />,
     type: "relation",
+  },
+  {
+    label: "Booleano",
+    icon: <BooleanIcon />,
+    type: "boolean",
   },
 ];

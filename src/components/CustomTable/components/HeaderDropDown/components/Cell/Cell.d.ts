@@ -27,6 +27,7 @@ enum IconType {
   Relation = "relation",
   Numeric = "numeric",
   Decimal = "decimal",
+  Boolean = "boolean",
 }
 
 export { ICellProps, IOption, IconType };
