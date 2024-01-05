@@ -375,6 +375,34 @@ export const ProductContextProvider = ({
     return productRequests.save(product);
   };
 
+  const buildProduct = (fields: any) => {
+    const obj: any[] = [];
+    if (Object.keys(fields).length) {
+      // @ts-ignore
+      const columnKeys = headerTable.map((column) => column?.data);
+      let newValue;
+      Object.keys(fields).forEach((field: any) => {
+        if (
+          !["id", "created_at"].includes(field) &&
+          columnKeys.includes(field)
+        ) {
+          newValue =
+            typeof fields[field] === "object"
+              ? fields[field] || ""
+              : [fields[field]];
+
+          if (newValue[0] !== "")
+            obj.push({
+              id: field,
+              value: newValue || [],
+            });
+        }
+      });
+    }
+
+    return obj;
+  };
+
   const handleSave = async (
     value: any,
     isNew: boolean,
@@ -382,7 +410,6 @@ export const ProductContextProvider = ({
   ): Promise<any> => {
     try {
       const fields = buildProduct(value);
-
       if (isNew) {
         const response = await productRequests.update({
           id: productId,
@@ -410,31 +437,6 @@ export const ProductContextProvider = ({
 
       toast.error(message);
     }
-  };
-
-  const buildProduct = (fields: any) => {
-    const obj: any[] = [];
-    if (Object.keys(fields).length) {
-      // @ts-ignore
-      const columnKeys = headerTable.map((column) => column?.data);
-      Object.keys(fields).forEach((field: any) => {
-        if (
-          !["id", "created_at"].includes(field) &&
-          columnKeys.includes(field)
-        ) {
-          const newValue =
-            typeof fields[field] === "object" ? fields[field] : [fields[field]];
-
-          if (newValue[0] !== "")
-            obj.push({
-              id: field,
-              value: newValue || [""],
-            });
-        }
-      });
-    }
-
-    return obj;
   };
 
   const handleAdd = () => {
