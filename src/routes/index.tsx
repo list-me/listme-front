@@ -6,6 +6,7 @@ import PrivateRoutes from "./PrivateRoutes";
 import Login from "../pages/login";
 import { PublicRoute } from "./PublicRoute";
 import { Products } from "../pages/products";
+import Integration from "../pages/integration";
 
 export function Router(): JSX.Element {
   return (
@@ -17,6 +18,7 @@ export function Router(): JSX.Element {
         <Route path="/" element={<PrivateRoutes />}>
           <Route path="/templates" element={<Template />} />
           <Route path="/products/:id" element={<Products />} />
+          <Route path="/integration/" element={<Integration />} />
         </Route>
       </Routes>
     </Suspense>

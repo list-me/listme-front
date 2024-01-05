@@ -13,6 +13,11 @@ const Active = css`
   span {
     color: ${({ theme }) => theme.colors.hover.text};
   }
+
+  svg,
+  path {
+    stroke: ${({ theme }) => theme.colors.hover.text} !important;
+  }
 `;
 
 export const Container = styled.div`
@@ -72,14 +77,20 @@ export const Shape = styled.div<IPositions>`
   &:hover {
     background: ${({ theme }) => theme.colors.hover.background};
     cursor: pointer;
-    transition: all 0.4s ease-in-out;
 
     span:last-child {
       color: ${({ theme }) => theme.colors.hover.text};
-      transition: all 0.4s ease-in-out;
+    }
+    svg,
+    path {
+      stroke: ${({ theme }) => theme.colors.hover.text};
     }
   }
 
+  svg,
+  path {
+    stroke: ${({ theme }) => theme.colors.tertiary};
+  }
   span:first-child {
     margin-right: 7px;
   }
@@ -87,11 +98,16 @@ export const Shape = styled.div<IPositions>`
   ${({ isActive }) => isActive && Active}
 `;
 
-export const Icon = styled.span`
+export const Icon = styled.span<{ isItem?: boolean }>`
   height: 16px;
 
   display: flex;
   align-items: center;
+  svg,
+  path {
+    stroke: ${({ theme, isItem }) =>
+      isItem === true ? theme.colors.fourth : theme.colors.tertiary};
+  }
 `;
 
 export const Label = styled.span<{ isItem?: boolean }>`
@@ -99,7 +115,7 @@ export const Label = styled.span<{ isItem?: boolean }>`
 
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-weight: ${({ isItem }) => (isItem === true ? 700 : 400)};
-  font-size: ${({ theme }) => theme.fonts.sizes.xxxsmall};
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
   color: ${({ theme, isItem }) =>
     isItem === true ? theme.colors.fourth : theme.colors.tertiary};
   line-height: 150%;
