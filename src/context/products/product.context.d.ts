@@ -37,6 +37,7 @@ interface IField {
   hidden?: boolean;
   width?: string;
   frozen?: boolean;
+  limit: number;
 }
 
 interface ITemplate {
@@ -63,6 +64,7 @@ interface IHeader {
   width: string;
   frozen: boolean;
   bucket_url: string;
+  limit: number;
 }
 
 interface ICustomField {

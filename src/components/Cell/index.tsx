@@ -19,6 +19,9 @@ import { ReactComponent as FrozenIcon } from "../../assets/frozen.svg";
 import { ReactComponent as AscIcon } from "../../assets/sort-asc.svg";
 import { ReactComponent as DescIcon } from "../../assets/sort-desc.svg";
 import { ReactComponent as TrashIcon } from "../../assets/trash-red.svg";
+import { ReactComponent as NumericIcon } from "../../assets/numeric-icon.svg";
+import { ReactComponent as DecimalIcon } from "../../assets/decimal-icon.svg";
+import { ReactComponent as BooleanIcon } from "../../assets/boolean-icon.svg";
 import { DropdownMenu } from "../DropdownMenu";
 import { PersonalModal } from "../CustomModa";
 
@@ -47,6 +50,9 @@ export const HeaderCell: React.FC<ICellProps> = ({
     [IconType.File]: <FileIcon />,
     [IconType.Radio]: <RadioIcon />,
     [IconType.Relation]: <RelationIcon />,
+    [IconType.Numeric]: <NumericIcon />,
+    [IconType.Decimal]: <DecimalIcon />,
+    [IconType.Boolean]: <BooleanIcon />,
   };
 
   const getIconByType = (type: IconType): ReactElement => {

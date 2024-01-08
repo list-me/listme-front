@@ -252,6 +252,12 @@ export const Container = styled.div`
 
       padding-top: 16px;
       align-content: center;
+      .boolean-switch-cell {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
       .tag-content {
         background-color: #dee2e6 !important;
