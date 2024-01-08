@@ -104,13 +104,15 @@ function DefaultTable({
     if (changes) {
       const currentColumnId = changes[0][1];
       const newValue = changes[0][3];
+
       const currentColumn = cols.find((item) => item.data === currentColumnId);
+
       if (currentColumn?.title) {
         const limit =
-          currentColumn.limit || DefaultLimits[currentColumn.type].default;
+          currentColumn?.limit || DefaultLimits[currentColumn?.type]?.default;
 
-        if (currentColumn.type !== "boolean" && newValue.length > limit) {
-          toast.warn(`Limite excedido em "${currentColumn.title}"`);
+        if (currentColumn?.type !== "boolean" && newValue?.length > limit) {
+          toast.warn(`Limite excedido em "${currentColumn?.title}"`);
           return;
         }
 
@@ -118,7 +120,6 @@ function DefaultTable({
 
         if (hotRef.current) {
           const { hotInstance } = hotRef.current;
-
           await handleCellChange(
             changes,
             hotInstance,
@@ -127,6 +128,7 @@ function DefaultTable({
             handleSave,
             products,
             setProducts,
+            currentColumn?.type,
           );
         }
       }
@@ -340,6 +342,37 @@ function DefaultTable({
       td.innerHTML = numericValue;
     },
     [svgStringDropDown],
+  );
+  const customRendererDecimal = useCallback(
+    (
+      _instance: Handsontable,
+      td: HTMLTableCellElement,
+      _row: number,
+      col: number,
+      _prop: string | number,
+      value: string | string[],
+    ): void => {
+      const colDecimalPoint =
+        (cols[col]?.options && cols[col]?.options[0]) || ".";
+
+      let numericValue = "";
+
+      if (typeof value === "string") {
+        numericValue = value;
+      } else if (
+        Array.isArray(value) &&
+        value.length > 0 &&
+        typeof value[0] === "string"
+      ) {
+        // eslint-disable-next-line prefer-destructuring
+        numericValue = value[0];
+      }
+
+      const replacedValue = numericValue.replace(/[.,]/g, colDecimalPoint);
+
+      td.innerHTML = replacedValue;
+    },
+    [svgStringDropDown, cols],
   );
 
   const customRendererRelation = useCallback(
@@ -661,6 +694,17 @@ function DefaultTable({
                 data={col.data}
                 key={col.order + col.data}
                 renderer={customRendererNumeric}
+              />
+            );
+          }
+          if (col.type === "decimal") {
+            return (
+              <HotColumn
+                width={col.width}
+                _columnIndex={+col.order}
+                data={col.data}
+                key={col.order + col.data}
+                renderer={customRendererDecimal}
               />
             );
           }

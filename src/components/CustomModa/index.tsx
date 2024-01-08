@@ -71,6 +71,10 @@ export const PersonalModal = ({
 
   const [characterLimit, setCharacterLimit] = useState<number>(initialLimit);
 
+  const initialDecimalPoint = data?.options ? data?.options[0] : ".";
+
+  const [decimalPoint, setDecimalPoint] = useState<string>(initialDecimalPoint);
+
   const [activeCharacterLimit, setActiveCharacterLimit] =
     useState<boolean>(false);
   const [isUpdate] = useState<boolean>(data?.id);
@@ -208,7 +212,7 @@ export const PersonalModal = ({
     if (isUpdate) {
       templateUpdated = template.fields.fields.map((item: any) => {
         if (item.id === data.id) {
-          data.options = option || [""];
+          data.options = type !== "decimal" ? option || [""] : [decimalPoint];
           data.type = type;
           data.name = name;
           data.title = title;
@@ -228,7 +232,7 @@ export const PersonalModal = ({
         title,
         name,
         limit: characterLimit,
-        options: option || [""],
+        options: type !== "decimal" ? option || [""] : [decimalPoint],
         required,
         is_public: false,
         help_text: "This fiedl will help you to make a new product register",
@@ -431,11 +435,43 @@ export const PersonalModal = ({
                       onChange={(e) => {
                         e.preventDefault();
 
-                        setTitle(e.target.value);
+                        setTitle(e?.target?.value);
                       }}
                       placeholder="Informe o nome do campo"
                     />
                   </Form.Item>
+                  {["decimal"].includes(data?.type) && (
+                    <Form.Item
+                      wrapperCol={{ flex: "auto" }}
+                      label="Escolha o separador decimal"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Escolha o separador decimal",
+                        },
+                      ]}
+                      style={{ marginBottom: "6px" }}
+                    >
+                      <Select
+                        style={{
+                          height: "64px",
+                          border: "1px solid #DEE2E6",
+                        }}
+                        value={decimalPoint}
+                        onChange={(e: string) => {
+                          setDecimalPoint(e as any);
+                        }}
+                        placeholder="Escolha o separador decimal"
+                      >
+                        <Select.Option value="." label=".">
+                          .
+                        </Select.Option>
+                        <Select.Option value="," label=",">
+                          ,
+                        </Select.Option>
+                      </Select>
+                    </Form.Item>
+                  )}
                   {!MULTI_SELECT.includes(data?.type) &&
                   ![
                     "relation",
