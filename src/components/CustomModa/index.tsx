@@ -75,8 +75,9 @@ export const PersonalModal = ({
 
   const [decimalPoint, setDecimalPoint] = useState<string>(initialDecimalPoint);
 
-  const [activeCharacterLimit, setActiveCharacterLimit] =
-    useState<boolean>(false);
+  const [activeCharacterLimit, setActiveCharacterLimit] = useState<boolean>(
+    data?.limit ? true : false,
+  );
   const [isUpdate] = useState<boolean>(data?.id);
   const [draggerOptions, setDraggerOptions] = useState<any[]>(
     data?.options ?? [""],
@@ -525,7 +526,7 @@ export const PersonalModal = ({
                   {[
                     "text",
                     "paragraph",
-                    "check",
+                    "checked",
                     "file",
                     "numeric",
                     "decimal",

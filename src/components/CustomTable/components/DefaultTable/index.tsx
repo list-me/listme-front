@@ -106,6 +106,21 @@ function DefaultTable({
       const newValue = changes[0][3];
 
       const currentColumn = cols.find((item) => item.data === currentColumnId);
+      if (
+        currentColumn?.type === "numeric" ||
+        currentColumn?.type === "decimal"
+      ) {
+        if (Number.isNaN(Number(newValue))) {
+          toast.warn(
+            `O valor deve ser numérico para a coluna ${currentColumn?.title}`,
+          );
+          const previousCellValue = changes[0][2];
+          // eslint-disable-next-line no-param-reassign
+          products[changes[0][0]][changes[0][1]] = previousCellValue;
+
+          setProducts([...products]);
+        }
+      }
 
       if (currentColumn?.title) {
         const limit =
@@ -338,11 +353,27 @@ function DefaultTable({
       value: string | string[],
     ): void => {
       const numericValue = value as string;
+      const previousValue = _instance.getDataAtCell(_row, col);
+      const colType = columns[col]?.type;
+      const maxLength = columns[col].limit || DefaultLimits[colType].max;
 
-      td.innerHTML = numericValue;
+      td.style.border = "";
+      if (value?.length > maxLength) {
+        td.style.border = "2px solid #F1BC02";
+      }
+
+      if (Number.isNaN(Number(numericValue))) {
+        td.innerHTML =
+          previousValue !== null && previousValue !== undefined
+            ? String(previousValue)
+            : "";
+      } else {
+        td.innerHTML = numericValue;
+      }
     },
     [svgStringDropDown],
   );
+
   const customRendererDecimal = useCallback(
     (
       _instance: Handsontable,
