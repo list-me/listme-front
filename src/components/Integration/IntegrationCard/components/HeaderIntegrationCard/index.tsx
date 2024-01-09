@@ -5,18 +5,19 @@ import {
   SwitchContainer,
   SwitchLabel,
 } from "./styles";
-import logoMock from "../../mock/logoIntegration.png";
 
 function HeaderIntegrationCard({
   isActive,
   setIsActive,
+  thumb,
 }: {
   isActive: boolean;
   setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
+  thumb: string;
 }): JSX.Element {
   return (
     <ContainerHeaderIntegrationCard>
-      <img src={logoMock} alt="logo" />
+      <img src={thumb} alt="logo" />
       <SwitchContainer>
         <SwitchLabel>{isActive ? "Ativo" : "Inativo"}</SwitchLabel>
         <ConfigProvider

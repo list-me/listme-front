@@ -10,6 +10,9 @@ function IntegrationCard({
   onClickPrimaryButtonDone,
   onClickSecondaryButtonDone,
   onClickNotDone,
+  title,
+  description,
+  thumb,
 }: {
   isActive: boolean;
   setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
@@ -17,14 +20,18 @@ function IntegrationCard({
   onClickPrimaryButtonDone: () => void;
   onClickSecondaryButtonDone: () => void;
   onClickNotDone: () => void;
+  title: string;
+  description: string;
+  thumb: string;
 }): JSX.Element {
   return (
     <ContainerIntegrationCard>
-      <HeaderIntegrationCard isActive={isActive} setIsActive={setIsActive} />
-      <ContentIntegrationCard
-        title="Nexaas"
-        description="Com a integração Nexaas, simplificamos processos e potencializamos a eficiência do seu negócio. Conecte-se ao sucesso!"
+      <HeaderIntegrationCard
+        isActive={isActive}
+        setIsActive={setIsActive}
+        thumb={thumb}
       />
+      <ContentIntegrationCard title={title} description={description} />
       <ActionsIntegrationCard
         done={done}
         onClickPrimaryButtonDone={onClickPrimaryButtonDone}

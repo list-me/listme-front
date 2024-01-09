@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import TemplateDefault from "../../components/TemplateDefault";
 import { useFilterContext } from "../../context/FilterContext";
 import { Content, TitlePage } from "../templates/styles";
@@ -8,7 +8,13 @@ import InlineMenu from "../../components/Integration/InlineMenu";
 import IntegrationCard from "../../components/Integration/IntegrationCard";
 import StepModal from "../../components/StepModal";
 import StepModalsContents from "../../components/Integration/StepModalsContents";
-import { ROUTES } from "../../constants/routes";
+import { integrationsRequest } from "../../services/apis/requests/integration";
+import {
+  IDataCardList,
+  IMenuInlineActivated,
+  IMenuToInlineMenuList,
+} from "../../models/integration/integration";
+import logoMock from "../../components/Integration/IntegrationCard/mock/logoIntegration.png";
 
 function Integration(): JSX.Element {
   const { setFilters, defaultFilter, setFilterStatus, setConditions } =
@@ -18,28 +24,39 @@ function Integration(): JSX.Element {
     setConditions([]);
     setFilters([defaultFilter]);
     setFilterStatus(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const navigate = useNavigate();
 
   const [fromToIsOpened, setFromToIsOpened] = useState(false);
 
-  const [menuActivated, setMenuActivated] = useState<
-    "seeAll" | "active" | "inactive"
-  >("seeAll");
+  const [menuActivated, setMenuActivated] =
+    useState<IMenuInlineActivated>("seeAll");
 
-  const menus: {
-    value: string;
-    label: string;
-    status: "incomplete" | "done" | "";
-  }[] = [
+  const menus: IMenuToInlineMenuList = [
     { value: "seeAll", label: "Ver todos", status: "" },
     { value: "active", label: "Ativos", status: "" },
     { value: "inactive", label: "Inativos", status: "" },
   ];
 
-  // aqui tem q ser alterado pra se comportar de acordo com a api
-  const [isActive, setIsActive] = useState(false);
+  const [listDataCard, setListDataCard] = useState<IDataCardList>();
+
+  async function getConfigTemplatesList(
+    status: IMenuInlineActivated,
+  ): Promise<void> {
+    try {
+      const configTemplatesList = await integrationsRequest.listConfigTemplates(
+        status,
+      );
+      setListDataCard(configTemplatesList);
+    } catch (error) {
+      console.error(error);
+      toast.error("Ocorreu um erro ao buscar a lista de integrações");
+    }
+  }
+
+  useEffect(() => {
+    getConfigTemplatesList(menuActivated);
+  }, [menuActivated]);
 
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
@@ -52,7 +69,23 @@ function Integration(): JSX.Element {
             setMenuActivated={setMenuActivated}
           />
           <CardsContainerIntegration>
-            <IntegrationCard
+            {listDataCard?.map((item) => (
+              <IntegrationCard
+                done={!!item?.config?.id}
+                onClickPrimaryButtonDone={() => ""}
+                onClickSecondaryButtonDone={() => ""}
+                onClickNotDone={() => {
+                  setFromToIsOpened(true);
+                }}
+                isActive={item?.config?.status === "active"}
+                setIsActive={() => ""}
+                title={item.name}
+                description={item.description}
+                // thumb={item.thumbnailUrl || logoMock}
+                thumb={logoMock}
+              />
+            ))}
+            {/* <IntegrationCard
               done={false}
               onClickPrimaryButtonDone={() => ""}
               onClickSecondaryButtonDone={() => ""}
@@ -71,7 +104,7 @@ function Integration(): JSX.Element {
               onClickNotDone={() => setFromToIsOpened(true)}
               isActive={!isActive}
               setIsActive={setIsActive}
-            />
+            /> */}
           </CardsContainerIntegration>
         </ContainerIntegration>
       </Content>

@@ -16,6 +16,7 @@ function InlineMenu({
     <ContainerInlineMenu>
       {menus.map((menu) => (
         <ItemInlineMenu
+          key={menu.value}
           isActivated={menu.value === menuActivated}
           onClick={() => setMenuActivated(menu.value)}
         >
