@@ -464,11 +464,11 @@ export const PersonalModal = ({
                         }}
                         placeholder="Escolha o separador decimal"
                       >
-                        <Select.Option value="." label=".">
-                          .
+                        <Select.Option value="." label="Ponto(.)">
+                          Ponto(.)
                         </Select.Option>
-                        <Select.Option value="," label=",">
-                          ,
+                        <Select.Option value="," label="Vírgula(,)">
+                          Vírgula(,)
                         </Select.Option>
                       </Select>
                     </Form.Item>
