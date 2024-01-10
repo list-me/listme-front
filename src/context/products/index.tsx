@@ -244,7 +244,6 @@ export const ProductContextProvider = ({
         id: string;
         created_at: string;
       }[] = [];
-      console.log(data.products);
       if (data.products.length) {
         data?.products?.forEach((item) => {
           const object: { [key: string]: string | string[] } = {};

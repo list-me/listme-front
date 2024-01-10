@@ -106,12 +106,22 @@ function DefaultTable({
       const newValue = changes[0][3];
 
       const currentColumn = cols.find((item) => item.data === currentColumnId);
-      console.log("🚀 ~ currentColumn:", currentColumn);
-      if (
-        currentColumn?.type === "numeric" ||
-        currentColumn?.type === "decimal"
-      ) {
+      if (currentColumn?.type === "numeric") {
         if (Number.isNaN(Number(newValue))) {
+          toast.warn(
+            `O valor deve ser numérico para a coluna ${currentColumn?.title}`,
+          );
+          const previousCellValue = changes[0][2];
+          // eslint-disable-next-line no-param-reassign
+          products[changes[0][0]][changes[0][1]] = previousCellValue;
+
+          setProducts([...products]);
+          return;
+        }
+      }
+
+      if (currentColumn?.type === "decimal") {
+        if (!/^-?\d*\.?\d*$/.test(newValue.replace(",", "."))) {
           toast.warn(
             `O valor deve ser numérico para a coluna ${currentColumn?.title}`,
           );
@@ -389,6 +399,12 @@ function DefaultTable({
         (cols[col]?.options && cols[col]?.options[0]) || ".";
 
       let numericValue = "";
+      const colType = columns[col]?.type;
+      const maxLength = columns[col].limit || DefaultLimits[colType].max;
+      td.style.border = "";
+      if (value?.length > maxLength) {
+        td.style.border = "2px solid #F1BC02";
+      }
 
       if (typeof value === "string") {
         numericValue = value;
