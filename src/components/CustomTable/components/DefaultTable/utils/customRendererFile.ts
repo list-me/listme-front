@@ -23,7 +23,15 @@ function customRendererFile(
     optionals?: { brand?: string; name?: string },
   ) => Promise<void | string[]>,
   template: any,
+  totalExistingImages: number,
+  limit: number,
 ): void {
+  let totalImages = totalExistingImages;
+
+  if (value && Array.isArray(value)) {
+    totalImages += value.length;
+  }
+
   td.className = "file-cell";
 
   td.draggable = true;
@@ -51,6 +59,10 @@ function customRendererFile(
   td.ondrop = async (event: DragEvent) => {
     event.preventDefault();
     event.stopPropagation();
+    // if (totalImages >= limit) {
+    //   toast.warn(`Limite de imagens excedido`);
+    //   return;
+    // }
 
     const { hotInstance } = hotRef.current!;
     const target = event.target as HTMLElement;

@@ -75,8 +75,9 @@ export const PersonalModal = ({
 
   const [decimalPoint, setDecimalPoint] = useState<string>(initialDecimalPoint);
 
-  const [activeCharacterLimit, setActiveCharacterLimit] =
-    useState<boolean>(false);
+  const [activeCharacterLimit, setActiveCharacterLimit] = useState<boolean>(
+    data?.limit ? true : false,
+  );
   const [isUpdate] = useState<boolean>(data?.id);
   const [draggerOptions, setDraggerOptions] = useState<any[]>(
     data?.options ?? [""],
@@ -295,7 +296,7 @@ export const PersonalModal = ({
         onCancel={onClickModal}
         onOk={onClickModal}
         width="470px"
-        style={{ marginBottom: "2vh", top: 30 }}
+        style={{ marginBottom: "2vh", top: 30, maxHeight: "90vh" }}
         footer={null}
       >
         <Container>
@@ -463,11 +464,11 @@ export const PersonalModal = ({
                         }}
                         placeholder="Escolha o separador decimal"
                       >
-                        <Select.Option value="." label=".">
-                          .
+                        <Select.Option value="." label="Ponto(.)">
+                          Ponto(.)
                         </Select.Option>
-                        <Select.Option value="," label=",">
-                          ,
+                        <Select.Option value="," label="Vírgula(,)">
+                          Vírgula(,)
                         </Select.Option>
                       </Select>
                     </Form.Item>
@@ -525,7 +526,7 @@ export const PersonalModal = ({
                   {[
                     "text",
                     "paragraph",
-                    "check",
+                    "checked",
                     "file",
                     "numeric",
                     "decimal",

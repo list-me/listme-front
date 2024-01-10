@@ -106,6 +106,33 @@ function DefaultTable({
       const newValue = changes[0][3];
 
       const currentColumn = cols.find((item) => item.data === currentColumnId);
+      if (currentColumn?.type === "numeric") {
+        if (Number.isNaN(Number(newValue))) {
+          toast.warn(
+            `O valor deve ser numérico para a coluna ${currentColumn?.title}`,
+          );
+          const previousCellValue = changes[0][2];
+          // eslint-disable-next-line no-param-reassign
+          products[changes[0][0]][changes[0][1]] = previousCellValue;
+
+          setProducts([...products]);
+          return;
+        }
+      }
+
+      if (currentColumn?.type === "decimal") {
+        if (!/^-?\d*\.?\d*$/.test(newValue.replace(",", "."))) {
+          toast.warn(
+            `O valor deve ser numérico para a coluna ${currentColumn?.title}`,
+          );
+          const previousCellValue = changes[0][2];
+          // eslint-disable-next-line no-param-reassign
+          products[changes[0][0]][changes[0][1]] = previousCellValue;
+
+          setProducts([...products]);
+          return;
+        }
+      }
 
       if (currentColumn?.title) {
         const limit =
@@ -255,15 +282,18 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      row: number,
+      _row: number,
       col: number,
       prop: string | number,
       value: any,
     ) => {
+      const colType = columns[col]?.type;
+      const maxLength = columns[col].limit || DefaultLimits[colType].max;
+      const previousValue = _instance.getDataAtCell(_row, col);
       customRendererFile(
         _instance,
         td,
-        row,
+        _row,
         col,
         prop,
         value,
@@ -271,10 +301,9 @@ function DefaultTable({
         loadingRef,
         uploadImages,
         template,
+        previousValue?.length,
+        maxLength,
       );
-
-      const colType = columns[col]?.type;
-      const maxLength = columns[col].limit || DefaultLimits[colType].max;
 
       td.style.border = "";
       if (value?.length > maxLength) {
@@ -338,11 +367,27 @@ function DefaultTable({
       value: string | string[],
     ): void => {
       const numericValue = value as string;
+      const previousValue = _instance.getDataAtCell(_row, col);
+      const colType = columns[col]?.type;
+      const maxLength = columns[col].limit || DefaultLimits[colType].max;
 
-      td.innerHTML = numericValue;
+      td.style.border = "";
+      if (value?.length > maxLength) {
+        td.style.border = "2px solid #F1BC02";
+      }
+
+      if (Number.isNaN(Number(numericValue))) {
+        td.innerHTML =
+          previousValue !== null && previousValue !== undefined
+            ? String(previousValue)
+            : "";
+      } else {
+        td.innerHTML = numericValue;
+      }
     },
     [svgStringDropDown],
   );
+
   const customRendererDecimal = useCallback(
     (
       _instance: Handsontable,
@@ -356,6 +401,12 @@ function DefaultTable({
         (cols[col]?.options && cols[col]?.options[0]) || ".";
 
       let numericValue = "";
+      const colType = columns[col]?.type;
+      const maxLength = columns[col].limit || DefaultLimits[colType].max;
+      td.style.border = "";
+      if (value?.length > maxLength) {
+        td.style.border = "2px solid #F1BC02";
+      }
 
       if (typeof value === "string") {
         numericValue = value;
