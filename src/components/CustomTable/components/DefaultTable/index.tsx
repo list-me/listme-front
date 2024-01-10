@@ -106,6 +106,7 @@ function DefaultTable({
       const newValue = changes[0][3];
 
       const currentColumn = cols.find((item) => item.data === currentColumnId);
+      console.log("🚀 ~ currentColumn:", currentColumn);
       if (
         currentColumn?.type === "numeric" ||
         currentColumn?.type === "decimal"
@@ -119,6 +120,7 @@ function DefaultTable({
           products[changes[0][0]][changes[0][1]] = previousCellValue;
 
           setProducts([...products]);
+          return;
         }
       }
 

@@ -96,6 +96,13 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           isCustom: true,
         };
       }
+      if (column.type === "numeric" || column.type === "decimal") {
+        return {
+          ...column,
+          width: column?.order == undefined ? "193" : column.width,
+          isCustom: false,
+        };
+      }
       return {
         ...column,
         width: column?.order == undefined ? "193" : column.width,
