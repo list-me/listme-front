@@ -282,15 +282,18 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      row: number,
+      _row: number,
       col: number,
       prop: string | number,
       value: any,
     ) => {
+      const colType = columns[col]?.type;
+      const maxLength = columns[col].limit || DefaultLimits[colType].max;
+      const previousValue = _instance.getDataAtCell(_row, col);
       customRendererFile(
         _instance,
         td,
-        row,
+        _row,
         col,
         prop,
         value,
@@ -298,10 +301,9 @@ function DefaultTable({
         loadingRef,
         uploadImages,
         template,
+        previousValue?.length,
+        maxLength,
       );
-
-      const colType = columns[col]?.type;
-      const maxLength = columns[col].limit || DefaultLimits[colType].max;
 
       td.style.border = "";
       if (value?.length > maxLength) {
