@@ -47,6 +47,10 @@ function Integration(): JSX.Element {
       const configTemplatesList = await integrationsRequest.listConfigTemplates(
         status,
       );
+      console.log(
+        "🚀 ~ Integration ~ configTemplatesList:",
+        configTemplatesList,
+      );
       setListDataCard(configTemplatesList);
     } catch (error) {
       console.error(error);

@@ -6,7 +6,7 @@ import { api } from "../api";
 export const integrationsRequest = {
   listConfigTemplates: async (status: IMenuInlineActivated): Promise<any> => {
     const routerConfigtemplates = {
-      seeAll: "/inte/grations/config-templates",
+      seeAll: "/integrations/config-templates",
       active: "/integrations/config-templates?status=active",
       inactive: "/integrations/config-templates?status=inactive",
     };
