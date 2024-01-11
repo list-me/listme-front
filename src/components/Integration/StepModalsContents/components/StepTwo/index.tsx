@@ -56,7 +56,13 @@ function StepTwo({
       console.error(error);
       toast.error("Ocorreu um erro ao buscar a lista de integrações");
     }
-  }, [environment, valueHomologApi, valueProdApi]);
+  }, [
+    currentProvider.config.custom_configs.organization_id,
+    environment,
+    mode,
+    valueHomologApi,
+    valueProdApi,
+  ]);
 
   useEffect(() => {
     getConfigTemplatesList();
@@ -90,6 +96,9 @@ function StepTwo({
             updateBody,
           );
         }
+        navigate(
+          `${ROUTES.INTEGRATION}/product_categories/${currentProvider.id}`,
+        );
       } catch (error) {
         console.error(error);
         const errorMessage =
@@ -120,7 +129,7 @@ function StepTwo({
           <PlusIcon />
           Voltar
         </NavigationButton>
-        {/* <NavigationButton onClick={() => navigate(`${ROUTES.INTEGRATION}/oi`)}> */}
+        {/* <NavigationButton onClick={() => `)}> */}
         <NavigationButton onClick={() => onFinish(currentProvider.provider)}>
           <PlusIcon />
           Integrar

@@ -1,6 +1,6 @@
 export default {
   BrandConfiguration: "Marcas",
-  CategoryConfiguration: "Categorias",
+  product_categories: "Categorias",
   FeatureConfiguration: "Características",
   ProductConfiguration: "Produtos",
   SKUConfiguration: "SKU",

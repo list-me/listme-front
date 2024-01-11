@@ -20,7 +20,10 @@ export function Router(): JSX.Element {
           <Route path="/templates" element={<Template />} />
           <Route path="/products/:id" element={<Products />} />
           <Route path="/integration/" element={<Integration />} />
-          <Route path="/integration/:id" element={<CompanyIntegration />} />
+          <Route
+            path="/integration/:path/:id"
+            element={<CompanyIntegration />}
+          />
         </Route>
       </Routes>
     </Suspense>

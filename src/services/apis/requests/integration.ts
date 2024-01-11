@@ -78,4 +78,14 @@ export const integrationsRequest = {
 
     return response.data;
   },
+  listConfigTemplatesId: async (id: string): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.get(`/integrations/config-template/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  },
 };

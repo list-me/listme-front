@@ -31,6 +31,7 @@ export const KeyText = styled.p`
   font-size: 16px;
   font-weight: 400;
   margin: 0;
+  gap: 5px;
   .required {
     color: #f15757;
   }
