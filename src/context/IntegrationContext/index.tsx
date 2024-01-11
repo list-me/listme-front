@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { IEnvironment, IntegrationContextType } from "./IntegrationContext";
+import { IProvider } from "../../models/integration/integration";
 
 const IntegrationContext = createContext<IntegrationContextType | undefined>(
   undefined,
@@ -10,9 +11,14 @@ function IntegrationProvider({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
-  const [environment, setEnvironment] = useState<IEnvironment>("PROD");
-  const [valueProdApi, setValueProdApi] = useState("");
-  const [valueHomologApi, setValueHomologApi] = useState("");
+  const [currentProvider, setCurrentProvider] = useState<IProvider>();
+  const [environment, setEnvironment] = useState<IEnvironment>("production");
+  const [valueProdApi, setValueProdApi] = useState(
+    "7ff7f9d45c3d4c73b83cc651864edaae",
+  );
+  const [valueHomologApi, setValueHomologApi] = useState(
+    "7ff7f9d45c3d4c73b83cc651864edaae",
+  );
   const value = {
     environment,
     setEnvironment,
@@ -20,6 +26,8 @@ function IntegrationProvider({
     setValueProdApi,
     valueHomologApi,
     setValueHomologApi,
+    currentProvider,
+    setCurrentProvider,
   };
 
   return (

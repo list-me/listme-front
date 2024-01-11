@@ -15,11 +15,13 @@ import {
   IMenuToInlineMenuList,
 } from "../../models/integration/integration";
 import logoMock from "../../components/Integration/IntegrationCard/mock/logoIntegration.png";
+import { useIntegration } from "../../context/IntegrationContext";
 
 function Integration(): JSX.Element {
   const { setFilters, defaultFilter, setFilterStatus, setConditions } =
     useFilterContext();
 
+  const { setCurrentProvider } = useIntegration();
   useEffect(() => {
     setConditions([]);
     setFilters([defaultFilter]);
@@ -47,10 +49,7 @@ function Integration(): JSX.Element {
       const configTemplatesList = await integrationsRequest.listConfigTemplates(
         status,
       );
-      console.log(
-        "🚀 ~ Integration ~ configTemplatesList:",
-        configTemplatesList,
-      );
+
       setListDataCard(configTemplatesList);
     } catch (error) {
       console.error(error);
@@ -75,10 +74,12 @@ function Integration(): JSX.Element {
           <CardsContainerIntegration>
             {listDataCard?.map((item) => (
               <IntegrationCard
-                done={!!item?.config?.id}
+                // done={!!item?.config?.id}
+                done={false}
                 onClickPrimaryButtonDone={() => ""}
                 onClickSecondaryButtonDone={() => ""}
                 onClickNotDone={() => {
+                  setCurrentProvider(item);
                   setFromToIsOpened(true);
                 }}
                 isActive={item?.config?.status === "active"}

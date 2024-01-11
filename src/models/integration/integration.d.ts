@@ -8,7 +8,7 @@ export interface IConfigCard {
   custom_configs: { organization_id: string };
 }
 
-export interface IDataCard {
+export interface IProvider {
   config: IConfigCard;
   description: string;
   id: string;
@@ -16,7 +16,7 @@ export interface IDataCard {
   provider: string;
   thumbnailUrl: string;
 }
-export type IDataCardList = IDataCard[];
+export type IDataCardList = IProvider[];
 
 export interface IMenuToInlineMenu {
   value: string;
@@ -26,3 +26,13 @@ export interface IMenuToInlineMenu {
 export type IMenuToInlineMenuList = IMenuToInlineMenu[];
 
 export type IMenuInlineActivated = "seeAll" | "active" | "inactive";
+
+export interface IPayloadIntegrationsConfig {
+  production_key: string;
+  sandbox_key: string;
+  environment: "production" | "sandbox";
+  provider: string;
+  custom_configs: {
+    organization_id: number;
+  };
+}

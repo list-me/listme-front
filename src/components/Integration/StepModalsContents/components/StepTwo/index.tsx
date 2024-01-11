@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { NavigationButton } from "../../../../NavigationButton/styles";
 import { ReactComponent as PlusIcon } from "../../../../../assets/plus-fromto.svg";
 import Anchor from "../../../../Anchor";
 import SelectComponent from "../../../../Select";
-import { BoxDualSwitch, LabelSwitchBox } from "./styles";
-import DualSwitch from "../../../DualSwitch";
+
 import { ROUTES } from "../../../../../constants/routes";
+import { integrationsRequest } from "../../../../../services/apis/requests/integration";
 import { useIntegration } from "../../../../../context/IntegrationContext";
-import InfoAlert from "../../../../InfoAlert";
+import { IOrganization } from "./StepTwo";
 
 function StepTwo({
   setCurrentStep,
@@ -16,57 +17,83 @@ function StepTwo({
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
 }): JSX.Element {
   const navigate = useNavigate();
-  const { environment, setEnvironment } = useIntegration();
+  const { valueProdApi, valueHomologApi, environment, currentProvider } =
+    useIntegration();
+  const [selectedOrganization, setSelectedOrganization] = useState<{
+    label: string;
+    value: IOrganization;
+  }>();
 
-  const dualOptions = [
-    { label: "Homologação", value: "HOMOLOG" },
-    { label: "Produção", value: "PROD" },
-  ];
+  const [organizationsList, setOrganizationsList] = useState<IOrganization[]>(
+    [],
+  );
 
-  const [company, setCompany] = useState("op1");
+  const getConfigTemplatesList = useCallback(async () => {
+    const currentApiKey =
+      environment === "production" ? valueProdApi : valueHomologApi;
+    try {
+      const response = await integrationsRequest.listOfOrganizations(
+        currentApiKey,
+      );
+      const responseToState = response.organizations.map(
+        (item: IOrganization) => {
+          return { label: item.name, value: item };
+        },
+      );
+      setOrganizationsList(responseToState);
+    } catch (error) {
+      console.error(error);
+      toast.error("Ocorreu um erro ao buscar a lista de integrações");
+    }
+  }, [environment, valueHomologApi, valueProdApi]);
+
+  useEffect(() => {
+    getConfigTemplatesList();
+  }, [getConfigTemplatesList]);
+
+  async function onFinish(provider: string): Promise<void> {
+    if (selectedOrganization) {
+      const body = {
+        production_key: valueProdApi,
+        sandbox_key: valueHomologApi,
+        environment,
+        provider,
+        custom_configs: {
+          organization_id: selectedOrganization.value.id,
+        },
+      };
+      try {
+        await integrationsRequest.postIntegrationsConfig(body);
+      } catch (error) {
+        console.error(error);
+        toast.error("Ocorreu um erro ao integrar com Nexaas");
+      }
+    }
+  }
 
   return (
     <>
       <SelectComponent
-        select={company}
-        onChange={setCompany}
-        options={[
-          { label: "op1", value: "op1" },
-          { label: "op2", value: "op2" },
-          { label: "op3", value: "op3" },
-          { label: "op4", value: "op4" },
-        ]}
+        select={selectedOrganization}
+        onChange={setSelectedOrganization}
+        options={organizationsList}
         placeHolder="Selecione"
         labelText="Empresa"
         required
         infoTitle="Lorem Ipsum"
         infoContent="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
       />
-      <div>
-        <LabelSwitchBox>
-          Qual ambiente você deseja integrar?<span>*</span>
-          <InfoAlert
-            title="Lorem Ipsum"
-            content="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-          />
-        </LabelSwitchBox>
-        <BoxDualSwitch>
-          <DualSwitch
-            value={environment}
-            options={dualOptions}
-            setValue={setEnvironment as any}
-          />
-        </BoxDualSwitch>
-      </div>
+
       <Anchor link="" text="Como integrar com a Nexaas" />
       <div style={{ display: "flex", gap: "16px" }}>
         <NavigationButton prev abort onClick={() => setCurrentStep(1)}>
           <PlusIcon />
           Voltar
         </NavigationButton>
-        <NavigationButton onClick={() => navigate(`${ROUTES.INTEGRATION}/oi`)}>
+        {/* <NavigationButton onClick={() => navigate(`${ROUTES.INTEGRATION}/oi`)}> */}
+        <NavigationButton onClick={() => onFinish(currentProvider.provider)}>
           <PlusIcon />
-          Continuar
+          Integrar
         </NavigationButton>
       </div>
     </>
