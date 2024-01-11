@@ -8,11 +8,11 @@ import {
 
 function HeaderIntegrationCard({
   isActive,
-  setIsActive,
+  onChange,
   thumb,
 }: {
   isActive: boolean;
-  setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
+  onChange: () => void;
   thumb: string;
 }): JSX.Element {
   return (
@@ -31,7 +31,7 @@ function HeaderIntegrationCard({
             style={{ width: "30px !important", height: "20px !important" }}
             className="customSwitch"
             checked={isActive}
-            onClick={() => setIsActive(!isActive)}
+            onClick={onChange}
           />
         </ConfigProvider>
       </SwitchContainer>

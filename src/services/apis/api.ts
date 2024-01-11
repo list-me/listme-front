@@ -26,9 +26,9 @@ api.interceptors.response.use(
     return response;
   },
   function (error) {
-    if (error.response.status === 401) {
-      window.location.replace(ROUTES.BASE);
-    }
+    // if (error.response.status === 401) {
+    //   window.location.replace(ROUTES.BASE);
+    // }
     return Promise.reject(error);
   },
 );

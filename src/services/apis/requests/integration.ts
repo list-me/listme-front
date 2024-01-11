@@ -49,4 +49,19 @@ export const integrationsRequest = {
 
     return response.data;
   },
+  patchSwitchActivation: async (id: string): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+
+    const response = await api.patch(
+      `integrations/config/${id}/switch-activation`,
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  },
 };

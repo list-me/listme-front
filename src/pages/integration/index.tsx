@@ -82,10 +82,8 @@ function Integration(): JSX.Element {
                   setCurrentProvider(item);
                   setFromToIsOpened(true);
                 }}
+                item={item}
                 isActive={item?.config?.status === "active"}
-                setIsActive={() => ""}
-                title={item.name}
-                description={item.description}
                 // thumb={item.thumbnailUrl || logoMock}
                 thumb={logoMock}
               />
