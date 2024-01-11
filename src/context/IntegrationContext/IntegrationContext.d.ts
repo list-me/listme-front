@@ -7,9 +7,9 @@ export interface IntegrationContextType {
   setValueProdApi: React.Dispatch<React.SetStateAction<string>>;
   valueHomologApi: string;
   setValueHomologApi: React.Dispatch<React.SetStateAction<string>>;
-  currentProvider: IProvider | undefined;
-  setCurrentProvider: React.Dispatch<
-    React.SetStateAction<IProvider | undefined>
-  >;
+  currentProvider: IProvider;
+  setCurrentProvider: React.Dispatch<React.SetStateAction<IProvider>>;
+  mode: "editing" | "registration";
+  setMode: React.Dispatch<React.SetStateAction<"editing" | "registration">>;
 }
 export type IEnvironment = "sandbox" | "production";

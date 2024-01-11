@@ -17,7 +17,7 @@ function StepTwo({
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
 }): JSX.Element {
   const navigate = useNavigate();
-  const { valueProdApi, valueHomologApi, environment, currentProvider } =
+  const { valueProdApi, valueHomologApi, environment, currentProvider, mode } =
     useIntegration();
   const [selectedOrganization, setSelectedOrganization] = useState<{
     label: string;
@@ -41,6 +41,17 @@ function StepTwo({
         },
       );
       setOrganizationsList(responseToState);
+
+      if (mode === "editing") {
+        const organizationId =
+          currentProvider.config.custom_configs.organization_id;
+
+        const currentOrganization = responseToState.find(
+          (item: any) => item.value.id === organizationId,
+        );
+
+        setSelectedOrganization(currentOrganization);
+      }
     } catch (error) {
       console.error(error);
       toast.error("Ocorreu um erro ao buscar a lista de integrações");
@@ -53,20 +64,39 @@ function StepTwo({
 
   async function onFinish(provider: string): Promise<void> {
     if (selectedOrganization) {
-      const body = {
+      const commonBody = {
         production_key: valueProdApi,
         sandbox_key: valueHomologApi,
         environment,
-        provider,
         custom_configs: {
           organization_id: selectedOrganization.value.id,
         },
       };
+
       try {
-        await integrationsRequest.postIntegrationsConfig(body);
+        if (mode === "registration" && selectedOrganization) {
+          const registrationBody = {
+            ...commonBody,
+            provider,
+          };
+          await integrationsRequest.postIntegrationsConfig(registrationBody);
+        } else if (selectedOrganization) {
+          const updateBody = {
+            ...commonBody,
+            status: currentProvider.config.id ? "active" : "inactive",
+          };
+          await integrationsRequest.patchIntegrationsConfig(
+            currentProvider.config.id,
+            updateBody,
+          );
+        }
       } catch (error) {
         console.error(error);
-        toast.error("Ocorreu um erro ao integrar com Nexaas");
+        const errorMessage =
+          mode === "registration"
+            ? "Ocorreu um erro ao integrar com Nexaas"
+            : "Ocorreu um erro ao atualizar integração com Nexaas";
+        toast.error(errorMessage);
       }
     }
   }

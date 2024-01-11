@@ -11,7 +11,10 @@ function IntegrationProvider({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
-  const [currentProvider, setCurrentProvider] = useState<IProvider>();
+  const [mode, setMode] = useState<"editing" | "registration">("registration");
+  const [currentProvider, setCurrentProvider] = useState<IProvider>(
+    {} as IProvider,
+  );
   const [environment, setEnvironment] = useState<IEnvironment>("production");
   const [valueProdApi, setValueProdApi] = useState(
     "7ff7f9d45c3d4c73b83cc651864edaae",
@@ -28,6 +31,8 @@ function IntegrationProvider({
     setValueHomologApi,
     currentProvider,
     setCurrentProvider,
+    mode,
+    setMode,
   };
 
   return (

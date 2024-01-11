@@ -21,7 +21,13 @@ function Integration(): JSX.Element {
   const { setFilters, defaultFilter, setFilterStatus, setConditions } =
     useFilterContext();
 
-  const { setCurrentProvider } = useIntegration();
+  const {
+    setCurrentProvider,
+    setMode,
+    setEnvironment,
+    setValueHomologApi,
+    setValueProdApi,
+  } = useIntegration();
   useEffect(() => {
     setConditions([]);
     setFilters([defaultFilter]);
@@ -74,11 +80,20 @@ function Integration(): JSX.Element {
           <CardsContainerIntegration>
             {listDataCard?.map((item) => (
               <IntegrationCard
-                // done={!!item?.config?.id}
-                done={false}
-                onClickPrimaryButtonDone={() => ""}
+                done={!!item?.config?.id}
+                onClickPrimaryButtonDone={() => {
+                  setMode("editing");
+                  setEnvironment(
+                    item.config.environment as "sandbox" | "production",
+                  );
+                  setValueHomologApi(item.config.sandbox_key);
+                  setValueProdApi(item.config.production_key);
+                  setCurrentProvider(item);
+                  setFromToIsOpened(true);
+                }}
                 onClickSecondaryButtonDone={() => ""}
                 onClickNotDone={() => {
+                  setMode("registration");
                   setCurrentProvider(item);
                   setFromToIsOpened(true);
                 }}

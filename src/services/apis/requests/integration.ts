@@ -1,6 +1,7 @@
 import { STORAGE } from "../../../constants/localStorage";
 import {
   IMenuInlineActivated,
+  IPatchPayloadIntegrationsConfig,
   IPayloadIntegrationsConfig,
 } from "../../../models/integration/integration";
 import { api } from "../api";
@@ -42,6 +43,19 @@ export const integrationsRequest = {
   ): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.post(`integrations/config`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  },
+  patchIntegrationsConfig: async (
+    id: string,
+    data: IPatchPayloadIntegrationsConfig,
+  ): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.patch(`integrations/config/${id}`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

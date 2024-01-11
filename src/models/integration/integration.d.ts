@@ -36,3 +36,12 @@ export interface IPayloadIntegrationsConfig {
     organization_id: number;
   };
 }
+export interface IPatchPayloadIntegrationsConfig {
+  production_key: string;
+  sandbox_key: string;
+  environment: string;
+  custom_configs: {
+    organization_id: number;
+  };
+  status: string;
+}
