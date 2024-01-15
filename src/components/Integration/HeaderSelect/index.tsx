@@ -22,7 +22,7 @@ function HeaderSelect({
   placeHolder: string;
   options: {
     label: string;
-    value: string;
+    value: any;
   }[];
   required: boolean;
 }): JSX.Element {

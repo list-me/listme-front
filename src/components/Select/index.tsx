@@ -21,6 +21,7 @@ const SelectComponent = ({
   infoTitle,
   infoContent,
 }: ISelect): JSX.Element => {
+  if (placeHolder === "oi") console.log("🚀 ~ options:", options);
   const DropdownWithProps = makeDropdownIndicator({ isSearchable });
 
   const CustomOptionWithProps = CustomOption(DropDownComponent);

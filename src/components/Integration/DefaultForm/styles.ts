@@ -1,20 +1,20 @@
 import styled from "styled-components";
 
 export const ContainerDefaultForm = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
   gap: 12px;
   border-top: 1px solid #eee;
   width: 100%;
 `;
 export const ColumnsDefaultForm = styled.div`
   display: flex;
-  flex-direction: column;
+`;
+export const ContainerTitlesDefaultForm = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
 `;
 export const ContentDefaultForm = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 12px;
 `;
 export const TitleColumn = styled.p`
   color: #212529;

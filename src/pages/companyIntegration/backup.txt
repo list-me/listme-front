@@ -24,14 +24,13 @@ import { integrationsRequest } from "../../services/apis/requests/integration";
 function Integration(): JSX.Element {
   const location = useLocation();
   const integrationId = location.pathname.split("/").pop();
-  console.log("🚀 ~ Integration ~ integrationId:", integrationId);
   const [headerSelectValue, setHeaderSelectValue] = useState<{
     value: string;
     label: string;
   } | null>(null);
 
   const [menuActivated, setMenuActivated] =
-    useState<IMenuActivated>("BrandConfiguration");
+    useState<IMenuActivated>("product_brands");
 
   const menus: {
     value: string;
@@ -39,7 +38,7 @@ function Integration(): JSX.Element {
     status: "incomplete" | "done" | "";
   }[] = [
     {
-      value: "BrandConfiguration",
+      value: "product_brands",
       label: "Config. de Marca",
       status: "done",
     },
@@ -85,7 +84,7 @@ function Integration(): JSX.Element {
       value: "FeatureConfiguration",
       label: "Config. de Características",
     },
-    BrandConfiguration: {
+    product_brands: {
       value: "product_categories",
       label: "Config. de Categorias",
     },
@@ -104,10 +103,7 @@ function Integration(): JSX.Element {
     try {
       const configTemplatesById =
         await integrationsRequest.listConfigTemplatesId(id);
-      console.log(
-        "🚀 ~ getConfigTemplatesById ~ configTemplatesById:",
-        configTemplatesById,
-      );
+
 
       // setListDataCard(configTemplatesList);
     } catch (error) {

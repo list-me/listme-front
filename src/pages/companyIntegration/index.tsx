@@ -15,7 +15,6 @@ import HeaderSelect from "../../components/Integration/HeaderSelect";
 import InlineMenu from "../../components/Integration/InlineMenu";
 import DualSwitch from "../../components/Integration/DualSwitch";
 import Menus from "../../utils/Integration/Menus";
-import FormIntegration from "../../components/Integration/FormIntegration";
 import { useIntegration } from "../../context/IntegrationContext";
 import {
   IFieldsByID,
@@ -27,6 +26,8 @@ import { integrationsRequest } from "../../services/apis/requests/integration";
 import { useProductContext } from "../../context/products";
 import { templateRequests } from "../../services/apis/requests/template";
 import { IPaginationTemplate } from "../templates/templates";
+import { DataField } from "../../components/CustomTable/components/HeaderDropDown/components/NewColumn/RelationForm/RelationForm";
+import DefaultForm from "../../components/Integration/DefaultForm";
 
 function Integration(): JSX.Element {
   const location = useLocation();
@@ -34,9 +35,38 @@ function Integration(): JSX.Element {
   const pathnameSize = pathnameSplited.length;
   const integrationId = pathnameSplited[pathnameSize - 1];
   const path = pathnameSplited[pathnameSize - 2] as IMenuActivated;
-
   const [templates, setTemplates] = useState();
-  console.log("🚀 ~ templates:", templates);
+
+  const [relatedTemplates, setRelatedTemplates] = useState<DataField[]>([]);
+
+  function getRelatedTemplates(id: string): void {
+    templateRequests
+      .get(id)
+      .then((response) => {
+        const relations = response.fields.fields
+          .filter((fItem: any) => {
+            const idOptions = fItem.options
+              .filter((oItem: any) => {
+                return oItem.templateId;
+              })
+              .map((mItem: any) => {
+                return mItem.templateId;
+              });
+            if (idOptions.length > 0) {
+              const notInitialId = !idOptions.includes(id);
+              return notInitialId && fItem.type === "relation";
+            }
+          })
+          .map((mItem: any) => {
+            return { label: mItem.title, value: mItem };
+          });
+        setRelatedTemplates(relations);
+      })
+      .catch((error) => {
+        toast.error("Ocorreu um erro ao listar os catálogos relacionados");
+        console.error(error);
+      });
+  }
 
   const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
     templateRequests
@@ -64,10 +94,7 @@ function Integration(): JSX.Element {
   const currentField = templatesById?.payloads?.fields.find((item) => {
     return item.endpointPath === `/${path}`;
   });
-  // const [headerSelectValue, setHeaderSelectValue] = useState<{
-  //   value: string;
-  //   label: string;
-  // } | null>(null);
+  const [headerSelectValue, setHeaderSelectValue] = useState(null);
 
   const [menuActivated, setMenuActivated] = useState<IMenuActivated>(path);
 
@@ -77,7 +104,7 @@ function Integration(): JSX.Element {
     status: "incomplete" | "done" | "";
   }[] = [
     {
-      value: "BrandConfiguration",
+      value: "product_brands",
       label: "Config. de Marca",
       status: "done",
     },
@@ -123,7 +150,7 @@ function Integration(): JSX.Element {
   //     value: "FeatureConfiguration",
   //     label: "Config. de Características",
   //   },
-  //   BrandConfiguration: {
+  //   product_brands: {
   //     value: "product_categories",
   //     label: "Config. de Categorias",
   //   },
@@ -177,17 +204,27 @@ function Integration(): JSX.Element {
                 menuActivated={menuActivated}
                 setMenuActivated={setMenuActivated}
               />
-              <HeaderSelect
-                headerSelectValue={null}
-                setHeaderSelectValue={() => ""}
-                label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
-                placeHolder="Selecione"
-                options={templates as any}
-                required
-              />
+              {templates && (
+                <HeaderSelect
+                  headerSelectValue={headerSelectValue}
+                  setHeaderSelectValue={(e: any) => {
+                    getRelatedTemplates(e.value.id);
+                    setHeaderSelectValue(e);
+                  }}
+                  label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
+                  placeHolder="Selecione"
+                  options={templates as any}
+                  required
+                />
+              )}
               {currentField?.id && (
-                <FormIntegration
-                  data={currentField as unknown as IFieldsByID}
+                <DefaultForm
+                  leftColumnName="Propriedades de payloads Nexaas"
+                  centerColumnName="Catálogo ListMe"
+                  rightColumnName="Campo ListMe"
+                  dataForm={currentField}
+                  optionsColLeft={relatedTemplates}
+                  allTemplates={templates as any}
                 />
               )}
               {/* <IntegrationNavigate
