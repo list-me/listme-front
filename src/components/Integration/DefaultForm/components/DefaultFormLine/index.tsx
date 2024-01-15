@@ -81,6 +81,10 @@ function DefaultFormLine({
     }
   }, [valueColLeft?.value?.id]);
 
+  const optionsToView = fieldsToOptions.filter((fItem) => {
+    return item.types.includes(fItem.value.type);
+  });
+
   return (
     <ContainerDefaultFormLine>
       <KeyText>
@@ -102,7 +106,7 @@ function DefaultFormLine({
           changePayloadToFinish(valueColLeft, e, index);
           setSecondValueSelected(e);
         }}
-        options={fieldsToOptions}
+        options={optionsToView}
         placeHolder="Selecione..."
         small
         isDisabled={!valueColLeft}
