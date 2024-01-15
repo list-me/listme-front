@@ -13,24 +13,15 @@ import { ReactComponent as ClearIcon } from "../../../assets/clear.svg";
 import { ROUTES } from "../../../constants/routes";
 
 function IntegrationNavigate({
-  nextMenu,
-  setNextMenu,
   external,
+  toClear,
 }: {
-  nextMenu: {
-    value: string;
-    label: string;
-  } | null;
-  setNextMenu: React.Dispatch<React.SetStateAction<string>>;
   external: boolean;
+  toClear: () => void;
 }): JSX.Element {
-  const location = useLocation();
-  const pathnameSplited = location.pathname.split("/");
-  const pathnameSize = pathnameSplited.length;
-
   return (
     <ContainerIntegrationNavigate external={external}>
-      <ClearButtonIntegration>
+      <ClearButtonIntegration onClick={toClear}>
         <ClearIcon />
         Limpar configurações de Características
       </ClearButtonIntegration>

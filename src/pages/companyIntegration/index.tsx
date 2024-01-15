@@ -28,6 +28,7 @@ import DefaultForm from "../../components/Integration/DefaultForm";
 import nextMenu from "./utils/nextMenu";
 import { NextButton } from "../../components/Integration/IntegrationNavigate/styles";
 import { ROUTES } from "../../constants/routes";
+import menus from "./utils/menus";
 
 function Integration(): JSX.Element {
   const location = useLocation();
@@ -68,38 +69,6 @@ function Integration(): JSX.Element {
 
   const [menuActivated, setMenuActivated] = useState<string>(path);
 
-  const menus: {
-    value: string;
-    label: string;
-    status: "incomplete" | "done" | "";
-  }[] = [
-    {
-      value: "product_brands",
-      label: "Config. de Marca",
-      status: "done",
-    },
-    {
-      value: "product_categories",
-      label: "Config. de Categorias",
-      status: "incomplete",
-    },
-    {
-      value: "product_features",
-      label: "Config. de Características",
-      status: "incomplete",
-    },
-    {
-      value: "ProductConfiguration",
-      label: "Config. de Produtos",
-      status: "incomplete",
-    },
-    {
-      value: "SKUConfiguration",
-      label: "Config. de SKU",
-      status: "incomplete",
-    },
-  ];
-
   const { environment, setEnvironment } = useIntegration();
 
   const dualOptions = [
@@ -128,6 +97,10 @@ function Integration(): JSX.Element {
   useEffect(() => {
     setHeaderSelectValue(null);
   }, [menuActivated]);
+
+  const toClear = (): void => {
+    setHeaderSelectValue(null);
+  };
 
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
@@ -172,11 +145,7 @@ function Integration(): JSX.Element {
                   valueColLeft={headerSelectValue}
                 />
               )}
-              <IntegrationNavigate
-                external={false}
-                nextMenu={nextMenu[menuActivated]}
-                setNextMenu={setMenuActivated}
-              />
+              <IntegrationNavigate external={false} toClear={toClear} />
             </ContainerIntegration>
             {nextMenu !== null && (
               <NextButton
