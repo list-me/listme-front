@@ -20,6 +20,8 @@ import { ContainerDefaultFormLine } from "./styles";
 function DefaultFormLine({
   item,
   valueColLeft,
+  changePayloadToFinish,
+  index,
 }: {
   item: {
     id: string;
@@ -29,6 +31,12 @@ function DefaultFormLine({
     required: boolean;
   };
   valueColLeft: any;
+  changePayloadToFinish: (
+    valueLeft: any,
+    valueRight: any,
+    index: number,
+  ) => void;
+  index: number;
 }): JSX.Element {
   const covertCast: { [key: string]: any } = {
     string: "text",
@@ -83,7 +91,7 @@ function DefaultFormLine({
       <SelectComponent
         select={valueColLeft || null}
         options={[]}
-        placeHolder=""
+        placeHolder="Selecione..."
         small
         isDisabled
         onChange={() => ""}
@@ -91,11 +99,13 @@ function DefaultFormLine({
       <SelectComponent
         select={secondValueSelected}
         onChange={(e) => {
+          changePayloadToFinish(valueColLeft, e, index);
           setSecondValueSelected(e);
         }}
         options={fieldsToOptions}
-        placeHolder=""
+        placeHolder="Selecione..."
         small
+        isDisabled={!valueColLeft}
       />
     </ContainerDefaultFormLine>
   );

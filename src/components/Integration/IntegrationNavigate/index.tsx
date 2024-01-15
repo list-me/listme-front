@@ -10,14 +10,17 @@ import {
 import { NavigationButton } from "../../NavigationButton/styles";
 
 import { ReactComponent as ClearIcon } from "../../../assets/clear.svg";
-import { ROUTES } from "../../../constants/routes";
 
 function IntegrationNavigate({
   external,
   toClear,
+  onSave,
+  isDisabled,
 }: {
   external: boolean;
   toClear: () => void;
+  onSave: () => void;
+  isDisabled: boolean;
 }): JSX.Element {
   return (
     <ContainerIntegrationNavigate external={external}>
@@ -26,8 +29,11 @@ function IntegrationNavigate({
         Limpar configurações de Características
       </ClearButtonIntegration>
       <RightButtons>
+        {/* colocar botao de testar */}
         <SaveButton>
-          <NavigationButton>Salvar</NavigationButton>
+          <NavigationButton onClick={onSave} disabled={isDisabled}>
+            Salvar
+          </NavigationButton>
         </SaveButton>
       </RightButtons>
     </ContainerIntegrationNavigate>

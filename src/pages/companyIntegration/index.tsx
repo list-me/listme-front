@@ -16,13 +16,11 @@ import InlineMenu from "../../components/Integration/InlineMenu";
 import DualSwitch from "../../components/Integration/DualSwitch";
 import Menus from "../../utils/Integration/Menus";
 import { useIntegration } from "../../context/IntegrationContext";
-import { IFieldsByID, ITemplatesById } from "./companyIntegration";
+import { ITemplatesById } from "./companyIntegration";
 import IntegrationNavigate from "../../components/Integration/IntegrationNavigate";
 import { integrationsRequest } from "../../services/apis/requests/integration";
-import { useProductContext } from "../../context/products";
 import { templateRequests } from "../../services/apis/requests/template";
 import { IPaginationTemplate } from "../templates/templates";
-import { DataField } from "../../components/CustomTable/components/HeaderDropDown/components/NewColumn/RelationForm/RelationForm";
 import { ReactComponent as RightArrowIcon } from "../../assets/right-arrow-small.svg";
 import DefaultForm from "../../components/Integration/DefaultForm";
 import nextMenu from "./utils/nextMenu";
@@ -65,6 +63,17 @@ function Integration(): JSX.Element {
   const currentField = templatesById?.payloads?.fields.find((item) => {
     return item.endpointPath === `/${path}`;
   });
+  const payloadToFinish = Array.from(
+    { length: (currentField as any)?.payload?.length || 0 },
+    () => ({
+      templateConfigPayloadId: "",
+      type: "",
+      value: {
+        templateId: "",
+        fieldId: "",
+      },
+    }),
+  );
   const [headerSelectValue, setHeaderSelectValue] = useState(null);
 
   const [menuActivated, setMenuActivated] = useState<string>(path);
@@ -100,6 +109,60 @@ function Integration(): JSX.Element {
 
   const toClear = (): void => {
     setHeaderSelectValue(null);
+  };
+
+  const onFinish = async (): Promise<void> => {
+    const templateConfigEntityId = currentField?.id;
+    const templateTriggerId = (headerSelectValue as any).value.id;
+    const templateConfigId = integrationId;
+    if (!currentField?.id) {
+      return;
+    }
+    // eslint-disable-next-line array-callback-return, consistent-return
+    const idsRequired = currentField?.payload
+      .map((mItem, index) => {
+        if (mItem.required) {
+          return index;
+        }
+        return null;
+      })
+      .filter((elem) => {
+        return typeof elem === "number";
+      });
+
+    if (idsRequired?.length === 0) {
+      return;
+    }
+
+    const notDone = payloadToFinish.find((item, index) => {
+      if (idsRequired.includes(index)) {
+        if (!item.value.fieldId) return item;
+      }
+    });
+    // eslint-disable-next-line no-useless-return
+    if (notDone) {
+      toast.warn("Algum campo obrigatório não esta preenchido.");
+      return;
+    }
+
+    const body = {
+      fields: {
+        templateConfigId,
+        entity: {
+          templateConfigEntityId,
+          templateTriggerId,
+          payloads: [...payloadToFinish],
+        },
+      },
+      type: "integration",
+    };
+    try {
+      await templateRequests.postIntegration(body);
+      toast.success("Template criado com sucesso");
+    } catch (err) {
+      console.log(err);
+      toast.error("Ocorreu um erro ao criar o template");
+    }
   };
 
   return (
@@ -143,9 +206,15 @@ function Integration(): JSX.Element {
                   rightColumnName="Campo ListMe"
                   dataForm={currentField}
                   valueColLeft={headerSelectValue}
+                  payloadToFinish={payloadToFinish}
                 />
               )}
-              <IntegrationNavigate external={false} toClear={toClear} />
+              <IntegrationNavigate
+                external={false}
+                toClear={toClear}
+                onSave={onFinish}
+                isDisabled={!headerSelectValue}
+              />
             </ContainerIntegration>
             {nextMenu !== null && (
               <NextButton
@@ -160,22 +229,6 @@ function Integration(): JSX.Element {
                 <RightArrowIcon />
               </NextButton>
             )}
-            {/* <ContainerIntegration> */}
-            {/* <HeaderSelect
-                headerSelectValue={headerSelectValue}
-                setHeaderSelectValue={setHeaderSelectValue}
-                label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
-                placeHolder="Selecione"
-                options={headerOptions}
-                required
-              /> */}
-            {/* <FormIntegration menuActivated={menuActivated} /> */}
-            {/* </ContainerIntegration> */}
-            {/* <IntegrationNavigate
-              external
-              nextMenu={nextMenu[menuActivated]}
-              setNextMenu={setMenuActivated}
-            /> */}
           </BoxesIntegration>
         </ContentIntegration>
       </ContainerContent>
