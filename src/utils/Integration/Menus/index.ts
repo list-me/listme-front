@@ -4,7 +4,7 @@ interface IMenus {
 export default {
   product_brands: "Marcas",
   product_categories: "Categorias",
-  FeatureConfiguration: "Características",
+  product_features: "Características",
   ProductConfiguration: "Produtos",
   SKUConfiguration: "SKU",
 } as IMenus;

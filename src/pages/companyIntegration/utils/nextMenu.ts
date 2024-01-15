@@ -4,7 +4,7 @@ interface INextMenu {
 
 export default {
   product_categories: {
-    value: "FeatureConfiguration",
+    value: "product_features",
     label: "Config. de Características",
   },
   product_brands: {
@@ -15,7 +15,7 @@ export default {
     value: "SKUConfiguration",
     label: "Config. de SKU",
   },
-  FeatureConfiguration: {
+  product_features: {
     value: "ProductConfiguration",
     label: "Config. de Produtos",
   },

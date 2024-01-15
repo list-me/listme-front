@@ -19,9 +19,6 @@ import { ContainerDefaultFormLine } from "./styles";
 
 function DefaultFormLine({
   item,
-  changeForm,
-  indexItem,
-  formToFinish,
   valueColLeft,
 }: {
   item: {
@@ -31,12 +28,8 @@ function DefaultFormLine({
     types: any;
     required: boolean;
   };
-  changeForm: (e: any, index: number, localValue: string) => void;
-  indexItem: number;
-  formToFinish: { firstValue: any; secondValue: any }[];
   valueColLeft: any;
 }): JSX.Element {
-  console.log("🚀 ~ valueColLeft:", valueColLeft);
   const covertCast: { [key: string]: any } = {
     string: "text",
   };
@@ -56,16 +49,15 @@ function DefaultFormLine({
   };
 
   const [fieldsToOptions, setFieldsToOptions] = useState<DataField[]>([]);
+  const [secondValueSelected, setSecondValueSelected] = useState(null);
 
   function getCols(id: string): void {
     templateRequests
       .get(id)
       .then((response) => {
-        // ver tipagem depois
         const fieldsMap = response.fields.fields.map((mItem: any) => {
           return { label: mItem.title, value: mItem };
         });
-        console.log("veio");
         setFieldsToOptions(fieldsMap);
       })
       .catch((error) => {
@@ -73,6 +65,13 @@ function DefaultFormLine({
         console.error(error);
       });
   }
+
+  useEffect(() => {
+    setSecondValueSelected(null);
+    if (valueColLeft?.value?.id) {
+      getCols(valueColLeft?.value?.id);
+    }
+  }, [valueColLeft?.value?.id]);
 
   return (
     <ContainerDefaultFormLine>
@@ -83,19 +82,16 @@ function DefaultFormLine({
       </KeyText>
       <SelectComponent
         select={valueColLeft || null}
-        onChange={(e) => {
-          getCols(e.value.options[0].templateId);
-          changeForm(e, indexItem, "first");
-        }}
         options={[]}
         placeHolder=""
         small
         isDisabled
+        onChange={() => ""}
       />
       <SelectComponent
-        select={formToFinish[indexItem].secondValue || null}
+        select={secondValueSelected}
         onChange={(e) => {
-          changeForm(e, indexItem, "second");
+          setSecondValueSelected(e);
         }}
         options={fieldsToOptions}
         placeHolder=""

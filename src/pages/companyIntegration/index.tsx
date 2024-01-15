@@ -80,7 +80,7 @@ function Integration(): JSX.Element {
       status: "incomplete",
     },
     {
-      value: "FeatureConfiguration",
+      value: "product_features",
       label: "Config. de Características",
       status: "incomplete",
     },
@@ -107,6 +107,10 @@ function Integration(): JSX.Element {
     try {
       const configTemplatesById =
         await integrationsRequest.listConfigTemplatesId(id);
+      console.log(
+        "🚀 ~ getCo nfigTemplatesById ~ configTemplatesById:",
+        configTemplatesById,
+      );
 
       setTemplatesById(configTemplatesById);
     } catch (error) {
@@ -120,6 +124,10 @@ function Integration(): JSX.Element {
       getConfigTemplatesById(integrationId);
     }
   }, [integrationId]);
+
+  useEffect(() => {
+    setHeaderSelectValue(null);
+  }, [menuActivated]);
 
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
