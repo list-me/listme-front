@@ -21,9 +21,8 @@ function DefaultFormLine({
   item,
   changeForm,
   indexItem,
-  optionsColLeft,
   formToFinish,
-  allTemplates,
+  valueColLeft,
 }: {
   item: {
     id: string;
@@ -34,13 +33,10 @@ function DefaultFormLine({
   };
   changeForm: (e: any, index: number, localValue: string) => void;
   indexItem: number;
-  optionsColLeft: DataField[];
   formToFinish: { firstValue: any; secondValue: any }[];
-  allTemplates: {
-    label: string;
-    value: any;
-  }[];
+  valueColLeft: any;
 }): JSX.Element {
+  console.log("🚀 ~ valueColLeft:", valueColLeft);
   const covertCast: { [key: string]: any } = {
     string: "text",
   };
@@ -60,9 +56,6 @@ function DefaultFormLine({
   };
 
   const [fieldsToOptions, setFieldsToOptions] = useState<DataField[]>([]);
-  useEffect(() => {
-    console.log("🚀 ~ fieldsToOptions:", fieldsToOptions);
-  }, [fieldsToOptions]);
 
   function getCols(id: string): void {
     templateRequests
@@ -89,14 +82,15 @@ function DefaultFormLine({
         {item.required && <span className="required">*</span>}
       </KeyText>
       <SelectComponent
-        select={formToFinish[indexItem].firstValue || null}
+        select={valueColLeft || null}
         onChange={(e) => {
           getCols(e.value.options[0].templateId);
           changeForm(e, indexItem, "first");
         }}
-        options={optionsColLeft}
+        options={[]}
         placeHolder=""
         small
+        isDisabled
       />
       <SelectComponent
         select={formToFinish[indexItem].secondValue || null}

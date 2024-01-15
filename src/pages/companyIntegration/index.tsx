@@ -34,37 +34,6 @@ function Integration(): JSX.Element {
   const path = pathnameSplited[pathnameSize - 2];
   const [templates, setTemplates] = useState();
 
-  const [relatedTemplates, setRelatedTemplates] = useState<DataField[]>([]);
-
-  function getRelatedTemplates(id: string): void {
-    templateRequests
-      .get(id)
-      .then((response) => {
-        const relations = response.fields.fields
-          .filter((fItem: any) => {
-            const idOptions = fItem.options
-              .filter((oItem: any) => {
-                return oItem.templateId;
-              })
-              .map((mItem: any) => {
-                return mItem.templateId;
-              });
-            if (idOptions.length > 0) {
-              const notInitialId = !idOptions.includes(id);
-              return notInitialId && fItem.type === "relation";
-            }
-          })
-          .map((mItem: any) => {
-            return { label: mItem.title, value: mItem };
-          });
-        setRelatedTemplates(relations);
-      })
-      .catch((error) => {
-        toast.error("Ocorreu um erro ao listar os catálogos relacionados");
-        console.error(error);
-      });
-  }
-
   const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
     templateRequests
       .list({ limit, page })
@@ -178,7 +147,6 @@ function Integration(): JSX.Element {
                 <HeaderSelect
                   headerSelectValue={headerSelectValue}
                   setHeaderSelectValue={(e: any) => {
-                    getRelatedTemplates(e.value.id);
                     setHeaderSelectValue(e);
                   }}
                   label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
@@ -193,8 +161,7 @@ function Integration(): JSX.Element {
                   centerColumnName="Catálogo ListMe"
                   rightColumnName="Campo ListMe"
                   dataForm={currentField}
-                  optionsColLeft={relatedTemplates}
-                  allTemplates={templates as any}
+                  valueColLeft={headerSelectValue}
                 />
               )}
               <IntegrationNavigate

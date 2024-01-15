@@ -20,6 +20,7 @@ const SelectComponent = ({
   required,
   infoTitle,
   infoContent,
+  isDisabled,
 }: ISelect): JSX.Element => {
   if (placeHolder === "oi") console.log("🚀 ~ options:", options);
   const DropdownWithProps = makeDropdownIndicator({ isSearchable });
@@ -45,6 +46,7 @@ const SelectComponent = ({
       )}
       {fixedOptions ? (
         <Select
+          isDisabled={isDisabled}
           className="react-select"
           isSearchable={isSearchable}
           value={select}
@@ -70,6 +72,7 @@ const SelectComponent = ({
         />
       ) : (
         <Select
+          isDisabled={isDisabled}
           isSearchable={false}
           value={select}
           onChange={(selectedOption) => onChange(selectedOption as string)}

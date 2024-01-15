@@ -29,7 +29,7 @@ export const LabelSelect = styled.label`
 `;
 
 export const customStyles = ({ small }: { small?: boolean }): Styles => ({
-  control: (provided: any) => ({
+  control: (provided: any, state: any) => ({
     ...provided,
     backgroundColor: "none",
     height: small ? "48px" : "64px",
@@ -39,8 +39,9 @@ export const customStyles = ({ small }: { small?: boolean }): Styles => ({
       borderColor: "#D1D6DC",
     },
     boxShadow: "none",
-    cursor: "pointer",
     position: "relative",
+    cursor: state.isDisabled ? "not-allowed" : "pointer",
+    opacity: state.isDisabled ? 0.5 : 1,
   }),
   singleValue: (provided: any) => ({
     ...provided,

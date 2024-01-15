@@ -16,18 +16,13 @@ function DefaultForm({
   centerColumnName,
   rightColumnName,
   dataForm,
-  optionsColLeft,
-  allTemplates,
+  valueColLeft,
 }: {
   leftColumnName: string;
   centerColumnName: string;
   rightColumnName: string;
   dataForm: IFieldsByID;
-  optionsColLeft: DataField[];
-  allTemplates: {
-    label: string;
-    value: any;
-  }[];
+  valueColLeft: any;
 }): JSX.Element {
   const arrayColumns = [leftColumnName, centerColumnName, rightColumnName];
   const { payload } = dataForm;
@@ -68,8 +63,7 @@ function DefaultForm({
             indexItem={indexItem}
             item={item}
             changeForm={changeForm}
-            optionsColLeft={optionsColLeft}
-            allTemplates={allTemplates}
+            valueColLeft={valueColLeft}
           />
         ))}
       </ContentDefaultForm>
