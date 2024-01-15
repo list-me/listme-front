@@ -79,6 +79,12 @@ function Integration(): JSX.Element {
 
   const [menuActivated, setMenuActivated] = useState<string>(path);
 
+  const menusToUpdate = [...currentMenus];
+  const indexMenu = menusToUpdate.findIndex((elem) => {
+    return elem.value === `${menuActivated}`;
+  });
+  const done = menusToUpdate[indexMenu].status;
+
   const { environment, setEnvironment } = useIntegration();
 
   const dualOptions = [
@@ -113,12 +119,8 @@ function Integration(): JSX.Element {
   };
 
   const updateDone = (): void => {
-    const menusToUpdate = [...currentMenus];
-    const index = menusToUpdate.findIndex((elem) => {
-      return elem.value === `${menuActivated}`;
-    });
-    if (index !== -1) {
-      menusToUpdate[index].status = "done";
+    if (indexMenu !== -1) {
+      menusToUpdate[indexMenu].status = "done";
       setCurrentMenus(menusToUpdate);
     }
   };
@@ -226,7 +228,7 @@ function Integration(): JSX.Element {
                 external={false}
                 toClear={toClear}
                 onSave={onFinish}
-                isDisabled={!headerSelectValue}
+                isDisabled={!headerSelectValue || done === "done"}
               />
             </ContainerIntegration>
             {nextMenu !== null && (
