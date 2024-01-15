@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ContainerInlineMenu, ItemInlineMenu } from "./styles";
 import { ReactComponent as IncompleteIcon } from "../../../assets/incompleteIcon.svg";
@@ -17,6 +17,12 @@ function InlineMenu({
   integrationId: string | null;
 }): JSX.Element {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (integrationId && menuActivated) {
+      navigate(`${ROUTES.INTEGRATION}/${menuActivated}/${integrationId}`);
+    }
+  }, [integrationId, menuActivated, navigate]);
   return (
     <ContainerInlineMenu>
       {menus.map((menu) => (
@@ -25,11 +31,6 @@ function InlineMenu({
           isActivated={menu.value === menuActivated}
           onClick={() => {
             setMenuActivated(menu.value);
-            if (menuActivated && integrationId) {
-              navigate(
-                `${ROUTES.INTEGRATION}/${menuActivated}/${integrationId}`,
-              );
-            }
           }}
         >
           {menu.status === "incomplete" && <IncompleteIcon />}

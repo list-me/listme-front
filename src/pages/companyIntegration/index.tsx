@@ -107,10 +107,6 @@ function Integration(): JSX.Element {
     try {
       const configTemplatesById =
         await integrationsRequest.listConfigTemplatesId(id);
-      console.log(
-        "🚀 ~ getCo nfigTemplatesById ~ configTemplatesById:",
-        configTemplatesById,
-      );
 
       setTemplatesById(configTemplatesById);
     } catch (error) {
