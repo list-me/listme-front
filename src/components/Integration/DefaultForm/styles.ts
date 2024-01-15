@@ -15,6 +15,8 @@ export const ContainerTitlesDefaultForm = styled.div`
 `;
 export const ContentDefaultForm = styled.div`
   display: flex;
+  flex-direction: column;
+  gap: 12px;
 `;
 export const TitleColumn = styled.p`
   color: #212529;

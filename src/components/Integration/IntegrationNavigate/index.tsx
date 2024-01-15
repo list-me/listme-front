@@ -9,7 +9,6 @@ import {
 } from "./styles";
 import { NavigationButton } from "../../NavigationButton/styles";
 
-import { ReactComponent as RightArrowIcon } from "../../../assets/right-arrow-small.svg";
 import { ReactComponent as ClearIcon } from "../../../assets/clear.svg";
 import { ROUTES } from "../../../constants/routes";
 
@@ -28,8 +27,6 @@ function IntegrationNavigate({
   const location = useLocation();
   const pathnameSplited = location.pathname.split("/");
   const pathnameSize = pathnameSplited.length;
-  const integrationId = pathnameSplited[pathnameSize - 1];
-  const navigate = useNavigate();
 
   return (
     <ContainerIntegrationNavigate external={external}>
@@ -38,19 +35,6 @@ function IntegrationNavigate({
         Limpar configurações de Características
       </ClearButtonIntegration>
       <RightButtons>
-        {nextMenu !== null && (
-          <NextButton
-            onClick={() => {
-              setNextMenu(nextMenu.value);
-              navigate(
-                `${ROUTES.INTEGRATION}/${nextMenu.value}/${integrationId}`,
-              );
-            }}
-          >
-            {nextMenu.label}
-            <RightArrowIcon />
-          </NextButton>
-        )}
         <SaveButton>
           <NavigationButton>Salvar</NavigationButton>
         </SaveButton>

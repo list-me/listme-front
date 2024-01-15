@@ -23,8 +23,11 @@ import { useProductContext } from "../../context/products";
 import { templateRequests } from "../../services/apis/requests/template";
 import { IPaginationTemplate } from "../templates/templates";
 import { DataField } from "../../components/CustomTable/components/HeaderDropDown/components/NewColumn/RelationForm/RelationForm";
+import { ReactComponent as RightArrowIcon } from "../../assets/right-arrow-small.svg";
 import DefaultForm from "../../components/Integration/DefaultForm";
 import nextMenu from "./utils/nextMenu";
+import { NextButton } from "../../components/Integration/IntegrationNavigate/styles";
+import { ROUTES } from "../../constants/routes";
 
 function Integration(): JSX.Element {
   const location = useLocation();
@@ -32,6 +35,7 @@ function Integration(): JSX.Element {
   const pathnameSize = pathnameSplited.length;
   const integrationId = pathnameSplited[pathnameSize - 1];
   const path = pathnameSplited[pathnameSize - 2];
+  const navigate = useNavigate();
   const [templates, setTemplates] = useState();
 
   const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
@@ -174,6 +178,19 @@ function Integration(): JSX.Element {
                 setNextMenu={setMenuActivated}
               />
             </ContainerIntegration>
+            {nextMenu !== null && (
+              <NextButton
+                onClick={() => {
+                  setMenuActivated((nextMenu[menuActivated] as any).value);
+                  navigate(
+                    `${ROUTES.INTEGRATION}/${nextMenu.value}/${integrationId}`,
+                  );
+                }}
+              >
+                {(nextMenu[menuActivated] as any).label}
+                <RightArrowIcon />
+              </NextButton>
+            )}
             {/* <ContainerIntegration> */}
             {/* <HeaderSelect
                 headerSelectValue={headerSelectValue}

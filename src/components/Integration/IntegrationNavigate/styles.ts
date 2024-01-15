@@ -24,6 +24,7 @@ export const RightButtons = styled.div`
 export const NextButton = styled.button`
   padding: 12px 24px;
   color: #3818d9;
+  align-self: flex-end;
   font-size: 14px;
   font-weight: 700;
   display: flex;
