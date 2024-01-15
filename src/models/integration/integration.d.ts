@@ -21,7 +21,7 @@ export type IDataCardList = IProvider[];
 export interface IMenuToInlineMenu {
   value: string;
   label: string;
-  status: "incomplete" | "done" | "";
+  status: "undone" | "done" | "";
 }
 export type IMenuToInlineMenuList = IMenuToInlineMenu[];
 

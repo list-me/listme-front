@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ContainerInlineMenu, ItemInlineMenu } from "./styles";
-import { ReactComponent as IncompleteIcon } from "../../../assets/incompleteIcon.svg";
+import { ReactComponent as UndoneIcon } from "../../../assets/undoneIcon.svg";
 import { ReactComponent as DoneIcon } from "../../../assets/doneIcon.svg";
 import { ROUTES } from "../../../constants/routes";
 
@@ -11,7 +11,7 @@ function InlineMenu({
   setMenuActivated,
   integrationId,
 }: {
-  menus: { value: string; label: string; status: "incomplete" | "done" | "" }[];
+  menus: { value: string; label: string; status: "undone" | "done" | "" }[];
   menuActivated: string;
   setMenuActivated: React.Dispatch<React.SetStateAction<any>>;
   integrationId: string | null;
@@ -33,7 +33,7 @@ function InlineMenu({
             setMenuActivated(menu.value);
           }}
         >
-          {menu.status === "incomplete" && <IncompleteIcon />}
+          {menu.status === "undone" && <UndoneIcon />}
           {menu.status === "done" && <DoneIcon />}
           {menu.label}
         </ItemInlineMenu>

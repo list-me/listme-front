@@ -11,5 +11,19 @@ export interface IntegrationContextType {
   setCurrentProvider: React.Dispatch<React.SetStateAction<IProvider>>;
   mode: "editing" | "registration";
   setMode: React.Dispatch<React.SetStateAction<"editing" | "registration">>;
+  currentMenus: {
+    value: string;
+    label: string;
+    status: "" | "undone" | "done";
+  }[];
+  setCurrentMenus: React.Dispatch<
+    React.SetStateAction<
+      {
+        value: string;
+        label: string;
+        status: "" | "undone" | "done";
+      }[]
+    >
+  >;
 }
 export type IEnvironment = "sandbox" | "production";

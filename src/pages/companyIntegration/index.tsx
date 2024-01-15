@@ -26,9 +26,10 @@ import DefaultForm from "../../components/Integration/DefaultForm";
 import nextMenu from "./utils/nextMenu";
 import { NextButton } from "../../components/Integration/IntegrationNavigate/styles";
 import { ROUTES } from "../../constants/routes";
-import menus from "./utils/menus";
 
 function Integration(): JSX.Element {
+  const { currentMenus, setCurrentMenus } = useIntegration();
+
   const location = useLocation();
   const pathnameSplited = location.pathname.split("/");
   const pathnameSize = pathnameSplited.length;
@@ -111,6 +112,17 @@ function Integration(): JSX.Element {
     setHeaderSelectValue(null);
   };
 
+  const updateDone = (): void => {
+    const menusToUpdate = [...currentMenus];
+    const index = menusToUpdate.findIndex((elem) => {
+      return elem.value === `${menuActivated}`;
+    });
+    if (index !== -1) {
+      menusToUpdate[index].status = "done";
+      setCurrentMenus(menusToUpdate);
+    }
+  };
+
   const onFinish = async (): Promise<void> => {
     const templateConfigEntityId = currentField?.id;
     const templateTriggerId = (headerSelectValue as any).value.id;
@@ -159,6 +171,7 @@ function Integration(): JSX.Element {
     try {
       await templateRequests.postIntegration(body);
       toast.success("Template criado com sucesso");
+      updateDone();
     } catch (err) {
       console.log(err);
       toast.error("Ocorreu um erro ao criar o template");
@@ -182,7 +195,7 @@ function Integration(): JSX.Element {
           <BoxesIntegration>
             <ContainerIntegration>
               <InlineMenu
-                menus={menus}
+                menus={currentMenus}
                 menuActivated={menuActivated}
                 setMenuActivated={setMenuActivated}
                 integrationId={integrationId}

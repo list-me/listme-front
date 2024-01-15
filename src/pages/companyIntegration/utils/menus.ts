@@ -1,32 +1,32 @@
 const menus: {
   value: string;
   label: string;
-  status: "incomplete" | "done" | "";
+  status: "undone" | "done" | "";
 }[] = [
   {
     value: "product_brands",
     label: "Config. de Marca",
-    status: "done",
+    status: "undone",
   },
   {
     value: "product_categories",
     label: "Config. de Categorias",
-    status: "incomplete",
+    status: "undone",
   },
   {
     value: "product_features",
     label: "Config. de Características",
-    status: "incomplete",
+    status: "undone",
   },
   {
     value: "ProductConfiguration",
     label: "Config. de Produtos",
-    status: "incomplete",
+    status: "undone",
   },
   {
     value: "SKUConfiguration",
     label: "Config. de SKU",
-    status: "incomplete",
+    status: "undone",
   },
 ];
 

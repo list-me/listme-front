@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { IEnvironment, IntegrationContextType } from "./IntegrationContext";
 import { IProvider } from "../../models/integration/integration";
+import menus from "../../pages/companyIntegration/utils/menus";
 
 const IntegrationContext = createContext<IntegrationContextType | undefined>(
   undefined,
@@ -22,6 +23,8 @@ function IntegrationProvider({
   const [valueHomologApi, setValueHomologApi] = useState(
     "7ff7f9d45c3d4c73b83cc651864edaae",
   );
+
+  const [currentMenus, setCurrentMenus] = useState(menus);
   const value = {
     environment,
     setEnvironment,
@@ -33,6 +36,8 @@ function IntegrationProvider({
     setCurrentProvider,
     mode,
     setMode,
+    currentMenus,
+    setCurrentMenus,
   };
 
   return (
