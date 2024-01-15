@@ -10,12 +10,14 @@ import { ROUTES } from "../../../../../constants/routes";
 import { integrationsRequest } from "../../../../../services/apis/requests/integration";
 import { useIntegration } from "../../../../../context/IntegrationContext";
 import { IOrganization } from "./StepTwo";
+import { Loading } from "../../../../Loading";
 
 function StepTwo({
   setCurrentStep,
 }: {
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
 }): JSX.Element {
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { valueProdApi, valueHomologApi, environment, currentProvider, mode } =
     useIntegration();
@@ -29,6 +31,7 @@ function StepTwo({
   );
 
   const getConfigTemplatesList = useCallback(async () => {
+    setIsLoading(true);
     const currentApiKey =
       environment === "production" ? valueProdApi : valueHomologApi;
     try {
@@ -55,6 +58,8 @@ function StepTwo({
     } catch (error) {
       console.error(error);
       toast.error("Ocorreu um erro ao buscar a lista de integrações");
+    } finally {
+      setIsLoading(false);
     }
   }, [
     currentProvider.config.custom_configs.organization_id,
@@ -112,16 +117,20 @@ function StepTwo({
 
   return (
     <>
-      <SelectComponent
-        select={selectedOrganization}
-        onChange={setSelectedOrganization}
-        options={organizationsList}
-        placeHolder="Selecione"
-        labelText="Empresa"
-        required
-        infoTitle="Lorem Ipsum"
-        infoContent="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-      />
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <SelectComponent
+          select={selectedOrganization}
+          onChange={setSelectedOrganization}
+          options={organizationsList}
+          placeHolder="Selecione"
+          labelText="Empresa"
+          required
+          infoTitle="Lorem Ipsum"
+          infoContent="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+        />
+      )}
 
       <Anchor link="" text="Como integrar com a Nexaas" />
       <div style={{ display: "flex", gap: "16px" }}>
