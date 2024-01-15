@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import TemplateDefault from "../../components/TemplateDefault";
 
@@ -16,11 +16,7 @@ import InlineMenu from "../../components/Integration/InlineMenu";
 import DualSwitch from "../../components/Integration/DualSwitch";
 import Menus from "../../utils/Integration/Menus";
 import { useIntegration } from "../../context/IntegrationContext";
-import {
-  IFieldsByID,
-  IMenuActivated,
-  ITemplatesById,
-} from "./companyIntegration";
+import { IFieldsByID, ITemplatesById } from "./companyIntegration";
 import IntegrationNavigate from "../../components/Integration/IntegrationNavigate";
 import { integrationsRequest } from "../../services/apis/requests/integration";
 import { useProductContext } from "../../context/products";
@@ -28,13 +24,14 @@ import { templateRequests } from "../../services/apis/requests/template";
 import { IPaginationTemplate } from "../templates/templates";
 import { DataField } from "../../components/CustomTable/components/HeaderDropDown/components/NewColumn/RelationForm/RelationForm";
 import DefaultForm from "../../components/Integration/DefaultForm";
+import nextMenu from "./utils/nextMenu";
 
 function Integration(): JSX.Element {
   const location = useLocation();
   const pathnameSplited = location.pathname.split("/");
   const pathnameSize = pathnameSplited.length;
   const integrationId = pathnameSplited[pathnameSize - 1];
-  const path = pathnameSplited[pathnameSize - 2] as IMenuActivated;
+  const path = pathnameSplited[pathnameSize - 2];
   const [templates, setTemplates] = useState();
 
   const [relatedTemplates, setRelatedTemplates] = useState<DataField[]>([]);
@@ -96,7 +93,7 @@ function Integration(): JSX.Element {
   });
   const [headerSelectValue, setHeaderSelectValue] = useState(null);
 
-  const [menuActivated, setMenuActivated] = useState<IMenuActivated>(path);
+  const [menuActivated, setMenuActivated] = useState<string>(path);
 
   const menus: {
     value: string;
@@ -130,40 +127,12 @@ function Integration(): JSX.Element {
     },
   ];
 
-  // const headerOptions = [
-  // { label: "op1", value: "op1" },
-  // { label: "op2", value: "op2" },
-  // { label: "op3", value: "op3" },
-  // { label: "op4", value: "op4" },
-  // ];
   const { environment, setEnvironment } = useIntegration();
 
   const dualOptions = [
     { label: "Homologação", value: "HOMOLOG" },
     { label: "Produção", value: "PROD" },
   ];
-
-  // const nextMenu: {
-  //   [key: string]: { value: IMenuActivated; label: string } | null;
-  // } = {
-  //   product_categories: {
-  //     value: "FeatureConfiguration",
-  //     label: "Config. de Características",
-  //   },
-  //   product_brands: {
-  //     value: "product_categories",
-  //     label: "Config. de Categorias",
-  //   },
-  //   ProductConfiguration: {
-  //     value: "SKUConfiguration",
-  //     label: "Config. de SKU",
-  //   },
-  //   FeatureConfiguration: {
-  //     value: "ProductConfiguration",
-  //     label: "Config. de Produtos",
-  //   },
-  //   SKUConfiguration: null,
-  // };
 
   async function getConfigTemplatesById(id: string): Promise<void> {
     try {
@@ -203,6 +172,7 @@ function Integration(): JSX.Element {
                 menus={menus}
                 menuActivated={menuActivated}
                 setMenuActivated={setMenuActivated}
+                integrationId={integrationId}
               />
               {templates && (
                 <HeaderSelect
@@ -227,11 +197,11 @@ function Integration(): JSX.Element {
                   allTemplates={templates as any}
                 />
               )}
-              {/* <IntegrationNavigate
+              <IntegrationNavigate
                 external={false}
                 nextMenu={nextMenu[menuActivated]}
                 setNextMenu={setMenuActivated}
-              /> */}
+              />
             </ContainerIntegration>
             {/* <ContainerIntegration> */}
             {/* <HeaderSelect

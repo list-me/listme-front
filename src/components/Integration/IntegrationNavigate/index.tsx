@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   ClearButtonIntegration,
   ContainerIntegrationNavigate,
@@ -10,7 +11,7 @@ import { NavigationButton } from "../../NavigationButton/styles";
 
 import { ReactComponent as RightArrowIcon } from "../../../assets/right-arrow-small.svg";
 import { ReactComponent as ClearIcon } from "../../../assets/clear.svg";
-import { IMenuActivated } from "../../../pages/companyIntegration/companyIntegration";
+import { ROUTES } from "../../../constants/routes";
 
 function IntegrationNavigate({
   nextMenu,
@@ -18,12 +19,18 @@ function IntegrationNavigate({
   external,
 }: {
   nextMenu: {
-    value: IMenuActivated;
+    value: string;
     label: string;
   } | null;
-  setNextMenu: React.Dispatch<React.SetStateAction<IMenuActivated>>;
+  setNextMenu: React.Dispatch<React.SetStateAction<string>>;
   external: boolean;
 }): JSX.Element {
+  const location = useLocation();
+  const pathnameSplited = location.pathname.split("/");
+  const pathnameSize = pathnameSplited.length;
+  const integrationId = pathnameSplited[pathnameSize - 1];
+  const navigate = useNavigate();
+
   return (
     <ContainerIntegrationNavigate external={external}>
       <ClearButtonIntegration>
@@ -32,7 +39,14 @@ function IntegrationNavigate({
       </ClearButtonIntegration>
       <RightButtons>
         {nextMenu !== null && (
-          <NextButton onClick={() => setNextMenu(nextMenu.value)}>
+          <NextButton
+            onClick={() => {
+              setNextMenu(nextMenu.value);
+              navigate(
+                `${ROUTES.INTEGRATION}/${nextMenu.value}/${integrationId}`,
+              );
+            }}
+          >
             {nextMenu.label}
             <RightArrowIcon />
           </NextButton>

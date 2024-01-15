@@ -1,10 +1,3 @@
-export type IMenuActivated =
-  | "product_categories"
-  | "product_brands"
-  | "ProductConfiguration"
-  | "FeatureConfiguration"
-  | "SKUConfiguration";
-
 export type IFieldsByID = {
   id: string;
   name: string;

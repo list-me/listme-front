@@ -101,9 +101,7 @@ function StepTwo({
             updateBody,
           );
         }
-        navigate(
-          `${ROUTES.INTEGRATION}/product_categories/${currentProvider.id}`,
-        );
+        navigate(`${ROUTES.INTEGRATION}/product_brands/${currentProvider.id}`);
       } catch (error) {
         console.error(error);
         const errorMessage =
