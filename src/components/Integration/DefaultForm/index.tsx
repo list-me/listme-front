@@ -68,7 +68,6 @@ function DefaultForm({
 
       if (!listTopics.includes(topic)) {
         listTopics.push(topic);
-        console.log("🚀 ~ topic:", topic);
         return topic;
       }
 

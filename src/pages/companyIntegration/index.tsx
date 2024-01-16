@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -26,6 +27,8 @@ import DefaultForm from "../../components/Integration/DefaultForm";
 import nextMenu from "./utils/nextMenu";
 import { NextButton } from "../../components/Integration/IntegrationNavigate/styles";
 import { ROUTES } from "../../constants/routes";
+import CharacteristicTypeSelector from "../../components/Integration/CharacteristicTypeSelector";
+import NewFeature from "../../components/Integration/NewFeature";
 
 function Integration(): JSX.Element {
   const { currentMenus, setCurrentMenus, environment, setEnvironment } =
@@ -181,6 +184,17 @@ function Integration(): JSX.Element {
     }
   };
 
+  const [bodys, setBodys] = useState([payloadToFinish]);
+  const [headersSelect, setHeadersSelect] = useState([headerSelectValue]);
+
+  useEffect(() => {
+    if (headerSelectValue) {
+      const copyHeadersSelect = headersSelect;
+      copyHeadersSelect[0] = headerSelectValue;
+      setHeadersSelect(copyHeadersSelect);
+    }
+  }, [headerSelectValue]);
+
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
       <ContainerContent>
@@ -203,6 +217,9 @@ function Integration(): JSX.Element {
                 setMenuActivated={setMenuActivated}
                 integrationId={integrationId}
               />
+              {menuActivated === "product_features" && (
+                <CharacteristicTypeSelector />
+              )}
               {templates && (
                 <HeaderSelect
                   headerSelectValue={headerSelectValue}
@@ -222,16 +239,84 @@ function Integration(): JSX.Element {
                   rightColumnName="Campo ListMe"
                   dataForm={currentField}
                   valueColLeft={headerSelectValue}
-                  payloadToFinish={payloadToFinish}
+                  payloadToFinish={
+                    menuActivated === "product_features"
+                      ? bodys[0]
+                      : payloadToFinish
+                  }
                 />
               )}
-              <IntegrationNavigate
-                external={false}
-                toClear={toClear}
-                onSave={onFinish}
-                isDisabled={!headerSelectValue || done === "done"}
-              />
+              {menuActivated !== "product_features" && (
+                <IntegrationNavigate
+                  external={false}
+                  toClear={toClear}
+                  onSave={onFinish}
+                  isDisabled={!headerSelectValue || done === "done"}
+                />
+              )}
             </ContainerIntegration>
+
+            {menuActivated === "product_features" &&
+              bodys.map(
+                (bItem, index) =>
+                  index !== 0 && (
+                    <ContainerIntegration key={index}>
+                      <CharacteristicTypeSelector />
+                      {templates && (
+                        <HeaderSelect
+                          headerSelectValue={headersSelect[index]}
+                          setHeaderSelectValue={(e: any) => {
+                            const copyHeaders = [...headersSelect];
+                            copyHeaders[index] = e;
+                            setHeadersSelect(copyHeaders);
+                          }}
+                          label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
+                          placeHolder="Selecione..."
+                          options={templates as any}
+                          required
+                        />
+                      )}
+                      {currentField?.id && (
+                        <DefaultForm
+                          leftColumnName="Propriedades de payloads Nexaas"
+                          centerColumnName="Catálogo ListMe"
+                          rightColumnName="Campo ListMe"
+                          dataForm={currentField}
+                          valueColLeft={headersSelect[index]}
+                          payloadToFinish={bodys[index]}
+                        />
+                      )}
+                    </ContainerIntegration>
+                  ),
+              )}
+            {menuActivated === "product_features" && (
+              <>
+                <NewFeature
+                  onClick={() => {
+                    const newBody = [
+                      ...bodys,
+                      [
+                        {
+                          templateConfigPayloadId: "",
+                          type: "",
+                          value: {
+                            templateId: "",
+                            fieldId: "",
+                          },
+                        },
+                      ],
+                    ];
+                    setBodys(newBody);
+                  }}
+                />
+                <IntegrationNavigate
+                  external
+                  toClear={toClear}
+                  onSave={() => console.log(bodys)}
+                  isDisabled={!headerSelectValue || done === "done"}
+                />
+              </>
+            )}
             {(nextMenu[menuActivated] as any)?.label && (
               <NextButton
                 onClick={() => {
