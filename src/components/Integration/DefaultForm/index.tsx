@@ -9,6 +9,7 @@ import {
 import { IFieldsByID } from "../../../pages/companyIntegration/companyIntegration";
 
 import DefaultFormLine from "./components/DefaultFormLine";
+import Topic from "./components/Topic";
 
 function DefaultForm({
   leftColumnName,
@@ -52,6 +53,31 @@ function DefaultForm({
     };
   };
 
+  const listTopics: string[] = [];
+
+  const topicToView = (item: {
+    id: string;
+    key: string;
+    cast: string;
+    types: string[];
+    required: boolean;
+  }): string | null | undefined => {
+    if (item.key.includes(".")) {
+      const topicParts = item.key.split(".");
+      const topic = topicParts[0];
+
+      if (!listTopics.includes(topic)) {
+        listTopics.push(topic);
+        console.log("🚀 ~ topic:", topic);
+        return topic;
+      }
+
+      return null;
+    }
+
+    return null;
+  };
+
   return (
     <ContainerDefaultForm>
       <ContainerTitlesDefaultForm>
@@ -63,13 +89,15 @@ function DefaultForm({
       </ContainerTitlesDefaultForm>
       <ContentDefaultForm>
         {payload.map((item, index) => (
-          <DefaultFormLine
-            key={item.id}
-            item={item}
-            index={index}
-            valueColLeft={valueColLeft}
-            changePayloadToFinish={changePayloadToFinish}
-          />
+          <div key={item.id}>
+            <Topic value={topicToView(item)} />
+            <DefaultFormLine
+              item={item}
+              index={index}
+              valueColLeft={valueColLeft}
+              changePayloadToFinish={changePayloadToFinish}
+            />
+          </div>
         ))}
       </ContentDefaultForm>
     </ContainerDefaultForm>

@@ -32,6 +32,7 @@ function InlineMenu({
           onClick={() => {
             setMenuActivated(menu.value);
           }}
+          disabled={menu.status === "done"}
         >
           {menu.status === "undone" && <UndoneIcon />}
           {menu.status === "done" && <DoneIcon />}

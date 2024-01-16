@@ -28,7 +28,8 @@ import { NextButton } from "../../components/Integration/IntegrationNavigate/sty
 import { ROUTES } from "../../constants/routes";
 
 function Integration(): JSX.Element {
-  const { currentMenus, setCurrentMenus } = useIntegration();
+  const { currentMenus, setCurrentMenus, environment, setEnvironment } =
+    useIntegration();
 
   const location = useLocation();
   const pathnameSplited = location.pathname.split("/");
@@ -85,21 +86,15 @@ function Integration(): JSX.Element {
   });
   const done = menusToUpdate[indexMenu].status;
 
-  const { environment, setEnvironment } = useIntegration();
-
   const dualOptions = [
-    { label: "Homologação", value: "HOMOLOG" },
-    { label: "Produção", value: "PROD" },
+    { label: "Homologação", value: "sandbox" },
+    { label: "Produção", value: "production" },
   ];
 
   async function getConfigTemplatesById(id: string): Promise<void> {
     try {
       const configTemplatesById =
         await integrationsRequest.listConfigTemplatesId(id);
-      console.log(
-        "🚀 ~ getConfigTemplatesById ~ configTemplatesById:",
-        configTemplatesById,
-      );
 
       setTemplatesById(configTemplatesById);
     } catch (error) {
@@ -159,7 +154,7 @@ function Integration(): JSX.Element {
     });
     // eslint-disable-next-line no-useless-return
     if (notDone) {
-      toast.warn("Algum campo obrigatório não esta preenchido.");
+      toast.warn("Algum campo obrigatório não está preenchido.");
       return;
     }
 
@@ -176,11 +171,13 @@ function Integration(): JSX.Element {
     };
     try {
       await templateRequests.postIntegration(body);
-      toast.success("Template criado com sucesso");
+      toast.success(
+        `Configuração de ${Menus[menuActivated]} realizado(a) com sucesso.`,
+      );
       updateDone();
     } catch (err) {
       console.log(err);
-      toast.error("Ocorreu um erro ao criar o template");
+      toast.error(`Ocorreu um erro ao configurar ${Menus[menuActivated]}`);
     }
   };
 
@@ -213,7 +210,7 @@ function Integration(): JSX.Element {
                     setHeaderSelectValue(e);
                   }}
                   label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
-                  placeHolder="Selecione"
+                  placeHolder="Selecione..."
                   options={templates as any}
                   required
                 />

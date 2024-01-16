@@ -12,9 +12,10 @@ import { ReactComponent as DropdownIcon } from "../../../../../assets/icons/head
 import { ReactComponent as FileIcon } from "../../../../../assets/icons/headers/file-icon.svg";
 import { ReactComponent as RadioIcon } from "../../../../../assets/icons/headers/radio-icon.svg";
 import { ReactComponent as RelationIcon } from "../../../../../assets/icons/headers/relation-icon.svg";
+import { ReactComponent as SubtopicIcon } from "../../../../../assets/subtopic.svg";
 import { DataField } from "../../../../CustomTable/components/HeaderDropDown/components/NewColumn/RelationForm/RelationForm";
 import { templateRequests } from "../../../../../services/apis/requests/template";
-import { ContainerDefaultFormLine } from "./styles";
+import { ContainerDefaultFormLine, SubTopicContainer } from "./styles";
 // import { Container } from './styles';
 
 function DefaultFormLine({
@@ -40,6 +41,7 @@ function DefaultFormLine({
 }): JSX.Element {
   const covertCast: { [key: string]: any } = {
     string: "text",
+    number: "numeric",
   };
 
   const ICON_HEADER: Record<IconType, ReactElement> = {
@@ -85,11 +87,18 @@ function DefaultFormLine({
     return item.types.includes(fItem.value.type);
   });
 
+  const subtopic = !!item.key.includes(".");
+
   return (
     <ContainerDefaultFormLine>
       <KeyText>
+        {subtopic && (
+          <SubTopicContainer>
+            <SubtopicIcon />
+          </SubTopicContainer>
+        )}
         {getIconByType(covertCast[item.cast])}
-        {item.key}
+        {subtopic ? item.key.split(".")[1] : item.key}
         {item.required && <span className="required">*</span>}
       </KeyText>
       <SelectComponent
