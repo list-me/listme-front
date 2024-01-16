@@ -11,13 +11,13 @@ export default {
     value: "product_categories",
     label: "Config. de Categorias",
   },
-  ProductConfiguration: {
-    value: "SKUConfiguration",
+  products: {
+    value: "product_skus",
     label: "Config. de SKU",
   },
   product_features: {
-    value: "ProductConfiguration",
+    value: "products",
     label: "Config. de Produtos",
   },
-  SKUConfiguration: null,
+  product_skus: null,
 } as INextMenu;

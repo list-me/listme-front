@@ -96,6 +96,10 @@ function Integration(): JSX.Element {
     try {
       const configTemplatesById =
         await integrationsRequest.listConfigTemplatesId(id);
+      console.log(
+        "🚀 ~ getConfigTemplatesById ~ configTemplatesById:",
+        configTemplatesById,
+      );
 
       setTemplatesById(configTemplatesById);
     } catch (error) {
@@ -231,7 +235,7 @@ function Integration(): JSX.Element {
                 isDisabled={!headerSelectValue || done === "done"}
               />
             </ContainerIntegration>
-            {nextMenu !== null && (
+            {(nextMenu[menuActivated] as any)?.label && (
               <NextButton
                 onClick={() => {
                   setMenuActivated((nextMenu[menuActivated] as any).value);
@@ -240,7 +244,7 @@ function Integration(): JSX.Element {
                   );
                 }}
               >
-                {(nextMenu[menuActivated] as any).label}
+                {(nextMenu[menuActivated] as any)?.label}
                 <RightArrowIcon />
               </NextButton>
             )}

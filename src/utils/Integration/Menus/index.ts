@@ -5,6 +5,6 @@ export default {
   product_brands: "Marcas",
   product_categories: "Categorias",
   product_features: "Características",
-  ProductConfiguration: "Produtos",
-  SKUConfiguration: "SKU",
+  products: "Produtos",
+  product_skus: "SKU",
 } as IMenus;

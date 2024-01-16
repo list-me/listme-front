@@ -19,12 +19,12 @@ const menus: {
     status: "undone",
   },
   {
-    value: "ProductConfiguration",
+    value: "products",
     label: "Config. de Produtos",
     status: "undone",
   },
   {
-    value: "SKUConfiguration",
+    value: "product_skus",
     label: "Config. de SKU",
     status: "undone",
   },
