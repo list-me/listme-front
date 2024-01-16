@@ -1,4 +1,3 @@
-/* eslint-disable react/no-array-index-key */
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -28,7 +27,7 @@ import nextMenu from "./utils/nextMenu";
 import { NextButton } from "../../components/Integration/IntegrationNavigate/styles";
 import { ROUTES } from "../../constants/routes";
 import CharacteristicTypeSelector from "../../components/Integration/CharacteristicTypeSelector";
-import NewFeature from "../../components/Integration/NewFeature";
+import FeatureForms from "../../components/Integration/FeatureForms";
 
 function Integration(): JSX.Element {
   const { currentMenus, setCurrentMenus, environment, setEnvironment } =
@@ -116,10 +115,6 @@ function Integration(): JSX.Element {
     setHeaderSelectValue(null);
   }, [menuActivated]);
 
-  const toClear = (): void => {
-    setHeaderSelectValue(null);
-  };
-
   const updateDone = (): void => {
     if (indexMenu !== -1) {
       menusToUpdate[indexMenu].status = "done";
@@ -185,15 +180,10 @@ function Integration(): JSX.Element {
   };
 
   const [bodys, setBodys] = useState([payloadToFinish]);
-  const [headersSelect, setHeadersSelect] = useState([headerSelectValue]);
-
-  useEffect(() => {
-    if (headerSelectValue) {
-      const copyHeadersSelect = headersSelect;
-      copyHeadersSelect[0] = headerSelectValue;
-      setHeadersSelect(copyHeadersSelect);
-    }
-  }, [headerSelectValue]);
+  const toClear = (): void => {
+    setHeaderSelectValue(null);
+    setBodys([payloadToFinish]);
+  };
 
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
@@ -256,67 +246,19 @@ function Integration(): JSX.Element {
               )}
             </ContainerIntegration>
 
-            {menuActivated === "product_features" &&
-              bodys.map(
-                (bItem, index) =>
-                  index !== 0 && (
-                    <ContainerIntegration key={index}>
-                      <CharacteristicTypeSelector />
-                      {templates && (
-                        <HeaderSelect
-                          headerSelectValue={headersSelect[index]}
-                          setHeaderSelectValue={(e: any) => {
-                            const copyHeaders = [...headersSelect];
-                            copyHeaders[index] = e;
-                            setHeadersSelect(copyHeaders);
-                          }}
-                          label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
-                          placeHolder="Selecione..."
-                          options={templates as any}
-                          required
-                        />
-                      )}
-                      {currentField?.id && (
-                        <DefaultForm
-                          leftColumnName="Propriedades de payloads Nexaas"
-                          centerColumnName="Catálogo ListMe"
-                          rightColumnName="Campo ListMe"
-                          dataForm={currentField}
-                          valueColLeft={headersSelect[index]}
-                          payloadToFinish={bodys[index]}
-                        />
-                      )}
-                    </ContainerIntegration>
-                  ),
-              )}
             {menuActivated === "product_features" && (
-              <>
-                <NewFeature
-                  onClick={() => {
-                    const newBody = [
-                      ...bodys,
-                      [
-                        {
-                          templateConfigPayloadId: "",
-                          type: "",
-                          value: {
-                            templateId: "",
-                            fieldId: "",
-                          },
-                        },
-                      ],
-                    ];
-                    setBodys(newBody);
-                  }}
-                />
-                <IntegrationNavigate
-                  external
-                  toClear={toClear}
-                  onSave={() => console.log(bodys)}
-                  isDisabled={!headerSelectValue || done === "done"}
-                />
-              </>
+              <FeatureForms
+                bodys={bodys}
+                headerSelectValue={headerSelectValue}
+                setBodys={setBodys}
+                templates={templates}
+                menuActivated={menuActivated}
+                currentField={currentField}
+                toClear={toClear}
+                done={done}
+              />
             )}
+
             {(nextMenu[menuActivated] as any)?.label && (
               <NextButton
                 onClick={() => {
