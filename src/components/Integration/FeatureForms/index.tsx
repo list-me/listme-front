@@ -7,6 +7,8 @@ import NewFeature from "../NewFeature";
 import HeaderSelect from "../HeaderSelect";
 import Menus from "../../../utils/Integration/Menus";
 import SelectComponent from "../../Select";
+import DefaultForm from "../DefaultForm";
+import { IFieldsByID } from "../../../pages/companyIntegration/companyIntegration";
 
 function FeatureForms({
   setCharacteristicType,
@@ -22,7 +24,9 @@ function FeatureForms({
   colHeaderSelectValue,
   setColHeaderSelectValue,
   colOptions,
+  currentField,
 }: {
+  currentField: IFieldsByID | undefined;
   colOptions: any[];
   setColHeaderSelectValue: React.Dispatch<React.SetStateAction<any[]>>;
   colHeaderSelectValue: any[];
@@ -121,7 +125,7 @@ function FeatureForms({
                   centerColumnName="Catálogo ListMe"
                   rightColumnName="Campo ListMe"
                   dataForm={currentField}
-                  valueColLeft={headersSelect[index]}
+                  valueColLeft={headerSelectValues[index]}
                   payloadToFinish={payloadsToFinish[index]}
                 />
               )}

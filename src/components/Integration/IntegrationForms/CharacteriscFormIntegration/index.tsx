@@ -269,6 +269,7 @@ function CharacteriscFormIntegration(): JSX.Element {
               colHeaderSelectValue={colHeaderSelectValue}
               setColHeaderSelectValue={setColHeaderSelectValue as any}
               colOptions={colOptions}
+              currentField={currentField}
             />
 
             {(nextMenu[menuActivated] as any)?.label && (
