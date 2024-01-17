@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { ContainerInlineMenu, ItemInlineMenu } from "./styles";
 import { ReactComponent as UndoneIcon } from "../../../assets/undoneIcon.svg";
 import { ReactComponent as DoneIcon } from "../../../assets/doneIcon.svg";
@@ -30,7 +31,17 @@ function InlineMenu({
           key={menu.value}
           isActivated={menu.value === menuActivated}
           onClick={() => {
-            setMenuActivated(menu.value);
+            if (menu.value === "products") {
+              if (
+                menus[0].status === "undone" ||
+                menus[1].status === "undone" ||
+                menus[2].status === "undone"
+              ) {
+                toast.error(
+                  "Você precisa configurar a Marca, Categorias e Características antes de configurar o Produto",
+                );
+              }
+            } else setMenuActivated(menu.value);
           }}
           disabled={menu.status === "done"}
         >

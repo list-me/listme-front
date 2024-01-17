@@ -33,6 +33,7 @@ import SelectComponent from "../../../Select";
 function CharacteriscFormIntegration(): JSX.Element {
   const { currentMenus, setCurrentMenus, environment, setEnvironment } =
     useIntegration();
+  console.log("🚀 ~ CharacteriscFormIntegration ~ currentMenus:", currentMenus);
 
   const location = useLocation();
   const pathnameSplited = location.pathname.split("/");
