@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import styled from "styled-components";
 import { CustomRadio } from "../../Radio";
@@ -24,8 +24,36 @@ const Text = styled.p`
   margin: 0;
 `;
 
-function CharacteristicTypeSelector(): JSX.Element {
-  const [value, setValue] = useState("Minha característica é um catálogo");
+function CharacteristicTypeSelector({
+  value,
+  onChange,
+  index,
+  listValue,
+  setValue,
+}: {
+  setValue: React.Dispatch<React.SetStateAction<"catalog"[] | "column"[]>>;
+  value: "catalog" | "column";
+  onChange: (
+    value: string,
+    index: number,
+    list: any[],
+    setValue: React.Dispatch<React.SetStateAction<any>>,
+  ) => void;
+  index: number;
+  listValue: "catalog"[] | "column"[];
+}): JSX.Element {
+  const changeValue = (val: string): void => {
+    if (val === "Minha característica é um catálogo") {
+      onChange("catalog", index, listValue, setValue);
+    } else onChange("column", index, listValue, setValue);
+  };
+
+  const valueToView = (val: string): string => {
+    if (val === "catalog") {
+      return "Minha característica é um catálogo";
+    }
+    return "Minha característica é uma coluna";
+  };
   return (
     <Container>
       <Text>Primeiro, selecione:</Text>
@@ -35,8 +63,8 @@ function CharacteristicTypeSelector(): JSX.Element {
             "Minha característica é um catálogo",
             "Minha característica é uma coluna",
           ]}
-          value={[value]}
-          handleGetNewValue={setValue}
+          value={[valueToView(value)]}
+          handleGetNewValue={changeValue}
         />
       </div>
     </Container>

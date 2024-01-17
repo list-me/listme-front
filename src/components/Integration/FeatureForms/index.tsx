@@ -1,25 +1,46 @@
+/* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/no-array-index-key */
-import React, { useEffect, useState } from "react";
-import { ContainerIntegration } from "../../../pages/companyIntegration/styles";
+import React from "react";
+import { ContainerIntegration } from "../IntegrationForms/CharacteriscFormIntegration/styles";
 import CharacteristicTypeSelector from "../CharacteristicTypeSelector";
-import HeaderSelect from "../HeaderSelect";
-import DefaultForm from "../DefaultForm";
 import NewFeature from "../NewFeature";
-import IntegrationNavigate from "../IntegrationNavigate";
+import HeaderSelect from "../HeaderSelect";
 import Menus from "../../../utils/Integration/Menus";
-import { IFieldsByID } from "../../../pages/companyIntegration/companyIntegration";
+import SelectComponent from "../../Select";
 
 function FeatureForms({
-  bodys,
-  headerSelectValue,
-  setBodys,
+  setCharacteristicType,
+  changeListValue,
+  payloadsToFinish,
+  setPayloadsToFinish,
+  characteristicsType,
   templates,
+  headerSelectValues,
   menuActivated,
-  currentField,
-  toClear,
-  done,
+  setHeaderSelectValues,
+  getHeaderCols,
+  colHeaderSelectValue,
+  setColHeaderSelectValue,
+  colOptions,
 }: {
-  bodys: {
+  colOptions: any[];
+  setColHeaderSelectValue: React.Dispatch<React.SetStateAction<any[]>>;
+  colHeaderSelectValue: any[];
+  getHeaderCols: (id: string, index: number) => void;
+  menuActivated: string;
+  headerSelectValues: any[];
+  templates: any;
+  setCharacteristicType: React.Dispatch<
+    React.SetStateAction<"catalog"[] | "column"[]>
+  >;
+  characteristicsType: "catalog"[] | "column"[];
+  changeListValue: (
+    value: string,
+    index: number,
+    list: any[],
+    setValue: React.Dispatch<React.SetStateAction<any>>,
+  ) => void;
+  payloadsToFinish: {
     templateConfigPayloadId: string;
     type: string;
     value: {
@@ -27,8 +48,8 @@ function FeatureForms({
       fieldId: string;
     };
   }[][];
-  headerSelectValue: any;
-  setBodys: React.Dispatch<
+  setHeaderSelectValues: React.Dispatch<React.SetStateAction<any[]>>;
+  setPayloadsToFinish: React.Dispatch<
     React.SetStateAction<
       {
         templateConfigPayloadId: string;
@@ -40,42 +61,59 @@ function FeatureForms({
       }[][]
     >
   >;
-  templates: any;
-  menuActivated: string;
-  currentField: IFieldsByID | undefined;
-  toClear: () => void;
-  done: "" | "done" | "undone";
 }): JSX.Element {
-  const [headersSelect, setHeadersSelect] = useState([headerSelectValue]);
-
-  useEffect(() => {
-    if (headerSelectValue) {
-      const copyHeadersSelect = headersSelect;
-      copyHeadersSelect[0] = headerSelectValue;
-      setHeadersSelect(copyHeadersSelect);
-    }
-  }, [headerSelectValue]);
-
   return (
     <>
-      {bodys.map(
+      {payloadsToFinish.map(
         (bItem, index) =>
           index !== 0 && (
             <ContainerIntegration key={index}>
-              <CharacteristicTypeSelector />
+              <CharacteristicTypeSelector
+                value={characteristicsType[index]}
+                setValue={setCharacteristicType}
+                onChange={changeListValue}
+                index={index}
+                listValue={characteristicsType}
+              />
               {templates && (
-                <HeaderSelect
-                  headerSelectValue={headersSelect[index]}
-                  setHeaderSelectValue={(e: any) => {
-                    const copyHeaders = [...headersSelect];
-                    copyHeaders[index] = e;
-                    setHeadersSelect(copyHeaders);
-                  }}
-                  label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
-                  placeHolder="Selecione..."
-                  options={templates as any}
-                  required
-                />
+                <div style={{ display: "flex", gap: "32px" }}>
+                  <HeaderSelect
+                    headerSelectValue={headerSelectValues[index]}
+                    setHeaderSelectValue={(e: any) => {
+                      changeListValue(
+                        e,
+                        index,
+                        headerSelectValues,
+                        setHeaderSelectValues,
+                      );
+                      getHeaderCols(e.value.id, index);
+                    }}
+                    label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
+                    placeHolder="Selecione..."
+                    options={templates as any}
+                    required
+                  />
+                  {characteristicsType[index] === "column" && (
+                    <SelectComponent
+                      select={colHeaderSelectValue[index]}
+                      onChange={(e: any) => {
+                        changeListValue(
+                          e,
+                          0,
+                          colHeaderSelectValue,
+                          setColHeaderSelectValue,
+                        );
+                      }}
+                      options={colOptions[index]}
+                      small
+                      inline
+                      labelText="Selecione a coluna"
+                      placeHolder="Selecione..."
+                      required
+                      isDisabled={!colOptions[index]}
+                    />
+                  )}
+                </div>
               )}
               {currentField?.id && (
                 <DefaultForm
@@ -84,7 +122,7 @@ function FeatureForms({
                   rightColumnName="Campo ListMe"
                   dataForm={currentField}
                   valueColLeft={headersSelect[index]}
-                  payloadToFinish={bodys[index]}
+                  payloadToFinish={payloadsToFinish[index]}
                 />
               )}
             </ContainerIntegration>
@@ -94,31 +132,33 @@ function FeatureForms({
       <>
         <NewFeature
           onClick={() => {
-            const newBody = [
-              ...bodys,
-              [
-                {
-                  templateConfigPayloadId: "",
-                  type: "",
-                  value: {
-                    templateId: "",
-                    fieldId: "",
-                  },
+            const value = [
+              {
+                templateConfigPayloadId: "",
+                type: "",
+                value: {
+                  templateId: "",
+                  fieldId: "",
                 },
-              ],
+              },
             ];
-            setBodys(newBody);
+            const copyPayloads = [...payloadsToFinish];
+            copyPayloads.push(value);
+            setPayloadsToFinish(copyPayloads);
+            const copyCharacteristicsType = [...characteristicsType, "catalog"];
+
+            setCharacteristicType(copyCharacteristicsType as any);
           }}
         />
-        <IntegrationNavigate
+        {/* <IntegrationNavigate
           external
           toClear={() => {
             toClear();
             setHeadersSelect([null]);
           }}
-          onSave={() => console.log(bodys)}
+          onSave={() => console.log(payloadsToFinish)}
           isDisabled={!headerSelectValue || done === "done"}
-        />
+        /> */}
       </>
     </>
   );
