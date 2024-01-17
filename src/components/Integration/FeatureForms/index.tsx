@@ -9,6 +9,7 @@ import Menus from "../../../utils/Integration/Menus";
 import SelectComponent from "../../Select";
 import DefaultForm from "../DefaultForm";
 import { IFieldsByID } from "../../../pages/companyIntegration/companyIntegration";
+import IntegrationNavigate from "../IntegrationNavigate";
 
 function FeatureForms({
   setCharacteristicType,
@@ -25,7 +26,11 @@ function FeatureForms({
   setColHeaderSelectValue,
   colOptions,
   currentField,
+  toClear,
+  onSave,
 }: {
+  onSave: () => void;
+  toClear: () => void;
   currentField: IFieldsByID | undefined;
   colOptions: any[];
   setColHeaderSelectValue: React.Dispatch<React.SetStateAction<any[]>>;
@@ -66,6 +71,13 @@ function FeatureForms({
     >
   >;
 }): JSX.Element {
+  const done = () => {
+    const isDone = payloadsToFinish.every((payload, index) => {
+      return typeof headerSelectValues[index] !== "undefined";
+    });
+    return isDone;
+  };
+
   return (
     <>
       {payloadsToFinish.map(
@@ -154,15 +166,14 @@ function FeatureForms({
             setCharacteristicType(copyCharacteristicsType as any);
           }}
         />
-        {/* <IntegrationNavigate
+        <IntegrationNavigate
           external
           toClear={() => {
             toClear();
-            setHeadersSelect([null]);
           }}
-          onSave={() => console.log(payloadsToFinish)}
-          isDisabled={!headerSelectValue || done === "done"}
-        /> */}
+          onSave={onSave}
+          isDisabled={!done()}
+        />
       </>
     </>
   );

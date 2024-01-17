@@ -18,7 +18,6 @@ import DualSwitch from "../../DualSwitch";
 import Menus from "../../../../utils/Integration/Menus";
 import { useIntegration } from "../../../../context/IntegrationContext";
 import { ITemplatesById } from "../../../../pages/companyIntegration/companyIntegration";
-import IntegrationNavigate from "../../IntegrationNavigate";
 import { integrationsRequest } from "../../../../services/apis/requests/integration";
 import { templateRequests } from "../../../../services/apis/requests/template";
 import { IPaginationTemplate } from "../../../../pages/templates/templates";
@@ -69,24 +68,30 @@ function CharacteriscFormIntegration(): JSX.Element {
   const currentField = templatesById?.payloads?.fields.find((item) => {
     return item.endpointPath === `/${path}`;
   });
-  const [payloadsToFinish, setPayloadsToFinish] = useState([
-    Array.from({ length: (currentField as any)?.payload?.length || 0 }, () => ({
-      templateConfigPayloadId: "",
-      type: "",
-      value: {
-        templateId: "",
-        fieldId: "",
-      },
-    })),
-  ]);
+  const [payloadsToFinish, setPayloadsToFinish] = useState<any[][]>([[]]);
+  console.log(
+    "🚀 ~ CharacteriscFormIntegration ~ payloadsToFinish:",
+    payloadsToFinish,
+  );
+
+  useEffect(() => {
+    const initialPayload = Array.from(
+      { length: (currentField as any)?.payload?.length || 0 },
+      () => ({
+        templateConfigPayloadId: "",
+        type: "",
+        value: {
+          templateId: "",
+          fieldId: "",
+        },
+      }),
+    );
+    if (currentField) {
+      setPayloadsToFinish([initialPayload]);
+    }
+  }, [currentField]);
 
   const [menuActivated, setMenuActivated] = useState<string>(path);
-
-  const menusToUpdate = [...currentMenus];
-  const indexMenu = menusToUpdate.findIndex((elem) => {
-    return elem.value === `${menuActivated}`;
-  });
-  const done = menusToUpdate[indexMenu].status;
 
   const dualOptions = [
     { label: "Homologação", value: "sandbox" },
@@ -110,8 +115,6 @@ function CharacteriscFormIntegration(): JSX.Element {
       getConfigTemplatesById(integrationId);
     }
   }, [integrationId]);
-
-  // const [colHeaderSelect, setColHeaderSelect] = useState({});
 
   const [characteristicsType, setCharacteristicType] = useState<
     "catalog"[] | "column"[]
@@ -155,6 +158,18 @@ function CharacteriscFormIntegration(): JSX.Element {
     setColHeaderSelectValue([]);
     setColOptions([]);
   }, [menuActivated]);
+  const menusToUpdate = [...currentMenus];
+
+  const indexMenu = menusToUpdate.findIndex((elem) => {
+    return elem.value === `${menuActivated}`;
+  });
+
+  const updateDone = (): void => {
+    if (indexMenu !== -1) {
+      menusToUpdate[indexMenu].status = "done";
+      setCurrentMenus(menusToUpdate);
+    }
+  };
 
   const toClear = (): void => {
     setHeaderSelectValues([]);
@@ -174,6 +189,84 @@ function CharacteriscFormIntegration(): JSX.Element {
       ),
     ]);
   };
+
+  const onFinish = async (): Promise<void> => {
+    const isOk = payloadsToFinish.map((payload, index) => {
+      if (!currentField?.id) {
+        return false;
+      }
+      // eslint-disable-next-line array-callback-return, consistent-return
+      const idsRequired = currentField?.payload
+        .map((mItem, mIndex) => {
+          if (mItem.required) {
+            return mIndex;
+          }
+          return null;
+        })
+        .filter((elem) => {
+          return typeof elem === "number";
+        });
+
+      if (idsRequired?.length === 0) {
+        return false;
+      }
+      const notDone = payloadsToFinish[index].find((item, fIndex) => {
+        if (idsRequired.includes(fIndex)) {
+          if (!item.value.fieldId) return item;
+        }
+      });
+      console.log("🚀 ~ notDone ~ payloadsToFinish:", payloadsToFinish[index]);
+      console.log("🚀 ~ notDone ~ notDone:", notDone);
+      // eslint-disable-next-line no-useless-return
+      if (notDone) {
+        toast.warn("Algum campo obrigatório não está preenchido.");
+        return false;
+      }
+      return true;
+    });
+    const onSuccess = (): void => {
+      toast.success(
+        `Configuração de ${Menus[menuActivated]} realizado(a) com sucesso.`,
+      );
+      updateDone();
+    };
+
+    const onError = (error: any): void => {
+      console.error(error);
+      toast.error(`Ocorreu um erro ao configurar ${Menus[menuActivated]}`);
+    };
+
+    if (isOk.every((result) => result)) {
+      try {
+        const requests = payloadsToFinish.map(async (payload, index) => {
+          const templateConfigEntityId = currentField?.id;
+          const templateTriggerId = (headerSelectValues as any)[index].value.id;
+          const templateConfigId = integrationId;
+
+          const body = {
+            fields: {
+              templateConfigId,
+              entity: {
+                templateConfigEntityId,
+                templateTriggerId,
+                payloads: [...payloadsToFinish[index]],
+              },
+            },
+            type: "integration",
+          };
+
+          await templateRequests.postIntegration(body);
+        });
+
+        await Promise.all(requests);
+
+        onSuccess();
+      } catch (error) {
+        onError(error);
+      }
+    }
+  };
+
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
       <ContainerContent>
@@ -270,6 +363,8 @@ function CharacteriscFormIntegration(): JSX.Element {
               setColHeaderSelectValue={setColHeaderSelectValue as any}
               colOptions={colOptions}
               currentField={currentField}
+              toClear={toClear}
+              onSave={onFinish}
             />
 
             {(nextMenu[menuActivated] as any)?.label && (
