@@ -191,6 +191,24 @@ function CharacteriscFormIntegration(): JSX.Element {
   };
 
   const onFinish = async (): Promise<void> => {
+    if (currentField) {
+      colHeaderSelectValue.forEach((item, index) => {
+        if (characteristicsType[index] === "column") {
+          payloadsToFinish[index] = payloadsToFinish[index].map((pItem) => {
+            return {
+              ...pItem,
+              templateConfigPayloadId: currentField.payload[index].id as any,
+              type: "column",
+              value: {
+                templateId: (headerSelectValues[index] as any).value.id,
+                fieldId: (colHeaderSelectValue[index] as any).value.id,
+              },
+            };
+          });
+        }
+      });
+    }
+
     const isOk = payloadsToFinish.map((payload, index) => {
       if (!currentField?.id) {
         return false;
@@ -215,8 +233,7 @@ function CharacteriscFormIntegration(): JSX.Element {
           if (!item.value.fieldId) return item;
         }
       });
-      console.log("🚀 ~ notDone ~ payloadsToFinish:", payloadsToFinish[index]);
-      console.log("🚀 ~ notDone ~ notDone:", notDone);
+
       // eslint-disable-next-line no-useless-return
       if (notDone) {
         toast.warn("Algum campo obrigatório não está preenchido.");
@@ -267,6 +284,14 @@ function CharacteriscFormIntegration(): JSX.Element {
     }
   };
 
+  const filteredOptions = (list: any) => {
+    return (list as any)?.filter((fItem: any) => {
+      return ["radio", "checked", "list", "relation"].includes(
+        fItem.value.type,
+      );
+    });
+  };
+
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
       <ContainerContent>
@@ -307,6 +332,12 @@ function CharacteriscFormIntegration(): JSX.Element {
                         headerSelectValues,
                         setHeaderSelectValues,
                       );
+                      changeListValue(
+                        null as any,
+                        0,
+                        colHeaderSelectValue,
+                        setColHeaderSelectValue,
+                      );
                       getHeaderCols(e.value.id, 0);
                     }}
                     label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
@@ -325,7 +356,7 @@ function CharacteriscFormIntegration(): JSX.Element {
                           setColHeaderSelectValue,
                         );
                       }}
-                      options={colOptions[0]}
+                      options={filteredOptions(colOptions[0])}
                       small
                       inline
                       labelText="Selecione a coluna"
@@ -340,10 +371,11 @@ function CharacteriscFormIntegration(): JSX.Element {
                 <DefaultForm
                   leftColumnName="Propriedades de payloads Nexaas"
                   centerColumnName="Catálogo ListMe"
-                  rightColumnName="Campo ListMe"
+                  rightColumnName=""
                   dataForm={currentField}
                   valueColLeft={headerSelectValues[0]}
                   payloadToFinish={payloadsToFinish[0]}
+                  type={characteristicsType[0]}
                 />
               )}
             </ContainerIntegration>
@@ -365,6 +397,7 @@ function CharacteriscFormIntegration(): JSX.Element {
               currentField={currentField}
               toClear={toClear}
               onSave={onFinish}
+              filteredOptions={filteredOptions}
             />
 
             {(nextMenu[menuActivated] as any)?.label && (

@@ -18,7 +18,9 @@ function DefaultForm({
   dataForm,
   valueColLeft,
   payloadToFinish,
+  type,
 }: {
+  type: "catalog" | "column";
   leftColumnName: string;
   centerColumnName: string;
   rightColumnName: string;
@@ -45,7 +47,7 @@ function DefaultForm({
     payloadToFinish[index] = {
       ...payloadToFinish[index],
       templateConfigPayloadId: payload[index].id,
-      type: "column",
+      type,
       value: {
         templateId: valueLeft.value.id,
         fieldId: valueRight.value.id,
@@ -95,6 +97,7 @@ function DefaultForm({
               index={index}
               valueColLeft={valueColLeft}
               changePayloadToFinish={changePayloadToFinish}
+              type={type}
             />
           </div>
         ))}

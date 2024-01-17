@@ -28,7 +28,9 @@ function FeatureForms({
   currentField,
   toClear,
   onSave,
+  filteredOptions,
 }: {
+  filteredOptions: (list: any) => void;
   onSave: () => void;
   toClear: () => void;
   currentField: IFieldsByID | undefined;
@@ -102,6 +104,12 @@ function FeatureForms({
                         headerSelectValues,
                         setHeaderSelectValues,
                       );
+                      changeListValue(
+                        null as any,
+                        index,
+                        colHeaderSelectValue,
+                        setColHeaderSelectValue,
+                      );
                       getHeaderCols(e.value.id, index);
                     }}
                     label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
@@ -115,12 +123,12 @@ function FeatureForms({
                       onChange={(e: any) => {
                         changeListValue(
                           e,
-                          0,
+                          index,
                           colHeaderSelectValue,
                           setColHeaderSelectValue,
                         );
                       }}
-                      options={colOptions[index]}
+                      options={filteredOptions(colOptions[index])}
                       small
                       inline
                       labelText="Selecione a coluna"
@@ -139,6 +147,7 @@ function FeatureForms({
                   dataForm={currentField}
                   valueColLeft={headerSelectValues[index]}
                   payloadToFinish={payloadsToFinish[index]}
+                  type={characteristicsType[index]}
                 />
               )}
             </ContainerIntegration>

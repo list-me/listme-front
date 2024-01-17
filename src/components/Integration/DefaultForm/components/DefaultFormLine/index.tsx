@@ -23,7 +23,9 @@ function DefaultFormLine({
   valueColLeft,
   changePayloadToFinish,
   index,
+  type,
 }: {
+  type: "catalog" | "column";
   item: {
     id: string;
     key: string;
@@ -54,8 +56,8 @@ function DefaultFormLine({
     [IconType.Relation]: <RelationIcon />,
   };
 
-  const getIconByType = (type: IconType): ReactElement => {
-    return ICON_HEADER[type];
+  const getIconByType = (gType: IconType): ReactElement => {
+    return ICON_HEADER[gType];
   };
 
   const [fieldsToOptions, setFieldsToOptions] = useState<DataField[]>([]);
@@ -109,17 +111,19 @@ function DefaultFormLine({
         isDisabled
         onChange={() => ""}
       />
-      <SelectComponent
-        select={secondValueSelected}
-        onChange={(e) => {
-          changePayloadToFinish(valueColLeft, e, index);
-          setSecondValueSelected(e);
-        }}
-        options={optionsToView}
-        placeHolder="Selecione..."
-        small
-        isDisabled={!valueColLeft}
-      />
+      {type === "catalog" && (
+        <SelectComponent
+          select={secondValueSelected}
+          onChange={(e) => {
+            changePayloadToFinish(valueColLeft, e, index);
+            setSecondValueSelected(e);
+          }}
+          options={optionsToView}
+          placeHolder="Selecione..."
+          small
+          isDisabled={!valueColLeft}
+        />
+      )}
     </ContainerDefaultFormLine>
   );
 }
