@@ -24,6 +24,7 @@ import { IHeaderTable } from "../../../../context/products/product.context";
 import EditableText from "../../../EditableText";
 import FromTo from "../../../FromTo";
 import { useFromToContext } from "../../../../context/FromToContext";
+import ButtonError from "../../../Integration/Error/ButtonError";
 
 function HeaderFilters({
   template,
@@ -60,6 +61,7 @@ function HeaderFilters({
           <EditIcon onClick={() => setIsEditingTitle(true)} />
         </LeftContent>
         <RightContent>
+          <ButtonError />
           <MoreOptions>
             <EllipsisIcon />
           </MoreOptions>
