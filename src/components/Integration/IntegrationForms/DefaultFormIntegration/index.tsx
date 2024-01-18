@@ -224,7 +224,7 @@ function DefaultFormIntegration(): JSX.Element {
                   dataForm={currentField}
                   valueColLeft={headerSelectValue}
                   payloadToFinish={payloadToFinish}
-                  type="catalog"
+                  type="column"
                 />
               )}
               <IntegrationNavigate

@@ -111,7 +111,7 @@ function DefaultFormLine({
         isDisabled
         onChange={() => ""}
       />
-      {type === "catalog" && (
+      {type === "column" && (
         <SelectComponent
           select={secondValueSelected}
           onChange={(e) => {
