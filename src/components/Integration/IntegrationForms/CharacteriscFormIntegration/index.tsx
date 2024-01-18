@@ -119,7 +119,7 @@ function CharacteriscFormIntegration(): JSX.Element {
 
   const [characteristicsType, setCharacteristicType] = useState<
     "catalog"[] | "column"[]
-  >(["catalog"]);
+  >(["column"]);
 
   const changeListValue = (
     value: string,
@@ -194,7 +194,7 @@ function CharacteriscFormIntegration(): JSX.Element {
   const onFinish = async (): Promise<void> => {
     if (currentField) {
       colHeaderSelectValue.forEach((item, index) => {
-        if (characteristicsType[index] === "column") {
+        if (characteristicsType[index] === "catalog") {
           payloadsToFinish[index] = payloadsToFinish[index].map((pItem) => {
             return {
               ...pItem,
@@ -287,9 +287,7 @@ function CharacteriscFormIntegration(): JSX.Element {
 
   const filteredOptions = (list: any) => {
     return (list as any)?.filter((fItem: any) => {
-      return ["radio", "checked", "list", "relation"].includes(
-        fItem.value.type,
-      );
+      return ["radio", "checked", "list"].includes(fItem.value.type);
     });
   };
 
@@ -346,7 +344,7 @@ function CharacteriscFormIntegration(): JSX.Element {
                     options={templates as any}
                     required
                   />
-                  {characteristicsType[0] === "column" && (
+                  {characteristicsType[0] === "catalog" && (
                     <SelectComponent
                       select={colHeaderSelectValue[0]}
                       onChange={(e: any) => {

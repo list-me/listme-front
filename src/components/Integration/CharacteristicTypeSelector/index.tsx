@@ -44,12 +44,12 @@ function CharacteristicTypeSelector({
 }): JSX.Element {
   const changeValue = (val: string): void => {
     if (val === "Minha característica é um catálogo") {
-      onChange("catalog", index, listValue, setValue);
-    } else onChange("column", index, listValue, setValue);
+      onChange("column", index, listValue, setValue);
+    } else onChange("catalog", index, listValue, setValue);
   };
 
   const valueToView = (val: string): string => {
-    if (val === "catalog") {
+    if (val === "column") {
       return "Minha característica é um catálogo";
     }
     return "Minha característica é uma coluna";
