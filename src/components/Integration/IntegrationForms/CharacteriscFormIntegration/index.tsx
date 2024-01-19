@@ -33,7 +33,6 @@ import SelectComponent from "../../../Select";
 function CharacteriscFormIntegration(): JSX.Element {
   const { currentMenus, setCurrentMenus, environment, setEnvironment } =
     useIntegration();
-  console.log("🚀 ~ CharacteriscFormIntegration ~ currentMenus:", currentMenus);
 
   const location = useLocation();
   const pathnameSplited = location.pathname.split("/");
@@ -70,10 +69,6 @@ function CharacteriscFormIntegration(): JSX.Element {
     return item.endpointPath === `/${path}`;
   });
   const [payloadsToFinish, setPayloadsToFinish] = useState<any[][]>([[]]);
-  console.log(
-    "🚀 ~ CharacteriscFormIntegration ~ payloadsToFinish:",
-    payloadsToFinish,
-  );
 
   useEffect(() => {
     const initialPayload = Array.from(
@@ -164,6 +159,8 @@ function CharacteriscFormIntegration(): JSX.Element {
   const indexMenu = menusToUpdate.findIndex((elem) => {
     return elem.value === `${menuActivated}`;
   });
+
+  const done = menusToUpdate[indexMenu].status;
 
   const updateDone = (): void => {
     if (indexMenu !== -1) {
@@ -290,6 +287,7 @@ function CharacteriscFormIntegration(): JSX.Element {
       return ["radio", "checked", "list"].includes(fItem.value.type);
     });
   };
+  console.log(nextMenu);
 
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
@@ -343,6 +341,7 @@ function CharacteriscFormIntegration(): JSX.Element {
                     placeHolder="Selecione..."
                     options={templates as any}
                     required
+                    done={done === "done"}
                   />
                   {characteristicsType[0] === "catalog" && (
                     <SelectComponent
@@ -361,7 +360,7 @@ function CharacteriscFormIntegration(): JSX.Element {
                       labelText="Selecione a coluna"
                       placeHolder="Selecione..."
                       required
-                      isDisabled={!colOptions[0]}
+                      isDisabled={done === "done" || !colOptions[0]}
                     />
                   )}
                 </div>
@@ -375,6 +374,7 @@ function CharacteriscFormIntegration(): JSX.Element {
                   valueColLeft={headerSelectValues[0]}
                   payloadToFinish={payloadsToFinish[0]}
                   type={characteristicsType[0]}
+                  done={done === "done"}
                 />
               )}
             </ContainerIntegration>
@@ -397,6 +397,7 @@ function CharacteriscFormIntegration(): JSX.Element {
               toClear={toClear}
               onSave={onFinish}
               filteredOptions={filteredOptions}
+              done={done === "done"}
             />
 
             {(nextMenu[menuActivated] as any)?.label && (
@@ -404,7 +405,9 @@ function CharacteriscFormIntegration(): JSX.Element {
                 onClick={() => {
                   setMenuActivated((nextMenu[menuActivated] as any).value);
                   navigate(
-                    `${ROUTES.INTEGRATION}/${nextMenu.value}/${integrationId}`,
+                    `${ROUTES.INTEGRATION}/${
+                      (nextMenu[menuActivated] as any).value
+                    }/${integrationId}`,
                   );
                 }}
               >

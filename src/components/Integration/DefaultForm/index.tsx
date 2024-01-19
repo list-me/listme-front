@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   ColumnsDefaultForm,
   ContainerDefaultForm,
@@ -19,7 +18,9 @@ function DefaultForm({
   valueColLeft,
   payloadToFinish,
   type,
+  done,
 }: {
+  done: boolean;
   type: "catalog" | "column";
   leftColumnName: string;
   centerColumnName: string;
@@ -98,6 +99,7 @@ function DefaultForm({
               valueColLeft={valueColLeft}
               changePayloadToFinish={changePayloadToFinish}
               type={type}
+              done={done}
             />
           </div>
         ))}

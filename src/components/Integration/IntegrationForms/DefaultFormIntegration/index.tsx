@@ -214,6 +214,7 @@ function DefaultFormIntegration(): JSX.Element {
                 placeHolder="Selecione..."
                 options={templates as any}
                 required
+                done={done === "done"}
               />
 
               {currentField?.id && (
@@ -225,6 +226,7 @@ function DefaultFormIntegration(): JSX.Element {
                   valueColLeft={headerSelectValue}
                   payloadToFinish={payloadToFinish}
                   type="column"
+                  done={done === "done"}
                 />
               )}
               <IntegrationNavigate
@@ -240,7 +242,9 @@ function DefaultFormIntegration(): JSX.Element {
                 onClick={() => {
                   setMenuActivated((nextMenu[menuActivated] as any).value);
                   navigate(
-                    `${ROUTES.INTEGRATION}/${nextMenu.value}/${integrationId}`,
+                    `${ROUTES.INTEGRATION}/${
+                      (nextMenu[menuActivated] as any).value
+                    }/${integrationId}`,
                   );
                 }}
               >

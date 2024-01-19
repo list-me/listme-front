@@ -7,7 +7,9 @@ function HeaderSelect({
   placeHolder,
   options,
   required,
+  done,
 }: {
+  done: boolean;
   headerSelectValue: {
     value: string;
     label: string;
@@ -36,6 +38,7 @@ function HeaderSelect({
       labelText={label}
       placeHolder={placeHolder}
       required={required}
+      isDisabled={done}
     />
   );
 }

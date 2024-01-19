@@ -24,7 +24,9 @@ function DefaultFormLine({
   changePayloadToFinish,
   index,
   type,
+  done,
 }: {
+  done: boolean;
   type: "catalog" | "column";
   item: {
     id: string;
@@ -121,7 +123,7 @@ function DefaultFormLine({
           options={optionsToView}
           placeHolder="Selecione..."
           small
-          isDisabled={!valueColLeft}
+          isDisabled={done || !valueColLeft}
         />
       )}
     </ContainerDefaultFormLine>

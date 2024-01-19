@@ -29,7 +29,9 @@ function FeatureForms({
   toClear,
   onSave,
   filteredOptions,
+  done,
 }: {
+  done: boolean;
   filteredOptions: (list: any) => void;
   onSave: () => void;
   toClear: () => void;
@@ -73,7 +75,7 @@ function FeatureForms({
     >
   >;
 }): JSX.Element {
-  const done = () => {
+  const funcionDone = () => {
     const isDone = payloadsToFinish.every((payload, index) => {
       return typeof headerSelectValues[index] !== "undefined";
     });
@@ -96,6 +98,7 @@ function FeatureForms({
               {templates && (
                 <div style={{ display: "flex", gap: "32px" }}>
                   <HeaderSelect
+                    done={done}
                     headerSelectValue={headerSelectValues[index]}
                     setHeaderSelectValue={(e: any) => {
                       changeListValue(
@@ -148,6 +151,7 @@ function FeatureForms({
                   valueColLeft={headerSelectValues[index]}
                   payloadToFinish={payloadsToFinish[index]}
                   type={characteristicsType[index]}
+                  done={done}
                 />
               )}
             </ContainerIntegration>
@@ -181,7 +185,7 @@ function FeatureForms({
             toClear();
           }}
           onSave={onSave}
-          isDisabled={!done()}
+          isDisabled={!funcionDone()}
         />
       </>
     </>
