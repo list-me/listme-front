@@ -16,6 +16,9 @@ import { ReactComponent as SubtopicIcon } from "../../../../../assets/subtopic.s
 import { DataField } from "../../../../CustomTable/components/HeaderDropDown/components/NewColumn/RelationForm/RelationForm";
 import { templateRequests } from "../../../../../services/apis/requests/template";
 import { ContainerDefaultFormLine, SubTopicContainer } from "./styles";
+import { ReactComponent as NumericIcon } from "../../../../../assets/numeric-icon.svg";
+import { ReactComponent as DecimalIcon } from "../../../../../assets/decimal-icon.svg";
+import { ReactComponent as BooleanIcon } from "../../../../../assets/boolean-icon.svg";
 // import { Container } from './styles';
 
 function DefaultFormLine({
@@ -56,6 +59,9 @@ function DefaultFormLine({
     [IconType.File]: <FileIcon />,
     [IconType.Radio]: <RadioIcon />,
     [IconType.Relation]: <RelationIcon />,
+    [IconType.Numeric]: <NumericIcon />,
+    [IconType.Decimal]: <DecimalIcon />,
+    [IconType.Boolean]: <BooleanIcon />,
   };
 
   const getIconByType = (gType: IconType): ReactElement => {

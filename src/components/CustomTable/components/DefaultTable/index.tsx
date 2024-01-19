@@ -796,7 +796,6 @@ function DefaultTable({
               _columnIndex={+col.order}
               data={col.data}
               key={col.order + col.data}
-              renderer={customRendererDefault}
             />
           );
         })}
