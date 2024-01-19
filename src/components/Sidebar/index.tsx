@@ -134,7 +134,7 @@ function Sidebar(): JSX.Element {
               onClick={() => handleClick(item)}
               isActive={handleGetCurrentActiveButton(item)}
             >
-              <Icon>{item.icon}</Icon>
+              <Icon isItem>{item.icon}</Icon>
               <Label isItem> {item.label} </Label>
             </Shape>
           ))}
