@@ -421,7 +421,7 @@ function DefaultTable({
         ref={hotRef}
         colHeaders={colHeaders}
         columns={cols}
-        data={productsToView}
+        data={products}
         hiddenColumns={{ columns: hidden }}
         manualColumnResize
         manualColumnMove
