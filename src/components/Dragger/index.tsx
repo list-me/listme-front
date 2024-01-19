@@ -2,10 +2,10 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import { Form, Input, Tree } from "antd";
+import { toast } from "react-toastify";
 import { IDraggerProps } from "./Dragger.d";
 import { Container, Content, IconContent } from "./styles";
 import { ReactComponent as MenuIcon } from "../../assets/menu-small-gray.svg";
-import { toast } from "react-toastify";
 
 import { ReactComponent as TrashIcon } from "../../assets/trash-icon.svg";
 
@@ -20,10 +20,10 @@ export const Dragger: React.FC<IDraggerProps> = ({
   return (
     <Container>
       {options.map((item, index) => {
-        const fieldName = `option${item}`;
+        const fieldName = `option${index}`;
 
         return (
-          <Content key={fieldName}>
+          <Content key={index}>
             <Form.Item
               wrapperCol={{ flex: "auto" }}
               label={index + 1}
@@ -74,10 +74,9 @@ export const Dragger: React.FC<IDraggerProps> = ({
                   return;
                 }
 
-                const updatedOptions = [...options];
-                updatedOptions.splice(index, 1);
-
-                setOptions(updatedOptions);
+                const newState = [...options];
+                newState.splice(index, 1);
+                setOptions(newState);
               }}
             >
               <TrashIcon />

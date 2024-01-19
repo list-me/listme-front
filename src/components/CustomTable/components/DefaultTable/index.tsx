@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 import Handsontable from "handsontable";
 import { CellValue, RangeType } from "handsontable/common";
 import { renderToString } from "react-dom/server";
+import { Switch } from "antd";
+import ReactDOM from "react-dom";
 import { FileEditor } from "../../Editors/File";
 import DropdownEditor from "../../Editors/Dropdown";
 import RadioEditor from "../../Editors/Radio";
@@ -17,6 +19,9 @@ import { ReactComponent as DropdownIcon } from "../../../../assets/icons/headers
 import { ReactComponent as FileIcon } from "../../../../assets/icons/headers/file-icon.svg";
 import { ReactComponent as RadioIcon } from "../../../../assets/icons/headers/radio-icon.svg";
 import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers/relation-icon.svg";
+import { ReactComponent as NumericIcon } from "../../../../assets/numeric-icon.svg";
+import { ReactComponent as DecimalIcon } from "../../../../assets/decimal-icon.svg";
+import { ReactComponent as BooleanIcon } from "../../../../assets/boolean-icon.svg";
 import { IDefaultTable } from "./DefaultTable";
 import handleCellChange from "./utils/handleCellChange";
 import handleBeforeCopy from "./utils/handleBeforeCopy";
@@ -39,6 +44,7 @@ import customRendererDropdownComponent from "./components/customRendererDropdown
 import { useFilterContext } from "../../../../context/FilterContext";
 import { useProductContext } from "../../../../context/products";
 import customRendererCheckedComponent from "./components/customRendererCheckedComponent";
+import DefaultLimits from "../../../../utils/DefaultLimits";
 
 function DefaultTable({
   hotRef,
@@ -96,47 +102,63 @@ function DefaultTable({
     source: string,
   ): Promise<void> => {
     if (changes) {
-      const before = changes[0][2];
-      const after = changes[0][3];
-      if (
-        changes?.length &&
-        typeof before === "string" &&
-        typeof after === "string"
-      ) {
-        const { length } = after;
-        const customChanges = changes as Handsontable.CellChange[];
-        const copyProducts = [...products];
-        // @ts-ignore
-        copyProducts[customChanges[0][0]][customChanges[0][1]] = before;
-        setProducts([...copyProducts]);
-        const currentColumn: any = cols.find(
-          (item) => item.data === changes[0][1],
-        );
-        if (length > currentColumn?.limitText) {
+      const currentColumnId = changes[0][1];
+      const newValue = changes[0][3];
+
+      const currentColumn = cols.find((item) => item.data === currentColumnId);
+      if (currentColumn?.type === "numeric") {
+        if (Number.isNaN(Number(newValue))) {
           toast.warn(
-            <div>
-              Limite de caracteres da coluna &quot;
-              <strong>{currentColumn?.title}</strong>
-              &quot; excedido
-            </div>,
+            `O valor deve ser numérico para a coluna ${currentColumn?.title}`,
           );
+          const previousCellValue = changes[0][2];
+          // eslint-disable-next-line no-param-reassign
+          products[changes[0][0]][changes[0][1]] = previousCellValue;
+
+          setProducts([...products]);
           return;
         }
       }
-    }
-    if (source === "CopyPaste.paste") return;
 
-    if (hotRef.current) {
-      const { hotInstance } = hotRef.current;
-      await handleCellChange(
-        changes,
-        hotInstance,
-        isTableLocked,
-        setIsTableLocked,
-        handleSave,
-        products,
-        setProducts,
-      );
+      if (currentColumn?.type === "decimal") {
+        if (!/^-?\d*\.?\d*$/.test(newValue.replace(",", "."))) {
+          toast.warn(
+            `O valor deve ser numérico para a coluna ${currentColumn?.title}`,
+          );
+          const previousCellValue = changes[0][2];
+          // eslint-disable-next-line no-param-reassign
+          products[changes[0][0]][changes[0][1]] = previousCellValue;
+
+          setProducts([...products]);
+          return;
+        }
+      }
+
+      if (currentColumn?.title) {
+        const limit =
+          currentColumn?.limit || DefaultLimits[currentColumn?.type]?.default;
+
+        if (currentColumn?.type !== "boolean" && newValue?.length > limit) {
+          toast.warn(`Limite excedido em "${currentColumn?.title}"`);
+          return;
+        }
+
+        if (source === "CopyPaste.paste") return;
+
+        if (hotRef.current) {
+          const { hotInstance } = hotRef.current;
+          await handleCellChange(
+            changes,
+            hotInstance,
+            isTableLocked,
+            setIsTableLocked,
+            handleSave,
+            products,
+            setProducts,
+            currentColumn?.type,
+          );
+        }
+      }
     }
   };
 
@@ -243,6 +265,14 @@ function DefaultTable({
           svgStringDropDown,
           setAlertTooltip,
         });
+
+        const colType = columns[col]?.type;
+        const maxLength = columns[col].limit || DefaultLimits[colType].max;
+
+        td.style.border = "";
+        if (value?.length > maxLength) {
+          td.style.border = "2px solid #F1BC02";
+        }
       }
     },
     [columns, svgStringDropDown],
@@ -252,15 +282,18 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      row: number,
+      _row: number,
       col: number,
       prop: string | number,
       value: any,
     ) => {
+      const colType = columns[col]?.type;
+      const maxLength = columns[col].limit || DefaultLimits[colType].max;
+      const previousValue = _instance.getDataAtCell(_row, col);
       customRendererFile(
         _instance,
         td,
-        row,
+        _row,
         col,
         prop,
         value,
@@ -268,7 +301,14 @@ function DefaultTable({
         loadingRef,
         uploadImages,
         template,
+        previousValue?.length,
+        maxLength,
       );
+
+      td.style.border = "";
+      if (value?.length > maxLength) {
+        td.style.border = "2px solid #F1BC02";
+      }
     },
     [hotRef, loadingRef, template, uploadImages],
   );
@@ -293,6 +333,98 @@ function DefaultTable({
     },
     [cols, svgStringDropDown],
   );
+  const customRendererText = useCallback(
+    (
+      _instance: Handsontable,
+      td: HTMLTableCellElement,
+      _row: number,
+      col: number,
+      _prop: string | number,
+      value: string | string[],
+    ): void => {
+      const colType = cols[col].type;
+      const maxLength = cols[col].limit || DefaultLimits[colType].max;
+      const textValue = value as string;
+
+      td.style.border = "";
+
+      if (textValue?.length > maxLength) {
+        td.style.border = "2px solid #F1BC02";
+      }
+
+      td.innerHTML = textValue;
+    },
+    [cols, svgStringDropDown],
+  );
+
+  const customRendererNumeric = useCallback(
+    (
+      _instance: Handsontable,
+      td: HTMLTableCellElement,
+      _row: number,
+      col: number,
+      _prop: string | number,
+      value: string | string[],
+    ): void => {
+      const numericValue = value as string;
+      const previousValue = _instance.getDataAtCell(_row, col);
+      const colType = columns[col]?.type;
+      const maxLength = columns[col].limit || DefaultLimits[colType].max;
+
+      td.style.border = "";
+      if (value?.length > maxLength) {
+        td.style.border = "2px solid #F1BC02";
+      }
+
+      if (Number.isNaN(Number(numericValue))) {
+        td.innerHTML =
+          previousValue !== null && previousValue !== undefined
+            ? String(previousValue)
+            : "";
+      } else {
+        td.innerHTML = numericValue;
+      }
+    },
+    [svgStringDropDown],
+  );
+
+  const customRendererDecimal = useCallback(
+    (
+      _instance: Handsontable,
+      td: HTMLTableCellElement,
+      _row: number,
+      col: number,
+      _prop: string | number,
+      value: string | string[],
+    ): void => {
+      const colDecimalPoint =
+        (cols[col]?.options && cols[col]?.options[0]) || ".";
+
+      let numericValue = "";
+      const colType = columns[col]?.type;
+      const maxLength = columns[col].limit || DefaultLimits[colType].max;
+      td.style.border = "";
+      if (value?.length > maxLength) {
+        td.style.border = "2px solid #F1BC02";
+      }
+
+      if (typeof value === "string") {
+        numericValue = value;
+      } else if (
+        Array.isArray(value) &&
+        value.length > 0 &&
+        typeof value[0] === "string"
+      ) {
+        // eslint-disable-next-line prefer-destructuring
+        numericValue = value[0];
+      }
+
+      const replacedValue = numericValue.replace(/[.,]/g, colDecimalPoint);
+
+      td.innerHTML = replacedValue;
+    },
+    [svgStringDropDown, cols],
+  );
 
   const customRendererRelation = useCallback(
     (
@@ -310,7 +442,7 @@ function DefaultTable({
     },
     [],
   );
-  const customRendererDefault = useCallback(
+  const customRendererBoolean = useCallback(
     (
       instance: Handsontable,
       td: HTMLTableCellElement,
@@ -319,14 +451,23 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
-      if (value?.length > (cols[col] as any).limitText) {
-        td.style.border = "1px solid #F1BC02";
-      } else {
-        td.style.border = "";
-      }
-      td.innerHTML = value;
+      const handleChange = (checked: boolean): void => {
+        const newValue = [`${checked}`];
+
+        instance.setDataAtCell(row, col, newValue);
+      };
+
+      ReactDOM.render(
+        <div className="boolean-switch-cell">
+          <Switch
+            checked={value?.length > 0 && value[0] === "true"}
+            onChange={handleChange}
+          />
+        </div>,
+        td,
+      );
     },
-    [cols],
+    [],
   );
 
   const ICON_HEADER = useMemo(
@@ -338,6 +479,9 @@ function DefaultTable({
       [IconType.File]: <FileIcon />,
       [IconType.Radio]: <RadioIcon />,
       [IconType.Relation]: <RelationIcon />,
+      [IconType.Numeric]: <NumericIcon />,
+      [IconType.Decimal]: <DecimalIcon />,
+      [IconType.Boolean]: <BooleanIcon />,
     }),
     [],
   );
@@ -503,6 +647,17 @@ function DefaultTable({
         afterChange={afterChangeCallback}
       >
         {cols.map((col, _index: number) => {
+          if (col?.type === "text" || col?.type === "paragraph") {
+            return (
+              <HotColumn
+                width={col.width}
+                _columnIndex={+col.order}
+                data={col.data}
+                key={col.order + col.data}
+                renderer={customRendererText}
+              />
+            );
+          }
           if (col.isCustom && col.type === "list") {
             return (
               <HotColumn
@@ -596,6 +751,42 @@ function DefaultTable({
                   field={col.options[0].field}
                 />
               </HotColumn>
+            );
+          }
+          if (col.type === "boolean") {
+            return (
+              <HotColumn
+                _columnIndex={+col.order}
+                data={col.data}
+                width={col.width}
+                key={col.order + col.data}
+                // eslint-disable-next-line react/jsx-no-bind
+                renderer={customRendererBoolean}
+                readOnly
+              />
+            );
+          }
+
+          if (col.type === "numeric") {
+            return (
+              <HotColumn
+                width={col.width}
+                _columnIndex={+col.order}
+                data={col.data}
+                key={col.order + col.data}
+                renderer={customRendererNumeric}
+              />
+            );
+          }
+          if (col.type === "decimal") {
+            return (
+              <HotColumn
+                width={col.width}
+                _columnIndex={+col.order}
+                data={col.data}
+                key={col.order + col.data}
+                renderer={customRendererDecimal}
+              />
             );
           }
 
