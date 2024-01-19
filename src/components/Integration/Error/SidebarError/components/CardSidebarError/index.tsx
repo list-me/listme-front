@@ -28,7 +28,6 @@ function CardSidebarError({
 
   const line = "Linha 2";
   const item = error.product.firstColumnValue;
-  console.log("🚀 ~ item:", item);
 
   function convertDateTimeToBrazilFormat(dateTimeUTC: string): string {
     const dateTime = new Date(dateTimeUTC);
@@ -56,7 +55,6 @@ function CardSidebarError({
   const extractTexts = (msg: any) => {
     try {
       const result = JSON.parse(msg);
-      console.log("🚀 ~ extractTexts ~ result:", result);
 
       if (Array.isArray(result) && typeof result[0] === "string") {
         return result;

@@ -26,7 +26,6 @@ export const Input: React.FC<IInputProps> = ({
   padding,
   onPressEnter = () => {},
 }) => {
-  console.log("🚀 ~ value:", value);
   const [inputText, setInputText] = useState<string>("");
   const inputRef = useRef<InputRef | null>(null);
 

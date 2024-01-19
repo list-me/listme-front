@@ -59,7 +59,6 @@ export const Temp: React.FC<IProps> = ({
 
   useEffect(() => {
     if (searchIntegration) {
-      console.log("🚀 ~ useEffect ~ searchIntegration:", searchIntegration);
       setFilter(searchIntegration);
       setOnSearch(true);
     }
