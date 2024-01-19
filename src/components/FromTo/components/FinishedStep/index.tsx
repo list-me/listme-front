@@ -5,7 +5,7 @@ import {
   ContentFinishedStep,
   TextFinishedStep,
 } from "./styles";
-import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
+import { BoxButtons, NavigationButton } from "../../../NavigationButton/styles";
 import { useFromToContext } from "../../../../context/FromToContext";
 // @ts-ignore
 import check from "../../../../assets/images/checkImage.png";

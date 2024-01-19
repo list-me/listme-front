@@ -8,4 +8,8 @@ export const ContainerIntegration = styled.div`
   flex-direction: column;
   gap: 32px;
 `;
-export const CardsContainerIntegration = styled.div``;
+export const CardsContainerIntegration = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+`;

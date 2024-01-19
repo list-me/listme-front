@@ -23,7 +23,7 @@ function Template(): JSX.Element {
     setConditions([]);
     setFilters([defaultFilter]);
     setFilterStatus(false);
-  }, [defaultFilter, setConditions, setFilterStatus, setFilters]);
+  }, []);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]): void => {
     setSelectedRowKeys(newSelectedRowKeys);

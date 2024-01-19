@@ -19,10 +19,15 @@ interface ISelect {
   item?: IFilter;
   index?: index;
   loadingOptions?: boolean;
+  inline?: boolean;
+  required?: boolean;
+  infoTitle?: string;
+  infoContent?: string;
+  isDisabled?: boolean;
 }
 
 type Styles = {
-  control: (provided: CSSProperties) => CSSProperties;
+  control: (provided: CSSProperties, state: OptionState) => CSSProperties;
   singleValue: (provided: CSSProperties) => CSSProperties;
   placeholder: (provided: CSSProperties) => CSSProperties;
   menu: (provided: CSSProperties) => CSSProperties;

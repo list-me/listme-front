@@ -1,7 +1,7 @@
 // import React, { useState } from "react";
 import { ContainerImportOptions } from "./styles";
 import Select from "../../../Select";
-import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
+import { BoxButtons, NavigationButton } from "../../../NavigationButton/styles";
 // import CheckboxCustom from "../../../Checkbox";
 import { useFromToContext } from "../../../../context/FromToContext";
 import options from "./utils/options";

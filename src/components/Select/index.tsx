@@ -4,6 +4,7 @@ import { ContainerSelect, LabelSelect, customStyles } from "./styles";
 import makeDropdownIndicator from "./components/DropdownIndicator";
 import CustomMenuList from "./components/Options";
 import CustomOption from "./components/Option";
+import InfoAlert from "../InfoAlert";
 
 const SelectComponent = ({
   select,
@@ -15,6 +16,11 @@ const SelectComponent = ({
   isSearchable,
   fixedOptions,
   DropDownComponent,
+  inline,
+  required,
+  infoTitle,
+  infoContent,
+  isDisabled,
 }: ISelect): JSX.Element => {
   const DropdownWithProps = makeDropdownIndicator({ isSearchable });
 
@@ -25,10 +31,22 @@ const SelectComponent = ({
   const optionsToView = fixedOptions ? [...options, ...fixedOptions] : options;
 
   return (
-    <ContainerSelect>
-      {labelText && <LabelSelect htmlFor={labelText}>{labelText}</LabelSelect>}
+    <ContainerSelect inline={inline}>
+      {labelText && (
+        <LabelSelect htmlFor={labelText}>
+          <div>
+            {labelText}
+            {required && <span>*</span>}
+          </div>
+          {(infoTitle || infoContent) && (
+            <InfoAlert title={infoTitle || ""} content={infoContent || ""} />
+          )}
+        </LabelSelect>
+      )}
       {fixedOptions ? (
         <Select
+          isDisabled={isDisabled}
+          className="react-select"
           isSearchable={isSearchable}
           value={select}
           onChange={(selectedOption) => onChange(selectedOption as string)}
@@ -53,6 +71,7 @@ const SelectComponent = ({
         />
       ) : (
         <Select
+          isDisabled={isDisabled}
           isSearchable={false}
           value={select}
           onChange={(selectedOption) => onChange(selectedOption as string)}

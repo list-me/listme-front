@@ -86,7 +86,7 @@ export const Description = styled.h2`
   font-weight: 400;
   font-size: 16px;
   line-height: 150%;
-  color: #868e96;
+  color: ${({ theme }) => theme.colors.tertiary};
 
   flex: none;
   order: 1;

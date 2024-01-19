@@ -10,7 +10,7 @@ import {
 } from "./styles";
 import Origin from "./components/Origin";
 import SelectComponent from "../../../Select";
-import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
+import { BoxButtons, NavigationButton } from "../../../NavigationButton/styles";
 import { useFromToContext } from "../../../../context/FromToContext";
 import { useProductContext } from "../../../../context/products";
 import { DropdownMenu } from "../../../DropdownMenu";

@@ -20,6 +20,10 @@ export const TitlePage = styled.h2`
   :hover {
     cursor: default;
   }
+
+  span {
+    color: ${({ theme }) => theme.colors.tertiary};
+  }
 `;
 
 export const Capsule = styled.div`

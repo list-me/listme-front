@@ -6,7 +6,7 @@ import {
   ContainerImportConfiguration,
 } from "./styles";
 import { useFromToContext } from "../../../../context/FromToContext";
-import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
+import { BoxButtons, NavigationButton } from "../../../NavigationButton/styles";
 import SelectComponent from "../../../Select";
 import options from "./utils/options";
 import handleChangeSelect from "../../utils/handleChangeSelect";
