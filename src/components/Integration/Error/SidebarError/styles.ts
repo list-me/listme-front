@@ -35,10 +35,11 @@ export const ContainerListCardsSidebarError = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding-bottom: 12px;
+  height: 80vh;
+  overflow-y: scroll;
   border-bottom: 1px solid #eee;
-  height: 100%;
-  overflow-y: auto;
+  padding-bottom: 12px;
+
   ::-webkit-scrollbar {
     width: 8px;
     cursor: default;

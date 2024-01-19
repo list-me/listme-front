@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useState } from "react";
-import { IEnvironment, IntegrationContextType } from "./IntegrationContext";
+import {
+  IEnvironment,
+  IErrorsIntegrations,
+  IntegrationContextType,
+} from "./IntegrationContext";
 import { IProvider } from "../../models/integration/integration";
 import menus from "../../pages/companyIntegration/utils/menus";
 
@@ -12,6 +16,11 @@ function IntegrationProvider({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
+  const [errors, setErrors] = useState<IErrorsIntegrations>(
+    {} as IErrorsIntegrations,
+  );
+
+  const [sidebarErrorOpened, setSidebarErrorOpened] = useState(false);
   const [mode, setMode] = useState<"editing" | "registration">("registration");
   const [currentProvider, setCurrentProvider] = useState<IProvider>(
     {} as IProvider,
@@ -38,6 +47,10 @@ function IntegrationProvider({
     setMode,
     currentMenus,
     setCurrentMenus,
+    errors,
+    setErrors,
+    sidebarErrorOpened,
+    setSidebarErrorOpened,
   };
 
   return (

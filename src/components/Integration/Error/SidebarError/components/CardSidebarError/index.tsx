@@ -15,25 +15,76 @@ import {
 } from "./styles";
 import LogoNexaas from "../../../../../../assets/images/logoNexaas.png";
 import { ReactComponent as ChevronDownIcon } from "../../../../../../assets/chevron-down-small.svg";
+import { IDataErrorIntegrations } from "../../../../../../context/IntegrationContext/IntegrationContext";
 
-function CardSidebarError(): JSX.Element {
+function CardSidebarError({
+  error,
+}: {
+  error: IDataErrorIntegrations;
+}): JSX.Element {
   const [opened, setOpened] = useState(false);
 
   const line = "Linha 2";
-  const item =
-    "Camisa Nike Brasil I 2023/Texto aqui pra ter parametro de corte";
-  const itemToView = `${item.split("/")[0]}/...`;
+  const item = error.product.firstColumnValue;
 
-  const listDescErrors = [
-    "Detectamos um erro de integração em um produto cadastrado, afetando a funcionalidade do sistema. Estamos comprometidos em resolver rapidamente e pedimos desculpas por qualquer inconveniente.",
-    "Detectamos um erro de integração em um produto cadastrado, afetando a funcionalidade do sistema. Estamos comprometidos em resolver rapidamente e pedimos desculpas por qualquer inconveniente.",
-    "Detectamos um erro de integração em um produto cadastrado, afetando a funcionalidade do sistema. Estamos comprometidos em resolver rapidamente e pedimos desculpas por qualquer inconveniente.",
-    "Detectamos um erro de integração em um produto cadastrado, afetando a funcionalidade do sistema. Estamos comprometidos em resolver rapidamente e pedimos desculpas por qualquer inconveniente.",
-    "Detectamos um erro de integração em um produto cadastrado, afetando a funcionalidade do sistema. Estamos comprometidos em resolver rapidamente e pedimos desculpas por qualquer inconveniente.",
-    "Detectamos um erro de integração em um produto cadastrado, afetando a funcionalidade do sistema. Estamos comprometidos em resolver rapidamente e pedimos desculpas por qualquer inconveniente.",
-    "Detectamos um erro de integração em um produto cadastrado, afetando a funcionalidade do sistema. Estamos comprometidos em resolver rapidamente e pedimos desculpas por qualquer inconveniente.",
-    "Detectamos um erro de integração em um produto cadastrado, afetando a funcionalidade do sistema. Estamos comprometidos em resolver rapidamente e pedimos desculpas por qualquer inconveniente.",
-  ];
+  function convertDateTimeToBrazilFormat(dateTimeUTC: string): string {
+    const dateTime = new Date(dateTimeUTC);
+
+    const day = `0${dateTime.getUTCDate()}`.slice(-2);
+    const monthAbbrev = new Intl.DateTimeFormat("en", {
+      month: "short",
+    }).format(dateTime);
+    const year = dateTime.getUTCFullYear();
+
+    const options: Intl.DateTimeFormatOptions = {
+      timeZone: "America/Sao_Paulo",
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+
+    const timeBrazil = dateTime.toLocaleString("en-US", options);
+
+    return `${day} de ${monthAbbrev}, ${year} - ${timeBrazil}`;
+  }
+
+  const hourDate = convertDateTimeToBrazilFormat(error.createdAt);
+
+  const extractTexts = (msg: any) => {
+    try {
+      const result = JSON.parse(msg);
+      console.log("🚀 ~ extractTexts ~ result:", result);
+
+      if (Array.isArray(result) && typeof result[0] === "string") {
+        return result;
+      }
+      if (
+        Array.isArray(result) &&
+        typeof result[0] === "object" &&
+        result[0] !== null
+      ) {
+        const listReturn: any[] = [];
+        const objs = result;
+        objs.forEach((obj: any) => {
+          const keys = Object.keys(obj);
+          keys.forEach((currentKey) => {
+            obj[currentKey].forEach((currentItem: any) => {
+              listReturn.push(currentItem);
+            });
+          });
+        });
+
+        return listReturn;
+      }
+      if (typeof result === "string") {
+        return [result];
+      }
+    } catch (err) {
+      return [msg];
+    }
+  };
+
+  extractTexts(error.message);
 
   return (
     <ContainerCardSidebarError opened={opened}>
@@ -43,7 +94,7 @@ function CardSidebarError(): JSX.Element {
           <ContainerTextMore>
             <TextHeaderSidebarError>
               <span>{line}</span>
-              {` - "${itemToView}"`}
+              {` - "${item}"`}
             </TextHeaderSidebarError>
             <MoreButton onClick={() => setOpened(!opened)}>
               Saiba mais
@@ -51,17 +102,17 @@ function CardSidebarError(): JSX.Element {
           </ContainerTextMore>
         </HeaderContentLeftCardSidebarError>
         <HeaderContentRightCardSidebarError>
-          <HourDateText>12 de Fev, 2023 - 12:32</HourDateText>
+          <HourDateText>{hourDate}</HourDateText>
           <ChevronButton onClick={() => setOpened(!opened)}>
             <ChevronDownIcon />
           </ChevronButton>
         </HeaderContentRightCardSidebarError>
       </HeaderCardSidebarError>
       <ContentCardSidebarError opened={opened}>
-        {listDescErrors.map((current) => (
+        {extractTexts(error.message)?.map((currentMessage) => (
           <ItemErrorDesc>
             <span>Error: </span>
-            {current}
+            {currentMessage}
           </ItemErrorDesc>
         ))}
         <ButtonProductView>Ver produto</ButtonProductView>

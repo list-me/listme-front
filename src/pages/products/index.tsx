@@ -6,12 +6,16 @@ import Table from "../../components/CustomTable";
 import { productContext } from "../../context/products";
 import { Loading } from "../../components/Loading";
 import SidebarError from "../../components/Integration/Error/SidebarError";
+import { useIntegration } from "../../context/IntegrationContext";
 
 export const Products: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { handleRedirectAndGetProducts, products, colHeaders } =
     useContext(productContext);
+
+  const { sidebarErrorOpened, errors, setSidebarErrorOpened } =
+    useIntegration();
 
   useEffect(() => {
     setIsLoading(true);
@@ -27,7 +31,12 @@ export const Products: React.FC = () => {
     <>
       <Content>
         <Container>
-          <SidebarError />
+          {sidebarErrorOpened && (
+            <SidebarError
+              errors={errors}
+              setSidebarErrorOpened={setSidebarErrorOpened}
+            />
+          )}
           {isLoading ? <Loading /> : products && colHeaders && <Table />}
         </Container>
       </Content>

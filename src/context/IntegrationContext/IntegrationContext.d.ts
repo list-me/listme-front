@@ -25,5 +25,30 @@ export interface IntegrationContextType {
       }[]
     >
   >;
+  errors: IErrorsIntegrations;
+  setErrors: React.Dispatch<React.SetStateAction<IErrorsIntegrations>>;
+  sidebarErrorOpened: boolean;
+  setSidebarErrorOpened: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export type IEnvironment = "sandbox" | "production";
+
+export interface IDataErrorIntegrations {
+  id: string;
+  message: string;
+  provider: {
+    name: string;
+    thumbnailUrl: string;
+  };
+  product: {
+    id: string;
+    firstColumnValue: string[];
+  };
+  createdAt: string;
+}
+
+export interface IErrorsIntegrations {
+  data: IDataErrorIntegrations[];
+  total: number;
+  offset: number;
+  limit: number;
+}

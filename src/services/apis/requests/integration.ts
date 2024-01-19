@@ -88,4 +88,23 @@ export const integrationsRequest = {
 
     return response.data;
   },
+  listIntegrationsErrors: async ({
+    limit,
+    offset,
+  }: {
+    limit: number;
+    offset: number;
+  }): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.get(
+      `/integrations/errors?limit=${limit}&offset=${offset}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  },
 };
