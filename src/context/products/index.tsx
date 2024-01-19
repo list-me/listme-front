@@ -2,7 +2,6 @@ import React, {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -124,6 +123,7 @@ export const ProductContextProvider = ({
       CHECKED: "checkbox",
       FILE: "file",
       RELATION: "relation",
+      BOOLEAN: "boolean",
     }),
     [],
   );
@@ -303,7 +303,7 @@ export const ProductContextProvider = ({
             width: item.width ? item.width : "300px",
             frozen: item.frozen ? item.frozen : false,
             bucket_url: response?.bucket_url,
-            limitText: 256,
+            limit: item.limit,
           };
         },
       );

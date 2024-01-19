@@ -287,7 +287,6 @@ function CharacteriscFormIntegration(): JSX.Element {
       return ["radio", "checked", "list"].includes(fItem.value.type);
     });
   };
-  console.log(nextMenu);
 
   return (
     <TemplateDefault handleGetTemplates={() => ""}>

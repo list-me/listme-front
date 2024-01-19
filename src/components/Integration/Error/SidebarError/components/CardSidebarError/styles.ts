@@ -1,17 +1,16 @@
 import styled from "styled-components";
 
 export const ContainerCardSidebarError = styled.div<{ opened: boolean }>`
-  min-height: 80px;
-  max-height: 0px;
+  /* height: ${(props) => (props.opened ? "auto" : "80px")}; */
   border-radius: 4px;
   background: rgba(255, 107, 107, 0.1);
   display: flex;
   padding: 16px;
   flex-direction: column;
-
-  max-height: ${(props) => (props.opened ? "528px" : "0px")};
-  min-height: ${(props) => (props.opened ? "528px" : "none")};
-  transition: max-height 0.5s linear, min-height 0.5s linear;
+  max-height: ${(props) => (props.opened ? "528px" : "80px")};
+  transition: max-height 0.4s ease-in-out;
+  overflow: hidden;
+  flex-shrink: 0;
 `;
 export const HeaderCardSidebarError = styled.div`
   display: flex;
@@ -91,7 +90,8 @@ export const ContentCardSidebarError = styled.div<{ opened: boolean }>`
   border-top: ${(props) =>
     props.opened ? "1px solid rgba(0, 0, 0, 0.1)" : "none"};
   overflow: hidden;
-  transition: margin-top 1s, border-top 0s 1s;
+  max-height: 528px;
+  transition: margin-top 0.4s ease-in-out, border-top 0s 0.4s ease-in-out;
   overflow-y: auto;
 
   ::-webkit-scrollbar {

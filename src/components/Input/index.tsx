@@ -69,7 +69,7 @@ export const Input: React.FC<IInputProps> = ({
           </span>
         </Label>
       ) : null}
-      <Form>
+      <Form autoComplete="off">
         <Form.Item
           className="formInput"
           name={name}

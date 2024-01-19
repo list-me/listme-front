@@ -7,24 +7,51 @@ import {
 } from "./styles";
 import { ReactComponent as CloseIcon } from "../../../../assets/close-gray.svg";
 import CardSidebarError from "./components/CardSidebarError";
+import { IErrorsIntegrations } from "../../../../context/IntegrationContext/IntegrationContext";
+import PaginationSidebarError from "./components/PaginationSidebarError";
 
-function SidebarError(): JSX.Element {
+function SidebarError({
+  errors,
+  setSidebarErrorOpened,
+  limit,
+  offset,
+  total,
+  setOffset,
+  setSearchIntegration,
+}: {
+  setSearchIntegration: React.Dispatch<React.SetStateAction<string>>;
+  setOffset: React.Dispatch<React.SetStateAction<number>>;
+  limit: number;
+  offset: number;
+  total: number;
+  errors: IErrorsIntegrations;
+  setSidebarErrorOpened: React.Dispatch<React.SetStateAction<boolean>>;
+}): JSX.Element {
+  const errorsData = errors.data;
   return (
     <ContainerSidebarError>
       <HeaderSidebarError>
         <TitleHeaderSidebarError>Falhas na integração</TitleHeaderSidebarError>
-        <CloseButtonSidebarError>
+        <CloseButtonSidebarError onClick={() => setSidebarErrorOpened(false)}>
           <CloseIcon />
         </CloseButtonSidebarError>
       </HeaderSidebarError>
       <ContainerListCardsSidebarError>
-        <CardSidebarError />
-        <CardSidebarError />
-        <CardSidebarError />
-        <CardSidebarError />
-        <CardSidebarError />
-        <CardSidebarError />
+        {errorsData.map((currentError) => (
+          <>
+            <CardSidebarError
+              error={currentError}
+              setSearchIntegration={setSearchIntegration}
+            />
+          </>
+        ))}
       </ContainerListCardsSidebarError>
+      <PaginationSidebarError
+        limit={limit}
+        offset={offset}
+        total={total}
+        onPageChange={setOffset}
+      />
     </ContainerSidebarError>
   );
 }

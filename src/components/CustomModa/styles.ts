@@ -482,3 +482,21 @@ export const IconContent = styled.span`
     transition: 0.5s;
   }
 `;
+export const CharacterLimitContainer = styled.div`
+  .ant-form-item-label {
+    .ant-form-item-no-colon {
+      width: 100%;
+      padding: 0;
+    }
+  }
+  .label-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+  }
+  button {
+    position: relative;
+    right: -10px;
+  }
+`;

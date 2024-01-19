@@ -11,6 +11,7 @@ const handleCellChange: any = async (
   handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>,
   dataProvider: any[],
   setDataProvider: React.Dispatch<React.SetStateAction<any[]>>,
+  type: string,
 ) => {
   if (changes !== null && changes.length && !isTableLocked && hotInstance) {
     const isNew = !!dataProvider[changes[0][0]].id;
@@ -58,12 +59,26 @@ const handleCellChange: any = async (
       // eslint-disable-next-line prefer-destructuring
       previousCellValue = customChanges[0][2];
 
+      let newDataProvider = [...dataProvider];
+      if (type === "decimal") {
+        const newData = newDataProvider.map((item) => {
+          // eslint-disable-next-line prefer-destructuring, no-multi-assign
+          const columnIndex = changes[0][1];
+
+          if (item[columnIndex]?.includes(",")) {
+            item[columnIndex] = item[columnIndex].split(",").join(".");
+          }
+          return item;
+        });
+        newDataProvider = newData;
+      }
+
       try {
         if (!isNew) setIsTableLocked(true);
         const response = await handleSave(
-          dataProvider[customChanges[0][0]],
+          newDataProvider[customChanges[0][0]],
           isNew,
-          dataProvider[customChanges[0][0]]?.id,
+          newDataProvider[customChanges[0][0]]?.id,
         );
         if (
           response.id &&
@@ -71,13 +86,13 @@ const handleCellChange: any = async (
             response.id.toString(),
           )
         ) {
-          const updated = dataProvider;
+          const updated = newDataProvider;
           updated[customChanges[0][0]].id = response.id;
           setDataProvider(updated);
         }
       } catch {
-        // @ts-ignore
-        dataProvider[customChanges[0][0]][customChanges[0][1]] =
+        // eslint-disable-next-line no-param-reassign
+        newDataProvider[customChanges[0][0]][customChanges[0][1]] =
           previousCellValue;
 
         setDataProvider([...dataProvider]);

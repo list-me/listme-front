@@ -18,6 +18,7 @@ import {
   AddNew,
   ButtonContainer2,
   Footer,
+  CharacterLimitContainer,
 } from "./styles";
 import { ReactComponent as ChevronDownIcon } from "../../assets/chevron-down-small.svg";
 import { ReactComponent as TrashIcon } from "../../assets/trash-icon.svg";
@@ -26,6 +27,7 @@ import { ReactComponent as PlusIcon } from "../../assets/plus-small.svg";
 import { templateRequests } from "../../services/apis/requests/template";
 import { RelationForm } from "../CustomTable/components/HeaderDropDown/components/NewColumn/RelationForm";
 import { useProductContext } from "../../context/products";
+import DefaultLimits from "../../utils/DefaultLimits";
 
 interface PropsModal {
   isOpen: boolean;
@@ -51,6 +53,7 @@ type Field = {
   option: string[] | Options[];
   required: boolean;
 };
+type DataType = "text" | "paragraph";
 
 export const PersonalModal = ({
   isOpen,
@@ -68,6 +71,19 @@ export const PersonalModal = ({
   );
   const [type, setType] = useState<string>(data?.type);
   const [required, setRequired] = useState<boolean>(data?.required ?? false);
+  // @ts-ignore
+  const initialLimit =
+    data?.limit || DefaultLimits[data?.type]?.default || null;
+
+  const [characterLimit, setCharacterLimit] = useState<number>(initialLimit);
+
+  const initialDecimalPoint = data?.options ? data?.options[0] : ".";
+
+  const [decimalPoint, setDecimalPoint] = useState<string>(initialDecimalPoint);
+
+  const [activeCharacterLimit, setActiveCharacterLimit] = useState<boolean>(
+    data?.limit ? true : false,
+  );
   const [isUpdate] = useState<boolean>(data?.id);
   const [draggerOptions, setDraggerOptions] = useState<any[]>(
     data?.options ?? [""],
@@ -106,6 +122,15 @@ export const PersonalModal = ({
   const titleRef = useRef(title);
 
   const [form] = Form.useForm();
+
+  const limitText: { [key: string]: string } = {
+    text: "Definir o limite máximo de caracteres:",
+    paragraph: "Definir o limite máximo de caracteres:",
+    checked: "Definir o limite máximo de opções selecionadas:",
+    file: "Definir o limite máximo de imagens:",
+    numeric: "Definir o limite máximo de caracteres:",
+    decimal: "Definir o limite máximo de caracteres:",
+  };
 
   const textOptions = [
     {
@@ -165,6 +190,18 @@ export const PersonalModal = ({
       label: "Conexão entre produtos",
       description: "Adicione um campo de relacionamento entre produtos",
     },
+    numeric: {
+      label: "Campo de números inteiros",
+      description: "Adicione uma entrada de números inteiros",
+    },
+    decimal: {
+      label: "Campo de números decimais",
+      description: "Adicione um campo para envio de preços ou outros tipos",
+    },
+    boolean: {
+      label: "Booleano",
+      description: "Adicione um campo do tipo booleano",
+    },
   };
 
   const MULTI_SELECT = ["checked", "radio", "list"];
@@ -182,11 +219,12 @@ export const PersonalModal = ({
     if (isUpdate) {
       templateUpdated = template.fields.fields.map((item: any) => {
         if (item.id === data.id) {
-          data.options = option;
+          data.options = type !== "decimal" ? option || [""] : [decimalPoint];
           data.type = type;
           data.name = name;
           data.title = title;
           data.required = required;
+          data.limit = characterLimit;
           item = data;
           return item;
         }
@@ -200,7 +238,8 @@ export const PersonalModal = ({
         type,
         title,
         name,
-        options: option,
+        limit: characterLimit,
+        options: type !== "decimal" ? option || [""] : [decimalPoint],
         required,
         is_public: false,
         help_text: "This fiedl will help you to make a new product register",
@@ -216,8 +255,18 @@ export const PersonalModal = ({
       delete item.hidden;
     });
 
+    const newFields = templateUpdated.map((item: any) => {
+      if (item.limit) {
+        return item;
+      }
+      const newObj = { ...item, limit: DefaultLimits[item.type].default };
+      return newObj;
+    });
+
+    const newTemplates = { fields: newFields };
+
     try {
-      await templateRequests.update(template?.id, { fields: templateUpdated });
+      await templateRequests.update(template?.id, newTemplates);
       toast.success("Template atualizado com sucesso");
       return templateUpdated;
     } catch (error) {
@@ -253,7 +302,7 @@ export const PersonalModal = ({
         onCancel={onClickModal}
         onOk={onClickModal}
         width="470px"
-        style={{ marginBottom: "2vh", top: 30 }}
+        style={{ marginBottom: "2vh", top: 30, maxHeight: "90vh" }}
         footer={null}
       >
         <Container>
@@ -269,6 +318,7 @@ export const PersonalModal = ({
                 title,
                 name: data?.name,
                 type: data?.type,
+                limit: characterLimit,
               }}
               onFinish={(fields) => {
                 if (!fields.type) fields.type = type;
@@ -278,6 +328,26 @@ export const PersonalModal = ({
                 ) {
                   toast.warn("O campo para exibição não pode ser vazio");
                   return;
+                }
+                if (activeCharacterLimit) {
+                  if (isNaN(characterLimit)) {
+                    toast.warn(
+                      "O campo de limite de caracteres contém um valor invalido",
+                    );
+                    return;
+                  }
+                  if (!characterLimit) {
+                    toast.warn(
+                      "O campo de limite de caracteres não pode ser vazio",
+                    );
+                    return;
+                  }
+                  if (!characterLimit) {
+                    toast.warn(
+                      "O campo de limite de caracteres não pode ser menor do que 0",
+                    );
+                    return;
+                  }
                 }
 
                 const customOptions: any[] = [];
@@ -372,13 +442,51 @@ export const PersonalModal = ({
                       onChange={(e) => {
                         e.preventDefault();
 
-                        setTitle(e.target.value);
+                        setTitle(e?.target?.value);
                       }}
                       placeholder="Informe o nome do campo"
                     />
                   </Form.Item>
+                  {["decimal"].includes(data?.type) && (
+                    <Form.Item
+                      wrapperCol={{ flex: "auto" }}
+                      label="Escolha o separador decimal"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Escolha o separador decimal",
+                        },
+                      ]}
+                      style={{ marginBottom: "6px" }}
+                    >
+                      <Select
+                        style={{
+                          height: "64px",
+                          border: "1px solid #DEE2E6",
+                        }}
+                        value={decimalPoint}
+                        onChange={(e: string) => {
+                          setDecimalPoint(e as any);
+                        }}
+                        placeholder="Escolha o separador decimal"
+                      >
+                        <Select.Option value="." label="Ponto(.)">
+                          Ponto(.)
+                        </Select.Option>
+                        <Select.Option value="," label="Vírgula(,)">
+                          Vírgula(,)
+                        </Select.Option>
+                      </Select>
+                    </Form.Item>
+                  )}
                   {!MULTI_SELECT.includes(data?.type) &&
-                  !["relation", "file"].includes(data?.type) ? (
+                  ![
+                    "relation",
+                    "file",
+                    "numeric",
+                    "decimal",
+                    "boolean",
+                  ].includes(data?.type) ? (
                     <Form.Item
                       wrapperCol={{ flex: "auto" }}
                       label="Escolha o tipo de valor"
@@ -396,6 +504,12 @@ export const PersonalModal = ({
                         value={type}
                         removeIcon
                         onChange={(e: string) => {
+                          if (e === "text") {
+                            setCharacterLimit(100);
+                          }
+                          if (e === "paragraph") {
+                            setCharacterLimit(512);
+                          }
                           setType(e);
                         }}
                         placeholder="Informe o tipo do campo"
@@ -415,80 +529,70 @@ export const PersonalModal = ({
                   ) : (
                     <></>
                   )}
-                  {(data.type === "paragraph" || data.type === "text") && (
-                    <>
-                      <Form.Item
-                        label="Definir limite máximo de caracteres"
-                        name="limitStatus"
-                        style={{
-                          display: "flex",
-                          marginBottom: "2px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            marginLeft: "68px",
-                          }}
-                        >
-                          <Switch
-                            size="small"
-                            onChange={() => setLimitStatus(!limitStatus)}
-                            checked={limitStatus}
-                          />
-                        </div>
-                      </Form.Item>
+                  {[
+                    "text",
+                    "paragraph",
+                    "checked",
+                    "file",
+                    "numeric",
+                    "decimal",
+                  ].includes(data?.type) && (
+                    <CharacterLimitContainer>
                       <Form.Item
                         wrapperCol={{ flex: "auto" }}
+                        colon={false}
+                        label={
+                          <div className="label-content">
+                            <span>{limitText[data.type]}</span>
+                            <Switch
+                              checked={activeCharacterLimit}
+                              size="small"
+                              onChange={(e) => setActiveCharacterLimit(e)}
+                            />
+                          </div>
+                        }
                         name="limit"
-                        style={{ marginBottom: "6px" }}
+                        style={{
+                          marginBottom: "6px",
+                          position: "relative",
+                        }}
                       >
                         <Input
-                          value={limit}
+                          type="number"
+                          min={0}
+                          max={DefaultLimits[data.type].max}
+                          disabled={!activeCharacterLimit}
                           style={{
                             height: "64px",
                             border: "1px solid #DEE2E6",
                           }}
-                          disabled={!limitStatus}
-                          type="number"
-                          min={0}
+                          value={characterLimit}
                           onChange={(e) => {
                             e.preventDefault();
+                            const inputValue = +e.target.value;
+                            const maxLimit = DefaultLimits[data.type].max;
 
-                            setLimit(+e.target.value);
+                            if (inputValue > maxLimit) {
+                              setCharacterLimit(maxLimit);
+                            } else {
+                              setCharacterLimit(inputValue);
+                            }
                           }}
                           placeholder="Ex.: 10"
                         />
                       </Form.Item>
-                    </>
+                    </CharacterLimitContainer>
                   )}
                 </InputContainer>
+
                 {MULTI_SELECT.includes(data?.type) ? (
                   <div className="dragger">
                     <p>Opções</p>
                     <Form.Item name="options" className="onDragger">
                       <Dragger
                         options={draggerOptions}
-                        setOptions={(values: any) => setDraggerOptions(values)}
-                        handleOnDrop={(info: any) => {
-                          const { node, dragNode } = info;
-                          const newTreeData = [...draggerOptions];
-                          const dragNodeIndex = newTreeData.findIndex(
-                            (n: any) => n.key === dragNode.key,
-                          );
-                          newTreeData.splice(dragNodeIndex, 1);
-                          const targetIndex = node
-                            ? newTreeData.findIndex(
-                                (n: any) => n.key === node.key,
-                              )
-                            : 0;
-                          const dropPosition =
-                            info.dropPosition - Number(info.dropToGap);
-                          const newIndex =
-                            dropPosition === -1 ? targetIndex : targetIndex + 1;
-                          const { title, key, value } = dragNode;
-                          const newNode = { title, key, value };
-                          newTreeData.splice(newIndex, 0, newNode);
-                          // setDraggerOptions(newTreeData);
+                        setOptions={(e: any) => {
+                          setDraggerOptions(e);
                         }}
                         form={form}
                       />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Contents,
@@ -25,6 +25,8 @@ import EditableText from "../../../EditableText";
 import FromTo from "../../../FromTo";
 import { useFromToContext } from "../../../../context/FromToContext";
 import ButtonError from "../../../Integration/Error/ButtonError";
+import { integrationsRequest } from "../../../../services/apis/requests/integration";
+import { useIntegration } from "../../../../context/IntegrationContext";
 
 function HeaderFilters({
   template,
@@ -41,6 +43,26 @@ function HeaderFilters({
 
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
   const { setFromToIsOpened } = useFromToContext();
+
+  const { setErrors, errors, setSidebarErrorOpened, offset, limit } =
+    useIntegration();
+
+  const getErrors = useCallback(async () => {
+    try {
+      const response = await integrationsRequest.listIntegrationsErrors({
+        limit,
+        offset,
+      });
+      setErrors(response);
+    } catch (error) {
+      // Handle errors here
+      console.error("Error fetching errors:", error);
+    }
+  }, [limit, offset, setErrors]);
+
+  useEffect(() => {
+    getErrors();
+  }, [getErrors]);
   return (
     <>
       <Header>
@@ -61,7 +83,12 @@ function HeaderFilters({
           <EditIcon onClick={() => setIsEditingTitle(true)} />
         </LeftContent>
         <RightContent>
-          <ButtonError />
+          {errors?.data?.length > 0 && (
+            <ButtonError
+              errors={errors}
+              setSidebarErrorOpened={setSidebarErrorOpened}
+            />
+          )}
           <MoreOptions>
             <EllipsisIcon />
           </MoreOptions>
