@@ -14,8 +14,15 @@ export const Products: React.FC = () => {
   const { handleRedirectAndGetProducts, products, colHeaders } =
     useContext(productContext);
 
-  const { sidebarErrorOpened, errors, setSidebarErrorOpened } =
-    useIntegration();
+  const {
+    sidebarErrorOpened,
+    errors,
+    setSidebarErrorOpened,
+    limit,
+    offset,
+    setOffset,
+    setSearchIntegration,
+  } = useIntegration();
 
   useEffect(() => {
     setIsLoading(true);
@@ -25,7 +32,12 @@ export const Products: React.FC = () => {
         setIsLoading(false);
       });
     }
-  }, [handleRedirectAndGetProducts]);
+    return () => {
+      setOffset(0);
+      setSidebarErrorOpened(false);
+      setSearchIntegration("");
+    };
+  }, [handleRedirectAndGetProducts, setOffset, setSidebarErrorOpened]);
 
   return (
     <>
@@ -35,6 +47,11 @@ export const Products: React.FC = () => {
             <SidebarError
               errors={errors}
               setSidebarErrorOpened={setSidebarErrorOpened}
+              limit={limit}
+              offset={offset}
+              setOffset={setOffset}
+              total={errors.total}
+              setSearchIntegration={setSearchIntegration}
             />
           )}
           {isLoading ? <Loading /> : products && colHeaders && <Table />}

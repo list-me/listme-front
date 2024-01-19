@@ -43,13 +43,14 @@ function HeaderFilters({
 
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
   const { setFromToIsOpened } = useFromToContext();
-  const [offset, setOffset] = useState(0);
-  const { setErrors, errors, setSidebarErrorOpened } = useIntegration();
+
+  const { setErrors, errors, setSidebarErrorOpened, offset, limit } =
+    useIntegration();
 
   const getErrors = useCallback(async () => {
     try {
       const response = await integrationsRequest.listIntegrationsErrors({
-        limit: 1,
+        limit,
         offset,
       });
       setErrors(response);
@@ -57,7 +58,7 @@ function HeaderFilters({
       // Handle errors here
       console.error("Error fetching errors:", error);
     }
-  }, [offset, setErrors]);
+  }, [limit, offset, setErrors]);
 
   useEffect(() => {
     getErrors();

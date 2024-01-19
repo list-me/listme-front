@@ -19,13 +19,16 @@ import { IDataErrorIntegrations } from "../../../../../../context/IntegrationCon
 
 function CardSidebarError({
   error,
+  setSearchIntegration,
 }: {
+  setSearchIntegration: React.Dispatch<React.SetStateAction<string>>;
   error: IDataErrorIntegrations;
 }): JSX.Element {
   const [opened, setOpened] = useState(false);
 
   const line = "Linha 2";
   const item = error.product.firstColumnValue;
+  console.log("🚀 ~ item:", item);
 
   function convertDateTimeToBrazilFormat(dateTimeUTC: string): string {
     const dateTime = new Date(dateTimeUTC);
@@ -94,7 +97,7 @@ function CardSidebarError({
           <ContainerTextMore>
             <TextHeaderSidebarError>
               <span>{line}</span>
-              {` - "${item}"`}
+              {` - "${item[0]}"`}
             </TextHeaderSidebarError>
             <MoreButton onClick={() => setOpened(!opened)}>
               Saiba mais
@@ -115,7 +118,9 @@ function CardSidebarError({
             {currentMessage}
           </ItemErrorDesc>
         ))}
-        <ButtonProductView>Ver produto</ButtonProductView>
+        <ButtonProductView onClick={() => setSearchIntegration(item[0])}>
+          Ver produto
+        </ButtonProductView>
       </ContentCardSidebarError>
     </ContainerCardSidebarError>
   );

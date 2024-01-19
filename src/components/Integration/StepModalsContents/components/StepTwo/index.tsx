@@ -47,7 +47,7 @@ function StepTwo({
 
       if (mode === "editing") {
         const organizationId =
-          currentProvider.config.custom_configs.organization_id;
+          currentProvider?.config?.custom_configs?.organization_id;
 
         const currentOrganization = responseToState.find(
           (item: any) => item.value.id === organizationId,
@@ -62,7 +62,7 @@ function StepTwo({
       setIsLoading(false);
     }
   }, [
-    currentProvider.config.custom_configs.organization_id,
+    currentProvider?.config?.custom_configs?.organization_id,
     environment,
     mode,
     valueHomologApi,

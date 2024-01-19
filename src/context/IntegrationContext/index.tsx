@@ -19,7 +19,9 @@ function IntegrationProvider({
   const [errors, setErrors] = useState<IErrorsIntegrations>(
     {} as IErrorsIntegrations,
   );
-
+  const [searchIntegration, setSearchIntegration] = useState<string>("");
+  const limit = 1;
+  const [offset, setOffset] = useState(0);
   const [sidebarErrorOpened, setSidebarErrorOpened] = useState(false);
   const [mode, setMode] = useState<"editing" | "registration">("registration");
   const [currentProvider, setCurrentProvider] = useState<IProvider>(
@@ -51,6 +53,11 @@ function IntegrationProvider({
     setErrors,
     sidebarErrorOpened,
     setSidebarErrorOpened,
+    offset,
+    setOffset,
+    limit,
+    searchIntegration,
+    setSearchIntegration,
   };
 
   return (

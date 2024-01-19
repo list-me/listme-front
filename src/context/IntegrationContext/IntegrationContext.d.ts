@@ -1,4 +1,7 @@
 export interface IntegrationContextType {
+  limit: number;
+  searchIntegration: string;
+  setSearchIntegration: React.Dispatch<React.SetStateAction<string>>;
   environment: "sandbox" | "production";
   setEnvironment: React.Dispatch<
     React.SetStateAction<"sandbox" | "production">
@@ -29,6 +32,8 @@ export interface IntegrationContextType {
   setErrors: React.Dispatch<React.SetStateAction<IErrorsIntegrations>>;
   sidebarErrorOpened: boolean;
   setSidebarErrorOpened: React.Dispatch<React.SetStateAction<boolean>>;
+  offset: number;
+  setOffset: React.Dispatch<React.SetStateAction<number>>;
 }
 export type IEnvironment = "sandbox" | "production";
 
