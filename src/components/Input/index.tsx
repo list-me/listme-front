@@ -85,7 +85,7 @@ export const Input: React.FC<IInputProps> = ({
             type={type}
             name={name}
             custom={{ background, bordered, padding }}
-            value={"oi" || value || inputText}
+            value={value || inputText}
             autoComplete="off"
             defaultValue={inputText}
             onChange={(e) => {
