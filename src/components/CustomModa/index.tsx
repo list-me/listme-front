@@ -215,7 +215,6 @@ export const PersonalModal = ({
   }: Field): Promise<any> => {
     let templateUpdated = [];
     let newField: any;
-
     if (isUpdate) {
       templateUpdated = template.fields.fields.map((item: any) => {
         if (item.id === data.id) {
@@ -224,7 +223,7 @@ export const PersonalModal = ({
           data.name = name;
           data.title = title;
           data.required = required;
-          data.limit = characterLimit;
+          data.limit = type === "relation" ? 20 : characterLimit;
           item = data;
           return item;
         }
@@ -238,7 +237,7 @@ export const PersonalModal = ({
         type,
         title,
         name,
-        limit: characterLimit,
+        limit: type === "relation" ? 20 : characterLimit,
         options: type !== "decimal" ? option || [""] : [decimalPoint],
         required,
         is_public: false,
