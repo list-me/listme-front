@@ -28,7 +28,6 @@ export const Input: React.FC<IInputProps> = ({
   disabledValidade,
 }) => {
   const [inputText, setInputText] = useState<string>(value || "");
-  console.log("🚀 ~ inputText:", inputText);
   const inputRef = useRef<InputRef | null>(null);
 
   const validateExactWord = (rule: any, word: any) => {
