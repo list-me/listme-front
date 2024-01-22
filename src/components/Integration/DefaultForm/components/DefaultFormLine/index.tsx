@@ -99,6 +99,10 @@ function DefaultFormLine({
 
   const subtopic = !!item.key.includes(".");
 
+  const filterOptionsRequired = optionsToView.filter((fItem) => {
+    return fItem.value.required;
+  });
+
   return (
     <ContainerDefaultFormLine>
       <KeyText>
@@ -126,7 +130,7 @@ function DefaultFormLine({
             changePayloadToFinish(valueColLeft, e, index);
             setSecondValueSelected(e);
           }}
-          options={optionsToView}
+          options={item.required ? filterOptionsRequired : optionsToView}
           placeHolder="Selecione..."
           small
           isDisabled={done || !valueColLeft}
