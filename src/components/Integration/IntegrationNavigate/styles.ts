@@ -16,6 +16,9 @@ export const ClearButtonIntegration = styled.button`
   font-weight: 700;
   background: none;
   border: none;
+  :disabled {
+    opacity: 0.5;
+  }
 `;
 export const RightButtons = styled.div`
   display: flex;

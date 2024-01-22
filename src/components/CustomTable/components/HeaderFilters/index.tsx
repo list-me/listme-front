@@ -49,10 +49,13 @@ function HeaderFilters({
 
   const getErrors = useCallback(async () => {
     try {
+      const id = window.location.pathname.split("/")[2];
       const response = await integrationsRequest.listIntegrationsErrors({
         limit,
         offset,
+        id,
       });
+
       setErrors(response);
     } catch (error) {
       // Handle errors here

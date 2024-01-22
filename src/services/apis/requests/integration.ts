@@ -91,13 +91,15 @@ export const integrationsRequest = {
   listIntegrationsErrors: async ({
     limit,
     offset,
+    id,
   }: {
     limit: number;
     offset: number;
+    id: string;
   }): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.get(
-      `/integrations/errors?limit=${limit}&offset=${offset}`,
+      `/integrations/errors?templateId=${id}&limit=${limit}&offset=${offset}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

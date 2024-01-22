@@ -59,8 +59,9 @@ export const Temp: React.FC<IProps> = ({
 
   useEffect(() => {
     if (searchIntegration) {
-      setFilter(searchIntegration);
       setOnSearch(true);
+      setFilter(searchIntegration);
+      handleSearch(searchIntegration, window.location.pathname.substring(10));
     }
   }, [searchIntegration]);
 
@@ -122,6 +123,7 @@ export const Temp: React.FC<IProps> = ({
                   handleSearch(filter, window.location.pathname.substring(10))
                 }
                 height="39px"
+                disabledValidade
               />
               <ButtonCustom
                 height="37px"

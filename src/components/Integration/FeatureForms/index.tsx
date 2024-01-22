@@ -120,7 +120,7 @@ function FeatureForms({
                     options={templates as any}
                     required
                   />
-                  {characteristicsType[index] === "column" && (
+                  {characteristicsType[index] === "catalog" && (
                     <SelectComponent
                       select={colHeaderSelectValue[index]}
                       onChange={(e: any) => {
@@ -174,7 +174,7 @@ function FeatureForms({
             const copyPayloads = [...payloadsToFinish];
             copyPayloads.push(value);
             setPayloadsToFinish(copyPayloads);
-            const copyCharacteristicsType = [...characteristicsType, "catalog"];
+            const copyCharacteristicsType = [...characteristicsType, "column"];
 
             setCharacteristicType(copyCharacteristicsType as any);
           }}
@@ -185,6 +185,7 @@ function FeatureForms({
             toClear();
           }}
           onSave={onSave}
+          done={done}
           isDisabled={!funcionDone()}
         />
       </>

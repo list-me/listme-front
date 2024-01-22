@@ -16,15 +16,17 @@ function IntegrationNavigate({
   toClear,
   onSave,
   isDisabled,
+  done,
 }: {
   external: boolean;
   toClear: () => void;
   onSave: () => void;
   isDisabled: boolean;
+  done: boolean;
 }): JSX.Element {
   return (
     <ContainerIntegrationNavigate external={external}>
-      <ClearButtonIntegration onClick={toClear}>
+      <ClearButtonIntegration onClick={toClear} disabled={done}>
         <ClearIcon />
         Limpar configurações de Características
       </ClearButtonIntegration>
