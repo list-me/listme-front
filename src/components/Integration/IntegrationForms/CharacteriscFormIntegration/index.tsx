@@ -377,7 +377,6 @@ function CharacteriscFormIntegration(): JSX.Element {
                 />
               )}
             </ContainerIntegration>
-            {/* aqui */}
             <FeatureForms
               changeListValue={changeListValue}
               payloadsToFinish={payloadsToFinish}
