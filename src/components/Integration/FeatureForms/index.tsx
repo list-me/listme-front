@@ -185,6 +185,7 @@ function FeatureForms({
             toClear();
           }}
           onSave={onSave}
+          done={done}
           isDisabled={!funcionDone()}
         />
       </>

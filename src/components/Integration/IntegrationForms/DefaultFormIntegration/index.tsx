@@ -44,9 +44,13 @@ function DefaultFormIntegration(): JSX.Element {
     templateRequests
       .list({ limit, page })
       .then((response) => {
-        const newTemplate = response.map((item: any) => {
-          return { label: item.name, value: item };
-        });
+        const newTemplate = response
+          .map((item: any) => {
+            return { label: item.name, value: item };
+          })
+          .filter((fItem: any) => {
+            return fItem.label !== null && fItem.label !== undefined;
+          });
         setTemplates(newTemplate);
       })
       .catch((error) => {
@@ -231,6 +235,7 @@ function DefaultFormIntegration(): JSX.Element {
               )}
               <IntegrationNavigate
                 external={false}
+                done={done === "done"}
                 toClear={toClear}
                 onSave={onFinish}
                 isDisabled={!headerSelectValue || done === "done"}
