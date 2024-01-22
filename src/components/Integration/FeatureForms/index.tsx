@@ -160,6 +160,7 @@ function FeatureForms({
 
       <>
         <NewFeature
+          isDisabled={done}
           onClick={() => {
             const value = [
               {

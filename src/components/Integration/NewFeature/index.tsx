@@ -3,10 +3,16 @@ import { ContainerNewFeature } from "./styles";
 import { NavigationButton } from "../../NavigationButton/styles";
 import { ReactComponent as PlusIcon } from "../../../assets/plus-fromto.svg";
 
-function NewFeature({ onClick }: { onClick: () => void }): JSX.Element {
+function NewFeature({
+  onClick,
+  isDisabled,
+}: {
+  onClick: () => void;
+  isDisabled: boolean;
+}): JSX.Element {
   return (
     <ContainerNewFeature>
-      <NavigationButton abort prev onClick={onClick}>
+      <NavigationButton abort prev onClick={onClick} disabled={isDisabled}>
         <PlusIcon />
         Nova característica
       </NavigationButton>
