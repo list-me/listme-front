@@ -25,8 +25,10 @@ export const Input: React.FC<IInputProps> = ({
   validation,
   padding,
   onPressEnter = () => {},
+  disabledValidade,
 }) => {
-  const [inputText, setInputText] = useState<string>("");
+  const [inputText, setInputText] = useState<string>(value || "");
+  console.log("🚀 ~ inputText:", inputText);
   const inputRef = useRef<InputRef | null>(null);
 
   const validateExactWord = (rule: any, word: any) => {
@@ -73,7 +75,9 @@ export const Input: React.FC<IInputProps> = ({
         <Form.Item
           className="formInput"
           name={name}
-          rules={[{ validator: validateExactWord }]}
+          rules={[
+            { validator: !disabledValidade ? validateExactWord : undefined },
+          ]}
         >
           <InputCustom
             ref={inputRef}
@@ -82,8 +86,9 @@ export const Input: React.FC<IInputProps> = ({
             type={type}
             name={name}
             custom={{ background, bordered, padding }}
-            value={value ?? inputText}
+            value={"oi" || value || inputText}
             autoComplete="off"
+            defaultValue={inputText}
             onChange={(e) => {
               const newValue = e.target.value;
               setInputText(newValue);
