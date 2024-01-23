@@ -31,8 +31,15 @@ import FeatureForms from "../../FeatureForms";
 import SelectComponent from "../../../Select";
 
 function CharacteriscFormIntegration(): JSX.Element {
-  const { currentMenus, setCurrentMenus, environment, setEnvironment } =
-    useIntegration();
+  const {
+    currentMenus,
+    setCurrentMenus,
+    environment,
+    setEnvironment,
+    valueProdApi,
+    valueHomologApi,
+    currentProvider,
+  } = useIntegration();
 
   const location = useLocation();
   const pathnameSplited = location.pathname.split("/");
@@ -288,6 +295,30 @@ function CharacteriscFormIntegration(): JSX.Element {
     });
   };
 
+  const changeEnvironment = async (
+    value: "sandbox" | "production",
+  ): Promise<void> => {
+    const body = {
+      production_key: valueProdApi,
+      sandbox_key: valueHomologApi,
+      environment: value,
+      custom_configs: {
+        organization_id: currentProvider.config.custom_configs.organization_id,
+      },
+      status: currentProvider.config.status,
+    };
+    try {
+      await integrationsRequest.patchIntegrationsConfig(
+        currentProvider.config.id,
+        body,
+      );
+      setEnvironment(value);
+      toast.success(`Ambiente atualizado com sucesso.`);
+    } catch (err) {
+      toast.success(`Erro ao atualizar ambiente`);
+    }
+  };
+
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
       <ContainerContent>
@@ -299,7 +330,7 @@ function CharacteriscFormIntegration(): JSX.Element {
             <DualSwitch
               value={environment}
               options={dualOptions}
-              setValue={setEnvironment as any}
+              setValue={changeEnvironment as any}
             />
           </TitleSwitchContainer>
           <BoxesIntegration>
