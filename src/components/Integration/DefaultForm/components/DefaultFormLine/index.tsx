@@ -19,6 +19,8 @@ import { ContainerDefaultFormLine, SubTopicContainer } from "./styles";
 import { ReactComponent as NumericIcon } from "../../../../../assets/numeric-icon.svg";
 import { ReactComponent as DecimalIcon } from "../../../../../assets/decimal-icon.svg";
 import { ReactComponent as BooleanIcon } from "../../../../../assets/boolean-icon.svg";
+import { IDataToEdit } from "../../../../../context/IntegrationContext/IntegrationContext";
+import { useIntegration } from "../../../../../context/IntegrationContext";
 // import { Container } from './styles';
 
 function DefaultFormLine({
@@ -28,7 +30,9 @@ function DefaultFormLine({
   index,
   type,
   done,
+  dataToEdit,
 }: {
+  dataToEdit: IDataToEdit;
   done: boolean;
   type: "catalog" | "column";
   item: {
@@ -50,6 +54,8 @@ function DefaultFormLine({
     string: "text",
     number: "numeric",
   };
+
+  const { mode } = useIntegration();
 
   const ICON_HEADER: Record<IconType, ReactElement> = {
     [IconType.Text]: <TextIcon />,
@@ -102,6 +108,33 @@ function DefaultFormLine({
   const filterOptionsRequired = optionsToView.filter((fItem) => {
     return fItem.value.required;
   });
+
+  useEffect(() => {
+    if (mode === "editing") {
+      const currentPayloads = dataToEdit?.fields?.entity?.payloads;
+      if (currentPayloads?.length > 0) {
+        const currentItem = currentPayloads?.find((fItem) => {
+          return fItem?.value?.templateId === valueColLeft?.value?.id;
+        });
+        console.log("🚀 ~ currentItem ~ currentItem:", currentItem);
+        console.log("🚀 ~ optionsToView ~ optionsToView:", optionsToView);
+        if (currentItem) {
+          const secondValueSelectedToEdit = optionsToView.find(
+            (opt) => opt.value.id === currentItem.value.fieldId,
+          );
+          changePayloadToFinish(valueColLeft, secondValueSelectedToEdit, index);
+          setSecondValueSelected(secondValueSelectedToEdit);
+        }
+      }
+    }
+  }, [
+    changePayloadToFinish,
+    dataToEdit?.fields?.entity?.payloads,
+    index,
+    mode,
+    optionsToView,
+    valueColLeft,
+  ]);
 
   return (
     <ContainerDefaultFormLine>

@@ -51,6 +51,26 @@ function DefaultFormIntegration(): JSX.Element {
   const [dataToEdit, setDataToEdit] = useState<IDataToEdit>({} as IDataToEdit);
   const [headerSelectValue, setHeaderSelectValue] = useState(null);
 
+  const [templatesById, setTemplatesById] = useState<ITemplatesById>(
+    {} as ITemplatesById,
+  );
+
+  console.log("🚀 ~ DefaultFormIntegration ~ templatesById:", templatesById);
+  const currentField = templatesById?.payloads?.fields.find((item) => {
+    return item.endpointPath === `/${path}`;
+  });
+  let payloadToFinish = Array.from(
+    { length: (currentField as any)?.payload?.length || 0 },
+    () => ({
+      templateConfigPayloadId: "",
+      type: "",
+      value: {
+        templateId: "",
+        fieldId: "",
+      },
+    }),
+  );
+
   const handleGetTemplates = useCallback(
     ({ page, limit }: IPaginationTemplate): void => {
       templateRequests
@@ -71,6 +91,8 @@ function DefaultFormIntegration(): JSX.Element {
               (temp: any) => temp.value.id === templateTriggerId,
             );
             setHeaderSelectValue(headerSelectValueToEdit);
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            payloadToFinish = dataToEdit?.fields?.entity?.payloads;
           }
         })
         .catch((error) => {
@@ -83,28 +105,9 @@ function DefaultFormIntegration(): JSX.Element {
 
   useEffect(() => {
     if (mode === "registration") handleGetTemplates({ page: 0, limit: 100 });
-    if (mode === "editing" && dataToEdit.id)
+    if (mode === "editing" && dataToEdit?.id)
       handleGetTemplates({ page: 0, limit: 100 });
-  }, [dataToEdit, dataToEdit.id, handleGetTemplates, mode]);
-
-  const [templatesById, setTemplatesById] = useState<ITemplatesById>(
-    {} as ITemplatesById,
-  );
-
-  const currentField = templatesById?.payloads?.fields.find((item) => {
-    return item.endpointPath === `/${path}`;
-  });
-  const payloadToFinish = Array.from(
-    { length: (currentField as any)?.payload?.length || 0 },
-    () => ({
-      templateConfigPayloadId: "",
-      type: "",
-      value: {
-        templateId: "",
-        fieldId: "",
-      },
-    }),
-  );
+  }, [dataToEdit?.id, handleGetTemplates, mode]);
 
   const [menuActivated, setMenuActivated] = useState<string>(path);
 
@@ -194,7 +197,9 @@ function DefaultFormIntegration(): JSX.Element {
       type: "integration",
     };
     try {
-      await templateRequests.postIntegration(body);
+      if (mode === "registration") await templateRequests.postIntegration(body);
+      if (mode === "editing")
+        await templateRequests.patchIntegration(dataToEdit.id, body);
       toast.success(
         `Configuração de ${Menus[menuActivated]} realizado(a) com sucesso.`,
       );
@@ -290,6 +295,7 @@ function DefaultFormIntegration(): JSX.Element {
                   payloadToFinish={payloadToFinish}
                   type="column"
                   done={done === "done"}
+                  dataToEdit={dataToEdit}
                 />
               )}
               <IntegrationNavigate

@@ -29,6 +29,7 @@ import { ROUTES } from "../../../../constants/routes";
 import CharacteristicTypeSelector from "../../CharacteristicTypeSelector";
 import FeatureForms from "../../FeatureForms";
 import SelectComponent from "../../../Select";
+import { IDataToEdit } from "../../../../context/IntegrationContext/IntegrationContext";
 
 function CharacteriscFormIntegration(): JSX.Element {
   const {
@@ -405,6 +406,7 @@ function CharacteriscFormIntegration(): JSX.Element {
                   payloadToFinish={payloadsToFinish[0]}
                   type={characteristicsType[0]}
                   done={done === "done"}
+                  dataToEdit={{} as IDataToEdit}
                 />
               )}
             </ContainerIntegration>

@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import {
   ColumnsDefaultForm,
   ContainerDefaultForm,
@@ -9,6 +10,7 @@ import { IFieldsByID } from "../../../pages/companyIntegration/companyIntegratio
 
 import DefaultFormLine from "./components/DefaultFormLine";
 import Topic from "./components/Topic";
+import { IDataToEdit } from "../../../context/IntegrationContext/IntegrationContext";
 
 function DefaultForm({
   leftColumnName,
@@ -19,7 +21,9 @@ function DefaultForm({
   payloadToFinish,
   type,
   done,
+  dataToEdit,
 }: {
+  dataToEdit: IDataToEdit;
   done: boolean;
   type: "catalog" | "column";
   leftColumnName: string;
@@ -39,22 +43,21 @@ function DefaultForm({
   const arrayColumns = [leftColumnName, centerColumnName, rightColumnName];
   const { payload } = dataForm;
 
-  const changePayloadToFinish = (
-    valueLeft: any,
-    valueRight: any,
-    index: number,
-  ): void => {
-    // eslint-disable-next-line no-param-reassign
-    payloadToFinish[index] = {
-      ...payloadToFinish[index],
-      templateConfigPayloadId: payload[index].id,
-      type,
-      value: {
-        templateId: valueLeft.value.id,
-        fieldId: valueRight.value.id,
-      },
-    };
-  };
+  const changePayloadToFinish = useCallback(
+    (valueLeft: any, valueRight: any, index: number): void => {
+      // eslint-disable-next-line no-param-reassign
+      payloadToFinish[index] = {
+        ...payloadToFinish[index],
+        templateConfigPayloadId: payload[index]?.id,
+        type,
+        value: {
+          templateId: valueLeft?.value?.id,
+          fieldId: valueRight?.value?.id,
+        },
+      };
+    },
+    [payload, payloadToFinish, type],
+  );
 
   const listTopics: string[] = [];
 
@@ -94,6 +97,7 @@ function DefaultForm({
           <div key={item.id}>
             <Topic value={topicToView(item)} />
             <DefaultFormLine
+              dataToEdit={dataToEdit}
               item={item}
               index={index}
               valueColLeft={valueColLeft}

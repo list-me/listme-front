@@ -10,6 +10,7 @@ import SelectComponent from "../../Select";
 import DefaultForm from "../DefaultForm";
 import { IFieldsByID } from "../../../pages/companyIntegration/companyIntegration";
 import IntegrationNavigate from "../IntegrationNavigate";
+import { IDataToEdit } from "../../../context/IntegrationContext/IntegrationContext";
 
 function FeatureForms({
   setCharacteristicType,
@@ -144,6 +145,7 @@ function FeatureForms({
               )}
               {currentField?.id && (
                 <DefaultForm
+                  dataToEdit={{} as IDataToEdit}
                   leftColumnName="Propriedades de payloads Nexaas"
                   centerColumnName="Catálogo ListMe"
                   rightColumnName="Campo ListMe"

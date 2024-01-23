@@ -68,6 +68,16 @@ export const templateRequests = {
 
     return response.data;
   },
+  patchIntegration: async (id: string, body: any): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.patch(`/template/${id}`, body, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  },
   postFromTo: async (data: ITemplate): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.post(`/template`, data, {
