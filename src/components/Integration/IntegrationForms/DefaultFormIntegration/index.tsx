@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import TemplateDefault from "../../../TemplateDefault";
@@ -27,6 +27,7 @@ import { TitlePage } from "../../../../pages/templates/styles";
 import { IPaginationTemplate } from "../../../../pages/templates/templates";
 import nextMenu from "../../../../pages/companyIntegration/utils/nextMenu";
 import { ITemplatesById } from "../../../../pages/companyIntegration/companyIntegration";
+import { IDataToEdit } from "../../../../context/IntegrationContext/IntegrationContext";
 
 function DefaultFormIntegration(): JSX.Element {
   const {
@@ -37,6 +38,7 @@ function DefaultFormIntegration(): JSX.Element {
     valueProdApi,
     valueHomologApi,
     currentProvider,
+    mode,
   } = useIntegration();
 
   const location = useLocation();
@@ -46,29 +48,44 @@ function DefaultFormIntegration(): JSX.Element {
   const path = pathnameSplited[pathnameSize - 2];
   const navigate = useNavigate();
   const [templates, setTemplates] = useState();
+  const [dataToEdit, setDataToEdit] = useState<IDataToEdit>({} as IDataToEdit);
+  const [headerSelectValue, setHeaderSelectValue] = useState(null);
 
-  const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
-    templateRequests
-      .list({ limit, page })
-      .then((response) => {
-        const newTemplate = response
-          .map((item: any) => {
-            return { label: item.name, value: item };
-          })
-          .filter((fItem: any) => {
-            return fItem.label !== null && fItem.label !== undefined;
-          });
-        setTemplates(newTemplate);
-      })
-      .catch((error) => {
-        toast.error("Ocorreu um erro ao listar os catálogos");
-        console.error(error);
-      });
-  };
+  const handleGetTemplates = useCallback(
+    ({ page, limit }: IPaginationTemplate): void => {
+      templateRequests
+        .list({ limit, page })
+        .then((response) => {
+          const newTemplate = response
+            .map((item: any) => {
+              return { label: item.name, value: item };
+            })
+            .filter((fItem: any) => {
+              return fItem.label !== null && fItem.label !== undefined;
+            });
+          setTemplates(newTemplate);
+
+          if (mode === "editing") {
+            const { templateTriggerId } = dataToEdit.fields.entity;
+            const headerSelectValueToEdit = (newTemplate as any).find(
+              (temp: any) => temp.value.id === templateTriggerId,
+            );
+            setHeaderSelectValue(headerSelectValueToEdit);
+          }
+        })
+        .catch((error) => {
+          toast.error("Ocorreu um erro ao listar os catálogos");
+          console.error(error);
+        });
+    },
+    [dataToEdit?.fields?.entity, mode],
+  );
 
   useEffect(() => {
-    handleGetTemplates({ page: 0, limit: 100 });
-  }, []);
+    if (mode === "registration") handleGetTemplates({ page: 0, limit: 100 });
+    if (mode === "editing" && dataToEdit.id)
+      handleGetTemplates({ page: 0, limit: 100 });
+  }, [dataToEdit, dataToEdit.id, handleGetTemplates, mode]);
 
   const [templatesById, setTemplatesById] = useState<ITemplatesById>(
     {} as ITemplatesById,
@@ -88,7 +105,6 @@ function DefaultFormIntegration(): JSX.Element {
       },
     }),
   );
-  const [headerSelectValue, setHeaderSelectValue] = useState(null);
 
   const [menuActivated, setMenuActivated] = useState<string>(path);
 
@@ -216,6 +232,18 @@ function DefaultFormIntegration(): JSX.Element {
       toast.success(`Erro ao atualizar ambiente`);
     }
   };
+
+  useEffect(() => {
+    const getDataToEdit = async (id: string): Promise<void> => {
+      const response: IDataToEdit[] =
+        await integrationsRequest.getTemplateEntity(id);
+
+      setDataToEdit(response[0]);
+    };
+    if (mode === "editing" && currentField?.id) {
+      getDataToEdit(currentField?.id);
+    }
+  }, [currentField?.id, mode]);
 
   return (
     <TemplateDefault handleGetTemplates={() => ""}>

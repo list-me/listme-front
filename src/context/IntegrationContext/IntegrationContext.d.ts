@@ -59,3 +59,36 @@ export interface IErrorsIntegrations {
   offset: number;
   limit: number;
 }
+export interface IDataToEdit {
+  id: string;
+  name: string;
+  type: string;
+  fields: {
+    entity: {
+      name: string;
+      type: string;
+      payloads: [
+        {
+          type: string;
+          value: {
+            fieldId: string;
+            templateId: string;
+          };
+          templateConfigPayloadId: string;
+        },
+      ];
+      templateTriggerId: string;
+      templateConfigEntityId: string;
+    };
+    templateConfigId: string;
+  };
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string;
+  categoryId: string;
+  companyId: string;
+  templateId: string;
+  storage: string;
+  integration_config_id: string;
+}

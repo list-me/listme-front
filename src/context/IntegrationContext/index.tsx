@@ -18,7 +18,6 @@ import {
   IProvider,
 } from "../../models/integration/integration";
 import menus from "../../pages/companyIntegration/utils/menus";
-import { integrationsRequest } from "../../services/apis/requests/integration";
 
 const IntegrationContext = createContext<IntegrationContextType | undefined>(
   undefined,
