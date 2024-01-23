@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import TemplateDefault from "../../components/TemplateDefault";
 import { useFilterContext } from "../../context/FilterContext";
 import { Content, TitlePage } from "../templates/styles";
@@ -8,11 +9,14 @@ import IntegrationCard from "../../components/Integration/IntegrationCard";
 import StepModal from "../../components/StepModal";
 import StepModalsContents from "../../components/Integration/StepModalsContents";
 import {
+  IDataCardList,
+  IMenuInlineActivated,
   IMenuToInlineMenuList,
   IProvider,
 } from "../../models/integration/integration";
 import logoMock from "../../components/Integration/IntegrationCard/mock/logoIntegration.png";
 import { useIntegration } from "../../context/IntegrationContext";
+import { integrationsRequest } from "../../services/apis/requests/integration";
 
 function Integration(): JSX.Element {
   const { setFilters, defaultFilter, setFilterStatus, setConditions } =
@@ -26,7 +30,6 @@ function Integration(): JSX.Element {
     setValueProdApi,
     menuActivated,
     setMenuActivated,
-    listDataCard,
   } = useIntegration();
   useEffect(() => {
     setConditions([]);
@@ -42,6 +45,27 @@ function Integration(): JSX.Element {
     { value: "active", label: "Ativos", status: "" },
     { value: "inactive", label: "Inativos", status: "" },
   ];
+
+  const [listDataCard, setListDataCard] = useState<IDataCardList>();
+
+  const getConfigTemplatesList = useCallback(
+    async (status: IMenuInlineActivated): Promise<void> => {
+      try {
+        const configTemplatesList =
+          await integrationsRequest.listConfigTemplates(status);
+
+        setListDataCard(configTemplatesList);
+      } catch (error) {
+        console.error(error);
+        toast.error("Ocorreu um erro ao buscar a lista de integrações");
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    getConfigTemplatesList(menuActivated);
+  }, [getConfigTemplatesList, menuActivated]);
 
   return (
     <TemplateDefault handleGetTemplates={() => ""}>

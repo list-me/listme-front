@@ -36,7 +36,6 @@ export interface IntegrationContextType {
   setOffset: React.Dispatch<React.SetStateAction<number>>;
   menuActivated: IMenuInlineActivated;
   setMenuActivated: React.Dispatch<React.SetStateAction<IMenuInlineActivated>>;
-  listDataCard: IDataCardList | undefined;
 }
 export type IEnvironment = "sandbox" | "production";
 

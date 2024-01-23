@@ -29,10 +29,6 @@ function IntegrationProvider({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
-  const location = useLocation();
-  const pathnameSplited = location.pathname.split("/");
-  const pathnameSize = pathnameSplited.length;
-  const providerId = pathnameSplited[pathnameSize - 1];
   const [errors, setErrors] = useState<IErrorsIntegrations>(
     {} as IErrorsIntegrations,
   );
@@ -56,34 +52,6 @@ function IntegrationProvider({
 
   const [menuActivated, setMenuActivated] =
     useState<IMenuInlineActivated>("seeAll");
-
-  const [listDataCard, setListDataCard] = useState<IDataCardList>();
-
-  const getConfigTemplatesList = useCallback(
-    async (status: IMenuInlineActivated): Promise<void> => {
-      try {
-        const configTemplatesList =
-          await integrationsRequest.listConfigTemplates(status);
-        if (providerId) {
-          const toProvider = configTemplatesList.find((item: IProvider) => {
-            return item.id === providerId;
-          });
-          setCurrentProvider(toProvider);
-          setEnvironment(toProvider.config.environment);
-        }
-
-        setListDataCard(configTemplatesList);
-      } catch (error) {
-        console.error(error);
-        toast.error("Ocorreu um erro ao buscar a lista de integrações");
-      }
-    },
-    [providerId],
-  );
-
-  useEffect(() => {
-    getConfigTemplatesList(menuActivated);
-  }, [getConfigTemplatesList, menuActivated]);
 
   const value = {
     environment,
@@ -109,7 +77,6 @@ function IntegrationProvider({
     setSearchIntegration,
     menuActivated,
     setMenuActivated,
-    listDataCard,
   };
 
   return (
