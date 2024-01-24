@@ -73,15 +73,12 @@ function DefaultFormIntegration(): JSX.Element {
   const handleGetTemplates = useCallback(
     ({ page, limit }: IPaginationTemplate): void => {
       templateRequests
-        .list({ limit, page })
+        .list({ limit, page, list: true })
         .then((response) => {
-          const newTemplate = response
-            .map((item: any) => {
-              return { label: item.name, value: item };
-            })
-            .filter((fItem: any) => {
-              return fItem.label !== null && fItem.label !== undefined;
-            });
+          const newTemplate = response.map((item: any) => {
+            return { label: item.name, value: item };
+          });
+
           setTemplates(newTemplate);
 
           if (mode === "editing") {
