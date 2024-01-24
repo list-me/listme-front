@@ -31,7 +31,7 @@ function Template(): JSX.Element {
 
   const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
     templateRequests
-      .list({ limit, page })
+      .list({ limit, page, list: true })
       .then((response) => {
         setTemplates(response);
       })
