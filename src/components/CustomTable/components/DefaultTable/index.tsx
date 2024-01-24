@@ -608,30 +608,26 @@ function DefaultTable({
         afterColumnResize={async (newSize: number, column: number) => {
           await handleResize(column, newSize, template);
         }}
-        afterOnCellMouseDown={(event: any) => {
-          const clickedElementClassList = event.target.classList;
-          const correctElementIntegration = clickedElementClassList.contains(
-            "REQUIRED_INTEGRATION",
-          );
-
-          if (correctElementIntegration) {
-            setAlertTooltipIntegration(true);
-          }
-        }}
+        // afterOnCellMouseDown={(event: any) => {
+        //   const clickedElementClassList = event.target.classList;
+        // }}
         afterOnCellMouseUp={(event: any, coords, _TD) => {
           const limitWidth = window.innerWidth - 350;
 
           const invert = event.clientX > limitWidth;
 
           const clickedElementClassList = event.target.classList;
+          console.log("🚀 ~ clickedElementClassList:", clickedElementClassList);
           const correctElement = clickedElementClassList.contains("dropDown");
+
           const correctElementIntegration = clickedElementClassList.contains(
-            "REQUIRED_INTEGRATION",
+            "REQUIRED_INTEGRATION_BUTTON",
           );
 
           if (correctElementIntegration) {
             setAlertTooltipIntegration(true);
           }
+
           if (colHeaders.length - 1 === coords.col) {
             setTimeout(() => {
               setDropDownStatus({

@@ -83,38 +83,11 @@ const MORE_REQUIRED_INTEGRATION = `
   align-items: center;
   justify-content: center;
 `;
-
-const ALERT_INTEGRATION = `
-position: absolute;
-top: 28px;
-right: -5.5px;
-width: 350px;
-padding: 8px 16px;
-border-radius: 6px;
-background: rgba(0, 0, 0, 0.8);
-p {
-  color: #fff;
-  font-size: 16px;
-  font-weight: 500;
-  margin: 0;
-}
-span {
-  color: #d1d3d6 !important;
-  font-size: 16px;
-  font-weight: 400;
-  margin: 0;
-}
-::before {
-  content: "";
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-bottom: 8px solid #000;
-  position: absolute;
-  top: -8px;
-  right: 8px;
-}
+const REQUIRED_INTEGRATION_BUTTON = `
+  display: flex;
+  border: none;
+  background: none;
+  padding: 0;
 `;
 
 const getStyledContent = (
@@ -141,16 +114,18 @@ const getStyledContent = (
               </button>`
             : ""
         }
-      </div>
-      <div class="REQUIRED_INTEGRATION" style="${REQUIRED_INTEGRATION}">
-          <svg class="REQUIRED_INTEGRATION" xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none">
-            <path d="M10 18C10.9849 18 11.9602 17.806 12.8701 17.4291C13.7801 17.0522 14.6069 16.4997 15.3033 15.8033C15.9997 15.1069 16.5522 14.2801 16.9291 13.3701C17.306 12.4602 17.5 11.4849 17.5 10.5C17.5 9.51509 17.306 8.53982 16.9291 7.62987C16.5522 6.71993 15.9997 5.89314 15.3033 5.1967C14.6069 4.50026 13.7801 3.94781 12.8701 3.5709C11.9602 3.19399 10.9849 3 10 3C8.01088 3 6.10322 3.79018 4.6967 5.1967C3.29018 6.60322 2.5 8.51088 2.5 10.5C2.5 12.4891 3.29018 14.3968 4.6967 15.8033C6.10322 17.2098 8.01088 18 10 18Z" stroke="#FF6B6B" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M10 7.16675H10.0083" stroke="#FF6B6B" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M9.16797 10.5H10.0013V13.8333H10.8346" stroke="#FF6B6B" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <img class="REQUIRED_INTEGRATION" src='${logoShop}' />
-          <img class="REQUIRED_INTEGRATION" src='${logoNexaas}' />
-          <div class="REQUIRED_INTEGRATION" style="${MORE_REQUIRED_INTEGRATION}">+${moreNumber}</div>
+        <div style="${REQUIRED_INTEGRATION}" >
+          <button style="${REQUIRED_INTEGRATION_BUTTON}" class="REQUIRED_INTEGRATION_BUTTON">
+            <svg class="REQUIRED_INTEGRATION_BUTTON" xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none">
+              <path d="M10 18C10.9849 18 11.9602 17.806 12.8701 17.4291C13.7801 17.0522 14.6069 16.4997 15.3033 15.8033C15.9997 15.1069 16.5522 14.2801 16.9291 13.3701C17.306 12.4602 17.5 11.4849 17.5 10.5C17.5 9.51509 17.306 8.53982 16.9291 7.62987C16.5522 6.71993 15.9997 5.89314 15.3033 5.1967C14.6069 4.50026 13.7801 3.94781 12.8701 3.5709C11.9602 3.19399 10.9849 3 10 3C8.01088 3 6.10322 3.79018 4.6967 5.1967C3.29018 6.60322 2.5 8.51088 2.5 10.5C2.5 12.4891 3.29018 14.3968 4.6967 15.8033C6.10322 17.2098 8.01088 18 10 18Z" stroke="#FF6B6B" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M10 7.16675H10.0083" stroke="#FF6B6B" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9.16797 10.5H10.0013V13.8333H10.8346" stroke="#FF6B6B" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <img  src='${logoShop}' />
+          <img  src='${logoNexaas}' />
+          <div  style="${MORE_REQUIRED_INTEGRATION}">+${moreNumber}</div>
+        </div>
       </div>
     </div>
 
