@@ -152,8 +152,10 @@ function CharacteriscFormIntegration(): JSX.Element {
   );
 
   useEffect(() => {
-    handleGetTemplates({ page: 0, limit: 100 });
-  }, [handleGetTemplates]);
+    if (mode === "registration") handleGetTemplates({ page: 0, limit: 100 });
+    if (mode === "editing" && dataToEdit[0]?.id)
+      handleGetTemplates({ page: 0, limit: 100 });
+  }, [dataToEdit, handleGetTemplates, mode]);
 
   const [templatesById, setTemplatesById] = useState<ITemplatesById>(
     {} as ITemplatesById,
