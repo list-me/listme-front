@@ -26,7 +26,6 @@ function CardSidebarError({
 }): JSX.Element {
   const [opened, setOpened] = useState(false);
 
-  const line = "Linha 2";
   const item = error.product.firstColumnValue;
 
   function convertDateTimeToBrazilFormat(dateTimeUTC: string): string {
@@ -93,10 +92,7 @@ function CardSidebarError({
         <HeaderContentLeftCardSidebarError>
           <img src={LogoNexaas} alt="Logo" width={48} height={48} />
           <ContainerTextMore>
-            <TextHeaderSidebarError>
-              <span>{line}</span>
-              {` - "${item[0]}"`}
-            </TextHeaderSidebarError>
+            <TextHeaderSidebarError>{`"${item[0]}"`}</TextHeaderSidebarError>
             <MoreButton onClick={() => setOpened(!opened)}>
               Saiba mais
             </MoreButton>
