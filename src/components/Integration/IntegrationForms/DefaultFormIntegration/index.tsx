@@ -55,7 +55,6 @@ function DefaultFormIntegration(): JSX.Element {
     {} as ITemplatesById,
   );
 
-  console.log("🚀 ~ DefaultFormIntegration ~ templatesById:", templatesById);
   const currentField = templatesById?.payloads?.fields.find((item) => {
     return item.endpointPath === `/${path}`;
   });
@@ -92,6 +91,7 @@ function DefaultFormIntegration(): JSX.Element {
             );
             setHeaderSelectValue(headerSelectValueToEdit);
             // eslint-disable-next-line react-hooks/exhaustive-deps
+            // @ts-ignore
             payloadToFinish = dataToEdit?.fields?.entity?.payloads;
           }
         })
@@ -287,6 +287,7 @@ function DefaultFormIntegration(): JSX.Element {
 
               {currentField?.id && (
                 <DefaultForm
+                  characteristic={false}
                   leftColumnName="Propriedades de payloads Nexaas"
                   centerColumnName="Catálogo ListMe"
                   rightColumnName="Campo ListMe"

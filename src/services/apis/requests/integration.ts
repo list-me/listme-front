@@ -116,7 +116,7 @@ export const integrationsRequest = {
         Authorization: `Bearer ${token}`,
       },
     });
-
+    console.log("🚀 ~ getTemplateEntity: ~ response:", response);
     return response.data;
   },
 };

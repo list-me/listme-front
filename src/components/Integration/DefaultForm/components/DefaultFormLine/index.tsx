@@ -28,13 +28,15 @@ function DefaultFormLine({
   valueColLeft,
   changePayloadToFinish,
   index,
-  type,
+
   done,
   dataToEdit,
+  characteristic,
 }: {
-  dataToEdit: IDataToEdit;
+  characteristic: boolean;
+  dataToEdit: IDataToEdit | IDataToEdit[];
   done: boolean;
-  type: "catalog" | "column";
+
   item: {
     id: string;
     key: string;
@@ -111,25 +113,52 @@ function DefaultFormLine({
 
   useEffect(() => {
     if (mode === "editing") {
-      const currentPayloads = dataToEdit?.fields?.entity?.payloads;
-      if (currentPayloads?.length > 0) {
-        const currentItem = currentPayloads?.find((fItem) => {
-          return fItem?.value?.templateId === valueColLeft?.value?.id;
+      if (!characteristic) {
+        const copyDataToEdit: IDataToEdit = dataToEdit as IDataToEdit;
+        const currentPayloads = copyDataToEdit?.fields?.entity?.payloads;
+        if (currentPayloads?.length > 0) {
+          const currentItem = currentPayloads?.find((fItem) => {
+            return fItem?.value?.templateId === valueColLeft?.value?.id;
+          });
+          if (currentItem) {
+            const secondValueSelectedToEdit = optionsToView.find(
+              (opt) => opt.value.id === currentItem.value.fieldId,
+            );
+            changePayloadToFinish(
+              valueColLeft,
+              secondValueSelectedToEdit,
+              index,
+            );
+            setSecondValueSelected(secondValueSelectedToEdit);
+          }
+        }
+      } else {
+        const copyDataToEdit: IDataToEdit[] = dataToEdit as IDataToEdit[];
+        const currentPayloads = copyDataToEdit.map((mItem) => {
+          return mItem?.fields?.entity?.payloads;
         });
-        console.log("🚀 ~ currentItem ~ currentItem:", currentItem);
-        console.log("🚀 ~ optionsToView ~ optionsToView:", optionsToView);
-        if (currentItem) {
-          const secondValueSelectedToEdit = optionsToView.find(
-            (opt) => opt.value.id === currentItem.value.fieldId,
-          );
-          changePayloadToFinish(valueColLeft, secondValueSelectedToEdit, index);
-          setSecondValueSelected(secondValueSelectedToEdit);
+        if (currentPayloads?.flat()?.length > 0) {
+          const currentItem = currentPayloads?.flat()?.find((fItem) => {
+            return fItem?.value?.templateId === valueColLeft?.value?.id;
+          });
+          if (currentItem) {
+            const secondValueSelectedToEdit = optionsToView.find(
+              (opt) => opt.value.id === currentItem.value.fieldId,
+            );
+            changePayloadToFinish(
+              valueColLeft,
+              secondValueSelectedToEdit,
+              index,
+            );
+            setSecondValueSelected(secondValueSelectedToEdit);
+          }
         }
       }
     }
   }, [
     changePayloadToFinish,
-    dataToEdit?.fields?.entity?.payloads,
+    characteristic,
+    dataToEdit,
     index,
     mode,
     optionsToView,
@@ -156,7 +185,7 @@ function DefaultFormLine({
         isDisabled
         onChange={() => ""}
       />
-      {type === "column" && (
+      {!characteristic && (
         <SelectComponent
           select={secondValueSelected}
           onChange={(e) => {

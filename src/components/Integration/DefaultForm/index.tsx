@@ -22,8 +22,10 @@ function DefaultForm({
   type,
   done,
   dataToEdit,
+  characteristic,
 }: {
-  dataToEdit: IDataToEdit;
+  characteristic: boolean;
+  dataToEdit: IDataToEdit | IDataToEdit[];
   done: boolean;
   type: "catalog" | "column";
   leftColumnName: string;
@@ -97,12 +99,12 @@ function DefaultForm({
           <div key={item.id}>
             <Topic value={topicToView(item)} />
             <DefaultFormLine
+              characteristic={characteristic}
               dataToEdit={dataToEdit}
               item={item}
               index={index}
               valueColLeft={valueColLeft}
               changePayloadToFinish={changePayloadToFinish}
-              type={type}
               done={done}
             />
           </div>

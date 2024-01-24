@@ -31,7 +31,9 @@ function FeatureForms({
   onSave,
   filteredOptions,
   done,
+  dataToEdit,
 }: {
+  dataToEdit: IDataToEdit[];
   done: boolean;
   filteredOptions: (list: any) => void;
   onSave: () => void;
@@ -121,7 +123,7 @@ function FeatureForms({
                     options={templates as any}
                     required
                   />
-                  {characteristicsType[index] === "catalog" && (
+                  {characteristicsType[index] === "column" && (
                     <SelectComponent
                       select={colHeaderSelectValue[index]}
                       onChange={(e: any) => {
@@ -145,15 +147,16 @@ function FeatureForms({
               )}
               {currentField?.id && (
                 <DefaultForm
-                  dataToEdit={{} as IDataToEdit}
+                  dataToEdit={dataToEdit as IDataToEdit[]}
                   leftColumnName="Propriedades de payloads Nexaas"
                   centerColumnName="Catálogo ListMe"
-                  rightColumnName="Campo ListMe"
+                  rightColumnName=""
                   dataForm={currentField}
                   valueColLeft={headerSelectValues[index]}
                   payloadToFinish={payloadsToFinish[index]}
                   type={characteristicsType[index]}
                   done={done}
+                  characteristic
                 />
               )}
             </ContainerIntegration>
@@ -177,7 +180,7 @@ function FeatureForms({
             const copyPayloads = [...payloadsToFinish];
             copyPayloads.push(value);
             setPayloadsToFinish(copyPayloads);
-            const copyCharacteristicsType = [...characteristicsType, "column"];
+            const copyCharacteristicsType = [...characteristicsType, "catalog"];
 
             setCharacteristicType(copyCharacteristicsType as any);
           }}

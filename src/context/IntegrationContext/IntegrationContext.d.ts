@@ -71,7 +71,7 @@ export interface IDataToEdit {
         {
           type: string;
           value: {
-            fieldId: string;
+            fieldId?: string;
             templateId: string;
           };
           templateConfigPayloadId: string;
