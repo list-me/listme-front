@@ -81,14 +81,14 @@ function DefaultFormIntegration(): JSX.Element {
 
           setTemplates(newTemplate);
 
-          if (mode === "editing") {
+          if (mode === "editing" && dataToEdit?.id) {
             const { templateTriggerId } = dataToEdit.fields.entity;
             const headerSelectValueToEdit = (newTemplate as any).find(
               (temp: any) => temp.value.id === templateTriggerId,
             );
             setHeaderSelectValue(headerSelectValueToEdit);
-            // eslint-disable-next-line react-hooks/exhaustive-deps
             // @ts-ignore
+            // eslint-disable-next-line react-hooks/exhaustive-deps
             payloadToFinish = dataToEdit?.fields?.entity?.payloads;
           }
         })
@@ -101,9 +101,12 @@ function DefaultFormIntegration(): JSX.Element {
   );
 
   useEffect(() => {
-    if (mode === "registration") handleGetTemplates({ page: 0, limit: 100 });
-    if (mode === "editing" && dataToEdit?.id)
+    if (mode === "registration") {
       handleGetTemplates({ page: 0, limit: 100 });
+    }
+    if (mode === "editing") {
+      handleGetTemplates({ page: 0, limit: 100 });
+    }
   }, [dataToEdit?.id, handleGetTemplates, mode]);
 
   const [menuActivated, setMenuActivated] = useState<string>(path);
