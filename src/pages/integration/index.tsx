@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import TemplateDefault from "../../components/TemplateDefault";
 import { useFilterContext } from "../../context/FilterContext";
@@ -8,14 +8,15 @@ import InlineMenu from "../../components/Integration/InlineMenu";
 import IntegrationCard from "../../components/Integration/IntegrationCard";
 import StepModal from "../../components/StepModal";
 import StepModalsContents from "../../components/Integration/StepModalsContents";
-import { integrationsRequest } from "../../services/apis/requests/integration";
 import {
   IDataCardList,
   IMenuInlineActivated,
   IMenuToInlineMenuList,
+  IProvider,
 } from "../../models/integration/integration";
 import logoMock from "../../components/Integration/IntegrationCard/mock/logoIntegration.png";
 import { useIntegration } from "../../context/IntegrationContext";
+import { integrationsRequest } from "../../services/apis/requests/integration";
 
 function Integration(): JSX.Element {
   const { setFilters, defaultFilter, setFilterStatus, setConditions } =
@@ -27,6 +28,8 @@ function Integration(): JSX.Element {
     setEnvironment,
     setValueHomologApi,
     setValueProdApi,
+    menuActivated,
+    setMenuActivated,
   } = useIntegration();
   useEffect(() => {
     setConditions([]);
@@ -37,9 +40,6 @@ function Integration(): JSX.Element {
 
   const [fromToIsOpened, setFromToIsOpened] = useState(false);
 
-  const [menuActivated, setMenuActivated] =
-    useState<IMenuInlineActivated>("seeAll");
-
   const menus: IMenuToInlineMenuList = [
     { value: "seeAll", label: "Ver todos", status: "" },
     { value: "active", label: "Ativos", status: "" },
@@ -48,24 +48,24 @@ function Integration(): JSX.Element {
 
   const [listDataCard, setListDataCard] = useState<IDataCardList>();
 
-  async function getConfigTemplatesList(
-    status: IMenuInlineActivated,
-  ): Promise<void> {
-    try {
-      const configTemplatesList = await integrationsRequest.listConfigTemplates(
-        status,
-      );
+  const getConfigTemplatesList = useCallback(
+    async (status: IMenuInlineActivated): Promise<void> => {
+      try {
+        const configTemplatesList =
+          await integrationsRequest.listConfigTemplates(status);
 
-      setListDataCard(configTemplatesList);
-    } catch (error) {
-      console.error(error);
-      toast.error("Ocorreu um erro ao buscar a lista de integrações");
-    }
-  }
+        setListDataCard(configTemplatesList);
+      } catch (error) {
+        console.error(error);
+        toast.error("Ocorreu um erro ao buscar a lista de integrações");
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     getConfigTemplatesList(menuActivated);
-  }, [menuActivated]);
+  }, [getConfigTemplatesList, menuActivated]);
 
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
@@ -79,7 +79,7 @@ function Integration(): JSX.Element {
             integrationId={null}
           />
           <CardsContainerIntegration>
-            {listDataCard?.map((item) => (
+            {listDataCard?.map((item: IProvider) => (
               <IntegrationCard
                 done={!!item?.config?.id}
                 onClickPrimaryButtonDone={() => {
@@ -104,26 +104,6 @@ function Integration(): JSX.Element {
                 thumb={logoMock}
               />
             ))}
-            {/* <IntegrationCard
-              done={false}
-              onClickPrimaryButtonDone={() => ""}
-              onClickSecondaryButtonDone={() => ""}
-              onClickNotDone={() => {
-                setFromToIsOpened(true);
-              }}
-              isActive={isActive}
-              setIsActive={setIsActive}
-            />
-            <IntegrationCard
-              done
-              onClickPrimaryButtonDone={() =>
-                navigate(`${ROUTES.INTEGRATION}/oi`)
-              }
-              onClickSecondaryButtonDone={() => ""}
-              onClickNotDone={() => setFromToIsOpened(true)}
-              isActive={!isActive}
-              setIsActive={setIsActive}
-            /> */}
           </CardsContainerIntegration>
         </ContainerIntegration>
       </Content>

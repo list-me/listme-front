@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import TemplateDefault from "../../../TemplateDefault";
@@ -27,10 +27,19 @@ import { TitlePage } from "../../../../pages/templates/styles";
 import { IPaginationTemplate } from "../../../../pages/templates/templates";
 import nextMenu from "../../../../pages/companyIntegration/utils/nextMenu";
 import { ITemplatesById } from "../../../../pages/companyIntegration/companyIntegration";
+import { IDataToEdit } from "../../../../context/IntegrationContext/IntegrationContext";
 
 function DefaultFormIntegration(): JSX.Element {
-  const { currentMenus, setCurrentMenus, environment, setEnvironment } =
-    useIntegration();
+  const {
+    currentMenus,
+    setCurrentMenus,
+    environment,
+    setEnvironment,
+    valueProdApi,
+    valueHomologApi,
+    currentProvider,
+    mode,
+  } = useIntegration();
 
   const location = useLocation();
   const pathnameSplited = location.pathname.split("/");
@@ -39,29 +48,8 @@ function DefaultFormIntegration(): JSX.Element {
   const path = pathnameSplited[pathnameSize - 2];
   const navigate = useNavigate();
   const [templates, setTemplates] = useState();
-
-  const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
-    templateRequests
-      .list({ limit, page })
-      .then((response) => {
-        const newTemplate = response
-          .map((item: any) => {
-            return { label: item.name, value: item };
-          })
-          .filter((fItem: any) => {
-            return fItem.label !== null && fItem.label !== undefined;
-          });
-        setTemplates(newTemplate);
-      })
-      .catch((error) => {
-        toast.error("Ocorreu um erro ao listar os catálogos");
-        console.error(error);
-      });
-  };
-
-  useEffect(() => {
-    handleGetTemplates({ page: 0, limit: 100 });
-  }, []);
+  const [dataToEdit, setDataToEdit] = useState<IDataToEdit>({} as IDataToEdit);
+  const [headerSelectValue, setHeaderSelectValue] = useState(null);
 
   const [templatesById, setTemplatesById] = useState<ITemplatesById>(
     {} as ITemplatesById,
@@ -70,7 +58,7 @@ function DefaultFormIntegration(): JSX.Element {
   const currentField = templatesById?.payloads?.fields.find((item) => {
     return item.endpointPath === `/${path}`;
   });
-  const payloadToFinish = Array.from(
+  let payloadToFinish = Array.from(
     { length: (currentField as any)?.payload?.length || 0 },
     () => ({
       templateConfigPayloadId: "",
@@ -81,7 +69,45 @@ function DefaultFormIntegration(): JSX.Element {
       },
     }),
   );
-  const [headerSelectValue, setHeaderSelectValue] = useState(null);
+
+  const handleGetTemplates = useCallback(
+    ({ page, limit }: IPaginationTemplate): void => {
+      templateRequests
+        .list({ limit, page })
+        .then((response) => {
+          const newTemplate = response
+            .map((item: any) => {
+              return { label: item.name, value: item };
+            })
+            .filter((fItem: any) => {
+              return fItem.label !== null && fItem.label !== undefined;
+            });
+          setTemplates(newTemplate);
+
+          if (mode === "editing") {
+            const { templateTriggerId } = dataToEdit.fields.entity;
+            const headerSelectValueToEdit = (newTemplate as any).find(
+              (temp: any) => temp.value.id === templateTriggerId,
+            );
+            setHeaderSelectValue(headerSelectValueToEdit);
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            // @ts-ignore
+            payloadToFinish = dataToEdit?.fields?.entity?.payloads;
+          }
+        })
+        .catch((error) => {
+          toast.error("Ocorreu um erro ao listar os catálogos");
+          console.error(error);
+        });
+    },
+    [dataToEdit?.fields?.entity, mode],
+  );
+
+  useEffect(() => {
+    if (mode === "registration") handleGetTemplates({ page: 0, limit: 100 });
+    if (mode === "editing" && dataToEdit?.id)
+      handleGetTemplates({ page: 0, limit: 100 });
+  }, [dataToEdit?.id, handleGetTemplates, mode]);
 
   const [menuActivated, setMenuActivated] = useState<string>(path);
 
@@ -171,7 +197,9 @@ function DefaultFormIntegration(): JSX.Element {
       type: "integration",
     };
     try {
-      await templateRequests.postIntegration(body);
+      if (mode === "registration") await templateRequests.postIntegration(body);
+      if (mode === "editing")
+        await templateRequests.patchIntegration(dataToEdit.id, body);
       toast.success(
         `Configuração de ${Menus[menuActivated]} realizado(a) com sucesso.`,
       );
@@ -186,6 +214,42 @@ function DefaultFormIntegration(): JSX.Element {
     setHeaderSelectValue(null);
   };
 
+  const changeEnvironment = async (
+    value: "sandbox" | "production",
+  ): Promise<void> => {
+    const body = {
+      production_key: valueProdApi,
+      sandbox_key: valueHomologApi,
+      environment: value,
+      custom_configs: {
+        organization_id: currentProvider.config.custom_configs.organization_id,
+      },
+      status: currentProvider.config.status,
+    };
+    try {
+      await integrationsRequest.patchIntegrationsConfig(
+        currentProvider.config.id,
+        body,
+      );
+      setEnvironment(value);
+      toast.success(`Ambiente atualizado com sucesso.`);
+    } catch (err) {
+      toast.success(`Erro ao atualizar ambiente`);
+    }
+  };
+
+  useEffect(() => {
+    const getDataToEdit = async (id: string): Promise<void> => {
+      const response: IDataToEdit[] =
+        await integrationsRequest.getTemplateEntity(id);
+
+      setDataToEdit(response[0]);
+    };
+    if (mode === "editing" && currentField?.id) {
+      getDataToEdit(currentField?.id);
+    }
+  }, [currentField?.id, mode]);
+
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
       <ContainerContent>
@@ -197,7 +261,7 @@ function DefaultFormIntegration(): JSX.Element {
             <DualSwitch
               value={environment}
               options={dualOptions}
-              setValue={setEnvironment as any}
+              setValue={changeEnvironment as any}
             />
           </TitleSwitchContainer>
           <BoxesIntegration>
@@ -223,6 +287,7 @@ function DefaultFormIntegration(): JSX.Element {
 
               {currentField?.id && (
                 <DefaultForm
+                  characteristic={false}
                   leftColumnName="Propriedades de payloads Nexaas"
                   centerColumnName="Catálogo ListMe"
                   rightColumnName="Campo ListMe"
@@ -231,6 +296,7 @@ function DefaultFormIntegration(): JSX.Element {
                   payloadToFinish={payloadToFinish}
                   type="column"
                   done={done === "done"}
+                  dataToEdit={dataToEdit}
                 />
               )}
               <IntegrationNavigate

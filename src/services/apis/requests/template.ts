@@ -5,14 +5,19 @@ import { ITemplate } from "../../../context/products/product.context";
 interface IPagination {
   page?: number;
   limit?: number;
+  list?: boolean;
 }
 
 // eslint-disable-next-line import/prefer-default-export
 export const templateRequests = {
-  list: async ({ page = 0, limit = 20 }: IPagination): Promise<any> => {
+  list: async ({
+    page = 0,
+    limit = 20,
+    list = false,
+  }: IPagination): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.get(
-      `/templates/?offset=${page}&limit=${limit}`,
+      `/templates/?offset=${page}&limit=${limit}${list ? "&type=list" : ""}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -61,6 +66,16 @@ export const templateRequests = {
   postIntegration: async (body: any): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.post(`/template`, body, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  },
+  patchIntegration: async (id: string, body: any): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.patch(`/template/${id}`, body, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

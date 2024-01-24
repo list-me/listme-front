@@ -1,10 +1,22 @@
-import React, { createContext, useContext, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { toast } from "react-toastify";
+import { useLocation } from "react-router-dom";
 import {
   IEnvironment,
   IErrorsIntegrations,
   IntegrationContextType,
 } from "./IntegrationContext";
-import { IProvider } from "../../models/integration/integration";
+import {
+  IDataCardList,
+  IMenuInlineActivated,
+  IProvider,
+} from "../../models/integration/integration";
 import menus from "../../pages/companyIntegration/utils/menus";
 
 const IntegrationContext = createContext<IntegrationContextType | undefined>(
@@ -36,6 +48,10 @@ function IntegrationProvider({
   );
 
   const [currentMenus, setCurrentMenus] = useState(menus);
+
+  const [menuActivated, setMenuActivated] =
+    useState<IMenuInlineActivated>("seeAll");
+
   const value = {
     environment,
     setEnvironment,
@@ -58,6 +74,8 @@ function IntegrationProvider({
     limit,
     searchIntegration,
     setSearchIntegration,
+    menuActivated,
+    setMenuActivated,
   };
 
   return (

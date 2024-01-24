@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import TemplateDefault from "../../../TemplateDefault";
@@ -29,10 +29,19 @@ import { ROUTES } from "../../../../constants/routes";
 import CharacteristicTypeSelector from "../../CharacteristicTypeSelector";
 import FeatureForms from "../../FeatureForms";
 import SelectComponent from "../../../Select";
+import { IDataToEdit } from "../../../../context/IntegrationContext/IntegrationContext";
 
 function CharacteriscFormIntegration(): JSX.Element {
-  const { currentMenus, setCurrentMenus, environment, setEnvironment } =
-    useIntegration();
+  const {
+    currentMenus,
+    setCurrentMenus,
+    environment,
+    setEnvironment,
+    valueProdApi,
+    valueHomologApi,
+    currentProvider,
+    mode,
+  } = useIntegration();
 
   const location = useLocation();
   const pathnameSplited = location.pathname.split("/");
@@ -41,25 +50,113 @@ function CharacteriscFormIntegration(): JSX.Element {
   const path = pathnameSplited[pathnameSize - 2];
   const navigate = useNavigate();
   const [templates, setTemplates] = useState();
+  const [dataToEdit, setDataToEdit] = useState<IDataToEdit[]>([
+    {},
+  ] as IDataToEdit[]);
+  const [headerSelectValues, setHeaderSelectValues] = useState([]);
+  const [payloadsToFinish, setPayloadsToFinish] = useState<any[][]>([[]]);
+  const [colOptions, setColOptions] = useState([]);
 
-  const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
-    templateRequests
-      .list({ limit, page })
-      .then((response) => {
-        const newTemplate = response.map((item: any) => {
-          return { label: item.name, value: item };
-        });
-        setTemplates(newTemplate);
-      })
-      .catch((error) => {
-        toast.error("Ocorreu um erro ao listar os catálogos");
-        console.error(error);
-      });
+  const [colHeaderSelectValue, setColHeaderSelectValue] = useState([]);
+
+  const changeListValue = (
+    value: string,
+    index: number,
+    list: any[],
+    setValue: React.Dispatch<React.SetStateAction<any>>,
+  ): void => {
+    const copyList = [...list];
+
+    copyList[index] = value;
+
+    setValue(copyList);
   };
+
+  const getHeaderCols = useCallback(
+    (id: string, index: number): void => {
+      templateRequests
+        .get(id)
+        .then((response) => {
+          const fieldsMap = response.fields.fields.map((mItem: any) => {
+            return { label: mItem.title, value: mItem };
+          });
+          changeListValue(fieldsMap, index, colOptions, setColOptions);
+          dataToEdit.forEach((fItem, index) => {
+            const itemFinded = fieldsMap.find((findItem: any) => {
+              return (
+                findItem.value.id ===
+                fItem.fields.entity.payloads[0].value.fieldId
+              );
+            });
+          });
+        })
+        .catch((error) => {
+          toast.error("Ocorreu um erro ao listar os catálogos relacionados");
+          console.error(error);
+        });
+    },
+    [dataToEdit],
+  );
+
+  const handleGetTemplates = useCallback(
+    ({ page, limit }: IPaginationTemplate) => {
+      templateRequests
+        .list({ limit, page })
+        .then((response) => {
+          const newTemplate = response
+            .map((item: any) => {
+              return { label: item.name, value: item };
+            })
+            .filter((fItem: any) => {
+              return fItem.label !== null && fItem.label !== undefined;
+            });
+          setTemplates(newTemplate);
+
+          if (mode === "editing") {
+            const listToHeadersSelectValueToEdit: any[] = [];
+
+            dataToEdit.forEach((itemDataToEdit: any) => {
+              const entityFields = itemDataToEdit?.fields?.entity;
+
+              if (entityFields) {
+                const { templateTriggerId } = entityFields;
+
+                const headerSelectValueToEdit = (newTemplate as any).find(
+                  (temp: any) => temp.value.id === templateTriggerId,
+                );
+
+                if (headerSelectValueToEdit) {
+                  listToHeadersSelectValueToEdit.push(headerSelectValueToEdit);
+                }
+              }
+            });
+
+            setHeaderSelectValues(listToHeadersSelectValueToEdit as any);
+
+            listToHeadersSelectValueToEdit.forEach((fItem, index) => {
+              getHeaderCols(fItem.value.id, index);
+            });
+
+            const listPayloadToFinish: any[] = [];
+            dataToEdit.forEach((itemDataToEdit: any) => {
+              listPayloadToFinish.push(
+                itemDataToEdit?.fields?.entity?.payloads,
+              );
+            });
+            setPayloadsToFinish(listPayloadToFinish);
+          }
+        })
+        .catch((error) => {
+          toast.error("Ocorreu um erro ao listar os catálogos");
+          console.error(error);
+        });
+    },
+    [dataToEdit, getHeaderCols, mode],
+  );
 
   useEffect(() => {
     handleGetTemplates({ page: 0, limit: 100 });
-  }, []);
+  }, [handleGetTemplates]);
 
   const [templatesById, setTemplatesById] = useState<ITemplatesById>(
     {} as ITemplatesById,
@@ -68,7 +165,6 @@ function CharacteriscFormIntegration(): JSX.Element {
   const currentField = templatesById?.payloads?.fields.find((item) => {
     return item.endpointPath === `/${path}`;
   });
-  const [payloadsToFinish, setPayloadsToFinish] = useState<any[][]>([[]]);
 
   useEffect(() => {
     const initialPayload = Array.from(
@@ -114,40 +210,7 @@ function CharacteriscFormIntegration(): JSX.Element {
 
   const [characteristicsType, setCharacteristicType] = useState<
     "catalog"[] | "column"[]
-  >(["column"]);
-
-  const changeListValue = (
-    value: string,
-    index: number,
-    list: any[],
-    setValue: React.Dispatch<React.SetStateAction<any>>,
-  ): void => {
-    const copyList = [...list];
-
-    copyList[index] = value;
-
-    setValue(copyList);
-  };
-
-  const [colOptions, setColOptions] = useState([]);
-  const [headerSelectValues, setHeaderSelectValues] = useState([]);
-
-  const [colHeaderSelectValue, setColHeaderSelectValue] = useState([]);
-
-  const getHeaderCols = (id: string, index: number): void => {
-    templateRequests
-      .get(id)
-      .then((response) => {
-        const fieldsMap = response.fields.fields.map((mItem: any) => {
-          return { label: mItem.title, value: mItem };
-        });
-        changeListValue(fieldsMap, index, colOptions, setColOptions);
-      })
-      .catch((error) => {
-        toast.error("Ocorreu um erro ao listar os catálogos relacionados");
-        console.error(error);
-      });
-  };
+  >(["catalog"]);
 
   useEffect(() => {
     setHeaderSelectValues([]);
@@ -190,20 +253,30 @@ function CharacteriscFormIntegration(): JSX.Element {
 
   const onFinish = async (): Promise<void> => {
     if (currentField) {
-      colHeaderSelectValue.forEach((item, index) => {
-        if (characteristicsType[index] === "catalog") {
-          payloadsToFinish[index] = payloadsToFinish[index].map((pItem) => {
+      currentField.payload.forEach((item, index) => {
+        payloadsToFinish[index] = payloadsToFinish[index]?.map((pItem) => {
+          if (characteristicsType[index] === "catalog") {
             return {
               ...pItem,
-              templateConfigPayloadId: currentField.payload[index].id as any,
-              type: "column",
+              templateConfigPayloadId: currentField?.payload[index]?.id as any,
+              type: characteristicsType[index],
               value: {
-                templateId: (headerSelectValues[index] as any).value.id,
-                fieldId: (colHeaderSelectValue[index] as any).value.id,
+                templateId: (headerSelectValues[index] as any)?.value?.id,
               },
             };
-          });
-        }
+          }
+          if (characteristicsType[index] === "column") {
+            return {
+              ...pItem,
+              templateConfigPayloadId: currentField?.payload[index]?.id as any,
+              type: characteristicsType[index],
+              value: {
+                templateId: (headerSelectValues[index] as any)?.value?.id,
+                fieldId: (colHeaderSelectValue[index] as any)?.value?.id,
+              },
+            };
+          }
+        });
       });
     }
 
@@ -226,14 +299,15 @@ function CharacteriscFormIntegration(): JSX.Element {
       if (idsRequired?.length === 0) {
         return false;
       }
-      const notDone = payloadsToFinish[index].find((item, fIndex) => {
+      const notDone = payloadsToFinish[index]?.find((item, fIndex) => {
         if (idsRequired.includes(fIndex)) {
-          if (!item.value.fieldId) return item;
+          if (item.type === "catalog" && !item.value.templateId) return item;
+          if (item.type === "column" && !item.value.fieldId) return item;
         }
       });
 
       // eslint-disable-next-line no-useless-return
-      if (notDone) {
+      if (characteristicsType[index] === "column" && notDone) {
         toast.warn("Algum campo obrigatório não está preenchido.");
         return false;
       }
@@ -270,7 +344,10 @@ function CharacteriscFormIntegration(): JSX.Element {
             type: "integration",
           };
 
-          await templateRequests.postIntegration(body);
+          if (mode === "registration")
+            await templateRequests.postIntegration(body);
+          if (mode === "editing")
+            await templateRequests.patchIntegration(dataToEdit[index].id, body);
         });
 
         await Promise.all(requests);
@@ -288,6 +365,48 @@ function CharacteriscFormIntegration(): JSX.Element {
     });
   };
 
+  const changeEnvironment = async (
+    value: "sandbox" | "production",
+  ): Promise<void> => {
+    const body = {
+      production_key: valueProdApi,
+      sandbox_key: valueHomologApi,
+      environment: value,
+      custom_configs: {
+        organization_id: currentProvider.config.custom_configs.organization_id,
+      },
+      status: currentProvider.config.status,
+    };
+    try {
+      await integrationsRequest.patchIntegrationsConfig(
+        currentProvider.config.id,
+        body,
+      );
+      setEnvironment(value);
+      toast.success(`Ambiente atualizado com sucesso.`);
+    } catch (err) {
+      toast.success(`Erro ao atualizar ambiente`);
+    }
+  };
+
+  useEffect(() => {
+    const getDataToEdit = async (id: string): Promise<void> => {
+      const response = await integrationsRequest.getTemplateEntity(id);
+
+      const typelist: any[] = [];
+      response.forEach((res: any) => {
+        typelist.push(res.fields.entity.payloads[0].type);
+      });
+
+      setCharacteristicType(typelist as any[]);
+
+      setDataToEdit(response);
+    };
+    if (mode === "editing" && currentField?.id) {
+      getDataToEdit(currentField?.id);
+    }
+  }, [currentField?.id, mode]);
+
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
       <ContainerContent>
@@ -299,7 +418,7 @@ function CharacteriscFormIntegration(): JSX.Element {
             <DualSwitch
               value={environment}
               options={dualOptions}
-              setValue={setEnvironment as any}
+              setValue={changeEnvironment as any}
             />
           </TitleSwitchContainer>
           <BoxesIntegration>
@@ -342,7 +461,7 @@ function CharacteriscFormIntegration(): JSX.Element {
                     required
                     done={done === "done"}
                   />
-                  {characteristicsType[0] === "catalog" && (
+                  {characteristicsType[0] === "column" && (
                     <SelectComponent
                       select={colHeaderSelectValue[0]}
                       onChange={(e: any) => {
@@ -374,10 +493,13 @@ function CharacteriscFormIntegration(): JSX.Element {
                   payloadToFinish={payloadsToFinish[0]}
                   type={characteristicsType[0]}
                   done={done === "done"}
+                  dataToEdit={dataToEdit as IDataToEdit[]}
+                  characteristic
                 />
               )}
             </ContainerIntegration>
             <FeatureForms
+              dataToEdit={dataToEdit}
               changeListValue={changeListValue}
               payloadsToFinish={payloadsToFinish}
               setPayloadsToFinish={setPayloadsToFinish}

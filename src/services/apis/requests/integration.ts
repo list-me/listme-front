@@ -109,4 +109,13 @@ export const integrationsRequest = {
 
     return response.data;
   },
+  getTemplateEntity: async (id: string): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.get(`/integrations/templates/entity/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  },
 };
