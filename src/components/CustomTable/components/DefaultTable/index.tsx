@@ -78,6 +78,8 @@ function DefaultTable({
 }: IDefaultTable): JSX.Element {
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
   const [openAlertTooltip, setAlertTooltip] = useState(false);
+  const [openAlertTooltipIntegration, setAlertTooltipIntegration] =
+    useState(false);
 
   const { operator } = useFilterContext();
   const { conditionsFilter } = useProductContext();
@@ -555,7 +557,29 @@ function DefaultTable({
 
   return (
     <>
-      {openAlertTooltip && <AlertTooltip setAlertTooltip={setAlertTooltip} />}
+      {openAlertTooltip && (
+        <AlertTooltip setAlertTooltip={setAlertTooltip}>
+          <p className="error-title">Inválido:</p>
+          <p>
+            A entrada não é aceitável, pois não
+            <br />
+            corresponde a nenhum dos itens da
+            <br />
+            coluna especificada.
+          </p>
+        </AlertTooltip>
+      )}
+      {openAlertTooltipIntegration && (
+        <AlertTooltip setAlertTooltip={setAlertTooltipIntegration}>
+          <p>
+            Esse campo é obrigatório com as seguintes integrações:
+            <br />
+            Shopify: Marcas, Produto
+            <br />
+            Nexaas: Marcas
+          </p>
+        </AlertTooltip>
+      )}
 
       <HotTable
         nestedRows
@@ -584,6 +608,16 @@ function DefaultTable({
         afterColumnResize={async (newSize: number, column: number) => {
           await handleResize(column, newSize, template);
         }}
+        afterOnCellMouseDown={(event: any) => {
+          const clickedElementClassList = event.target.classList;
+          const correctElementIntegration = clickedElementClassList.contains(
+            "REQUIRED_INTEGRATION",
+          );
+
+          if (correctElementIntegration) {
+            setAlertTooltipIntegration(true);
+          }
+        }}
         afterOnCellMouseUp={(event: any, coords, _TD) => {
           const limitWidth = window.innerWidth - 350;
 
@@ -591,6 +625,13 @@ function DefaultTable({
 
           const clickedElementClassList = event.target.classList;
           const correctElement = clickedElementClassList.contains("dropDown");
+          const correctElementIntegration = clickedElementClassList.contains(
+            "REQUIRED_INTEGRATION",
+          );
+
+          if (correctElementIntegration) {
+            setAlertTooltipIntegration(true);
+          }
           if (colHeaders.length - 1 === coords.col) {
             setTimeout(() => {
               setDropDownStatus({
