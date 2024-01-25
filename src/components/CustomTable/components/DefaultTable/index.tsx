@@ -617,7 +617,6 @@ function DefaultTable({
           const invert = event.clientX > limitWidth;
 
           const clickedElementClassList = event.target.classList;
-          console.log("🚀 ~ clickedElementClassList:", clickedElementClassList);
           const correctElement = clickedElementClassList.contains("dropDown");
 
           const correctElementIntegration = clickedElementClassList.contains(
