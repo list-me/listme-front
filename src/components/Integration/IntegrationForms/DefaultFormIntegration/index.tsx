@@ -197,9 +197,9 @@ function DefaultFormIntegration(): JSX.Element {
       type: "integration",
     };
     try {
-      if (mode === "registration") await templateRequests.postIntegration(body);
-      if (mode === "editing")
+      if (mode === "editing" && dataToEdit?.id)
         await templateRequests.patchIntegration(dataToEdit.id, body);
+      else await templateRequests.postIntegration(body);
       toast.success(
         `Configuração de ${Menus[menuActivated]} realizado(a) com sucesso.`,
       );

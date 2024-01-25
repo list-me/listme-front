@@ -342,10 +342,9 @@ function CharacteriscFormIntegration(): JSX.Element {
             type: "integration",
           };
 
-          if (mode === "registration")
-            await templateRequests.postIntegration(body);
-          if (mode === "editing")
+          if (mode === "editing" && dataToEdit[index].id)
             await templateRequests.patchIntegration(dataToEdit[index].id, body);
+          else await templateRequests.postIntegration(body);
         });
 
         await Promise.all(requests);
