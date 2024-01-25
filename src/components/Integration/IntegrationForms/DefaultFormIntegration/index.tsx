@@ -128,6 +128,22 @@ function DefaultFormIntegration(): JSX.Element {
         await integrationsRequest.listConfigTemplatesId(id);
 
       setTemplatesById(configTemplatesById);
+
+      const copyCurrentMenus = [...currentMenus];
+      currentMenus.forEach((fItem, index) => {
+        const fieldFinded = configTemplatesById.payloads.fields.find(
+          (findItem: any) => {
+            return findItem.endpointPath === `/${fItem.value}`;
+          },
+        );
+        if (fieldFinded.payload[0].id) {
+          copyCurrentMenus[index] = {
+            ...copyCurrentMenus[index],
+            status: "done",
+          };
+        }
+      });
+      setCurrentMenus(copyCurrentMenus);
     } catch (error) {
       console.error(error);
       toast.error("Ocorreu um erro ao buscar a lista de integrações");
@@ -271,6 +287,7 @@ function DefaultFormIntegration(): JSX.Element {
                 menuActivated={menuActivated}
                 setMenuActivated={setMenuActivated}
                 integrationId={integrationId}
+                mode={mode}
               />
 
               <HeaderSelect
@@ -282,7 +299,7 @@ function DefaultFormIntegration(): JSX.Element {
                 placeHolder="Selecione..."
                 options={templates as any}
                 required
-                done={done === "done"}
+                done={mode === "registration" && done === "done"}
               />
 
               {currentField?.id && (
@@ -295,16 +312,19 @@ function DefaultFormIntegration(): JSX.Element {
                   valueColLeft={headerSelectValue}
                   payloadToFinish={payloadToFinish}
                   type="column"
-                  done={done === "done"}
+                  done={mode === "registration" && done === "done"}
                   dataToEdit={dataToEdit}
                 />
               )}
               <IntegrationNavigate
                 external={false}
-                done={done === "done"}
+                done={mode === "registration" && done === "done"}
                 toClear={toClear}
                 onSave={onFinish}
-                isDisabled={!headerSelectValue || done === "done"}
+                isDisabled={
+                  mode === "registration" &&
+                  (!headerSelectValue || done === "done")
+                }
               />
             </ContainerIntegration>
 
