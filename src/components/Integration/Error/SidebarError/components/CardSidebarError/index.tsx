@@ -73,8 +73,6 @@ function CardSidebarError({
     }
   };
 
-  console.log("🚀 ~ error:", extractTexts(error.message));
-
   return (
     <ContainerCardSidebarError opened={opened}>
       <HeaderCardSidebarError>

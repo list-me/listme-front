@@ -77,6 +77,7 @@ function Integration(): JSX.Element {
             menuActivated={menuActivated}
             setMenuActivated={setMenuActivated}
             integrationId={null}
+            mode={null}
           />
           <CardsContainerIntegration>
             {listDataCard?.map((item: IProvider) => (

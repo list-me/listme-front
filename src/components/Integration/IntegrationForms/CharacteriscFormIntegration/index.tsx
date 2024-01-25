@@ -194,6 +194,22 @@ function CharacteriscFormIntegration(): JSX.Element {
         await integrationsRequest.listConfigTemplatesId(id);
 
       setTemplatesById(configTemplatesById);
+
+      const copyCurrentMenus = [...currentMenus];
+      currentMenus.forEach((fItem, index) => {
+        const fieldFinded = configTemplatesById.payloads.fields.find(
+          (findItem: any) => {
+            return findItem.endpointPath === `/${fItem.value}`;
+          },
+        );
+        if (fieldFinded.payload[0].id) {
+          copyCurrentMenus[index] = {
+            ...copyCurrentMenus[index],
+            status: "done",
+          };
+        }
+      });
+      setCurrentMenus(copyCurrentMenus);
     } catch (error) {
       console.error(error);
       toast.error("Ocorreu um erro ao buscar a lista de integrações");
@@ -425,6 +441,7 @@ function CharacteriscFormIntegration(): JSX.Element {
                 menuActivated={menuActivated}
                 setMenuActivated={setMenuActivated}
                 integrationId={integrationId}
+                mode={mode}
               />
               <CharacteristicTypeSelector
                 value={characteristicsType[0]}
@@ -456,7 +473,7 @@ function CharacteriscFormIntegration(): JSX.Element {
                     placeHolder="Selecione..."
                     options={templates as any}
                     required
-                    done={done === "done"}
+                    done={mode === "registration" && done === "done"}
                   />
                   {characteristicsType[0] === "column" && (
                     <SelectComponent
@@ -475,7 +492,10 @@ function CharacteriscFormIntegration(): JSX.Element {
                       labelText="Selecione a coluna"
                       placeHolder="Selecione..."
                       required
-                      isDisabled={done === "done" || !colOptions[0]}
+                      isDisabled={
+                        mode === "registration" &&
+                        (done === "done" || !colOptions[0])
+                      }
                     />
                   )}
                 </div>
@@ -489,7 +509,7 @@ function CharacteriscFormIntegration(): JSX.Element {
                   valueColLeft={headerSelectValues[0]}
                   payloadToFinish={payloadsToFinish[0]}
                   type={characteristicsType[0]}
-                  done={done === "done"}
+                  done={mode === "registration" && done === "done"}
                   dataToEdit={dataToEdit as IDataToEdit[]}
                   characteristic
                 />
@@ -514,7 +534,7 @@ function CharacteriscFormIntegration(): JSX.Element {
               toClear={toClear}
               onSave={onFinish}
               filteredOptions={filteredOptions}
-              done={done === "done"}
+              done={mode === "registration" && done === "done"}
             />
 
             {(nextMenu[menuActivated] as any)?.label && (
