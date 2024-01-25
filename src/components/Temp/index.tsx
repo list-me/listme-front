@@ -35,7 +35,7 @@ export const Temp: React.FC<IProps> = ({
 }) => {
   const { setOpenedFilter, filterStatus } = useFilterContext();
   const { conditionsFilter } = useProductContext();
-  const { searchIntegration } = useIntegration();
+  const { searchIntegration, searchSwitch } = useIntegration();
   const iconRef = useRef(null);
   const searchRef = useRef(null);
 
@@ -63,7 +63,7 @@ export const Temp: React.FC<IProps> = ({
       setFilter(searchIntegration);
       handleSearch(searchIntegration, window.location.pathname.substring(10));
     }
-  }, [searchIntegration]);
+  }, [searchIntegration, searchSwitch]);
 
   return (
     <Contents>

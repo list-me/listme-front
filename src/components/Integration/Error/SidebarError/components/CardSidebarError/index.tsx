@@ -20,7 +20,9 @@ import { IDataErrorIntegrations } from "../../../../../../context/IntegrationCon
 function CardSidebarError({
   error,
   setSearchIntegration,
+  setSearchSwitch,
 }: {
+  setSearchSwitch: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchIntegration: React.Dispatch<React.SetStateAction<string>>;
   error: IDataErrorIntegrations;
 }): JSX.Element {
@@ -112,7 +114,12 @@ function CardSidebarError({
             {currentMessage}
           </ItemErrorDesc>
         ))}
-        <ButtonProductView onClick={() => setSearchIntegration(item[0])}>
+        <ButtonProductView
+          onClick={() => {
+            setSearchSwitch((prev) => !prev);
+            setSearchIntegration(item[0]);
+          }}
+        >
           Ver produto
         </ButtonProductView>
       </ContentCardSidebarError>

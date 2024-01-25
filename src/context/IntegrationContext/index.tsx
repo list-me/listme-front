@@ -32,6 +32,7 @@ function IntegrationProvider({
     {} as IErrorsIntegrations,
   );
   const [searchIntegration, setSearchIntegration] = useState<string>("");
+  const [searchSwitch, setSearchSwitch] = useState(false);
   const limit = 10;
   const [offset, setOffset] = useState(0);
   const [sidebarErrorOpened, setSidebarErrorOpened] = useState(false);
@@ -76,6 +77,8 @@ function IntegrationProvider({
     setSearchIntegration,
     menuActivated,
     setMenuActivated,
+    searchSwitch,
+    setSearchSwitch,
   };
 
   return (

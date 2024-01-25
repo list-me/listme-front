@@ -22,6 +22,7 @@ export const Products: React.FC = () => {
     offset,
     setOffset,
     setSearchIntegration,
+    setSearchSwitch,
   } = useIntegration();
 
   useEffect(() => {
@@ -36,8 +37,15 @@ export const Products: React.FC = () => {
       setOffset(0);
       setSidebarErrorOpened(false);
       setSearchIntegration("");
+      setSearchSwitch(false);
     };
-  }, [handleRedirectAndGetProducts, setOffset, setSidebarErrorOpened]);
+  }, [
+    handleRedirectAndGetProducts,
+    setOffset,
+    setSearchIntegration,
+    setSearchSwitch,
+    setSidebarErrorOpened,
+  ]);
 
   return (
     <>
@@ -52,6 +60,7 @@ export const Products: React.FC = () => {
               setOffset={setOffset}
               total={errors.total}
               setSearchIntegration={setSearchIntegration}
+              setSearchSwitch={setSearchSwitch}
             />
           )}
           {isLoading ? <Loading /> : products && colHeaders && <Table />}

@@ -18,6 +18,7 @@ function SidebarError({
   total,
   setOffset,
   setSearchIntegration,
+  setSearchSwitch,
 }: {
   setSearchIntegration: React.Dispatch<React.SetStateAction<string>>;
   setOffset: React.Dispatch<React.SetStateAction<number>>;
@@ -26,6 +27,7 @@ function SidebarError({
   total: number;
   errors: IErrorsIntegrations;
   setSidebarErrorOpened: React.Dispatch<React.SetStateAction<boolean>>;
+  setSearchSwitch: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
   const errorsData = errors.data;
   return (
@@ -42,6 +44,7 @@ function SidebarError({
             <CardSidebarError
               error={currentError}
               setSearchIntegration={setSearchIntegration}
+              setSearchSwitch={setSearchSwitch}
             />
           </>
         ))}

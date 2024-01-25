@@ -36,6 +36,8 @@ export interface IntegrationContextType {
   setOffset: React.Dispatch<React.SetStateAction<number>>;
   menuActivated: IMenuInlineActivated;
   setMenuActivated: React.Dispatch<React.SetStateAction<IMenuInlineActivated>>;
+  searchSwitch: boolean;
+  setSearchSwitch: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export type IEnvironment = "sandbox" | "production";
 

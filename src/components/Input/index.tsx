@@ -28,6 +28,8 @@ export const Input: React.FC<IInputProps> = ({
   disabledValidade,
 }) => {
   const [inputText, setInputText] = useState<string>(value || "");
+  console.log("🚀 ~ inputText:", inputText);
+  console.log("🚀 ~ value:", value);
   const inputRef = useRef<InputRef | null>(null);
 
   const validateExactWord = (rule: any, word: any) => {
@@ -60,6 +62,10 @@ export const Input: React.FC<IInputProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    setInputText(value || "");
+  }, [value]);
+
   return (
     <Container>
       {label?.length ? (
@@ -79,15 +85,15 @@ export const Input: React.FC<IInputProps> = ({
           ]}
         >
           <InputCustom
+            key={inputText}
             ref={inputRef}
             style={{ height: height ?? "35px", width }}
-            placeholder={placeholder}
+            placeholder={placeholder || value}
             type={type}
             name={name}
             custom={{ background, bordered, padding }}
-            value={value || inputText}
+            value={inputText}
             autoComplete="off"
-            defaultValue={inputText}
             onChange={(e) => {
               const newValue = e.target.value;
               setInputText(newValue);
@@ -96,6 +102,17 @@ export const Input: React.FC<IInputProps> = ({
             }}
             autoFocus={autoFocus}
             onPressEnter={() => onPressEnter()}
+          />
+          <input
+            style={{ display: "none" }}
+            type="text"
+            value={inputText}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setInputText(newValue);
+
+              if (handleCustomChange) handleCustomChange(newValue);
+            }}
           />
         </Form.Item>
       </Form>
