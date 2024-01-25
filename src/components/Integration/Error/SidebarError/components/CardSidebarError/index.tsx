@@ -55,38 +55,25 @@ function CardSidebarError({
 
   const extractTexts = (msg: any) => {
     try {
-      const result = JSON.parse(msg);
-
-      if (Array.isArray(result) && typeof result[0] === "string") {
-        return result;
-      }
-      if (
-        Array.isArray(result) &&
-        typeof result[0] === "object" &&
-        result[0] !== null
-      ) {
-        const listReturn: any[] = [];
-        const objs = result;
-        objs.forEach((obj: any) => {
-          const keys = Object.keys(obj);
-          keys.forEach((currentKey) => {
-            obj[currentKey].forEach((currentItem: any) => {
-              listReturn.push(currentItem);
-            });
-          });
-        });
-
-        return listReturn;
-      }
-      if (typeof result === "string") {
-        return [result];
-      }
+      // const result = JSON.parse(msg);
+      const result = msg
+        .split('"')
+        .filter((fItem: string[]) => {
+          return (
+            !fItem.includes("[") &&
+            !fItem.includes("]") &&
+            !fItem.includes("{") &&
+            !fItem.includes("}")
+          );
+        })
+        .join(" - ");
+      return result;
     } catch (err) {
-      return [msg];
+      return null;
     }
   };
 
-  extractTexts(error.message);
+  console.log("🚀 ~ error:", extractTexts(error.message));
 
   return (
     <ContainerCardSidebarError opened={opened}>
@@ -108,12 +95,10 @@ function CardSidebarError({
         </HeaderContentRightCardSidebarError>
       </HeaderCardSidebarError>
       <ContentCardSidebarError opened={opened}>
-        {extractTexts(error.message)?.map((currentMessage) => (
-          <ItemErrorDesc>
-            <span>Error: </span>
-            {currentMessage}
-          </ItemErrorDesc>
-        ))}
+        <ItemErrorDesc>
+          <span>Error: </span>
+          {extractTexts(error.message)}
+        </ItemErrorDesc>
         <ButtonProductView
           onClick={() => {
             setSearchSwitch((prev) => !prev);
