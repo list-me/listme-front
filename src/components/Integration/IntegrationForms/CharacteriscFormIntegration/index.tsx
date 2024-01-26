@@ -202,12 +202,10 @@ function CharacteriscFormIntegration(): JSX.Element {
             return findItem.endpointPath === `/${fItem.value}`;
           },
         );
-        if (fieldFinded.payload[0].id) {
-          copyCurrentMenus[index] = {
-            ...copyCurrentMenus[index],
-            status: "done",
-          };
-        }
+        copyCurrentMenus[index] = {
+          ...copyCurrentMenus[index],
+          status: fieldFinded.isDone ? "done" : "undone",
+        };
       });
       setCurrentMenus(copyCurrentMenus);
     } catch (error) {
