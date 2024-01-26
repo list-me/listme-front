@@ -43,4 +43,6 @@ export interface IDefaultTable {
   setCurrentCell: React.Dispatch<any>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleFreeze: any;
+  subItemsMode: string | null;
+  setSubItemsMode: React.Dispatch<React.SetStateAction<string | null>>;
 }
