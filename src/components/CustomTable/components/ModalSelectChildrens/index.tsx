@@ -41,9 +41,11 @@ const ContainerButtons = styled.div`
 function ModalSelectChildrens({
   amount,
   clearSubItensMode,
+  onFinishProductChild,
 }: {
   amount: number;
   clearSubItensMode: () => void;
+  onFinishProductChild: () => Promise<void>;
 }): JSX.Element {
   return (
     <ContainerModalSelectChildrens>
@@ -52,7 +54,9 @@ function ModalSelectChildrens({
         <NavigationButton abort onClick={clearSubItensMode}>
           Cancelar
         </NavigationButton>
-        <NavigationButton>Salvar</NavigationButton>
+        <NavigationButton onClick={onFinishProductChild}>
+          Salvar
+        </NavigationButton>
       </ContainerButtons>
     </ContainerModalSelectChildrens>
   );

@@ -91,4 +91,17 @@ export const productRequests = {
 
     return response.data;
   },
+  postProductChildren: async (body: {
+    product_id: string;
+    childs: string[];
+  }): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(`/product/children`, body, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  },
 };

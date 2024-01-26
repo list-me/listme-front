@@ -46,6 +46,7 @@ import { useProductContext } from "../../../../context/products";
 import customRendererCheckedComponent from "./components/customRendererCheckedComponent";
 import DefaultLimits from "../../../../utils/DefaultLimits";
 import ModalSelectChildrens from "../ModalSelectChildrens";
+import { productRequests } from "../../../../services/apis/requests/product";
 
 function DefaultTable({
   hotRef,
@@ -559,6 +560,7 @@ function DefaultTable({
     if (index === 0) return { ...item, __children: childs };
     return item;
   });
+  console.log("🚀 ~ productsToView ~ products:", products);
 
   const [rowsSelectedPosition, setRowsSelectedPosition] = useState<string[]>(
     [],
@@ -625,6 +627,23 @@ function DefaultTable({
     },
     [products, rowsSelectedPosition, subItemsMode, toggleRowSelection],
   );
+
+  const onFinishProductChild = async (): Promise<void> => {
+    if (subItemsMode) {
+      const body = {
+        product_id: subItemsMode,
+        childs: childsSelectedIds,
+      };
+      try {
+        await productRequests.postProductChildren(body);
+        toast.success("Subitems adicionados com sucesso");
+        clearSubItensMode();
+      } catch (error) {
+        console.error(error);
+        toast.error("Não foi possível adicionar os subitems, tente novamente!");
+      }
+    }
+  };
 
   return (
     <>
@@ -933,11 +952,13 @@ function DefaultTable({
         setIsOpen={setIsOpen}
         handleFreeze={handleFreeze}
       />
-      <ModalSelectChildrens
-        amount={childsSelectedIds.length}
-        clearSubItensMode={clearSubItensMode}
-      />
-      {/* {subItemsMode && <ModalSelectChildrens />} */}
+      {subItemsMode && (
+        <ModalSelectChildrens
+          amount={childsSelectedIds.length}
+          clearSubItensMode={clearSubItensMode}
+          onFinishProductChild={onFinishProductChild}
+        />
+      )}
     </>
   );
 }
