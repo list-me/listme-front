@@ -118,4 +118,13 @@ export const integrationsRequest = {
     });
     return response.data;
   },
+  deleteIntegrationConfig: async (id: string): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.delete(`/integrations/config/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  },
 };

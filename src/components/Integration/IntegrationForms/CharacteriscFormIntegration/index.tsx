@@ -81,14 +81,6 @@ function CharacteriscFormIntegration(): JSX.Element {
             return { label: mItem.title, value: mItem };
           });
           changeListValue(fieldsMap, index, colOptions, setColOptions);
-          dataToEdit.forEach((fItem, index) => {
-            const itemFinded = fieldsMap.find((findItem: any) => {
-              return (
-                findItem.value.id ===
-                fItem.fields.entity.payloads[0].value.fieldId
-              );
-            });
-          });
         })
         .catch((error) => {
           toast.error("Ocorreu um erro ao listar os catálogos relacionados");
@@ -372,7 +364,9 @@ function CharacteriscFormIntegration(): JSX.Element {
 
   const filteredOptions = (list: any) => {
     return (list as any)?.filter((fItem: any) => {
-      return ["radio", "checked", "list"].includes(fItem.value.type);
+      return ["radio", "checked", "list", "relation"].includes(
+        fItem.value.type,
+      );
     });
   };
 
