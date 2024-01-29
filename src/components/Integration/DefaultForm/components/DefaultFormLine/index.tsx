@@ -102,7 +102,6 @@ function DefaultFormLine({
   }, [valueColLeft?.value?.id]);
 
   const optionsToView = fieldsToOptions.filter((fItem) => {
-    console.log("🚀 ~ optionsToView ~ fItem:", fItem);
     return !fItem?.value?.types?.includes("file");
   });
 

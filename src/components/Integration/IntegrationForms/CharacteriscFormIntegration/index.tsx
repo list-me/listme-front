@@ -363,7 +363,6 @@ function CharacteriscFormIntegration(): JSX.Element {
   };
 
   const filteredOptions = (list: any) => {
-    console.log("🚀 ~ return ~ list:", list);
     return (list as any)?.filter((fItem: any) => {
       return ["radio", "checked", "list", "relation"].includes(
         fItem.value.type,
