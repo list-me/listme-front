@@ -102,14 +102,11 @@ function DefaultFormLine({
   }, [valueColLeft?.value?.id]);
 
   const optionsToView = fieldsToOptions.filter((fItem) => {
-    return item.types.includes(fItem.value.type);
+    console.log("🚀 ~ optionsToView ~ fItem:", fItem);
+    return !fItem?.value?.types?.includes("file");
   });
 
   const subtopic = !!item.key.includes(".");
-
-  const filterOptionsRequired = optionsToView.filter((fItem) => {
-    return fItem.value.required;
-  });
 
   useEffect(() => {
     if (mode === "editing") {
@@ -192,7 +189,7 @@ function DefaultFormLine({
             changePayloadToFinish(valueColLeft, e, index);
             setSecondValueSelected(e);
           }}
-          options={item.required ? filterOptionsRequired : optionsToView}
+          options={optionsToView}
           placeHolder="Selecione..."
           small
           isDisabled={done || !valueColLeft}
