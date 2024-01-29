@@ -78,6 +78,7 @@ function DefaultFormLine({
 
   const [fieldsToOptions, setFieldsToOptions] = useState<DataField[]>([]);
   const [secondValueSelected, setSecondValueSelected] = useState(null);
+  console.log("🚀 ~ secondValueSelected:", secondValueSelected);
 
   function getCols(id: string): void {
     templateRequests
@@ -116,7 +117,7 @@ function DefaultFormLine({
           const currentItem = currentPayloads?.find((fItem) => {
             return fItem?.value?.templateId === valueColLeft?.value?.id;
           });
-          if (currentItem) {
+          if (currentItem && !secondValueSelected) {
             const secondValueSelectedToEdit = optionsToView.find(
               (opt) => opt.value.id === currentItem.value.fieldId,
             );
@@ -137,7 +138,7 @@ function DefaultFormLine({
           const currentItem = currentPayloads?.flat()?.find((fItem) => {
             return fItem?.value?.templateId === valueColLeft?.value?.id;
           });
-          if (currentItem) {
+          if (currentItem && !secondValueSelected) {
             const secondValueSelectedToEdit = optionsToView.find(
               (opt) => opt.value.id === currentItem.value.fieldId,
             );
@@ -158,6 +159,7 @@ function DefaultFormLine({
     index,
     mode,
     optionsToView,
+    secondValueSelected,
     valueColLeft,
   ]);
 
