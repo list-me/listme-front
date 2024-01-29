@@ -67,6 +67,17 @@ function Integration(): JSX.Element {
     getConfigTemplatesList(menuActivated);
   }, [getConfigTemplatesList, menuActivated]);
 
+  const deleteConfigById = async (id: string): Promise<void> => {
+    try {
+      await integrationsRequest.deleteIntegrationConfig(id);
+      getConfigTemplatesList(menuActivated);
+      toast.success(`Integração deletada com sucesso`);
+    } catch (error) {
+      console.log(error);
+      toast.error(`Ocorreu um erro ao deletar integração`);
+    }
+  };
+
   return (
     <TemplateDefault handleGetTemplates={() => ""}>
       <Content>
@@ -93,7 +104,9 @@ function Integration(): JSX.Element {
                   setCurrentProvider(item);
                   setFromToIsOpened(true);
                 }}
-                onClickSecondaryButtonDone={() => ""}
+                onClickSecondaryButtonDone={() =>
+                  deleteConfigById(item.config.id)
+                }
                 onClickNotDone={() => {
                   setMode("registration");
                   setCurrentProvider(item);
