@@ -6,12 +6,13 @@ import ContentIntegrationCard from "./components/ContentIntegrationCard";
 import ActionsIntegrationCard from "./components/ActionsIntegrationCard";
 import { integrationsRequest } from "../../../services/apis/requests/integration";
 import { IProvider } from "../../../models/integration/integration";
+import { Confirmation } from "../../Confirmation";
 
 function IntegrationCard({
   isActive,
   done,
   onClickPrimaryButtonDone,
-  onClickSecondaryButtonDone,
+  deleteFunction,
   onClickNotDone,
   thumb,
   item,
@@ -19,12 +20,14 @@ function IntegrationCard({
   isActive: boolean;
   done: boolean;
   onClickPrimaryButtonDone: () => void;
-  onClickSecondaryButtonDone: () => void;
+  deleteFunction: (id: string) => Promise<void>;
   onClickNotDone: () => void;
   thumb: string;
   item: IProvider;
 }): JSX.Element {
   const [currentStatus, setCurrrentStatus] = useState(isActive);
+
+  const [isOpen, setIsOpen] = useState(false);
 
   async function changeStatus(value: boolean): Promise<void> {
     try {
@@ -41,23 +44,34 @@ function IntegrationCard({
   };
 
   return (
-    <ContainerIntegrationCard>
-      <HeaderIntegrationCard
-        isActive={currentStatus}
-        onChange={handleChangeStatus}
-        thumb={thumb}
+    <>
+      <Confirmation
+        description="Tem certeza que deseja excluir esta integração?"
+        action="DELETE"
+        title="Excluir Integração"
+        pass="excluir"
+        handleChangeVisible={() => setIsOpen(!isOpen)}
+        isOpen={isOpen}
+        handleConfirmation={() => deleteFunction(item.config.id)}
       />
-      <ContentIntegrationCard
-        title={item.name}
-        description={item.description}
-      />
-      <ActionsIntegrationCard
-        done={done}
-        onClickPrimaryButtonDone={onClickPrimaryButtonDone}
-        onClickSecondaryButtonDone={onClickSecondaryButtonDone}
-        onClickNotDone={onClickNotDone}
-      />
-    </ContainerIntegrationCard>
+      <ContainerIntegrationCard>
+        <HeaderIntegrationCard
+          isActive={currentStatus}
+          onChange={handleChangeStatus}
+          thumb={thumb}
+        />
+        <ContentIntegrationCard
+          title={item.name}
+          description={item.description}
+        />
+        <ActionsIntegrationCard
+          done={done}
+          onClickPrimaryButtonDone={onClickPrimaryButtonDone}
+          onClickSecondaryButtonDone={() => setIsOpen(true)}
+          onClickNotDone={onClickNotDone}
+        />
+      </ContainerIntegrationCard>
+    </>
   );
 }
 
