@@ -560,7 +560,6 @@ function DefaultTable({
     if (index === 0) return { ...item, __children: childs };
     return item;
   });
-  console.log("🚀 ~ productsToView ~ products:", products);
 
   const [rowsSelectedPosition, setRowsSelectedPosition] = useState<string[]>(
     [],
