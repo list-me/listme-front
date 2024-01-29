@@ -30,7 +30,6 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
   const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(true);
   const [inputText, setInputText] = useState("");
-  console.log("🚀 ~ inputText:", inputText);
 
   const handleSubmit = () => {
     if (inputText !== pass) return false;
@@ -39,7 +38,6 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
     form.resetFields();
     handleConfirmation();
     setInputText("");
-    console.log("veio");
   };
 
   const handleChangeValue = (value: string) => {
