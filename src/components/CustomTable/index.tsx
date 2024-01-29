@@ -309,6 +309,38 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     handleMountColumns();
   }, [handleMountColumns]);
 
+  const [subItemsMode, setSubItemsMode] = useState<string | null>(null);
+
+  const checkToHeaderTable = {
+    title: "Check",
+    data: "000000",
+    className: "htLeft htMiddle",
+    type: "checkSubItem",
+    required: false,
+    options: [""],
+    order: "-1",
+    hidden: false,
+    width: "300px",
+    frozen: false,
+  };
+
+  const checkToColHeaders = "checkSubItem";
+
+  const checkToCols = {
+    title: "Check",
+    data: "000000",
+    className: "htLeft htMiddle",
+    type: "checkSubItem",
+    required: false,
+    options: [""],
+    order: "-1",
+    hidden: false,
+    width: "300px",
+    frozen: false,
+    isCustom: false,
+    bucket_url: "",
+  };
+
   return (
     <>
       <Confirmation
@@ -335,11 +367,18 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         </Content>
         <Container>
           <DefaultTable
+            cols={subItemsMode ? [checkToCols, ...cols] : (cols as any)}
+            colHeaders={
+              subItemsMode ? [checkToColHeaders, ...colHeaders] : colHeaders
+            }
+            headerTable={
+              subItemsMode ? [checkToHeaderTable, ...headerTable] : headerTable
+            }
+            subItemsMode={subItemsMode}
+            setSubItemsMode={setSubItemsMode}
             key={colHeaders.join()}
             hotRef={hotRef}
-            colHeaders={colHeaders}
             setColHeaders={setColHeaders}
-            cols={cols}
             products={products}
             setProducts={setProducts}
             handleDelete={handleDelete}
@@ -358,7 +397,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             uploadImages={uploadImages}
             page={page}
             setPage={setPage}
-            headerTable={headerTable}
             currentKeyword={currentKeyword}
             handleNewColumn={handleNewColumn}
             handleHidden={handleHidden}

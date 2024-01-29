@@ -45,6 +45,8 @@ import { useFilterContext } from "../../../../context/FilterContext";
 import { useProductContext } from "../../../../context/products";
 import customRendererCheckedComponent from "./components/customRendererCheckedComponent";
 import DefaultLimits from "../../../../utils/DefaultLimits";
+import ModalSelectChildrens from "../ModalSelectChildrens";
+import { productRequests } from "../../../../services/apis/requests/product";
 
 function DefaultTable({
   hotRef,
@@ -75,6 +77,8 @@ function DefaultTable({
   setIsOpen,
   hidden,
   handleFreeze,
+  subItemsMode,
+  setSubItemsMode,
 }: IDefaultTable): JSX.Element {
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
   const [openAlertTooltip, setAlertTooltip] = useState(false);
@@ -269,7 +273,7 @@ function DefaultTable({
         });
 
         const colType = columns[col]?.type;
-        const maxLength = columns[col].limit || DefaultLimits[colType].max;
+        const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
 
         td.style.border = "";
         if (value?.length > maxLength) {
@@ -290,7 +294,7 @@ function DefaultTable({
       value: any,
     ) => {
       const colType = columns[col]?.type;
-      const maxLength = columns[col].limit || DefaultLimits[colType].max;
+      const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
       const previousValue = _instance.getDataAtCell(_row, col);
       customRendererFile(
         _instance,
@@ -371,7 +375,7 @@ function DefaultTable({
       const numericValue = value as string;
       const previousValue = _instance.getDataAtCell(_row, col);
       const colType = columns[col]?.type;
-      const maxLength = columns[col].limit || DefaultLimits[colType].max;
+      const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
 
       td.style.border = "";
       if (value?.length > maxLength) {
@@ -404,7 +408,7 @@ function DefaultTable({
 
       let numericValue = "";
       const colType = columns[col]?.type;
-      const maxLength = columns[col].limit || DefaultLimits[colType].max;
+      const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
       td.style.border = "";
       if (value?.length > maxLength) {
         td.style.border = "2px solid #F1BC02";
@@ -437,9 +441,11 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
-      if (typeof value === "string" && value.length) value = JSON.parse(value);
+      if (typeof value === "string" && value?.length && value?.includes("["))
+        // eslint-disable-next-line no-param-reassign
+        value = JSON?.parse(value);
 
-      const totalItems = value ? value.length : 0;
+      const totalItems = value ? value?.length : 0;
       td.innerHTML = `<div class="tag-content">${totalItems} Items relacionados</div>`;
     },
     [],
@@ -555,6 +561,89 @@ function DefaultTable({
     return item;
   });
 
+  const [rowsSelectedPosition, setRowsSelectedPosition] = useState<string[]>(
+    [],
+  );
+  const [childsSelectedIds, setChildsSelectedIds] = useState<string[]>([]);
+  const clearSubItensMode = (): void => {
+    setChildsSelectedIds([]);
+    setSubItemsMode(null);
+  };
+
+  const toggleRowSelection = useCallback(
+    (row: string) => {
+      const isSelected = rowsSelectedPosition.includes(row);
+      const updatedSelection = isSelected
+        ? rowsSelectedPosition.filter((selectedRow) => selectedRow !== row)
+        : rowsSelectedPosition.concat(row);
+
+      setRowsSelectedPosition(updatedSelection);
+      const idsSelecteds = updatedSelection.map((updatedItem: any) => {
+        return products[+updatedItem].id;
+      });
+      setChildsSelectedIds(idsSelecteds);
+    },
+    [products, rowsSelectedPosition],
+  );
+
+  const customCheckboxRenderer = useCallback(
+    (
+      instance: Handsontable,
+      td: HTMLTableCellElement,
+      row: number,
+      _col: number,
+      _prop: string | number,
+      _value: any,
+    ) => {
+      const stringRow = String(row);
+
+      const isChecked = rowsSelectedPosition?.includes(stringRow);
+
+      const checkboxContainer = document.createElement("div");
+      checkboxContainer.style.width = "100%";
+      checkboxContainer.style.height = "50px";
+      checkboxContainer.style.display = "flex";
+      checkboxContainer.style.alignItems = "center";
+      checkboxContainer.style.justifyContent = "center";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = isChecked || false;
+
+      if (products[row]?.id === subItemsMode) {
+        checkbox.disabled = true;
+      }
+
+      checkbox.addEventListener("change", () => {
+        toggleRowSelection(stringRow);
+      });
+
+      checkboxContainer.appendChild(checkbox);
+
+      td.innerHTML = "";
+
+      td.appendChild(checkboxContainer);
+    },
+    [products, rowsSelectedPosition, subItemsMode, toggleRowSelection],
+  );
+
+  const onFinishProductChild = async (): Promise<void> => {
+    if (subItemsMode) {
+      const body = {
+        product_id: subItemsMode,
+        childs: childsSelectedIds,
+      };
+      try {
+        await productRequests.postProductChildren(body);
+        toast.success("Subitems adicionados com sucesso");
+        clearSubItensMode();
+      } catch (error) {
+        console.error(error);
+        toast.error("Não foi possível adicionar os subitems, tente novamente!");
+      }
+    }
+  };
+
   return (
     <>
       {openAlertTooltip && (
@@ -585,7 +674,7 @@ function DefaultTable({
         nestedRows
         bindRowsWithHeaders
         className="hot-table"
-        readOnly={isTableLocked}
+        readOnly={!!subItemsMode || isTableLocked}
         ref={hotRef}
         colHeaders={colHeaders}
         columns={cols}
@@ -593,7 +682,7 @@ function DefaultTable({
         hiddenColumns={{ columns: hidden }}
         manualColumnResize
         manualColumnMove
-        rowHeaders
+        rowHeaders={!subItemsMode}
         rowHeights="52px"
         licenseKey="non-commercial-and-evaluation"
         fixedColumnsLeft={getMaxOrderForFrozen(cols) + 1}
@@ -606,7 +695,7 @@ function DefaultTable({
         afterColumnMove={afterColumnMoveCallback}
         afterGetColHeader={styledHeader}
         afterColumnResize={async (newSize: number, column: number) => {
-          await handleResize(column, newSize, template);
+          if (!subItemsMode) await handleResize(column, newSize, template);
         }}
         // afterOnCellMouseDown={(event: any) => {
         //   const clickedElementClassList = event.target.classList;
@@ -627,7 +716,7 @@ function DefaultTable({
             setAlertTooltipIntegration(true);
           }
 
-          if (colHeaders.length - 1 === coords.col) {
+          if (!subItemsMode && colHeaders.length - 1 === coords.col) {
             setTimeout(() => {
               setDropDownStatus({
                 type: "new",
@@ -678,11 +767,20 @@ function DefaultTable({
                 }
               },
             },
+            subItems_row: {
+              name: "Adicionar SubItens",
+              callback(key, selection) {
+                setSubItemsMode(products[selection[0].start.row].id as any);
+              },
+            },
           },
         }}
         afterChange={afterChangeCallback}
       >
         {cols.map((col, _index: number) => {
+          if (col.type === "checkSubItem") {
+            return <HotColumn width={50} renderer={customCheckboxRenderer} />;
+          }
           if (col?.type === "text" || col?.type === "paragraph") {
             return (
               <HotColumn
@@ -853,6 +951,13 @@ function DefaultTable({
         setIsOpen={setIsOpen}
         handleFreeze={handleFreeze}
       />
+      {subItemsMode && (
+        <ModalSelectChildrens
+          amount={childsSelectedIds.length}
+          clearSubItensMode={clearSubItensMode}
+          onFinishProductChild={onFinishProductChild}
+        />
+      )}
     </>
   );
 }
