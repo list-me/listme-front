@@ -104,9 +104,7 @@ function Integration(): JSX.Element {
                   setCurrentProvider(item);
                   setFromToIsOpened(true);
                 }}
-                onClickSecondaryButtonDone={() =>
-                  deleteConfigById(item.config.id)
-                }
+                deleteFunction={deleteConfigById}
                 onClickNotDone={() => {
                   setMode("registration");
                   setCurrentProvider(item);

@@ -30,6 +30,7 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
   const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(true);
   const [inputText, setInputText] = useState("");
+  console.log("🚀 ~ inputText:", inputText);
 
   const handleSubmit = () => {
     if (inputText !== pass) return false;
@@ -38,6 +39,7 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
     form.resetFields();
     handleConfirmation();
     setInputText("");
+    console.log("veio");
   };
 
   const handleChangeValue = (value: string) => {
@@ -72,6 +74,7 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
               bordered
               label="Para confirmar digite a palavra"
               name={pass}
+              value={inputText}
               type="text"
               width="482px"
               height="64px"
@@ -81,6 +84,8 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
               padding="20px"
               onPressEnter={handleKeyDown}
               handleCustomChange={handleChangeValue}
+              disabledValidade={false}
+              autoFocus
             />
             <ButtonCotainer>
               <Button
