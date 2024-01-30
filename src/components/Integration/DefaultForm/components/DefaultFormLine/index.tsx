@@ -113,14 +113,13 @@ function DefaultFormLine({
         const copyDataToEdit: IDataToEdit = dataToEdit as IDataToEdit;
         const currentPayloads = copyDataToEdit?.fields?.entity?.payloads;
         if (currentPayloads?.length > 0) {
-          const currentItem = currentPayloads?.find((fItem) => {
-            return fItem?.value?.templateId === valueColLeft?.value?.id;
+          const currentItem = currentPayloads?.find((fItem, fIndex) => {
+            return +fIndex === +index;
           });
           if (currentItem && !secondValueSelected) {
             const secondValueSelectedToEdit = optionsToView.find(
               (opt) => opt.value.id === currentItem.value.fieldId,
             );
-
             changePayloadToFinish(
               valueColLeft,
               secondValueSelectedToEdit,
@@ -164,7 +163,7 @@ function DefaultFormLine({
   ]);
 
   return (
-    <ContainerDefaultFormLine>
+    <ContainerDefaultFormLine key={index}>
       <KeyText>
         {subtopic && (
           <SubTopicContainer>
