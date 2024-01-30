@@ -315,16 +315,6 @@ function DefaultFormIntegration(): JSX.Element {
         return pItem.multiple;
       });
 
-      if (currentField) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < payloadsMultiple.length / 2; i++) {
-          const variants = currentField?.payload.filter((pItem) => {
-            return pItem.key.includes("variants");
-          });
-          currentField.payload = [...currentField.payload, ...variants];
-        }
-      }
-
       payloadsMultiple.forEach((item: any) => {
         item.value.forEach((valueItem: any) => {
           newPayloadsMultiple.push({
@@ -335,6 +325,20 @@ function DefaultFormIntegration(): JSX.Element {
           });
         });
       });
+
+      if (currentField) {
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < newPayloadsMultiple.length / 2 - 1; i++) {
+          const variants = currentField?.payload.filter((pItem) => {
+            return pItem.key.includes("variants");
+          });
+          currentField.payload = [
+            ...currentField.payload,
+            variants[0],
+            variants[1],
+          ];
+        }
+      }
 
       const responseToDataEdit = {
         ...response[0],

@@ -105,7 +105,7 @@ function DefaultFormLine({
     return !["file"].includes(fItem?.value?.type);
   });
 
-  const subtopic = !!item.key.includes(".");
+  const subtopic = !!item?.key?.includes(".");
 
   useEffect(() => {
     if (mode === "editing") {
@@ -170,9 +170,9 @@ function DefaultFormLine({
             <SubtopicIcon />
           </SubTopicContainer>
         )}
-        {getIconByType(covertCast[item.cast])}
-        {subtopic ? item.key.split(".")[1] : item.key}
-        {item.required && <span className="required">*</span>}
+        {getIconByType(covertCast[item?.cast])}
+        {subtopic ? item?.key?.split(".")[1] : item?.key}
+        {item?.required && <span className="required">*</span>}
       </KeyText>
       <SelectComponent
         select={valueColLeft || null}

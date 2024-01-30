@@ -87,7 +87,7 @@ function DefaultForm({
     types: string[];
     required: boolean;
   }): string | null | undefined => {
-    if (item.key.includes(".")) {
+    if (item?.key?.includes(".")) {
       const topicParts = item.key.split(".");
       const topic = topicParts[0];
 
@@ -113,7 +113,8 @@ function DefaultForm({
       </ContainerTitlesDefaultForm>
       <ContentDefaultForm key={currentPayload[0]?.id}>
         {currentPayload.map((item, index) => (
-          <div key={item.id}>
+          // eslint-disable-next-line react/no-array-index-key
+          <div key={`${item?.id} + ${index}`}>
             <Topic value={topicToView(item)} />
             <DefaultFormLine
               characteristic={characteristic}
@@ -134,7 +135,7 @@ function DefaultForm({
             const variants = payload.filter((pItem) => {
               return pItem.key.includes("variants");
             });
-            setCurrentPayload([...currentPayload, variants[0], variants[2]]);
+            setCurrentPayload([...currentPayload, variants[0], variants[1]]);
           }}
           text="Adicionar variante"
         />
