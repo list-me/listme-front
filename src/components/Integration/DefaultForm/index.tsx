@@ -134,7 +134,7 @@ function DefaultForm({
             const variants = payload.filter((pItem) => {
               return pItem.key.includes("variants");
             });
-            setCurrentPayload([...currentPayload, ...variants]);
+            setCurrentPayload([...currentPayload, variants[0], variants[2]]);
           }}
           text="Adicionar variante"
         />

@@ -329,7 +329,7 @@ function DefaultFormIntegration(): JSX.Element {
         item.value.forEach((valueItem: any) => {
           newPayloadsMultiple.push({
             type: item.type,
-            value: [valueItem],
+            value: valueItem,
             multiple: item.multiple,
             templateConfigPayloadId: item.templateConfigPayloadId,
           });
