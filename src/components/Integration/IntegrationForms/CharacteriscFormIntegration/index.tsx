@@ -70,6 +70,7 @@ function CharacteriscFormIntegration(): JSX.Element {
   ] as IDataToEdit[]);
   const [headerSelectValues, setHeaderSelectValues] = useState([]);
   const [payloadsToFinish, setPayloadsToFinish] = useState<any[][]>([[]]);
+
   const [colOptions, setColOptions] = useState([]);
 
   const [colHeaderSelectValue, setColHeaderSelectValue] = useState([]);
@@ -147,6 +148,7 @@ function CharacteriscFormIntegration(): JSX.Element {
                 itemDataToEdit?.fields?.entity?.payloads,
               );
             });
+
             setPayloadsToFinish(listPayloadToFinish);
           }
         })
