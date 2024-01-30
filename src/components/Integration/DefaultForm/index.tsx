@@ -57,6 +57,9 @@ function DefaultForm({
 
   useEffect(() => {
     setCurrentPayload(payload);
+    return () => {
+      setCurrentPayload([]);
+    };
   }, [payload]);
 
   const changePayloadToFinish = useCallback(
@@ -108,7 +111,7 @@ function DefaultForm({
           </ColumnsDefaultForm>
         ))}
       </ContainerTitlesDefaultForm>
-      <ContentDefaultForm>
+      <ContentDefaultForm key={currentPayload[0]?.id}>
         {currentPayload.map((item, index) => (
           <div key={item.id}>
             <Topic value={topicToView(item)} />

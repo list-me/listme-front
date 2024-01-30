@@ -42,6 +42,8 @@ function InlineMenu({
                 toast.error(
                   "Você precisa configurar a Marca, Categorias e Características antes de configurar o Produto",
                 );
+              } else {
+                setMenuActivated(menu.value);
               }
             } else setMenuActivated(menu.value);
           }}
