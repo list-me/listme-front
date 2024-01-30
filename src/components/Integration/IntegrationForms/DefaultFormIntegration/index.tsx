@@ -29,6 +29,21 @@ import nextMenu from "../../../../pages/companyIntegration/utils/nextMenu";
 import { ITemplatesById } from "../../../../pages/companyIntegration/companyIntegration";
 import { IDataToEdit } from "../../../../context/IntegrationContext/IntegrationContext";
 
+interface TemplateItem {
+  templateConfigPayloadId: string;
+  type: string;
+  multiple: boolean;
+  value:
+    | {
+        templateId: string;
+        fieldId?: string | undefined;
+      }
+    | {
+        templateId: string;
+        fieldId?: string | undefined;
+      }[];
+}
+
 function DefaultFormIntegration(): JSX.Element {
   const {
     currentMenus,
@@ -63,6 +78,7 @@ function DefaultFormIntegration(): JSX.Element {
     () => ({
       templateConfigPayloadId: "",
       type: "",
+      multiple: true,
       value: {
         templateId: "",
         fieldId: "",
@@ -165,6 +181,35 @@ function DefaultFormIntegration(): JSX.Element {
     }
   };
 
+  function mergePayloads(list: TemplateItem[]): TemplateItem[] {
+    const templateMap: Record<string, TemplateItem> = {};
+
+    list.forEach((item) => {
+      const templateId = item.templateConfigPayloadId;
+
+      if (!templateMap[templateId]) {
+        templateMap[templateId] = { ...item, multiple: false };
+      } else {
+        if (!Array.isArray(templateMap[templateId].value)) {
+          // @ts-ignore
+          templateMap[templateId].value = [templateMap[templateId].value];
+          templateMap[templateId].multiple = true;
+        }
+
+        // @ts-ignore
+        templateMap[templateId].value.push(
+          item.value as {
+            templateId: string;
+            fieldId?: string | undefined;
+          },
+        );
+      }
+    });
+
+    const mergedResult = Object.values(templateMap);
+    return mergedResult;
+  }
+
   const onFinish = async (): Promise<void> => {
     const templateConfigEntityId = currentField?.id;
     const templateTriggerId = (headerSelectValue as any).value.id;
@@ -199,13 +244,15 @@ function DefaultFormIntegration(): JSX.Element {
       return;
     }
 
+    const mergedPayload = mergePayloads(payloadToFinish);
+
     const body = {
       fields: {
         templateConfigId,
         entity: {
           templateConfigEntityId,
           templateTriggerId,
-          payloads: [...payloadToFinish],
+          payloads: [...mergedPayload],
         },
       },
       type: "integration",

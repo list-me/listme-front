@@ -1,4 +1,5 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   ColumnsDefaultForm,
   ContainerDefaultForm,
@@ -6,11 +7,15 @@ import {
   ContentDefaultForm,
   TitleColumn,
 } from "./styles";
-import { IFieldsByID } from "../../../pages/companyIntegration/companyIntegration";
+import {
+  IFieldsByID,
+  IPayload,
+} from "../../../pages/companyIntegration/companyIntegration";
 
 import DefaultFormLine from "./components/DefaultFormLine";
 import Topic from "./components/Topic";
 import { IDataToEdit } from "../../../context/IntegrationContext/IntegrationContext";
+import NewFeature from "../NewFeature";
 
 function DefaultForm({
   leftColumnName,
@@ -42,15 +47,24 @@ function DefaultForm({
     };
   }[];
 }): JSX.Element {
+  const location = useLocation();
+  const pathnameSplited = location.pathname.split("/");
+  const path = pathnameSplited[2];
   const arrayColumns = [leftColumnName, centerColumnName, rightColumnName];
   const { payload } = dataForm;
+
+  const [currentPayload, setCurrentPayload] = useState<IPayload[]>([]);
+
+  useEffect(() => {
+    setCurrentPayload(payload);
+  }, [payload]);
 
   const changePayloadToFinish = useCallback(
     (valueLeft: any, valueRight: any, index: number): void => {
       // eslint-disable-next-line no-param-reassign
       payloadToFinish[index] = {
         ...payloadToFinish[index],
-        templateConfigPayloadId: payload[index]?.id,
+        templateConfigPayloadId: currentPayload[index]?.id,
         type,
         value: {
           templateId: valueLeft?.value?.id,
@@ -58,7 +72,7 @@ function DefaultForm({
         },
       };
     },
-    [payload, payloadToFinish, type],
+    [currentPayload, payloadToFinish, type],
   );
 
   const listTopics: string[] = [];
@@ -95,7 +109,7 @@ function DefaultForm({
         ))}
       </ContainerTitlesDefaultForm>
       <ContentDefaultForm>
-        {payload.map((item, index) => (
+        {currentPayload.map((item, index) => (
           <div key={item.id}>
             <Topic value={topicToView(item)} />
             <DefaultFormLine
@@ -110,6 +124,17 @@ function DefaultForm({
           </div>
         ))}
       </ContentDefaultForm>
+      {path === "products" && (
+        <NewFeature
+          isDisabled={done}
+          onClick={() => {
+            const variants = payload.filter((pItem) => {
+              return pItem.key.includes("variants");
+            });
+            setCurrentPayload([...currentPayload, ...variants]);
+          }}
+        />
+      )}
     </ContainerDefaultForm>
   );
 }

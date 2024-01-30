@@ -78,7 +78,6 @@ function DefaultFormLine({
 
   const [fieldsToOptions, setFieldsToOptions] = useState<DataField[]>([]);
   const [secondValueSelected, setSecondValueSelected] = useState(null);
-  console.log("🚀 ~ secondValueSelected:", secondValueSelected);
 
   function getCols(id: string): void {
     templateRequests
@@ -121,6 +120,7 @@ function DefaultFormLine({
             const secondValueSelectedToEdit = optionsToView.find(
               (opt) => opt.value.id === currentItem.value.fieldId,
             );
+
             changePayloadToFinish(
               valueColLeft,
               secondValueSelectedToEdit,

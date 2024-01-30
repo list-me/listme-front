@@ -31,6 +31,21 @@ import FeatureForms from "../../FeatureForms";
 import SelectComponent from "../../../Select";
 import { IDataToEdit } from "../../../../context/IntegrationContext/IntegrationContext";
 
+interface TemplateItem {
+  templateConfigPayloadId: string;
+  type: string;
+  multiple: boolean;
+  value:
+    | {
+        templateId: string;
+        fieldId?: string | undefined;
+      }
+    | {
+        templateId: string;
+        fieldId?: string | undefined;
+      }[];
+}
+
 function CharacteriscFormIntegration(): JSX.Element {
   const {
     currentMenus,
@@ -255,6 +270,35 @@ function CharacteriscFormIntegration(): JSX.Element {
     ]);
   };
 
+  function mergePayloads(list: TemplateItem[]): TemplateItem[] {
+    const templateMap: Record<string, TemplateItem> = {};
+
+    list?.forEach((item) => {
+      const templateId = item.templateConfigPayloadId;
+
+      if (!templateMap[templateId]) {
+        templateMap[templateId] = { ...item, multiple: false };
+      } else {
+        if (!Array.isArray(templateMap[templateId].value)) {
+          // @ts-ignore
+          templateMap[templateId].value = [templateMap[templateId].value];
+          templateMap[templateId].multiple = true;
+        }
+
+        // @ts-ignore
+        templateMap[templateId].value.push(
+          item.value as {
+            templateId: string;
+            fieldId?: string | undefined;
+          },
+        );
+      }
+    });
+
+    const mergedResult = Object.values(templateMap);
+    return mergedResult;
+  }
+
   const onFinish = async (): Promise<void> => {
     if (currentField) {
       currentField.payload.forEach((item, index) => {
@@ -317,23 +361,16 @@ function CharacteriscFormIntegration(): JSX.Element {
       }
       return true;
     });
-    const onSuccess = (): void => {
-      toast.success(
-        `Configuração de ${Menus[menuActivated]} realizado(a) com sucesso.`,
-      );
-      updateDone();
-    };
-
-    const onError = (error: any): void => {
-      console.error(error);
-      toast.error(`Ocorreu um erro ao configurar ${Menus[menuActivated]}`);
-    };
 
     if (isOk.every((result) => result)) {
       try {
-        const requests = payloadsToFinish.map(async (payload, index) => {
+        const payFinish = payloadsToFinish.filter(
+          (element) => element !== undefined,
+        );
+        const requests = payFinish.map(async (payload, index) => {
           const templateConfigEntityId = currentField?.id;
-          const templateTriggerId = (headerSelectValues as any)[index].value.id;
+          const templateTriggerId = (headerSelectValues as any)[index]?.value
+            ?.id;
           const templateConfigId = integrationId;
 
           const body = {
@@ -342,22 +379,26 @@ function CharacteriscFormIntegration(): JSX.Element {
               entity: {
                 templateConfigEntityId,
                 templateTriggerId,
-                payloads: [...payloadsToFinish[index]],
+                payloads: [...mergePayloads(payloadsToFinish[index])],
               },
             },
             type: "integration",
           };
 
-          if (mode === "editing" && dataToEdit[index].id)
+          if (mode === "editing" && dataToEdit[index]?.id)
             await templateRequests.patchIntegration(dataToEdit[index].id, body);
           else await templateRequests.postIntegration(body);
         });
 
         await Promise.all(requests);
 
-        onSuccess();
+        toast.success(
+          `Configuração de ${Menus[menuActivated]} realizado(a) com sucesso.`,
+        );
+        updateDone();
       } catch (error) {
-        onError(error);
+        console.error(error);
+        toast.error(`Ocorreu um erro ao configurar ${Menus[menuActivated]}`);
       }
     }
   };
