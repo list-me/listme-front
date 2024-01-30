@@ -71,6 +71,7 @@ export interface IDataToEdit {
       type: string;
       payloads: [
         {
+          multiple: boolean;
           type: string;
           value: {
             fieldId?: string;

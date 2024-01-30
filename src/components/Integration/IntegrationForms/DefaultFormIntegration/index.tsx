@@ -304,12 +304,59 @@ function DefaultFormIntegration(): JSX.Element {
       const response: IDataToEdit[] =
         await integrationsRequest.getTemplateEntity(id);
 
-      setDataToEdit(response[0]);
+      const payloadsToFilter = response[0].fields.entity.payloads;
+
+      const payloadsDefault = payloadsToFilter.filter((pItem) => {
+        return !pItem.multiple;
+      });
+
+      const newPayloadsMultiple: any[] = [];
+      const payloadsMultiple = payloadsToFilter.filter((pItem) => {
+        return pItem.multiple;
+      });
+
+      if (currentField) {
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < payloadsMultiple.length / 2; i++) {
+          const variants = currentField?.payload.filter((pItem) => {
+            return pItem.key.includes("variants");
+          });
+          currentField.payload = [...currentField.payload, ...variants];
+        }
+      }
+
+      payloadsMultiple.forEach((item: any) => {
+        item.value.forEach((valueItem: any) => {
+          newPayloadsMultiple.push({
+            type: item.type,
+            value: [valueItem],
+            multiple: item.multiple,
+            templateConfigPayloadId: item.templateConfigPayloadId,
+          });
+        });
+      });
+
+      const responseToDataEdit = {
+        ...response[0],
+        fields: {
+          templateConfigId: response[0].fields.templateConfigId,
+          entity: {
+            payloads: [...payloadsDefault, ...newPayloadsMultiple],
+            name: response[0].fields.entity.name,
+            templateConfigEntityId:
+              response[0].fields.entity.templateConfigEntityId,
+            templateTriggerId: response[0].fields.entity.templateTriggerId,
+            type: response[0].fields.entity.type,
+          },
+        },
+      };
+
+      setDataToEdit(responseToDataEdit as any);
     };
     if (mode === "editing" && currentField?.id) {
       getDataToEdit(currentField?.id);
     }
-  }, [currentField?.id, mode]);
+  }, [currentField, currentField?.id, mode]);
 
   return (
     <TemplateDefault handleGetTemplates={() => ""}>

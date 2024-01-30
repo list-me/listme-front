@@ -136,6 +136,7 @@ function DefaultForm({
             });
             setCurrentPayload([...currentPayload, ...variants]);
           }}
+          text="Adicionar variante"
         />
       )}
     </ContainerDefaultForm>

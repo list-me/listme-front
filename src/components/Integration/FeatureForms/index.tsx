@@ -186,6 +186,7 @@ function FeatureForms({
 
             setCharacteristicType(copyCharacteristicsType as any);
           }}
+          text="Nova característica"
         />
         <IntegrationNavigate
           external
