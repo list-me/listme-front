@@ -263,17 +263,19 @@ export const ProductContextProvider = ({
               }
             });
           }
+
           const toProductFields = {
             ...object,
             id: item.id,
             created_at: item.created_at,
+            parent_id: item.parent_id,
           };
 
           productFields.push(toProductFields);
         });
       }
 
-      setProducts(productFields);
+      setProducts(productFields as any);
       setTotal(data?.total);
       return { productFields, headerTable };
     },

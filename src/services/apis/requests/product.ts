@@ -104,4 +104,23 @@ export const productRequests = {
 
     return response.data;
   },
+  deleteProductChildren: async ({
+    parent_id,
+    childs,
+  }: {
+    parent_id: string;
+    childs: string[];
+  }): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: { childs },
+    };
+
+    const response = await api.delete(`/product/${parent_id}/children`, config);
+
+    return response.data;
+  },
 };

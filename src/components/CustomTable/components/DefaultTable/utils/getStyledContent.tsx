@@ -89,6 +89,9 @@ const REQUIRED_INTEGRATION_BUTTON = `
   background: none;
   padding: 0;
 `;
+const checkSubItem = `
+  color: transparent;
+`;
 
 const getStyledContent = (
   iconType: any,
@@ -102,7 +105,12 @@ const getStyledContent = (
       <div style="${FLEX_GAP_STYLE}">
         ${renderToString(iconType)}
         <p style="${
-          valueToVisible !== "+" ? TEXT_STYLE : PLUS_STYLE
+          // eslint-disable-next-line no-nested-ternary
+          valueToVisible !== "checkSubItem"
+            ? valueToVisible !== "+"
+              ? TEXT_STYLE
+              : PLUS_STYLE
+            : checkSubItem
         }">${valueToVisible}</p>
       </div>
       <div style="${FLEX_GAP_STYLE}">

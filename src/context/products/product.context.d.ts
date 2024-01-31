@@ -89,10 +89,12 @@ interface IProduct {
   product_template_id: string;
   status: string;
   fields: IProductFields[];
+  parent_id: string;
 }
 
 interface IProductToTable {
   [key: string]: string | string[];
+  parent_id: string;
   id: string;
   created_at: string;
 }

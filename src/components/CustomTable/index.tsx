@@ -309,7 +309,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     handleMountColumns();
   }, [handleMountColumns]);
 
-  const [subItemsMode, setSubItemsMode] = useState<string | null>(null);
+  const [parentId, setParentId] = useState<string | null>(null);
+  const [subItensMode, setSubItemsMode] = useState<"add" | "remove">("add");
 
   const checkToHeaderTable = {
     title: "Check",
@@ -367,15 +368,15 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         </Content>
         <Container>
           <DefaultTable
-            cols={subItemsMode ? [checkToCols, ...cols] : (cols as any)}
+            cols={parentId ? [checkToCols, ...cols] : (cols as any)}
             colHeaders={
-              subItemsMode ? [checkToColHeaders, ...colHeaders] : colHeaders
+              parentId ? [checkToColHeaders, ...colHeaders] : colHeaders
             }
             headerTable={
-              subItemsMode ? [checkToHeaderTable, ...headerTable] : headerTable
+              parentId ? [checkToHeaderTable, ...headerTable] : headerTable
             }
-            subItemsMode={subItemsMode}
-            setSubItemsMode={setSubItemsMode}
+            parentId={parentId}
+            setParentId={setParentId}
             key={colHeaders.join()}
             hotRef={hotRef}
             setColHeaders={setColHeaders}
@@ -403,6 +404,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             setCurrentCell={setCurrentCell}
             setIsOpen={setIsOpen}
             handleFreeze={handleFreeze}
+            subItensMode={subItensMode}
+            setSubItemsMode={setSubItemsMode}
           />
           {!!conditionsFilter.length && products.length < 1 && <NotFound />}
         </Container>
