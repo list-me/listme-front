@@ -29,7 +29,9 @@ export const fileRequests = {
     let url: string = `template/signed-url?file_type=${fileType}&template_id=${templateId}&file_name=${fileName}`;
 
     if (optionals?.brand && optionals?.name) {
-      url = `template/signed-url?file_type=${fileType}&template_id=${templateId}&file_name=${fileName}&brand=${optionals.brand}&name=${optionals.name}`;
+      url = `template/signed-url?file_type=${fileType}&template_id=${templateId}&file_name=${fileName}&brand=${
+        optionals.brand
+      }&name=${encodeURIComponent(optionals.name)}`;
     }
 
     const response = await api.get(url, {

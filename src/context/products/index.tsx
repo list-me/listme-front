@@ -381,6 +381,7 @@ export const ProductContextProvider = ({
   ): Promise<any> => {
     try {
       const fields = buildProduct(value);
+      console.log("teste");
 
       if (isNew) {
         await productRequests.update({ id: productId, fields });
