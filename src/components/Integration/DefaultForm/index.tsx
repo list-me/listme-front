@@ -1,4 +1,5 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   ColumnsDefaultForm,
   ContainerDefaultForm,
@@ -6,11 +7,15 @@ import {
   ContentDefaultForm,
   TitleColumn,
 } from "./styles";
-import { IFieldsByID } from "../../../pages/companyIntegration/companyIntegration";
+import {
+  IFieldsByID,
+  IPayload,
+} from "../../../pages/companyIntegration/companyIntegration";
 
 import DefaultFormLine from "./components/DefaultFormLine";
 import Topic from "./components/Topic";
 import { IDataToEdit } from "../../../context/IntegrationContext/IntegrationContext";
+import NewFeature from "../NewFeature";
 
 function DefaultForm({
   leftColumnName,
@@ -42,15 +47,27 @@ function DefaultForm({
     };
   }[];
 }): JSX.Element {
+  const location = useLocation();
+  const pathnameSplited = location.pathname.split("/");
+  const path = pathnameSplited[2];
   const arrayColumns = [leftColumnName, centerColumnName, rightColumnName];
   const { payload } = dataForm;
+
+  const [currentPayload, setCurrentPayload] = useState<IPayload[]>([]);
+
+  useEffect(() => {
+    setCurrentPayload(payload);
+    return () => {
+      setCurrentPayload([]);
+    };
+  }, [payload]);
 
   const changePayloadToFinish = useCallback(
     (valueLeft: any, valueRight: any, index: number): void => {
       // eslint-disable-next-line no-param-reassign
       payloadToFinish[index] = {
         ...payloadToFinish[index],
-        templateConfigPayloadId: payload[index]?.id,
+        templateConfigPayloadId: currentPayload[index]?.id,
         type,
         value: {
           templateId: valueLeft?.value?.id,
@@ -58,7 +75,7 @@ function DefaultForm({
         },
       };
     },
-    [payload, payloadToFinish, type],
+    [currentPayload, payloadToFinish, type],
   );
 
   const listTopics: string[] = [];
@@ -70,7 +87,7 @@ function DefaultForm({
     types: string[];
     required: boolean;
   }): string | null | undefined => {
-    if (item.key.includes(".")) {
+    if (item?.key?.includes(".")) {
       const topicParts = item.key.split(".");
       const topic = topicParts[0];
 
@@ -94,9 +111,10 @@ function DefaultForm({
           </ColumnsDefaultForm>
         ))}
       </ContainerTitlesDefaultForm>
-      <ContentDefaultForm>
-        {payload.map((item, index) => (
-          <div key={item.id}>
+      <ContentDefaultForm key={currentPayload[0]?.id}>
+        {currentPayload.map((item, index) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <div key={`${item?.id} + ${index}`}>
             <Topic value={topicToView(item)} />
             <DefaultFormLine
               characteristic={characteristic}
@@ -110,6 +128,18 @@ function DefaultForm({
           </div>
         ))}
       </ContentDefaultForm>
+      {path === "products" && (
+        <NewFeature
+          isDisabled={done}
+          onClick={() => {
+            const variants = payload.filter((pItem) => {
+              return pItem.key.includes("variants");
+            });
+            setCurrentPayload([...currentPayload, variants[0], variants[1]]);
+          }}
+          text="Adicionar variante"
+        />
+      )}
     </ContainerDefaultForm>
   );
 }

@@ -87,81 +87,83 @@ function FeatureForms({
 
   return (
     <>
-      {payloadsToFinish.map(
-        (bItem, index) =>
-          index !== 0 && (
-            <ContainerIntegration key={index}>
-              <CharacteristicTypeSelector
-                value={characteristicsType[index]}
-                setValue={setCharacteristicType}
-                onChange={changeListValue}
-                index={index}
-                listValue={characteristicsType}
-              />
-              {templates && (
-                <div style={{ display: "flex", gap: "32px" }}>
-                  <HeaderSelect
-                    done={done}
-                    headerSelectValue={headerSelectValues[index]}
-                    setHeaderSelectValue={(e: any) => {
-                      changeListValue(
-                        e,
-                        index,
-                        headerSelectValues,
-                        setHeaderSelectValues,
-                      );
-                      changeListValue(
-                        null as any,
-                        index,
-                        colHeaderSelectValue,
-                        setColHeaderSelectValue,
-                      );
-                      getHeaderCols(e.value.id, index);
-                    }}
-                    label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
-                    placeHolder="Selecione..."
-                    options={templates as any}
-                    required
-                  />
-                  {characteristicsType[index] === "column" && (
-                    <SelectComponent
-                      select={colHeaderSelectValue[index]}
-                      onChange={(e: any) => {
+      {payloadsToFinish
+        .filter((element) => element !== undefined)
+        .map(
+          (bItem, index) =>
+            index !== 0 && (
+              <ContainerIntegration key={index}>
+                <CharacteristicTypeSelector
+                  value={characteristicsType[index]}
+                  setValue={setCharacteristicType}
+                  onChange={changeListValue}
+                  index={index}
+                  listValue={characteristicsType}
+                />
+                {templates && (
+                  <div style={{ display: "flex", gap: "32px" }}>
+                    <HeaderSelect
+                      done={done}
+                      headerSelectValue={headerSelectValues[index]}
+                      setHeaderSelectValue={(e: any) => {
                         changeListValue(
                           e,
+                          index,
+                          headerSelectValues,
+                          setHeaderSelectValues,
+                        );
+                        changeListValue(
+                          null as any,
                           index,
                           colHeaderSelectValue,
                           setColHeaderSelectValue,
                         );
+                        getHeaderCols(e.value.id, index);
                       }}
-                      options={filteredOptions(colOptions[index])}
-                      small
-                      inline
-                      labelText="Selecione a coluna"
+                      label={`Selecione o catálogo de "${Menus[menuActivated]}"`}
                       placeHolder="Selecione..."
+                      options={templates as any}
                       required
-                      isDisabled={!colOptions[index]}
                     />
-                  )}
-                </div>
-              )}
-              {currentField?.id && (
-                <DefaultForm
-                  dataToEdit={dataToEdit as IDataToEdit[]}
-                  leftColumnName="Propriedades de payloads Nexaas"
-                  centerColumnName="Catálogo ListMe"
-                  rightColumnName=""
-                  dataForm={currentField}
-                  valueColLeft={headerSelectValues[index]}
-                  payloadToFinish={payloadsToFinish[index]}
-                  type={characteristicsType[index]}
-                  done={done}
-                  characteristic
-                />
-              )}
-            </ContainerIntegration>
-          ),
-      )}
+                    {characteristicsType[index] === "column" && (
+                      <SelectComponent
+                        select={colHeaderSelectValue[index]}
+                        onChange={(e: any) => {
+                          changeListValue(
+                            e,
+                            index,
+                            colHeaderSelectValue,
+                            setColHeaderSelectValue,
+                          );
+                        }}
+                        options={filteredOptions(colOptions[index])}
+                        small
+                        inline
+                        labelText="Selecione a coluna"
+                        placeHolder="Selecione..."
+                        required
+                        isDisabled={!colOptions[index]}
+                      />
+                    )}
+                  </div>
+                )}
+                {currentField?.id && (
+                  <DefaultForm
+                    dataToEdit={dataToEdit as IDataToEdit[]}
+                    leftColumnName="Propriedades de payloads Nexaas"
+                    centerColumnName="Catálogo ListMe"
+                    rightColumnName=""
+                    dataForm={currentField}
+                    valueColLeft={headerSelectValues[index]}
+                    payloadToFinish={payloadsToFinish[index]}
+                    type={characteristicsType[index]}
+                    done={done}
+                    characteristic
+                  />
+                )}
+              </ContainerIntegration>
+            ),
+        )}
 
       <>
         <NewFeature
@@ -184,6 +186,7 @@ function FeatureForms({
 
             setCharacteristicType(copyCharacteristicsType as any);
           }}
+          text="Nova característica"
         />
         <IntegrationNavigate
           external

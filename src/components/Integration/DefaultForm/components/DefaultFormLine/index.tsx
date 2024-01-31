@@ -105,7 +105,7 @@ function DefaultFormLine({
     return !["file"].includes(fItem?.value?.type);
   });
 
-  const subtopic = !!item.key.includes(".");
+  const subtopic = !!item?.key?.includes(".");
 
   useEffect(() => {
     if (mode === "editing") {
@@ -113,10 +113,10 @@ function DefaultFormLine({
         const copyDataToEdit: IDataToEdit = dataToEdit as IDataToEdit;
         const currentPayloads = copyDataToEdit?.fields?.entity?.payloads;
         if (currentPayloads?.length > 0) {
-          const currentItem = currentPayloads?.find((fItem) => {
-            return fItem?.value?.templateId === valueColLeft?.value?.id;
+          const currentItem = currentPayloads?.find((fItem, fIndex) => {
+            return +fIndex === +index;
           });
-          if (currentItem) {
+          if (currentItem && !secondValueSelected) {
             const secondValueSelectedToEdit = optionsToView.find(
               (opt) => opt.value.id === currentItem.value.fieldId,
             );
@@ -137,7 +137,7 @@ function DefaultFormLine({
           const currentItem = currentPayloads?.flat()?.find((fItem) => {
             return fItem?.value?.templateId === valueColLeft?.value?.id;
           });
-          if (currentItem) {
+          if (currentItem && !secondValueSelected) {
             const secondValueSelectedToEdit = optionsToView.find(
               (opt) => opt.value.id === currentItem.value.fieldId,
             );
@@ -158,20 +158,21 @@ function DefaultFormLine({
     index,
     mode,
     optionsToView,
+    secondValueSelected,
     valueColLeft,
   ]);
 
   return (
-    <ContainerDefaultFormLine>
+    <ContainerDefaultFormLine key={index}>
       <KeyText>
         {subtopic && (
           <SubTopicContainer>
             <SubtopicIcon />
           </SubTopicContainer>
         )}
-        {getIconByType(covertCast[item.cast])}
-        {subtopic ? item.key.split(".")[1] : item.key}
-        {item.required && <span className="required">*</span>}
+        {getIconByType(covertCast[item?.cast])}
+        {subtopic ? item?.key?.split(".")[1] : item?.key}
+        {item?.required && <span className="required">*</span>}
       </KeyText>
       <SelectComponent
         select={valueColLeft || null}
