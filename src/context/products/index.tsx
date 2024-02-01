@@ -239,9 +239,10 @@ export const ProductContextProvider = ({
       );
 
       const productFields: {
-        [key: string]: string | string[];
+        [key: string]: string | string[] | boolean;
         id: string;
         created_at: string;
+        is_parent: boolean;
       }[] = [];
       if (data.products.length) {
         data?.products?.forEach((item) => {
@@ -263,17 +264,20 @@ export const ProductContextProvider = ({
               }
             });
           }
+
           const toProductFields = {
             ...object,
             id: item.id,
             created_at: item.created_at,
+            parent_id: item.parent_id,
+            is_parent: item.is_parent,
           };
 
           productFields.push(toProductFields);
         });
       }
 
-      setProducts(productFields);
+      setProducts(productFields as any);
       setTotal(data?.total);
       return { productFields, headerTable };
     },
@@ -304,6 +308,7 @@ export const ProductContextProvider = ({
             frozen: item.frozen ? item.frozen : false,
             bucket_url: response?.bucket_url,
             limit: item.limit,
+            integrations: item.integrations,
           };
         },
       );

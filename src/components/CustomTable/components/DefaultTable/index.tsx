@@ -47,6 +47,8 @@ import customRendererCheckedComponent from "./components/customRendererCheckedCo
 import DefaultLimits from "../../../../utils/DefaultLimits";
 import ModalSelectChildrens from "../ModalSelectChildrens";
 import { productRequests } from "../../../../services/apis/requests/product";
+import { IProductToTable } from "../../../../context/products/product.context";
+import getStyleRowHeader from "./utils/getStyleRowHeader";
 
 function DefaultTable({
   hotRef,
@@ -77,7 +79,9 @@ function DefaultTable({
   setIsOpen,
   hidden,
   handleFreeze,
-  subItemsMode,
+  parentId,
+  setParentId,
+  subItensMode,
   setSubItemsMode,
 }: IDefaultTable): JSX.Element {
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
@@ -511,9 +515,57 @@ function DefaultTable({
         columnHeaderValue !== " " ? columnHeaderValue : "+";
       const iconType = getIconByType(colData?.type);
 
-      TH.innerHTML = getStyledContent(iconType, valueToVisible, isRequired);
+      TH.innerHTML = getStyledContent(
+        iconType,
+        valueToVisible,
+        isRequired,
+        colData,
+      );
     },
     [getIconByType, headerTable, hotRef, template?.fields?.fields],
+  );
+
+  const [hiddenRows, setHiddenRows] = useState<number[]>([]);
+  const [isOpenedParentId, setIsOpenedParentId] = useState<string>("");
+
+  const handleRowHeaderClick = useCallback(
+    (currentParentId: string, currentProducts: IProductToTable[]): void => {
+      if (isOpenedParentId !== currentParentId) {
+        const childsWithIndex = currentProducts.map((product, indexProduct) => {
+          return { item: product, index: indexProduct };
+        });
+
+        const childsFiltereds = childsWithIndex.filter((fitem) => {
+          return fitem.item.parent_id === currentParentId;
+        });
+        const childsId = childsFiltereds.map((lastItem) => lastItem.index);
+
+        setIsOpenedParentId(currentParentId);
+
+        setHiddenRows(childsId);
+      } else {
+        setIsOpenedParentId("");
+        setHiddenRows([]);
+      }
+    },
+    [isOpenedParentId],
+  );
+
+  const styledRow = useCallback(
+    (row: number, TH: HTMLTableHeaderCellElement): void => {
+      const currentProduct = products[row];
+      const onClickHandler = (currentParentId: string): void => {
+        handleRowHeaderClick(currentParentId, products);
+      };
+      const opened = isOpenedParentId === currentProduct.id;
+      TH.innerHTML = getStyleRowHeader(
+        row,
+        currentProduct,
+        onClickHandler,
+        opened,
+      );
+    },
+    [handleRowHeaderClick, products],
   );
 
   const [dropDownStatus, setDropDownStatus] = useState<IDropDownStatus>({
@@ -533,41 +585,15 @@ function DefaultTable({
     }, -Infinity);
   }
 
-  const childs = [
-    {
-      748083: "one",
-      id: "f57a91d1-85f3-4b69-b40b-9b2e9357e143",
-      created_at: "2023-10-15T08:21:45.932Z",
-    },
-    {
-      748083: "two",
-      id: "7c8f5c6b-2fc6-4783-9f1f-0dd8a12b01c5",
-      created_at: "2023-11-28T14:37:59.541Z",
-    },
-    {
-      748083: "three",
-      id: "f3e8be1a-655c-434f-847d-92174a6b2bb6",
-      created_at: "2023-12-03T18:45:20.723Z",
-    },
-    {
-      748083: "four",
-      id: "82ef3e80-14ab-4142-80cc-91bca5deff9a",
-      created_at: "2023-12-30T22:10:11.819Z",
-    },
-  ];
-
-  const productsToView = products.map((item, index) => {
-    if (index === 0) return { ...item, __children: childs };
-    return item;
-  });
-
   const [rowsSelectedPosition, setRowsSelectedPosition] = useState<string[]>(
     [],
   );
   const [childsSelectedIds, setChildsSelectedIds] = useState<string[]>([]);
+
   const clearSubItensMode = (): void => {
     setChildsSelectedIds([]);
-    setSubItemsMode(null);
+    setRowsSelectedPosition([]);
+    setParentId(null);
   };
 
   const toggleRowSelection = useCallback(
@@ -610,12 +636,21 @@ function DefaultTable({
       checkbox.type = "checkbox";
       checkbox.checked = isChecked || false;
 
-      if (products[row]?.id === subItemsMode) {
+      if (products[row]?.id === parentId) {
+        checkbox.disabled = true;
+      }
+      if (subItensMode === "add" && products[row]?.parent_id === parentId) {
+        checkbox.disabled = true;
+      }
+      if (subItensMode === "remove" && products[row]?.parent_id !== parentId) {
         checkbox.disabled = true;
       }
 
       checkbox.addEventListener("change", () => {
         toggleRowSelection(stringRow);
+      });
+      checkboxContainer.addEventListener("click", () => {
+        if (!checkbox.disabled) toggleRowSelection(stringRow);
       });
 
       checkboxContainer.appendChild(checkbox);
@@ -624,26 +659,50 @@ function DefaultTable({
 
       td.appendChild(checkboxContainer);
     },
-    [products, rowsSelectedPosition, subItemsMode, toggleRowSelection],
+    [products, rowsSelectedPosition, parentId, toggleRowSelection],
   );
+  const { handleRedirectAndGetProducts } = useProductContext();
+
+  const [contentTooltipIntegration, setContentTooltipIntegration] = useState([
+    {
+      provider: "",
+      entities: [""],
+    },
+  ]);
 
   const onFinishProductChild = async (): Promise<void> => {
-    if (subItemsMode) {
-      const body = {
-        product_id: subItemsMode,
-        childs: childsSelectedIds,
-      };
+    if (parentId) {
       try {
-        await productRequests.postProductChildren(body);
-        toast.success("Subitems adicionados com sucesso");
-        clearSubItensMode();
+        if (subItensMode === "add") {
+          const body = {
+            product_id: parentId,
+            childs: childsSelectedIds,
+          };
+          await productRequests.postProductChildren(body);
+          toast.success("Subitems adicionados com sucesso");
+          clearSubItensMode();
+        } else {
+          await productRequests.deleteProductChildren({
+            parent_id: parentId,
+            childs: childsSelectedIds,
+          });
+          toast.success("Subitems removidos com sucesso");
+          clearSubItensMode();
+        }
+        const id = window.location.pathname.substring(10);
+        if (id) {
+          handleRedirectAndGetProducts(id);
+        }
       } catch (error) {
         console.error(error);
-        toast.error("Não foi possível adicionar os subitems, tente novamente!");
+        toast.error(
+          `Não foi possível ${
+            subItensMode === "add" ? "adicionar" : "remover"
+          } os subitems, tente novamente!`,
+        );
       }
     }
   };
-
   return (
     <>
       {openAlertTooltip && (
@@ -662,27 +721,39 @@ function DefaultTable({
         <AlertTooltip setAlertTooltip={setAlertTooltipIntegration}>
           <p>
             Esse campo é obrigatório com as seguintes integrações:
-            <br />
-            Shopify: Marcas, Produto
-            <br />
-            Nexaas: Marcas
+            {contentTooltipIntegration.map((itemTool) => (
+              <>
+                <br />
+                <>
+                  {itemTool.provider}:{" "}
+                  {itemTool.entities.map((entity) => (
+                    <>{entity}, </>
+                  ))}
+                </>
+              </>
+            ))}
           </p>
         </AlertTooltip>
       )}
 
       <HotTable
+        key={parentId + subItensMode}
         nestedRows
         bindRowsWithHeaders
         className="hot-table"
-        readOnly={!!subItemsMode || isTableLocked}
+        readOnly={!!parentId || isTableLocked}
         ref={hotRef}
         colHeaders={colHeaders}
         columns={cols}
         data={products}
+        hiddenRows={{
+          rows: hiddenRows,
+          indicators: false,
+        }}
         hiddenColumns={{ columns: hidden }}
         manualColumnResize
         manualColumnMove
-        rowHeaders={!subItemsMode}
+        rowHeaders={!parentId}
         rowHeights="52px"
         licenseKey="non-commercial-and-evaluation"
         fixedColumnsLeft={getMaxOrderForFrozen(cols) + 1}
@@ -694,14 +765,16 @@ function DefaultTable({
         afterPaste={afterPasteCallback}
         afterColumnMove={afterColumnMoveCallback}
         afterGetColHeader={styledHeader}
+        afterGetRowHeader={styledRow}
         afterColumnResize={async (newSize: number, column: number) => {
-          if (!subItemsMode) await handleResize(column, newSize, template);
+          if (!parentId) await handleResize(column, newSize, template);
         }}
         // afterOnCellMouseDown={(event: any) => {
         //   const clickedElementClassList = event.target.classList;
         // }}
         afterOnCellMouseUp={(event: any, coords, _TD) => {
           const limitWidth = window.innerWidth - 350;
+          setContentTooltipIntegration(cols[coords.col].integrations);
 
           const invert = event.clientX > limitWidth;
 
@@ -716,7 +789,7 @@ function DefaultTable({
             setAlertTooltipIntegration(true);
           }
 
-          if (!subItemsMode && colHeaders.length - 1 === coords.col) {
+          if (!parentId && colHeaders.length - 1 === coords.col) {
             setTimeout(() => {
               setDropDownStatus({
                 type: "new",
@@ -746,6 +819,9 @@ function DefaultTable({
             // eslint-disable-next-line no-param-reassign
             TD.style.display = "none";
           }
+          if (products[row].parent_id) {
+            TD.style.background = "#DEE2E6";
+          }
         }}
         contextMenu={{
           items: {
@@ -768,9 +844,31 @@ function DefaultTable({
               },
             },
             subItems_row: {
-              name: "Adicionar SubItens",
+              name: "Vincular variações",
               callback(key, selection) {
-                setSubItemsMode(products[selection[0].start.row].id as any);
+                const selectedRow = selection[0].start.row;
+                const selectedProduct = products[selectedRow];
+                if (selectedProduct && !selectedProduct.parent_id) {
+                  clearSubItensMode();
+                  setSubItemsMode("add");
+                  setParentId(selectedProduct.id as any);
+                } else {
+                  toast.warn("Este produto não pode ter subitens");
+                }
+              },
+            },
+            subItems_row_remove: {
+              name: "Desvincular variação",
+              callback(key, selection) {
+                const selectedRow = selection[0].start.row;
+                const selectedProduct = products[selectedRow];
+                if (selectedProduct && selectedProduct.parent_id) {
+                  clearSubItensMode();
+                  setSubItemsMode("remove");
+                  setParentId(selectedProduct.parent_id as any);
+                } else {
+                  toast.warn("Este produto não é um subitem");
+                }
               },
             },
           },
@@ -951,7 +1049,7 @@ function DefaultTable({
         setIsOpen={setIsOpen}
         handleFreeze={handleFreeze}
       />
-      {subItemsMode && (
+      {parentId && (
         <ModalSelectChildrens
           amount={childsSelectedIds.length}
           clearSubItensMode={clearSubItensMode}
