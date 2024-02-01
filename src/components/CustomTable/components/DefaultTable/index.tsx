@@ -773,7 +773,6 @@ function DefaultTable({
         //   const clickedElementClassList = event.target.classList;
         // }}
         afterOnCellMouseUp={(event: any, coords, _TD) => {
-          console.log("🚀 ~ coords:", coords);
           const limitWidth = window.innerWidth - 350;
           setContentTooltipIntegration(cols[coords.col].integrations);
 
