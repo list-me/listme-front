@@ -48,6 +48,10 @@ interface ICol {
   frozen: boolean;
   bucket_url: string;
   limit: number;
+  integrations: {
+    provider: string;
+    entities: string[];
+  }[];
 }
 
 export type {

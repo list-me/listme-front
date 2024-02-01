@@ -515,7 +515,12 @@ function DefaultTable({
         columnHeaderValue !== " " ? columnHeaderValue : "+";
       const iconType = getIconByType(colData?.type);
 
-      TH.innerHTML = getStyledContent(iconType, valueToVisible, isRequired);
+      TH.innerHTML = getStyledContent(
+        iconType,
+        valueToVisible,
+        isRequired,
+        colData,
+      );
     },
     [getIconByType, headerTable, hotRef, template?.fields?.fields],
   );
@@ -658,6 +663,13 @@ function DefaultTable({
   );
   const { handleRedirectAndGetProducts } = useProductContext();
 
+  const [contentTooltipIntegration, setContentTooltipIntegration] = useState([
+    {
+      provider: "",
+      entities: [""],
+    },
+  ]);
+
   const onFinishProductChild = async (): Promise<void> => {
     if (parentId) {
       try {
@@ -691,7 +703,6 @@ function DefaultTable({
       }
     }
   };
-
   return (
     <>
       {openAlertTooltip && (
@@ -710,10 +721,17 @@ function DefaultTable({
         <AlertTooltip setAlertTooltip={setAlertTooltipIntegration}>
           <p>
             Esse campo é obrigatório com as seguintes integrações:
-            <br />
-            Shopify: Marcas, Produto
-            <br />
-            Nexaas: Marcas
+            {contentTooltipIntegration.map((itemTool) => (
+              <>
+                <br />
+                <>
+                  {itemTool.provider}:{" "}
+                  {itemTool.entities.map((entity) => (
+                    <>{entity}, </>
+                  ))}
+                </>
+              </>
+            ))}
           </p>
         </AlertTooltip>
       )}
@@ -755,7 +773,9 @@ function DefaultTable({
         //   const clickedElementClassList = event.target.classList;
         // }}
         afterOnCellMouseUp={(event: any, coords, _TD) => {
+          console.log("🚀 ~ coords:", coords);
           const limitWidth = window.innerWidth - 350;
+          setContentTooltipIntegration(cols[coords.col].integrations);
 
           const invert = event.clientX > limitWidth;
 

@@ -38,6 +38,10 @@ interface IField {
   width?: string;
   frozen?: boolean;
   limit: number;
+  integrations: {
+    provider: string;
+    entities: string[];
+  }[];
 }
 
 interface ITemplate {
@@ -65,6 +69,10 @@ interface IHeader {
   frozen: boolean;
   bucket_url: string;
   limit: number;
+  integrations: {
+    provider: string;
+    entities: string[];
+  }[];
 }
 
 interface ICustomField {

@@ -308,6 +308,7 @@ export const ProductContextProvider = ({
             frozen: item.frozen ? item.frozen : false,
             bucket_url: response?.bucket_url,
             limit: item.limit,
+            integrations: item.integrations,
           };
         },
       );
