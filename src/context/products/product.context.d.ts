@@ -90,11 +90,13 @@ interface IProduct {
   status: string;
   fields: IProductFields[];
   parent_id: string;
+  is_parent: boolean;
 }
 
 interface IProductToTable {
   [key: string]: string | string[];
   parent_id: string;
+  is_parent: boolean;
   id: string;
   created_at: string;
 }

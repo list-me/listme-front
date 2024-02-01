@@ -239,9 +239,10 @@ export const ProductContextProvider = ({
       );
 
       const productFields: {
-        [key: string]: string | string[];
+        [key: string]: string | string[] | boolean;
         id: string;
         created_at: string;
+        is_parent: boolean;
       }[] = [];
       if (data.products.length) {
         data?.products?.forEach((item) => {
@@ -269,6 +270,7 @@ export const ProductContextProvider = ({
             id: item.id,
             created_at: item.created_at,
             parent_id: item.parent_id,
+            is_parent: item.is_parent,
           };
 
           productFields.push(toProductFields);

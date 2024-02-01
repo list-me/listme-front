@@ -47,6 +47,8 @@ import customRendererCheckedComponent from "./components/customRendererCheckedCo
 import DefaultLimits from "../../../../utils/DefaultLimits";
 import ModalSelectChildrens from "../ModalSelectChildrens";
 import { productRequests } from "../../../../services/apis/requests/product";
+import { IProductToTable } from "../../../../context/products/product.context";
+import getStyleRowHeader from "./utils/getStyleRowHeader";
 
 function DefaultTable({
   hotRef,
@@ -518,6 +520,49 @@ function DefaultTable({
     [getIconByType, headerTable, hotRef, template?.fields?.fields],
   );
 
+  const [hiddenRows, setHiddenRows] = useState<number[]>([]);
+  const [isOpenedParentId, setIsOpenedParentId] = useState<string>("");
+
+  const handleRowHeaderClick = useCallback(
+    (currentParentId: string, currentProducts: IProductToTable[]): void => {
+      if (isOpenedParentId !== currentParentId) {
+        const childsWithIndex = currentProducts.map((product, indexProduct) => {
+          return { item: product, index: indexProduct };
+        });
+
+        const childsFiltereds = childsWithIndex.filter((fitem) => {
+          return fitem.item.parent_id === currentParentId;
+        });
+        const childsId = childsFiltereds.map((lastItem) => lastItem.index);
+
+        setIsOpenedParentId(currentParentId);
+
+        setHiddenRows(childsId);
+      } else {
+        setIsOpenedParentId("");
+        setHiddenRows([]);
+      }
+    },
+    [isOpenedParentId],
+  );
+
+  const styledRow = useCallback(
+    (row: number, TH: HTMLTableHeaderCellElement): void => {
+      const currentProduct = products[row];
+      const onClickHandler = (currentParentId: string): void => {
+        handleRowHeaderClick(currentParentId, products);
+      };
+      const opened = isOpenedParentId === currentProduct.id;
+      TH.innerHTML = getStyleRowHeader(
+        row,
+        currentProduct,
+        onClickHandler,
+        opened,
+      );
+    },
+    [handleRowHeaderClick, products],
+  );
+
   const [dropDownStatus, setDropDownStatus] = useState<IDropDownStatus>({
     type: "none",
     coordX: 0,
@@ -591,15 +636,16 @@ function DefaultTable({
       }
       if (subItensMode === "add" && products[row]?.parent_id === parentId) {
         checkbox.disabled = true;
-        console.log("add");
       }
       if (subItensMode === "remove" && products[row]?.parent_id !== parentId) {
         checkbox.disabled = true;
-        console.log("remove");
       }
 
       checkbox.addEventListener("change", () => {
         toggleRowSelection(stringRow);
+      });
+      checkboxContainer.addEventListener("click", () => {
+        if (!checkbox.disabled) toggleRowSelection(stringRow);
       });
 
       checkboxContainer.appendChild(checkbox);
@@ -646,34 +692,6 @@ function DefaultTable({
     }
   };
 
-  function rearrangeArray() {
-    products.forEach((item) => {
-      if (item.parent_id) {
-        const indexParent = products.findIndex((findItem) => {
-          return findItem.parent_id === item.parent_id;
-        });
-        const filtereds = products.filter((filterItem) => {
-          return filterItem.parent_id === item.parent_id;
-        });
-        filtereds.forEach((filteredItem) => {
-          const indexToDelete = products.findIndex(
-            (prodItem) => filteredItem.id === prodItem.id,
-          );
-          if (indexToDelete !== -1) {
-            products.splice(indexToDelete, 1);
-          }
-
-          if (indexParent >= 0 && indexParent < products.length) {
-            products.splice(indexParent, 0, filteredItem);
-          }
-        });
-      }
-    });
-    return products;
-  }
-
-  rearrangeArray();
-
   return (
     <>
       {openAlertTooltip && (
@@ -710,6 +728,10 @@ function DefaultTable({
         colHeaders={colHeaders}
         columns={cols}
         data={products}
+        hiddenRows={{
+          rows: hiddenRows,
+          indicators: false,
+        }}
         hiddenColumns={{ columns: hidden }}
         manualColumnResize
         manualColumnMove
@@ -725,6 +747,7 @@ function DefaultTable({
         afterPaste={afterPasteCallback}
         afterColumnMove={afterColumnMoveCallback}
         afterGetColHeader={styledHeader}
+        afterGetRowHeader={styledRow}
         afterColumnResize={async (newSize: number, column: number) => {
           if (!parentId) await handleResize(column, newSize, template);
         }}
@@ -802,7 +825,7 @@ function DefaultTable({
               },
             },
             subItems_row: {
-              name: "Adicionar SubItens",
+              name: "Vincular variações",
               callback(key, selection) {
                 const selectedRow = selection[0].start.row;
                 const selectedProduct = products[selectedRow];
@@ -816,7 +839,7 @@ function DefaultTable({
               },
             },
             subItems_row_remove: {
-              name: "Remover SubItem",
+              name: "Desvincular variação",
               callback(key, selection) {
                 const selectedRow = selection[0].start.row;
                 const selectedProduct = products[selectedRow];
