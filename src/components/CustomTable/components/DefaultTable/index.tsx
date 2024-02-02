@@ -774,7 +774,7 @@ function DefaultTable({
         // }}
         afterOnCellMouseUp={(event: any, coords, _TD) => {
           const limitWidth = window.innerWidth - 350;
-          setContentTooltipIntegration(cols[coords.col].integrations);
+          setContentTooltipIntegration(cols[coords?.col]?.integrations);
 
           const invert = event.clientX > limitWidth;
 
