@@ -30,6 +30,7 @@ function Login(): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();
+  console.log("teste");
 
   const handleSubmit = (e: React.MouseEvent): void => {
     setLoading(!loading);
