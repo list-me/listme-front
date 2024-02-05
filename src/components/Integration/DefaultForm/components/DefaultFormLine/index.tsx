@@ -102,7 +102,10 @@ function DefaultFormLine({
   }, [valueColLeft?.value?.id]);
 
   const optionsToView = fieldsToOptions.filter((fItem) => {
-    return !["file"].includes(fItem?.value?.type);
+    return (
+      !["file"].includes(fItem?.value?.type) &&
+      item.types.includes(fItem?.value?.type)
+    );
   });
 
   const subtopic = !!item?.key?.includes(".");

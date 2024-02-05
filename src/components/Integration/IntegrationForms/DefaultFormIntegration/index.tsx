@@ -117,12 +117,7 @@ function DefaultFormIntegration(): JSX.Element {
   );
 
   useEffect(() => {
-    if (mode === "registration") {
-      handleGetTemplates({ page: 0, limit: 100 });
-    }
-    if (mode === "editing") {
-      handleGetTemplates({ page: 0, limit: 100 });
-    }
+    handleGetTemplates({ page: 0, limit: 100 });
   }, [dataToEdit?.id, handleGetTemplates, mode]);
 
   const [menuActivated, setMenuActivated] = useState<string>(path);
@@ -266,7 +261,6 @@ function DefaultFormIntegration(): JSX.Element {
       );
       updateDone();
     } catch (err) {
-      console.log(err);
       toast.error(`Ocorreu um erro ao configurar ${Menus[menuActivated]}`);
     }
   };
@@ -304,58 +298,60 @@ function DefaultFormIntegration(): JSX.Element {
       const response: IDataToEdit[] =
         await integrationsRequest.getTemplateEntity(id);
 
-      const payloadsToFilter = response[0].fields.entity.payloads;
+      if (response && response.length > 0 && response[0].fields) {
+        const payloadsToFilter = response[0].fields.entity.payloads;
 
-      const payloadsDefault = payloadsToFilter.filter((pItem) => {
-        return !pItem.multiple;
-      });
+        const payloadsDefault = payloadsToFilter.filter((pItem) => {
+          return !pItem.multiple;
+        });
 
-      const newPayloadsMultiple: any[] = [];
-      const payloadsMultiple = payloadsToFilter.filter((pItem) => {
-        return pItem.multiple;
-      });
+        const newPayloadsMultiple: any[] = [];
+        const payloadsMultiple = payloadsToFilter.filter((pItem) => {
+          return pItem.multiple;
+        });
 
-      payloadsMultiple.forEach((item: any) => {
-        item.value.forEach((valueItem: any) => {
-          newPayloadsMultiple.push({
-            type: item.type,
-            value: valueItem,
-            multiple: item.multiple,
-            templateConfigPayloadId: item.templateConfigPayloadId,
+        payloadsMultiple.forEach((item: any) => {
+          item.value.forEach((valueItem: any) => {
+            newPayloadsMultiple.push({
+              type: item.type,
+              value: valueItem,
+              multiple: item.multiple,
+              templateConfigPayloadId: item.templateConfigPayloadId,
+            });
           });
         });
-      });
 
-      if (currentField) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < newPayloadsMultiple.length / 2 - 1; i++) {
-          const variants = currentField?.payload.filter((pItem) => {
-            return pItem.key.includes("variants");
-          });
-          currentField.payload = [
-            ...currentField.payload,
-            variants[0],
-            variants[1],
-          ];
+        if (currentField) {
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < newPayloadsMultiple.length / 2 - 1; i++) {
+            const variants = currentField?.payload.filter((pItem) => {
+              return pItem.key.includes("variants");
+            });
+            currentField.payload = [
+              ...currentField.payload,
+              variants[0],
+              variants[1],
+            ];
+          }
         }
-      }
 
-      const responseToDataEdit = {
-        ...response[0],
-        fields: {
-          templateConfigId: response[0].fields.templateConfigId,
-          entity: {
-            payloads: [...payloadsDefault, ...newPayloadsMultiple],
-            name: response[0].fields.entity.name,
-            templateConfigEntityId:
-              response[0].fields.entity.templateConfigEntityId,
-            templateTriggerId: response[0].fields.entity.templateTriggerId,
-            type: response[0].fields.entity.type,
+        const responseToDataEdit = {
+          ...response[0],
+          fields: {
+            templateConfigId: response[0].fields.templateConfigId,
+            entity: {
+              payloads: [...payloadsDefault, ...newPayloadsMultiple],
+              name: response[0].fields.entity.name,
+              templateConfigEntityId:
+                response[0].fields.entity.templateConfigEntityId,
+              templateTriggerId: response[0].fields.entity.templateTriggerId,
+              type: response[0].fields.entity.type,
+            },
           },
-        },
-      };
+        };
 
-      setDataToEdit(responseToDataEdit as any);
+        setDataToEdit(responseToDataEdit as any);
+      }
     };
     if (mode === "editing" && currentField?.id) {
       getDataToEdit(currentField?.id);

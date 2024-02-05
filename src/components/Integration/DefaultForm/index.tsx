@@ -129,16 +129,18 @@ function DefaultForm({
         ))}
       </ContentDefaultForm>
       {path === "products" && (
-        <NewFeature
-          isDisabled={done}
-          onClick={() => {
-            const variants = payload.filter((pItem) => {
-              return pItem.key.includes("variants");
-            });
-            setCurrentPayload([...currentPayload, variants[0], variants[1]]);
-          }}
-          text="Adicionar variante"
-        />
+        <div style={{ marginTop: "1.5rem" }}>
+          <NewFeature
+            isDisabled={done}
+            onClick={() => {
+              const variants = payload.filter((pItem) => {
+                return pItem.key.includes("variants");
+              });
+              setCurrentPayload([...currentPayload, variants[0], variants[1]]);
+            }}
+            text="Adicionar variante"
+          />
+        </div>
       )}
     </ContainerDefaultForm>
   );

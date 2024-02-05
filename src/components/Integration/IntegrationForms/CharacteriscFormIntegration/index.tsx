@@ -31,21 +31,6 @@ import FeatureForms from "../../FeatureForms";
 import SelectComponent from "../../../Select";
 import { IDataToEdit } from "../../../../context/IntegrationContext/IntegrationContext";
 
-interface TemplateItem {
-  templateConfigPayloadId: string;
-  type: string;
-  multiple: boolean;
-  value:
-    | {
-        templateId: string;
-        fieldId?: string | undefined;
-      }
-    | {
-        templateId: string;
-        fieldId?: string | undefined;
-      }[];
-}
-
 function CharacteriscFormIntegration(): JSX.Element {
   const {
     currentMenus,
@@ -70,7 +55,6 @@ function CharacteriscFormIntegration(): JSX.Element {
   ] as IDataToEdit[]);
   const [headerSelectValues, setHeaderSelectValues] = useState([]);
   const [payloadsToFinish, setPayloadsToFinish] = useState<any[][]>([[]]);
-
   const [colOptions, setColOptions] = useState([]);
 
   const [colHeaderSelectValue, setColHeaderSelectValue] = useState([]);
@@ -148,7 +132,6 @@ function CharacteriscFormIntegration(): JSX.Element {
                 itemDataToEdit?.fields?.entity?.payloads,
               );
             });
-
             setPayloadsToFinish(listPayloadToFinish);
           }
         })
@@ -161,8 +144,7 @@ function CharacteriscFormIntegration(): JSX.Element {
   );
 
   useEffect(() => {
-    if (mode === "registration") handleGetTemplates({ page: 0, limit: 100 });
-    if (mode === "editing") handleGetTemplates({ page: 0, limit: 100 });
+    handleGetTemplates({ page: 0, limit: 100 });
   }, [dataToEdit, handleGetTemplates, mode]);
 
   const [templatesById, setTemplatesById] = useState<ITemplatesById>(
@@ -177,6 +159,7 @@ function CharacteriscFormIntegration(): JSX.Element {
     const initialPayload = Array.from(
       { length: (currentField as any)?.payload?.length || 0 },
       () => ({
+        multiple: false,
         templateConfigPayloadId: "",
         type: "",
         value: {
@@ -262,6 +245,7 @@ function CharacteriscFormIntegration(): JSX.Element {
         { length: (currentField as any)?.payload?.length || 0 },
         () => ({
           templateConfigPayloadId: "",
+          multiple: false,
           type: "",
           value: {
             templateId: "",
@@ -272,61 +256,38 @@ function CharacteriscFormIntegration(): JSX.Element {
     ]);
   };
 
-  function mergePayloads(list: TemplateItem[]): TemplateItem[] {
-    const templateMap: Record<string, TemplateItem> = {};
-
-    list?.forEach((item) => {
-      const templateId = item.templateConfigPayloadId;
-
-      if (!templateMap[templateId]) {
-        templateMap[templateId] = { ...item, multiple: false };
-      } else {
-        if (!Array.isArray(templateMap[templateId].value)) {
-          // @ts-ignore
-          templateMap[templateId].value = [templateMap[templateId].value];
-          templateMap[templateId].multiple = true;
-        }
-
-        // @ts-ignore
-        templateMap[templateId].value.push(
-          item.value as {
-            templateId: string;
-            fieldId?: string | undefined;
-          },
-        );
-      }
-    });
-
-    const mergedResult = Object.values(templateMap);
-    return mergedResult;
-  }
-
   const onFinish = async (): Promise<void> => {
     if (currentField) {
-      currentField.payload.forEach((item, index) => {
-        payloadsToFinish[index] = payloadsToFinish[index]?.map((pItem) => {
-          if (characteristicsType[index] === "catalog") {
-            return {
-              ...pItem,
-              templateConfigPayloadId: currentField?.payload[index]?.id as any,
-              type: characteristicsType[index],
-              value: {
-                templateId: (headerSelectValues[index] as any)?.value?.id,
-              },
-            };
-          }
-          if (characteristicsType[index] === "column") {
-            return {
-              ...pItem,
-              templateConfigPayloadId: currentField?.payload[index]?.id as any,
-              type: characteristicsType[index],
-              value: {
-                templateId: (headerSelectValues[index] as any)?.value?.id,
-                fieldId: (colHeaderSelectValue[index] as any)?.value?.id,
-              },
-            };
-          }
-        });
+      currentField?.payload.forEach((item, index) => {
+        payloadsToFinish[index] = payloadsToFinish[index]?.map(
+          (pItem, indexPay) => {
+            if (characteristicsType[index] === "catalog") {
+              return {
+                ...pItem,
+                templateConfigPayloadId: currentField?.payload[indexPay]
+                  ?.id as any,
+                type: characteristicsType[index],
+                multiple: false,
+                value: {
+                  templateId: (headerSelectValues[index] as any)?.value?.id,
+                },
+              };
+            }
+            if (characteristicsType[index] === "column") {
+              return {
+                ...pItem,
+                templateConfigPayloadId: currentField?.payload[indexPay]
+                  ?.id as any,
+                type: characteristicsType[index],
+                multiple: false,
+                value: {
+                  templateId: (headerSelectValues[index] as any)?.value?.id,
+                  fieldId: (colHeaderSelectValue[index] as any)?.value?.id,
+                },
+              };
+            }
+          },
+        );
       });
     }
 
@@ -351,8 +312,8 @@ function CharacteriscFormIntegration(): JSX.Element {
       }
       const notDone = payloadsToFinish[index]?.find((item, fIndex) => {
         if (idsRequired.includes(fIndex)) {
-          if (item.type === "catalog" && !item.value.templateId) return item;
-          if (item.type === "column" && !item.value.fieldId) return item;
+          if (item?.type === "catalog" && !item.value.templateId) return item;
+          if (item?.type === "column" && !item.value.fieldId) return item;
         }
       });
 
@@ -363,44 +324,53 @@ function CharacteriscFormIntegration(): JSX.Element {
       }
       return true;
     });
+    const onSuccess = (): void => {
+      toast.success(
+        `Configuração de ${Menus[menuActivated]} realizado(a) com sucesso.`,
+      );
+      updateDone();
+    };
+
+    const onError = (error: any): void => {
+      console.error(error);
+      toast.error(`Ocorreu um erro ao configurar ${Menus[menuActivated]}`);
+    };
 
     if (isOk.every((result) => result)) {
+      const templateConfigEntityId = currentField?.id;
+      const templateConfigId = integrationId;
+
       try {
-        const payFinish = payloadsToFinish.filter(
-          (element) => element !== undefined,
-        );
-        const requests = payFinish.map(async (payload, index) => {
-          const templateConfigEntityId = currentField?.id;
-          const templateTriggerId = (headerSelectValues as any)[index]?.value
-            ?.id;
-          const templateConfigId = integrationId;
-
-          const body = {
-            fields: {
-              templateConfigId,
-              entity: {
-                templateConfigEntityId,
-                templateTriggerId,
-                payloads: [...mergePayloads(payloadsToFinish[index])],
+        const requests = payloadsToFinish
+          .filter(Boolean)
+          .map(async (payload, index) => {
+            const templateTriggerId = (headerSelectValues as any)[index]?.value
+              ?.id;
+            const body = {
+              fields: {
+                templateConfigId,
+                entity: {
+                  templateConfigEntityId,
+                  templateTriggerId,
+                  payloads: payloadsToFinish[index],
+                },
               },
-            },
-            type: "integration",
-          };
+              type: "integration",
+            };
 
-          if (mode === "editing" && dataToEdit[index]?.id)
-            await templateRequests.patchIntegration(dataToEdit[index].id, body);
-          else await templateRequests.postIntegration(body);
-        });
+            if (currentField?.isDone && dataToEdit[index].id)
+              await templateRequests.patchIntegration(
+                dataToEdit[index].id,
+                body,
+              );
+            else await templateRequests.postIntegration(body);
+          });
 
         await Promise.all(requests);
 
-        toast.success(
-          `Configuração de ${Menus[menuActivated]} realizado(a) com sucesso.`,
-        );
-        updateDone();
+        onSuccess();
       } catch (error) {
-        console.error(error);
-        toast.error(`Ocorreu um erro ao configurar ${Menus[menuActivated]}`);
+        onError(error);
       }
     }
   };

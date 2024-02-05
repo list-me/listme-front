@@ -169,16 +169,18 @@ function FeatureForms({
         <NewFeature
           isDisabled={done}
           onClick={() => {
-            const value = [
-              {
+            const value = Array.from(
+              { length: (currentField as any)?.payload?.length || 0 },
+              () => ({
+                multiple: false,
                 templateConfigPayloadId: "",
                 type: "",
                 value: {
                   templateId: "",
                   fieldId: "",
                 },
-              },
-            ];
+              }),
+            );
             const copyPayloads = [...payloadsToFinish];
             copyPayloads.push(value);
             setPayloadsToFinish(copyPayloads);

@@ -10,6 +10,7 @@ export type IFieldsByID = {
   name: string;
   payload: IPayload[];
   endpointPath: string;
+  isDone: boolean;
 };
 
 export interface ITemplatesById {
