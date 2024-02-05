@@ -670,31 +670,6 @@ function DefaultTable({
     },
   ]);
 
-  function ordenarPorParentId(list: IProductToTable[]) {
-    const parentsListIndex: number[] = [];
-    const parenstList = list.filter((itemList, indexItemList) => {
-      if (itemList.is_parent) parentsListIndex.push(indexItemList);
-      return itemList.is_parent;
-    });
-    parenstList.forEach((parentItem, indexItemParentsList) => {
-      const childsIndex = list.map((itemList, indexItemList) => {
-        if (itemList.parent_id === parentItem.id) {
-          return indexItemList;
-        }
-      });
-      childsIndex.forEach((child) => {
-        const elementoRemovido = list.splice(child as number, 1)[0];
-        list.splice(
-          parentsListIndex[indexItemParentsList] + 1,
-          0,
-          elementoRemovido,
-        );
-      });
-    });
-
-    return list;
-  }
-
   const onFinishProductChild = async (): Promise<void> => {
     if (parentId) {
       try {
@@ -770,7 +745,7 @@ function DefaultTable({
         ref={hotRef}
         colHeaders={colHeaders}
         columns={cols}
-        data={ordenarPorParentId(products)}
+        data={products}
         hiddenRows={{
           rows: hiddenRows,
           indicators: false,
