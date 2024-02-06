@@ -40,7 +40,13 @@ interface ITypeProductContext {
   headerTable: IHeader[];
   setHeaderTable: React.Dispatch<React.SetStateAction<IHeader[]>>;
   handleAdd: Function;
-  handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>;
+  handleSave: (
+    value: any,
+    isNew: boolean,
+    productId: string,
+    fieldId: string,
+    newValue: string,
+  ) => Promise<any>;
   editing: boolean;
   setEditing: Function;
   colHeaders: string[];
@@ -377,7 +383,14 @@ export const ProductContextProvider = ({
   );
 
   const handlePost = async (product: any): Promise<any> => {
-    return productRequests.save(product);
+    const responseHandlePost = productRequests.save(product);
+    const id = window.location.pathname.substring(10);
+    if (id) {
+      setTimeout(() => {
+        handleRedirectAndGetProducts(id).then(() => {});
+      }, 0);
+    }
+    return responseHandlePost;
   };
 
   const buildProduct = (fields: any) => {
@@ -412,13 +425,16 @@ export const ProductContextProvider = ({
     value: any,
     isNew: boolean,
     productId: string,
+    fieldId: string,
+    newValue: string,
   ): Promise<any> => {
     try {
       const fields = buildProduct(value);
       if (isNew) {
-        const response = await productRequests.update({
-          id: productId,
-          fields,
+        const response = await productRequests.patchProductValue({
+          value: [newValue],
+          productId,
+          fieldId,
         });
         toast.success("Produto atualizado com sucesso");
         return response;

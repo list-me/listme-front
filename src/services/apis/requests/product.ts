@@ -123,4 +123,28 @@ export const productRequests = {
 
     return response.data;
   },
+  patchProductValue: async ({
+    value,
+    productId,
+    fieldId,
+  }: {
+    value: string[];
+    productId: string;
+    fieldId: string;
+  }): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.patch(
+      `/product/${productId}/field/${fieldId}`,
+      {
+        value,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  },
 };

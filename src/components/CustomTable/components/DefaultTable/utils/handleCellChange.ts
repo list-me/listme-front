@@ -8,7 +8,13 @@ const handleCellChange: any = async (
   hotInstance: Handsontable | null | undefined,
   isTableLocked: boolean,
   setIsTableLocked: React.Dispatch<React.SetStateAction<boolean>>,
-  handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>,
+  handleSave: (
+    value: any,
+    isNew: boolean,
+    productId: string,
+    fieldId: string,
+    newValue: string,
+  ) => Promise<any>,
   dataProvider: any[],
   setDataProvider: React.Dispatch<React.SetStateAction<any[]>>,
   type: string,
@@ -29,6 +35,8 @@ const handleCellChange: any = async (
           dataProvider[customChanges[0][0]],
           isNew,
           dataProvider[customChanges[0][0]]?.id,
+          customChanges[0][1] as string,
+          customChanges[0][3] as string,
         );
         if (
           response.id &&
@@ -79,6 +87,8 @@ const handleCellChange: any = async (
           newDataProvider[customChanges[0][0]],
           isNew,
           newDataProvider[customChanges[0][0]]?.id,
+          customChanges[0][1] as string,
+          customChanges[0][3] as string,
         );
         if (
           response.id &&
