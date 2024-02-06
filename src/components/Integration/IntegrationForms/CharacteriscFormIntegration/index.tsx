@@ -271,7 +271,7 @@ function CharacteriscFormIntegration(): JSX.Element {
                 type: characteristicsType[index],
                 multiple: false,
                 value: {
-                  templateId: (headerSelectValues[indexPay] as any)?.value?.id,
+                  templateId: (headerSelectValues[index] as any)?.value?.id,
                 },
               };
             }
@@ -283,8 +283,8 @@ function CharacteriscFormIntegration(): JSX.Element {
                 type: characteristicsType[index],
                 multiple: false,
                 value: {
-                  templateId: (headerSelectValues[indexPay] as any)?.value?.id,
-                  fieldId: (colHeaderSelectValue[indexPay] as any)?.value?.id,
+                  templateId: (headerSelectValues[index] as any)?.value?.id,
+                  fieldId: (colHeaderSelectValue[index] as any)?.value?.id,
                 },
               };
             }
