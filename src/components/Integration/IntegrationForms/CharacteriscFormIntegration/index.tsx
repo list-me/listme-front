@@ -548,12 +548,25 @@ function CharacteriscFormIntegration(): JSX.Element {
             {(nextMenu[menuActivated] as any)?.label && (
               <NextButton
                 onClick={() => {
-                  setMenuActivated((nextMenu[menuActivated] as any).value);
-                  navigate(
-                    `${ROUTES.INTEGRATION}/${
-                      (nextMenu[menuActivated] as any).value
-                    }/${integrationId}`,
-                  );
+                  if (mode === "registration") {
+                    if (
+                      currentMenus[0].status === "undone" ||
+                      currentMenus[1].status === "undone" ||
+                      currentMenus[2].status === "undone"
+                    ) {
+                      toast.error(
+                        "Você precisa configurar a Marca, Categorias e Características antes de configurar o Produto",
+                      );
+                    } else {
+                      setMenuActivated((nextMenu[menuActivated] as any).value);
+                      navigate(
+                        `${ROUTES.INTEGRATION}/${
+                          (nextMenu[menuActivated] as any).value
+                        }/${integrationId}`,
+                      );
+                    }
+                  } else
+                    setMenuActivated((nextMenu[menuActivated] as any).value);
                 }}
               >
                 {(nextMenu[menuActivated] as any)?.label}
