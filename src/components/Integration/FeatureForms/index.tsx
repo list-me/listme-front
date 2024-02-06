@@ -106,6 +106,7 @@ function FeatureForms({
                       done={done}
                       headerSelectValue={headerSelectValues[index]}
                       setHeaderSelectValue={(e: any) => {
+                        console.log("veio");
                         changeListValue(
                           e,
                           index,

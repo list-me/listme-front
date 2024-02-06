@@ -22,10 +22,12 @@ const Active = css`
 
 export const Container = styled.div`
   width: 222px;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: fixed;
+  left: 0;
 
   margin: 0;
 
@@ -54,7 +56,6 @@ export const Content = styled.div`
 export const Functions = styled.div`
   width: 100%;
   height: auto;
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -125,7 +126,6 @@ export const Capsule = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
   height: 100%;
   width: 100%;
 
