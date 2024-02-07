@@ -69,6 +69,7 @@ export const customStyles = ({ small }: { small?: boolean }): Styles => ({
     borderRadius: "8px",
     boxShadow: "0px 10px 40px 0px rgba(56, 24, 217, 0.07)",
     position: "absolute !important",
+    zIndex: 1000000,
   }),
   option: (provided: any, state: any) => ({
     ...provided,

@@ -6,17 +6,19 @@ interface InfoAlertProps {
   title: string;
   content: string;
   toRight?: boolean;
+  lowZindex?: boolean;
 }
 
 const InfoAlert: React.FC<InfoAlertProps> = ({
   title,
   content,
   toRight,
+  lowZindex,
 }: InfoAlertProps) => {
   const [isActive, setIsActive] = useState(false);
 
   return (
-    <ContainerInfoAlert isActive={isActive}>
+    <ContainerInfoAlert isActive={isActive} lowZindex={lowZindex}>
       {(title || content) && (
         <AlertIcon
           onMouseEnter={() => setIsActive(true)}
@@ -35,6 +37,7 @@ const InfoAlert: React.FC<InfoAlertProps> = ({
 
 InfoAlert.defaultProps = {
   toRight: false,
+  lowZindex: false,
 };
 
 export default InfoAlert;

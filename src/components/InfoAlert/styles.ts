@@ -1,6 +1,9 @@
 import styled from "styled-components";
 
-export const ContainerInfoAlert = styled.div<{ isActive: boolean }>`
+export const ContainerInfoAlert = styled.div<{
+  isActive: boolean;
+  lowZindex?: boolean;
+}>`
   position: relative;
   margin-left: 8px;
   display: flex;
@@ -13,7 +16,7 @@ export const ContainerInfoAlert = styled.div<{ isActive: boolean }>`
           : props.theme.colors.tertiary};
     }
   }
-  z-index: 9000;
+  z-index: ${(props) => (props.lowZindex ? "1" : "9000")};
 `;
 export const ContentInfoAlert = styled.div<{ toRight?: boolean }>`
   position: absolute;
@@ -48,4 +51,5 @@ export const ContentInfoAlert = styled.div<{ toRight?: boolean }>`
     right: ${(props) => (props.toRight ? "initial" : "8px")};
     left: ${(props) => (props.toRight ? "8px" : "initial")};
   }
+  z-index: 9000;
 `;

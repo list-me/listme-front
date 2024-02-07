@@ -118,8 +118,8 @@ function DefaultForm({
       <ContainerTitlesDefaultForm>
         {arrayColumns.map((columnName) => (
           <ColumnsDefaultForm key={columnName.text}>
-            {columnName.info ? (
-              <InfoAlert title="" content={columnName.info} toRight />
+            {columnName.text && columnName.info ? (
+              <InfoAlert title="" content={columnName.info} toRight lowZindex />
             ) : (
               <></>
             )}
