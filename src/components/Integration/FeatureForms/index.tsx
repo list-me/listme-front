@@ -139,6 +139,7 @@ function FeatureForms({
                         options={filteredOptions(colOptions[index])}
                         small
                         inline
+                        subLabel="Apenas campos de múltipla escolha"
                         labelText="Selecione a coluna"
                         placeHolder="Selecione..."
                         required

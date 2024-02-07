@@ -498,6 +498,7 @@ function CharacteriscFormIntegration(): JSX.Element {
                       small
                       inline
                       labelText="Selecione a coluna"
+                      subLabel="Apenas campos de múltipla escolha"
                       placeHolder="Selecione..."
                       required
                       isDisabled={

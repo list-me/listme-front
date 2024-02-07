@@ -26,6 +26,11 @@ export const LabelSelect = styled.label`
   span {
     color: #f15757;
   }
+  .subLabel {
+    color: #515151;
+    font-size: ${({ theme }) => theme.fonts.sizes.small};
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
+  }
 `;
 
 export const customStyles = ({ small }: { small?: boolean }): Styles => ({

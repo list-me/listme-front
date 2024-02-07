@@ -23,6 +23,7 @@ const SelectComponent = ({
   infoContent,
   isDisabled,
   withIcons,
+  subLabel,
 }: ISelect): JSX.Element => {
   const DropdownWithProps = makeDropdownIndicator({ isSearchable });
 
@@ -39,6 +40,8 @@ const SelectComponent = ({
           <div>
             {labelText}
             {required && <span>*</span>}
+            <br />
+            <div className="subLabel">{subLabel}</div>
           </div>
           {(infoTitle || infoContent) && (
             <InfoAlert title={infoTitle || ""} content={infoContent || ""} />
