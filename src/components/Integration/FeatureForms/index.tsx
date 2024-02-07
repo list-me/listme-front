@@ -160,6 +160,9 @@ function FeatureForms({
                     type={characteristicsType[index]}
                     done={done}
                     characteristic
+                    infoLeftColumnName=""
+                    infoCenterColumnName=""
+                    infoRightColumnName="Refere-se à coluna do catálogo selecionado da ListMe"
                   />
                 )}
               </ContainerIntegration>

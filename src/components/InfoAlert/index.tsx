@@ -2,13 +2,17 @@ import React, { useState } from "react";
 import { ContainerInfoAlert, ContentInfoAlert } from "./styles";
 import { ReactComponent as AlertIcon } from "../../assets/alertIcon.svg";
 
-function InfoAlert({
-  title,
-  content,
-}: {
+interface InfoAlertProps {
   title: string;
   content: string;
-}): JSX.Element {
+  toRight?: boolean;
+}
+
+const InfoAlert: React.FC<InfoAlertProps> = ({
+  title,
+  content,
+  toRight,
+}: InfoAlertProps) => {
   const [isActive, setIsActive] = useState(false);
 
   return (
@@ -20,13 +24,17 @@ function InfoAlert({
         />
       )}
       {isActive && (
-        <ContentInfoAlert>
+        <ContentInfoAlert toRight={toRight}>
           {title && <p>{title}</p>}
           {content && <span>{content}</span>}
         </ContentInfoAlert>
       )}
     </ContainerInfoAlert>
   );
-}
+};
+
+InfoAlert.defaultProps = {
+  toRight: false,
+};
 
 export default InfoAlert;

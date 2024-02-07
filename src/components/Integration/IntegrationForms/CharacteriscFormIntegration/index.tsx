@@ -521,6 +521,9 @@ function CharacteriscFormIntegration(): JSX.Element {
                   done={mode === "registration" && done === "done"}
                   dataToEdit={dataToEdit as IDataToEdit[]}
                   characteristic
+                  infoLeftColumnName=""
+                  infoCenterColumnName=""
+                  infoRightColumnName="Refere-se à coluna do catálogo selecionado da ListMe"
                 />
               )}
             </ContainerIntegration>

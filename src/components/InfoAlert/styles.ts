@@ -3,6 +3,7 @@ import styled from "styled-components";
 export const ContainerInfoAlert = styled.div<{ isActive: boolean }>`
   position: relative;
   margin-left: 8px;
+  display: flex;
   svg {
     cursor: pointer;
     path {
@@ -14,10 +15,11 @@ export const ContainerInfoAlert = styled.div<{ isActive: boolean }>`
   }
   z-index: 9000;
 `;
-export const ContentInfoAlert = styled.div`
+export const ContentInfoAlert = styled.div<{ toRight?: boolean }>`
   position: absolute;
   top: 28px;
-  right: -5.5px;
+  right: ${(props) => (props.toRight ? "initial" : "-5.5px")};
+  left: ${(props) => (props.toRight ? "-5.5px" : "initial")};
   width: 350px;
   padding: 8px 16px;
   border-radius: 6px;
@@ -43,6 +45,7 @@ export const ContentInfoAlert = styled.div`
     border-bottom: 8px solid #000;
     position: absolute;
     top: -8px;
-    right: 8px;
+    right: ${(props) => (props.toRight ? "initial" : "8px")};
+    left: ${(props) => (props.toRight ? "8px" : "initial")};
   }
 `;

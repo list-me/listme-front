@@ -398,8 +398,11 @@ function DefaultFormIntegration(): JSX.Element {
                 <DefaultForm
                   characteristic={false}
                   leftColumnName="Propriedades de payloads Nexaas"
+                  infoLeftColumnName=""
                   centerColumnName="Catálogo ListMe"
+                  infoCenterColumnName=""
                   rightColumnName="Campo ListMe"
+                  infoRightColumnName="Refere-se à coluna do catálogo selecionado da ListMe"
                   dataForm={currentField}
                   valueColLeft={headerSelectValue}
                   payloadToFinish={payloadToFinish}

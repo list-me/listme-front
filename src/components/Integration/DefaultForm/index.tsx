@@ -16,6 +16,7 @@ import DefaultFormLine from "./components/DefaultFormLine";
 import Topic from "./components/Topic";
 import { IDataToEdit } from "../../../context/IntegrationContext/IntegrationContext";
 import NewFeature from "../NewFeature";
+import InfoAlert from "../../InfoAlert";
 
 function DefaultForm({
   leftColumnName,
@@ -28,7 +29,13 @@ function DefaultForm({
   done,
   dataToEdit,
   characteristic,
+  infoLeftColumnName,
+  infoCenterColumnName,
+  infoRightColumnName,
 }: {
+  infoLeftColumnName: string;
+  infoCenterColumnName: string;
+  infoRightColumnName: string;
   characteristic: boolean;
   dataToEdit: IDataToEdit | IDataToEdit[];
   done: boolean;
@@ -50,7 +57,11 @@ function DefaultForm({
   const location = useLocation();
   const pathnameSplited = location.pathname.split("/");
   const path = pathnameSplited[2];
-  const arrayColumns = [leftColumnName, centerColumnName, rightColumnName];
+  const arrayColumns = [
+    { info: infoLeftColumnName, text: leftColumnName },
+    { info: infoCenterColumnName, text: centerColumnName },
+    { info: infoRightColumnName, text: rightColumnName },
+  ];
   const { payload } = dataForm;
 
   const [currentPayload, setCurrentPayload] = useState<IPayload[]>([]);
@@ -106,8 +117,13 @@ function DefaultForm({
     <ContainerDefaultForm>
       <ContainerTitlesDefaultForm>
         {arrayColumns.map((columnName) => (
-          <ColumnsDefaultForm key={columnName}>
-            <TitleColumn>{columnName}</TitleColumn>
+          <ColumnsDefaultForm key={columnName.text}>
+            {columnName.info ? (
+              <InfoAlert title="" content={columnName.info} toRight />
+            ) : (
+              <></>
+            )}
+            <TitleColumn>{columnName.text}</TitleColumn>
           </ColumnsDefaultForm>
         ))}
       </ContainerTitlesDefaultForm>
