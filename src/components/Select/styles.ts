@@ -82,6 +82,11 @@ export const customStyles = ({ small }: { small?: boolean }): Styles => ({
     "&:disabled": {
       background: "none",
     },
+    path: {
+      stroke: state.isSelected
+        ? themeStyle.colors.primary
+        : themeStyle.colors.grayscale.primary,
+    },
     "&:hover": {
       backgroundColor:
         (state.isSelected || state.isFocused) &&
