@@ -54,6 +54,7 @@ function DefaultFormIntegration(): JSX.Element {
     valueHomologApi,
     currentProvider,
     mode,
+    setMode,
   } = useIntegration();
 
   const location = useLocation();
@@ -277,7 +278,8 @@ function DefaultFormIntegration(): JSX.Element {
       sandbox_key: valueHomologApi,
       environment: value,
       custom_configs: {
-        organization_id: currentProvider.config.custom_configs.organization_id,
+        organization_id:
+          currentProvider?.config?.custom_configs?.organization_id,
       },
       status: currentProvider.config.status,
     };
@@ -380,6 +382,7 @@ function DefaultFormIntegration(): JSX.Element {
                 setMenuActivated={setMenuActivated}
                 integrationId={integrationId}
                 mode={mode}
+                setMode={setMode}
               />
 
               <HeaderSelect

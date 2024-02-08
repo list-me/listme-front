@@ -78,13 +78,6 @@ function FeatureForms({
     >
   >;
 }): JSX.Element {
-  const funcionDone = () => {
-    const isDone = payloadsToFinish.every((payload, index) => {
-      return typeof headerSelectValues[index] !== "undefined";
-    });
-    return isDone;
-  };
-
   return (
     <>
       {payloadsToFinish
@@ -201,7 +194,7 @@ function FeatureForms({
           }}
           onSave={onSave}
           done={done}
-          isDisabled={!funcionDone()}
+          isDisabled={done}
         />
       </>
     </>

@@ -12,12 +12,14 @@ function InlineMenu({
   setMenuActivated,
   integrationId,
   mode,
+  setMode,
 }: {
   menus: { value: string; label: string; status: "undone" | "done" | "" }[];
   menuActivated: string;
   setMenuActivated: React.Dispatch<React.SetStateAction<any>>;
   integrationId: string | null;
   mode: "editing" | "registration" | null;
+  setMode: React.Dispatch<React.SetStateAction<"editing" | "registration">>;
 }): JSX.Element {
   const navigate = useNavigate();
 
@@ -46,8 +48,12 @@ function InlineMenu({
                 setMenuActivated(menu.value);
               }
             } else setMenuActivated(menu.value);
+            if (menu.status && menu.status === "done") {
+              setMode("editing");
+            } else {
+              setMode("registration");
+            }
           }}
-          disabled={mode === "registration" && menu.status === "done"}
         >
           {menu.status === "undone" && <UndoneIcon />}
           {menu.status === "done" && <DoneIcon />}

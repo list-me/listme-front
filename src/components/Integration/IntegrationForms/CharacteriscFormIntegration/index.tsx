@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { SetStateAction, useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import TemplateDefault from "../../../TemplateDefault";
@@ -41,6 +41,7 @@ function CharacteriscFormIntegration(): JSX.Element {
     valueHomologApi,
     currentProvider,
     mode,
+    setMode,
   } = useIntegration();
 
   const location = useLocation();
@@ -394,7 +395,8 @@ function CharacteriscFormIntegration(): JSX.Element {
       sandbox_key: valueHomologApi,
       environment: value,
       custom_configs: {
-        organization_id: currentProvider.config.custom_configs.organization_id,
+        organization_id:
+          currentProvider?.config?.custom_configs?.organization_id,
       },
       status: currentProvider.config.status,
     };
@@ -450,6 +452,7 @@ function CharacteriscFormIntegration(): JSX.Element {
                 setMenuActivated={setMenuActivated}
                 integrationId={integrationId}
                 mode={mode}
+                setMode={setMode}
               />
               <CharacteristicTypeSelector
                 value={characteristicsType[0]}
