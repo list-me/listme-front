@@ -329,14 +329,20 @@ function CharacteriscFormIntegration(): JSX.Element {
     });
     const onSuccess = (): void => {
       toast.success(
-        `Configuração de ${Menus[menuActivated]} realizado(a) com sucesso.`,
+        `Configuração de ${Menus[menuActivated]} ${
+          mode === "editing" ? "atualizado(a)" : "realizado(a)"
+        } com sucesso.`,
       );
       updateDone();
     };
 
     const onError = (error: any): void => {
       console.error(error);
-      toast.error(`Ocorreu um erro ao configurar ${Menus[menuActivated]}`);
+      toast.error(
+        `Ocorreu um erro ao ${
+          mode === "editing" ? "atualizar configuração de" : "configurar)"
+        } ${Menus[menuActivated]}`,
+      );
     };
 
     if (isOk.every((result) => result)) {

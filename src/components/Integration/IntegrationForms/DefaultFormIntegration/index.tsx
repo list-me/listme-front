@@ -258,11 +258,17 @@ function DefaultFormIntegration(): JSX.Element {
         await templateRequests.patchIntegration(dataToEdit.id, body);
       else await templateRequests.postIntegration(body);
       toast.success(
-        `Configuração de ${Menus[menuActivated]} realizado(a) com sucesso.`,
+        `Configuração de ${Menus[menuActivated]} ${
+          mode === "editing" ? "atualizado(a)" : "realizado(a)"
+        } com sucesso.`,
       );
       updateDone();
     } catch (err) {
-      toast.error(`Ocorreu um erro ao configurar ${Menus[menuActivated]}`);
+      toast.error(
+        `Ocorreu um erro ao ${
+          mode === "editing" ? "atualizar configuração de" : "configurar)"
+        } ${Menus[menuActivated]}`,
+      );
     }
   };
 
