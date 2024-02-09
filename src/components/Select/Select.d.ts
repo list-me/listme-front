@@ -24,6 +24,8 @@ interface ISelect {
   infoTitle?: string;
   infoContent?: string;
   isDisabled?: boolean;
+  withIcons?: boolean;
+  subLabel?: string;
 }
 
 type Styles = {

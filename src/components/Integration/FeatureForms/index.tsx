@@ -78,13 +78,6 @@ function FeatureForms({
     >
   >;
 }): JSX.Element {
-  const funcionDone = () => {
-    const isDone = payloadsToFinish.every((payload, index) => {
-      return typeof headerSelectValues[index] !== "undefined";
-    });
-    return isDone;
-  };
-
   return (
     <>
       {payloadsToFinish
@@ -139,6 +132,7 @@ function FeatureForms({
                         options={filteredOptions(colOptions[index])}
                         small
                         inline
+                        subLabel="Apenas campos de múltipla escolha"
                         labelText="Selecione a coluna"
                         placeHolder="Selecione..."
                         required
@@ -159,6 +153,9 @@ function FeatureForms({
                     type={characteristicsType[index]}
                     done={done}
                     characteristic
+                    infoLeftColumnName=""
+                    infoCenterColumnName=""
+                    infoRightColumnName="Refere-se à coluna do catálogo selecionado da ListMe"
                   />
                 )}
               </ContainerIntegration>
@@ -197,7 +194,7 @@ function FeatureForms({
           }}
           onSave={onSave}
           done={done}
-          isDisabled={!funcionDone()}
+          isDisabled={done}
         />
       </>
     </>

@@ -54,6 +54,7 @@ function DefaultFormIntegration(): JSX.Element {
     valueHomologApi,
     currentProvider,
     mode,
+    setMode,
   } = useIntegration();
 
   const location = useLocation();
@@ -257,11 +258,17 @@ function DefaultFormIntegration(): JSX.Element {
         await templateRequests.patchIntegration(dataToEdit.id, body);
       else await templateRequests.postIntegration(body);
       toast.success(
-        `Configuração de ${Menus[menuActivated]} realizado(a) com sucesso.`,
+        `Configuração de ${Menus[menuActivated]} ${
+          mode === "editing" ? "atualizado(a)" : "realizado(a)"
+        } com sucesso.`,
       );
       updateDone();
     } catch (err) {
-      toast.error(`Ocorreu um erro ao configurar ${Menus[menuActivated]}`);
+      toast.error(
+        `Ocorreu um erro ao ${
+          mode === "editing" ? "atualizar configuração de" : "configurar)"
+        } ${Menus[menuActivated]}`,
+      );
     }
   };
 
@@ -277,7 +284,8 @@ function DefaultFormIntegration(): JSX.Element {
       sandbox_key: valueHomologApi,
       environment: value,
       custom_configs: {
-        organization_id: currentProvider.config.custom_configs.organization_id,
+        organization_id:
+          currentProvider?.config?.custom_configs?.organization_id,
       },
       status: currentProvider.config.status,
     };
@@ -380,6 +388,7 @@ function DefaultFormIntegration(): JSX.Element {
                 setMenuActivated={setMenuActivated}
                 integrationId={integrationId}
                 mode={mode}
+                setMode={setMode}
               />
 
               <HeaderSelect
@@ -398,8 +407,11 @@ function DefaultFormIntegration(): JSX.Element {
                 <DefaultForm
                   characteristic={false}
                   leftColumnName="Propriedades de payloads Nexaas"
+                  infoLeftColumnName=""
                   centerColumnName="Catálogo ListMe"
+                  infoCenterColumnName=""
                   rightColumnName="Campo ListMe"
+                  infoRightColumnName="Refere-se à coluna do catálogo selecionado da ListMe"
                   dataForm={currentField}
                   valueColLeft={headerSelectValue}
                   payloadToFinish={payloadToFinish}

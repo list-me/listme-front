@@ -194,6 +194,7 @@ function DefaultFormLine({
             setSecondValueSelected(e);
           }}
           options={optionsToView}
+          withIcons
           placeHolder="Selecione..."
           small
           isDisabled={done || !valueColLeft}

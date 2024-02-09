@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import Select from "react-select";
 import { useState } from "react";
 import { ContainerSelect, LabelSelect, customStyles } from "./styles";
@@ -21,6 +22,8 @@ const SelectComponent = ({
   infoTitle,
   infoContent,
   isDisabled,
+  withIcons,
+  subLabel,
 }: ISelect): JSX.Element => {
   const DropdownWithProps = makeDropdownIndicator({ isSearchable });
 
@@ -37,6 +40,8 @@ const SelectComponent = ({
           <div>
             {labelText}
             {required && <span>*</span>}
+            <br />
+            <div className="subLabel">{subLabel}</div>
           </div>
           {(infoTitle || infoContent) && (
             <InfoAlert title={infoTitle || ""} content={infoContent || ""} />
@@ -68,6 +73,21 @@ const SelectComponent = ({
               ? "Nenhum resultado encontrado"
               : "Nenhuma opção disponível"
           }
+        />
+      ) : withIcons ? (
+        <Select
+          isDisabled={isDisabled}
+          isSearchable={false}
+          value={select}
+          onChange={(selectedOption) => onChange(selectedOption as string)}
+          options={options}
+          styles={customStyles({ small }) as any}
+          placeholder={isSearchable && isFocused ? "Digite aqui" : placeHolder}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          components={{
+            Option: CustomOptionWithProps as any,
+          }}
         />
       ) : (
         <Select

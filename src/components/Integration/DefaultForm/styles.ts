@@ -7,6 +7,9 @@ export const ContainerDefaultForm = styled.div`
 `;
 export const ColumnsDefaultForm = styled.div`
   display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 2px;
 `;
 export const ContainerTitlesDefaultForm = styled.div`
   display: grid;
@@ -23,7 +26,7 @@ export const TitleColumn = styled.p`
   font-size: 16px;
   font-weight: 400;
   padding: 16px 0;
-  margin-bottom: 8px;
+  margin: 0;
 `;
 export const KeyText = styled.p`
   color: #212529;
