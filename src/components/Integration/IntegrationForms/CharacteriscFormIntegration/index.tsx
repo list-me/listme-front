@@ -57,6 +57,8 @@ function CharacteriscFormIntegration(): JSX.Element {
   const [headerSelectValues, setHeaderSelectValues] = useState([]);
 
   const [payloadsToFinish, setPayloadsToFinish] = useState<any[][]>([[]]);
+  const [indexInitialPayloadsToFinish, setIndexInitialPayloadsToFinish] =
+    useState<number[]>([]);
 
   const [colOptions, setColOptions] = useState([]);
 
@@ -135,6 +137,12 @@ function CharacteriscFormIntegration(): JSX.Element {
                 itemDataToEdit?.fields?.entity?.payloads,
               );
             });
+            const listIndexPayloads = listPayloadToFinish.map(
+              (_pay, indexPay) => {
+                return indexPay;
+              },
+            );
+            setIndexInitialPayloadsToFinish(listIndexPayloads);
             setPayloadsToFinish(listPayloadToFinish);
           }
         })
@@ -352,27 +360,34 @@ function CharacteriscFormIntegration(): JSX.Element {
       try {
         const requests = payloadsToFinish
           .filter(Boolean)
-          .map(async (payload, index) => {
-            const templateTriggerId = (headerSelectValues as any)[index]?.value
-              ?.id;
+          .map(async (payload, indexPayReq) => {
+            const templateTriggerId = (headerSelectValues as any)[indexPayReq]
+              ?.value?.id;
             const body = {
               fields: {
                 templateConfigId,
                 entity: {
                   templateConfigEntityId,
                   templateTriggerId,
-                  payloads: payloadsToFinish[index],
+                  payloads: payloadsToFinish[indexPayReq],
                 },
               },
               type: "integration",
             };
 
-            if (currentField?.isDone && dataToEdit[index].id)
-              await templateRequests.patchIntegration(
-                dataToEdit[index].id,
-                body,
-              );
-            else await templateRequests.postIntegration(body);
+            if (currentField?.isDone) {
+              if (
+                indexInitialPayloadsToFinish.includes(indexPayReq) &&
+                dataToEdit[indexPayReq].id
+              ) {
+                await templateRequests.patchIntegration(
+                  dataToEdit[indexPayReq].id,
+                  body,
+                );
+              } else {
+                await templateRequests.postIntegration(body);
+              }
+            } else await templateRequests.postIntegration(body);
           });
 
         await Promise.all(requests);
