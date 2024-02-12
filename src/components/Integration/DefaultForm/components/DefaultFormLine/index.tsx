@@ -100,12 +100,13 @@ function DefaultFormLine({
       getCols(valueColLeft?.value?.id);
     }
   }, [valueColLeft?.value?.id]);
+  console.log(item);
 
   const optionsToView = fieldsToOptions.filter((fItem) => {
     return (
       !["file"].includes(fItem?.value?.type) &&
       item.types.includes(fItem?.value?.type) &&
-      fItem.value.required
+      (item.required ? fItem.value.required : true)
     );
   });
 
