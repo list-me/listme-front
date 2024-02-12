@@ -267,6 +267,22 @@ function CharacteriscFormIntegration(): JSX.Element {
     ]);
   };
 
+  const getDataToEdit = useCallback(async (id: string) => {
+    try {
+      const response = await integrationsRequest.getTemplateEntity(id);
+
+      const typelist: any[] = [];
+      response.forEach((res: any) => {
+        typelist.push(res.fields.entity.payloads[0].type);
+      });
+
+      setCharacteristicType(typelist);
+      setDataToEdit(response);
+    } catch (error) {
+      console.error("Error fetching data to edit:", error);
+    }
+  }, []);
+
   const onFinish = async (): Promise<void> => {
     if (currentField) {
       payloadsToFinish.forEach((item, index) => {
@@ -393,6 +409,9 @@ function CharacteriscFormIntegration(): JSX.Element {
         await Promise.all(requests);
 
         onSuccess();
+        if (mode === "editing" && currentField?.id) {
+          getDataToEdit(currentField?.id);
+        }
       } catch (error) {
         onError(error);
       }
@@ -434,18 +453,6 @@ function CharacteriscFormIntegration(): JSX.Element {
   };
 
   useEffect(() => {
-    const getDataToEdit = async (id: string): Promise<void> => {
-      const response = await integrationsRequest.getTemplateEntity(id);
-
-      const typelist: any[] = [];
-      response.forEach((res: any) => {
-        typelist.push(res.fields.entity.payloads[0].type);
-      });
-
-      setCharacteristicType(typelist as any[]);
-
-      setDataToEdit(response);
-    };
     if (mode === "editing" && currentField?.id) {
       getDataToEdit(currentField?.id);
     }
