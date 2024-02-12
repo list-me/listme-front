@@ -252,6 +252,7 @@ export const PersonalModal = ({
       delete item.order;
       delete item.width;
       delete item.hidden;
+      delete item.integrations;
     });
 
     const newFields = templateUpdated.map((item: any) => {
