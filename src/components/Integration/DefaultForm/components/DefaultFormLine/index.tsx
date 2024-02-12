@@ -129,7 +129,8 @@ function DefaultFormLine({
               secondValueSelectedToEdit,
               index,
             );
-            setSecondValueSelected(secondValueSelectedToEdit);
+            if (valueColLeft?.value?.id)
+              setSecondValueSelected(secondValueSelectedToEdit);
           }
         }
       } else {
@@ -150,7 +151,8 @@ function DefaultFormLine({
               secondValueSelectedToEdit,
               index,
             );
-            setSecondValueSelected(secondValueSelectedToEdit);
+            if (valueColLeft?.value?.id)
+              setSecondValueSelected(secondValueSelectedToEdit);
           }
         }
       }

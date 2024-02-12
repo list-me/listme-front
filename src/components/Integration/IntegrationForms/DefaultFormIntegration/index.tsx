@@ -309,29 +309,39 @@ function DefaultFormIntegration(): JSX.Element {
       if (response && response.length > 0 && response[0].fields) {
         const payloadsToFilter = response[0].fields.entity.payloads;
 
-        const payloadsDefault = payloadsToFilter.filter((pItem) => {
-          return !pItem.multiple;
+        const payloadsDefault = payloadsToFilter.map((pItem) => {
+          if (pItem.multiple)
+            return {
+              ...pItem,
+              // @ts-ignore
+              value: pItem.value[0],
+            };
+
+          return pItem;
         });
 
         const newPayloadsMultiple: any[] = [];
-        const payloadsMultiple = payloadsToFilter.filter((pItem) => {
+        const payloadsMultiple = payloadsToFilter.find((pItem) => {
           return pItem.multiple;
         });
 
-        payloadsMultiple.forEach((item: any) => {
-          item.value.forEach((valueItem: any) => {
-            newPayloadsMultiple.push({
-              type: item.type,
-              value: valueItem,
-              multiple: item.multiple,
-              templateConfigPayloadId: item.templateConfigPayloadId,
-            });
-          });
-        });
+        (payloadsMultiple?.value as unknown as [])?.forEach(
+          (multiValue, index) => {
+            if (index > 0) {
+              newPayloadsMultiple.push({
+                type: payloadsMultiple?.type,
+                value: multiValue,
+                multiple: payloadsMultiple?.multiple,
+                templateConfigPayloadId:
+                  payloadsMultiple?.templateConfigPayloadId,
+              });
+            }
+          },
+        );
 
         if (currentField) {
           // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < newPayloadsMultiple.length / 2 - 1; i++) {
+          for (let i = 0; i < newPayloadsMultiple.length; i++) {
             const variants = currentField?.payload.filter((pItem) => {
               return pItem.key.includes("variant_id");
             });
