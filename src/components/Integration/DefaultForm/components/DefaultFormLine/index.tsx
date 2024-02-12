@@ -100,7 +100,6 @@ function DefaultFormLine({
       getCols(valueColLeft?.value?.id);
     }
   }, [valueColLeft?.value?.id]);
-  console.log(item);
 
   const optionsToView = fieldsToOptions.filter((fItem) => {
     return (

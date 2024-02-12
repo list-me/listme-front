@@ -333,13 +333,9 @@ function DefaultFormIntegration(): JSX.Element {
           // eslint-disable-next-line no-plusplus
           for (let i = 0; i < newPayloadsMultiple.length / 2 - 1; i++) {
             const variants = currentField?.payload.filter((pItem) => {
-              return pItem.key.includes("variants");
+              return pItem.key.includes("variant_id");
             });
-            currentField.payload = [
-              ...currentField.payload,
-              variants[0],
-              variants[1],
-            ];
+            currentField.payload = [...currentField.payload, variants[0]];
           }
         }
 
