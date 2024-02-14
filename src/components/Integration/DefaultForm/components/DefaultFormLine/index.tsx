@@ -105,7 +105,7 @@ function DefaultFormLine({
     return (
       !["file"].includes(fItem?.value?.type) &&
       item.types.includes(fItem?.value?.type) &&
-      fItem.value.required
+      (item.required ? fItem.value.required : true)
     );
   });
 
@@ -129,7 +129,8 @@ function DefaultFormLine({
               secondValueSelectedToEdit,
               index,
             );
-            setSecondValueSelected(secondValueSelectedToEdit);
+            if (valueColLeft?.value?.id)
+              setSecondValueSelected(secondValueSelectedToEdit);
           }
         }
       } else {
@@ -150,7 +151,8 @@ function DefaultFormLine({
               secondValueSelectedToEdit,
               index,
             );
-            setSecondValueSelected(secondValueSelectedToEdit);
+            if (valueColLeft?.value?.id)
+              setSecondValueSelected(secondValueSelectedToEdit);
           }
         }
       }

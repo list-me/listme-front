@@ -118,12 +118,12 @@ function DefaultForm({
       <ContainerTitlesDefaultForm>
         {arrayColumns.map((columnName) => (
           <ColumnsDefaultForm key={columnName.text}>
+            <TitleColumn>{columnName.text}</TitleColumn>
             {columnName.text && columnName.info ? (
               <InfoAlert title="" content={columnName.info} toRight lowZindex />
             ) : (
               <></>
             )}
-            <TitleColumn>{columnName.text}</TitleColumn>
           </ColumnsDefaultForm>
         ))}
       </ContainerTitlesDefaultForm>
@@ -150,9 +150,9 @@ function DefaultForm({
             isDisabled={done}
             onClick={() => {
               const variants = payload.filter((pItem) => {
-                return pItem.key.includes("variants");
+                return pItem.key.includes("variant_id");
               });
-              setCurrentPayload([...currentPayload, variants[0], variants[1]]);
+              setCurrentPayload([...currentPayload, variants[0]]);
             }}
             text="Adicionar variante"
           />
