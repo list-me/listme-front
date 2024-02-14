@@ -103,7 +103,6 @@ function customRendererFile(
             optionals.name = _instance.getDataAtRowProp(row, "889711");
           }
 
-          console.log("🚀 ~ td.ondrop= ~ optionals:", optionals);
           const newFiles: Array<string> | void = await uploadImages(
             parsedFiles,
             template.id,
