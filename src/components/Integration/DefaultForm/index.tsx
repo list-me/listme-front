@@ -150,7 +150,7 @@ function DefaultForm({
             isDisabled={done}
             onClick={() => {
               const variants = payload.filter((pItem) => {
-                return pItem.key.includes("variant_id");
+                return pItem.key.includes("feature_id");
               });
               setCurrentPayload([...currentPayload, variants[0]]);
             }}
