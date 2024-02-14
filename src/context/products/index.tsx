@@ -173,6 +173,7 @@ export const ProductContextProvider = ({
 
           let signedUrl: SignedUrlResponse;
           if (isCollectionCompany(companyId)) {
+            console.log("🚀 ~ uploadPromises ~ companyId:", companyId);
             if (!optionals?.brand || !optionals?.name) {
               // eslint-disable-next-line @typescript-eslint/no-throw-literal
               throw "Marca e Nome devem estar preenchidos";

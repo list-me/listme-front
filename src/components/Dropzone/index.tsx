@@ -22,6 +22,8 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   field,
   onCancel,
   onSuccess,
+  companyId,
+  optionals,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -36,7 +38,12 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     if (acceptedFiles.length > 0) {
       setLoading(true);
       try {
-        const newFiles = await uploadImages(acceptedFiles, templateId);
+        const newFiles = await uploadImages(
+          acceptedFiles,
+          templateId,
+          companyId,
+          optionals,
+        );
 
         if (newFiles) {
           setItems((prev) => [...prev, ...newFiles]);

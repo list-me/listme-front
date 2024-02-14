@@ -157,6 +157,7 @@ function DefaultTable({
 
         if (hotRef.current) {
           const { hotInstance } = hotRef.current;
+
           await handleCellChange(
             changes,
             hotInstance,
@@ -300,6 +301,7 @@ function DefaultTable({
       const colType = columns[col]?.type;
       const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
       const previousValue = _instance.getDataAtCell(_row, col);
+
       customRendererFile(
         _instance,
         td,
@@ -957,6 +959,8 @@ function DefaultTable({
                   editorColumnScope={0}
                   templateId={template.id}
                   dataProvider={products}
+                  hotRef={hotRef}
+                  template={template}
                 />
               </HotColumn>
             );

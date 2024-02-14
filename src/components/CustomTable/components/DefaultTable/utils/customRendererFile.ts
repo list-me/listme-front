@@ -93,7 +93,6 @@ function customRendererFile(
 
           if (template.id === "8956d969-d769-4f09-8736-e0b4d73b3e3d") {
             const brand = _instance.getDataAtRowProp(row, "730291");
-
             optionals.brand = brand?.length ? brand[0]?.id : undefined;
             optionals.name = _instance.getDataAtRowProp(row, "474091");
           }
@@ -104,6 +103,7 @@ function customRendererFile(
             optionals.name = _instance.getDataAtRowProp(row, "889711");
           }
 
+          console.log("🚀 ~ td.ondrop= ~ optionals:", optionals);
           const newFiles: Array<string> | void = await uploadImages(
             parsedFiles,
             template.id,

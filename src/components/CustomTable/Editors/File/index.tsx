@@ -30,6 +30,8 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
       currentIndex: 0,
       isOpen: false,
       isLoading: false,
+      companyId: "",
+      optionals: { brand: "", name: "" },
     };
 
     this.containerStyle = {
@@ -69,6 +71,26 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
     cellProperties: any,
   ): void {
     super.prepare(row, col, prop, td, originalValue, cellProperties);
+    const { hotInstance } = this.props.hotRef.current;
+    const { template } = this.props;
+    const companyId = template.company_id;
+
+    const optionals = {
+      brand: "",
+      name: "",
+    };
+    if (template.id === "8956d969-d769-4f09-8736-e0b4d73b3e3d") {
+      const brand = hotInstance.getDataAtRowProp(row, "730291");
+
+      optionals.brand = brand?.length ? brand[0]?.id : undefined;
+      optionals.name = hotInstance.getDataAtRowProp(row, "474091");
+    }
+
+    if (template.id === "a13f5317-d855-4766-9063-c916f4d90b83") {
+      const brand = hotInstance.getDataAtRowProp(row, "956614");
+      optionals.brand = brand?.length ? brand[0]?.id : undefined;
+      optionals.name = hotInstance.getDataAtRowProp(row, "889711");
+    }
 
     const productId = this.props.dataProvider[row][prop]
       ? this.props.dataProvider[row]?.id
@@ -80,6 +102,8 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
       productId,
       row,
       col,
+      companyId,
+      optionals,
     });
   }
 
@@ -124,6 +148,7 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
               value={this.state.newValue}
               field={this.state.field}
               productId={this.state.productId}
+              companyId={this.state.companyId}
               onCancel={() => {
                 this.finishEditing();
                 this.navigateToNextRightCell();
@@ -134,6 +159,7 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
 
                 this.TD.setAttribute("data-new-value", JSON.stringify(images));
               }}
+              optionals={this.state.optionals}
             />
           ) : (
             <></>
