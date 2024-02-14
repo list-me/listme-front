@@ -240,7 +240,14 @@ function DefaultFormIntegration(): JSX.Element {
       return;
     }
 
-    const mergedPayload = mergePayloads(payloadToFinish);
+    let mergedPayload = mergePayloads(payloadToFinish);
+    mergedPayload = mergedPayload.filter((fItem) => {
+      return (
+        fItem.type === "catalog" ||
+        // @ts-ignore
+        (fItem.type === "column" && fItem?.value?.fieldId)
+      );
+    });
 
     const body = {
       fields: {
