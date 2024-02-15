@@ -83,6 +83,7 @@ const handleCellChange: any = async (
 
       try {
         if (!isNew) setIsTableLocked(true);
+        console.log(customChanges[0][3]);
         const response = await handleSave(
           newDataProvider[customChanges[0][0]],
           isNew,
@@ -90,8 +91,8 @@ const handleCellChange: any = async (
           customChanges[0][1] as string,
           type === "radio" ||
             type === "relation" ||
-            type === "relation" ||
-            type === "relation"
+            type === "checked" ||
+            type === "list"
             ? customChanges[0][3][0]
             : (customChanges[0][3] as string),
         );
