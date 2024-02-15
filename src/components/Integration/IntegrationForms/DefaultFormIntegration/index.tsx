@@ -61,7 +61,7 @@ const generatePayloadToFinish = (
   return Array.from({ length: (cField as any)?.payload?.length || 0 }, () => ({
     templateConfigPayloadId: "",
     type: "",
-    multiple: true,
+    multiple: false,
     value: {
       templateId: "",
       fieldId: "",
@@ -258,14 +258,14 @@ function DefaultFormIntegration(): JSX.Element {
       return;
     }
 
-    const mergedPayload = mergePayloads(payloadToFinish);
-    // mergedPayload = mergedPayload.filter((fItem) => {
-    //   return (
-    //     fItem.type === "catalog" ||
-    //     // @ts-ignore
-    //     (fItem.type === "column" && fItem?.value?.fieldId)
-    //   );
-    // });
+    let mergedPayload = mergePayloads(payloadToFinish);
+    mergedPayload = mergedPayload.filter((fItem) => {
+      return (
+        fItem.type === "catalog" ||
+        // @ts-ignore
+        (fItem.type === "column" && fItem?.value?.fieldId)
+      );
+    });
 
     const body = {
       fields: {
@@ -334,16 +334,32 @@ function DefaultFormIntegration(): JSX.Element {
       if (response && response.length > 0 && response[0].fields) {
         const payloadsToFilter = response[0].fields.entity.payloads;
 
-        const payloadsDefault = payloadsToFilter.map((pItem) => {
-          if (pItem.multiple)
+        const payloadsDefault = currentField?.payload
+          .map((currentPayItem) => {
+            const item = payloadsToFilter.find((findItem) => {
+              return findItem.templateConfigPayloadId === currentPayItem.id;
+            });
+            if (item) return item;
             return {
-              ...pItem,
-              // @ts-ignore
-              value: pItem.value[0],
+              templateConfigPayloadId: "",
+              type: "",
+              multiple: false,
+              value: {
+                templateId: "",
+                fieldId: "",
+              },
             };
+          })
+          .map((pItem) => {
+            if (pItem.multiple)
+              return {
+                ...pItem,
+                // @ts-ignore
+                value: pItem.value[0],
+              };
 
-          return pItem;
-        });
+            return pItem;
+          });
 
         const newPayloadsMultiple: any[] = [];
         const payloadsMultiple = payloadsToFilter.find((pItem) => {
@@ -379,7 +395,7 @@ function DefaultFormIntegration(): JSX.Element {
           fields: {
             templateConfigId: response[0].fields.templateConfigId,
             entity: {
-              payloads: [...payloadsDefault, ...newPayloadsMultiple],
+              payloads: [...payloadsDefault!, ...newPayloadsMultiple],
               name: response[0].fields.entity.name,
               templateConfigEntityId:
                 response[0].fields.entity.templateConfigEntityId,
