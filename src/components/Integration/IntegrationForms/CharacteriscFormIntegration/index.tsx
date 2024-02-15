@@ -334,9 +334,6 @@ function CharacteriscFormIntegration(): JSX.Element {
           return typeof elem === "number";
         });
 
-      if (idsRequired?.length === 0) {
-        return false;
-      }
       const notDone = payloadsToFinish[index]?.find((item, fIndex) => {
         if (idsRequired.includes(fIndex)) {
           if (item?.type === "catalog" && !item.value.templateId) return item;

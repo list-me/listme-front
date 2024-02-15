@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import TemplateDefault from "../../../TemplateDefault";
@@ -26,7 +26,10 @@ import { ROUTES } from "../../../../constants/routes";
 import { TitlePage } from "../../../../pages/templates/styles";
 import { IPaginationTemplate } from "../../../../pages/templates/templates";
 import nextMenu from "../../../../pages/companyIntegration/utils/nextMenu";
-import { ITemplatesById } from "../../../../pages/companyIntegration/companyIntegration";
+import {
+  IFieldsByID,
+  ITemplatesById,
+} from "../../../../pages/companyIntegration/companyIntegration";
 import { IDataToEdit } from "../../../../context/IntegrationContext/IntegrationContext";
 
 interface TemplateItem {
@@ -43,6 +46,28 @@ interface TemplateItem {
         fieldId?: string | undefined;
       }[];
 }
+
+const generatePayloadToFinish = (
+  cField: IFieldsByID | undefined,
+): {
+  templateConfigPayloadId: string;
+  type: string;
+  multiple: boolean;
+  value: {
+    templateId: string;
+    fieldId: string;
+  };
+}[] => {
+  return Array.from({ length: (cField as any)?.payload?.length || 0 }, () => ({
+    templateConfigPayloadId: "",
+    type: "",
+    multiple: true,
+    value: {
+      templateId: "",
+      fieldId: "",
+    },
+  }));
+};
 
 function DefaultFormIntegration(): JSX.Element {
   const {
@@ -74,17 +99,9 @@ function DefaultFormIntegration(): JSX.Element {
   const currentField = templatesById?.payloads?.fields.find((item) => {
     return item.endpointPath === `/${path}`;
   });
-  let payloadToFinish = Array.from(
-    { length: (currentField as any)?.payload?.length || 0 },
-    () => ({
-      templateConfigPayloadId: "",
-      type: "",
-      multiple: true,
-      value: {
-        templateId: "",
-        fieldId: "",
-      },
-    }),
+  let payloadToFinish = useMemo(
+    () => generatePayloadToFinish(currentField),
+    [currentField],
   );
 
   const handleGetTemplates = useCallback(
@@ -106,6 +123,7 @@ function DefaultFormIntegration(): JSX.Element {
             setHeaderSelectValue(headerSelectValueToEdit);
             // @ts-ignore
             // eslint-disable-next-line react-hooks/exhaustive-deps
+
             payloadToFinish = dataToEdit?.fields?.entity?.payloads;
           }
         })
@@ -240,14 +258,14 @@ function DefaultFormIntegration(): JSX.Element {
       return;
     }
 
-    let mergedPayload = mergePayloads(payloadToFinish);
-    mergedPayload = mergedPayload.filter((fItem) => {
-      return (
-        fItem.type === "catalog" ||
-        // @ts-ignore
-        (fItem.type === "column" && fItem?.value?.fieldId)
-      );
-    });
+    const mergedPayload = mergePayloads(payloadToFinish);
+    // mergedPayload = mergedPayload.filter((fItem) => {
+    //   return (
+    //     fItem.type === "catalog" ||
+    //     // @ts-ignore
+    //     (fItem.type === "column" && fItem?.value?.fieldId)
+    //   );
+    // });
 
     const body = {
       fields: {

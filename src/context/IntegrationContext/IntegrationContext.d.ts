@@ -69,17 +69,15 @@ export interface IDataToEdit {
     entity: {
       name: string;
       type: string;
-      payloads: [
-        {
-          multiple: boolean;
-          type: string;
-          value: {
-            fieldId?: string;
-            templateId: string;
-          };
-          templateConfigPayloadId: string;
-        },
-      ];
+      payloads: {
+        multiple: boolean;
+        type: string;
+        value: {
+          fieldId?: string;
+          templateId: string;
+        };
+        templateConfigPayloadId: string;
+      }[];
       templateTriggerId: string;
       templateConfigEntityId: string;
     };
