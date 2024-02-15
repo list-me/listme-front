@@ -88,7 +88,10 @@ const handleCellChange: any = async (
           isNew,
           newDataProvider[customChanges[0][0]]?.id,
           customChanges[0][1] as string,
-          type === "radio" || type === "relation" || "checked" || "list"
+          type === "radio" ||
+            type === "relation" ||
+            type === "relation" ||
+            type === "relation"
             ? customChanges[0][3][0]
             : (customChanges[0][3] as string),
         );
