@@ -28,7 +28,6 @@ function DefaultFormLine({
   valueColLeft,
   changePayloadToFinish,
   index,
-
   done,
   dataToEdit,
   characteristic,
@@ -116,14 +115,16 @@ function DefaultFormLine({
       if (!characteristic) {
         const copyDataToEdit: IDataToEdit = dataToEdit as IDataToEdit;
         const currentPayloads = copyDataToEdit?.fields?.entity?.payloads;
+
         if (currentPayloads?.length > 0) {
           const currentItem = currentPayloads?.find((fItem, fIndex) => {
             return +fIndex === +index;
           });
           if (currentItem && !secondValueSelected) {
-            const secondValueSelectedToEdit = optionsToView.find(
+            const secondValueSelectedToEdit = optionsToView?.find(
               (opt) => opt.value.id === currentItem.value.fieldId,
             );
+
             changePayloadToFinish(
               valueColLeft,
               secondValueSelectedToEdit,

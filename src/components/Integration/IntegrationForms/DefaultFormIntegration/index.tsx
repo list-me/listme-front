@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import TemplateDefault from "../../../TemplateDefault";
@@ -26,7 +26,10 @@ import { ROUTES } from "../../../../constants/routes";
 import { TitlePage } from "../../../../pages/templates/styles";
 import { IPaginationTemplate } from "../../../../pages/templates/templates";
 import nextMenu from "../../../../pages/companyIntegration/utils/nextMenu";
-import { ITemplatesById } from "../../../../pages/companyIntegration/companyIntegration";
+import {
+  IFieldsByID,
+  ITemplatesById,
+} from "../../../../pages/companyIntegration/companyIntegration";
 import { IDataToEdit } from "../../../../context/IntegrationContext/IntegrationContext";
 
 interface TemplateItem {
@@ -43,6 +46,28 @@ interface TemplateItem {
         fieldId?: string | undefined;
       }[];
 }
+
+const generatePayloadToFinish = (
+  cField: IFieldsByID | undefined,
+): {
+  templateConfigPayloadId: string;
+  type: string;
+  multiple: boolean;
+  value: {
+    templateId: string;
+    fieldId: string;
+  };
+}[] => {
+  return Array.from({ length: (cField as any)?.payload?.length || 0 }, () => ({
+    templateConfigPayloadId: "",
+    type: "",
+    multiple: false,
+    value: {
+      templateId: "",
+      fieldId: "",
+    },
+  }));
+};
 
 function DefaultFormIntegration(): JSX.Element {
   const {
@@ -74,17 +99,9 @@ function DefaultFormIntegration(): JSX.Element {
   const currentField = templatesById?.payloads?.fields.find((item) => {
     return item.endpointPath === `/${path}`;
   });
-  let payloadToFinish = Array.from(
-    { length: (currentField as any)?.payload?.length || 0 },
-    () => ({
-      templateConfigPayloadId: "",
-      type: "",
-      multiple: true,
-      value: {
-        templateId: "",
-        fieldId: "",
-      },
-    }),
+  let payloadToFinish = useMemo(
+    () => generatePayloadToFinish(currentField),
+    [currentField],
   );
 
   const handleGetTemplates = useCallback(
@@ -106,6 +123,7 @@ function DefaultFormIntegration(): JSX.Element {
             setHeaderSelectValue(headerSelectValueToEdit);
             // @ts-ignore
             // eslint-disable-next-line react-hooks/exhaustive-deps
+
             payloadToFinish = dataToEdit?.fields?.entity?.payloads;
           }
         })
@@ -316,16 +334,32 @@ function DefaultFormIntegration(): JSX.Element {
       if (response && response.length > 0 && response[0].fields) {
         const payloadsToFilter = response[0].fields.entity.payloads;
 
-        const payloadsDefault = payloadsToFilter.map((pItem) => {
-          if (pItem.multiple)
+        const payloadsDefault = currentField?.payload
+          .map((currentPayItem) => {
+            const item = payloadsToFilter.find((findItem) => {
+              return findItem.templateConfigPayloadId === currentPayItem.id;
+            });
+            if (item) return item;
             return {
-              ...pItem,
-              // @ts-ignore
-              value: pItem.value[0],
+              templateConfigPayloadId: "",
+              type: "",
+              multiple: false,
+              value: {
+                templateId: "",
+                fieldId: "",
+              },
             };
+          })
+          .map((pItem) => {
+            if (pItem.multiple)
+              return {
+                ...pItem,
+                // @ts-ignore
+                value: pItem.value[0],
+              };
 
-          return pItem;
-        });
+            return pItem;
+          });
 
         const newPayloadsMultiple: any[] = [];
         const payloadsMultiple = payloadsToFilter.find((pItem) => {
@@ -361,7 +395,7 @@ function DefaultFormIntegration(): JSX.Element {
           fields: {
             templateConfigId: response[0].fields.templateConfigId,
             entity: {
-              payloads: [...payloadsDefault, ...newPayloadsMultiple],
+              payloads: [...payloadsDefault!, ...newPayloadsMultiple],
               name: response[0].fields.entity.name,
               templateConfigEntityId:
                 response[0].fields.entity.templateConfigEntityId,
