@@ -41,9 +41,16 @@ export const fileRequests = {
     return response.data;
   },
   uploadFile: async (file: File, url: string): Promise<void> => {
-    await axios.put(url, file).catch((error) => {
+    try {
+      const contentType = file.type;
+      const headers = {
+        "Content-Type": contentType,
+      };
+
+      await axios.put(url, file, { headers });
+    } catch (error) {
       toast.error("Ocorreu um erro ao realizar o upload de uma das imagens");
-    });
+    }
   },
   dropFile: async (
     file: string,
@@ -65,6 +72,7 @@ export const fileRequests = {
     await api.patch(`file/delete`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "image/*",
       },
     });
   },

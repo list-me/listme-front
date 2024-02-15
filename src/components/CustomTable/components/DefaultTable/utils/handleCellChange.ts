@@ -88,7 +88,9 @@ const handleCellChange: any = async (
           isNew,
           newDataProvider[customChanges[0][0]]?.id,
           customChanges[0][1] as string,
-          customChanges[0][3] as string,
+          type === "radio"
+            ? customChanges[0][3][0]
+            : (customChanges[0][3] as string),
         );
         if (
           response.id &&

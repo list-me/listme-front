@@ -240,7 +240,14 @@ function DefaultFormIntegration(): JSX.Element {
       return;
     }
 
-    const mergedPayload = mergePayloads(payloadToFinish);
+    let mergedPayload = mergePayloads(payloadToFinish);
+    mergedPayload = mergedPayload.filter((fItem) => {
+      return (
+        fItem.type === "catalog" ||
+        // @ts-ignore
+        (fItem.type === "column" && fItem?.value?.fieldId)
+      );
+    });
 
     const body = {
       fields: {
@@ -343,7 +350,7 @@ function DefaultFormIntegration(): JSX.Element {
           // eslint-disable-next-line no-plusplus
           for (let i = 0; i < newPayloadsMultiple.length; i++) {
             const variants = currentField?.payload.filter((pItem) => {
-              return pItem.key.includes("variant_id");
+              return pItem.key.includes("feature_id");
             });
             currentField.payload = [...currentField.payload, variants[0]];
           }

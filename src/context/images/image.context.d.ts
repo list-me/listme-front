@@ -3,7 +3,12 @@ interface ImageContextProps {
 }
 
 interface ImageContext {
-  uploadImages: (files: File[], bucket_url: string) => Promise<string[] | void>;
+  uploadImages: (
+    files: File[],
+    bucket_url: string,
+    companyId: string,
+    optionals?: { brand?: string; name?: string },
+  ) => Promise<string[] | void>;
   isDragActive: boolean;
   handleActiveDrag: () => void;
 }
