@@ -450,13 +450,14 @@ export const ProductContextProvider = ({
           }
           return [{ value: prevValue || "", destroy: true }];
         };
-
         const response = await productRequests.patchProductValue({
-          value:
-            (newValueToPatch() as any)[0]?.destroy ||
-            typeof newValueToPatch()[0] === "string"
-              ? newValueToPatch()
-              : (newValueToPatch()[0] as any),
+          // eslint-disable-next-line no-nested-ternary
+          value: newValueToPatch()[0].id
+            ? newValueToPatch()
+            : (newValueToPatch() as any)[0]?.destroy ||
+              typeof newValueToPatch()[0] === "string"
+            ? newValueToPatch()
+            : (newValueToPatch()[0] as any),
           productId,
           fieldId,
         });
