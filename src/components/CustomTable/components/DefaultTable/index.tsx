@@ -157,7 +157,6 @@ function DefaultTable({
 
         if (hotRef.current) {
           const { hotInstance } = hotRef.current;
-
           await handleCellChange(
             changes,
             hotInstance,
