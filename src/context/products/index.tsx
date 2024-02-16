@@ -437,6 +437,17 @@ export const ProductContextProvider = ({
           if (newValue) {
             return [newValue || ""];
           }
+          if (typeof prevValue === "string") {
+            return [{ value: prevValue || "", destroy: true }];
+          }
+          if (typeof prevValue !== "string" && (prevValue as any).length > 0) {
+            const listToValue = (prevValue as any).map(
+              (itemPrevValue: string) => {
+                return { value: itemPrevValue || "", destroy: true };
+              },
+            );
+            return listToValue;
+          }
           return [{ value: prevValue || "", destroy: true }];
         };
 
