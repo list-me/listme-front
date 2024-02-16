@@ -441,7 +441,11 @@ export const ProductContextProvider = ({
         };
 
         const response = await productRequests.patchProductValue({
-          value: newValueToPatch() as any,
+          value:
+            (newValueToPatch() as any)[0]?.destroy ||
+            typeof newValueToPatch()[0] === "string"
+              ? newValueToPatch()
+              : (newValueToPatch()[0] as any),
           productId,
           fieldId,
         });
