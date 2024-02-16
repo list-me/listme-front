@@ -67,6 +67,7 @@ export const fileRequests = {
       file,
       productId,
       field,
+      destroy: true,
     };
 
     await api.patch(`file/delete`, data, {

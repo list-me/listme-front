@@ -14,6 +14,7 @@ const handleCellChange: any = async (
     productId: string,
     fieldId: string,
     newValue: string,
+    prevValue?: string,
   ) => Promise<any>,
   dataProvider: any[],
   setDataProvider: React.Dispatch<React.SetStateAction<any[]>>,
@@ -37,6 +38,7 @@ const handleCellChange: any = async (
           dataProvider[customChanges[0][0]]?.id,
           customChanges[0][1] as string,
           customChanges[0][3] as string,
+          previousCellValue as string,
         );
         if (
           response.id &&
@@ -83,7 +85,6 @@ const handleCellChange: any = async (
 
       try {
         if (!isNew) setIsTableLocked(true);
-        console.log(customChanges[0][3]);
         const response = await handleSave(
           newDataProvider[customChanges[0][0]],
           isNew,
@@ -95,6 +96,7 @@ const handleCellChange: any = async (
             type === "list"
             ? customChanges[0][3][0]
             : (customChanges[0][3] as string),
+          previousCellValue as string,
         );
         if (
           response.id &&
