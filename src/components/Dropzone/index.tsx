@@ -14,6 +14,7 @@ import { fileRequests } from "../../services/apis/requests/file";
 import Modal from "../Modal";
 import { Loading } from "../Loading";
 import { getFilenameFromUrl } from "../../utils";
+import { productRequests } from "../../services/apis/requests/product";
 
 const Dropzone: React.FC<DropzoneRendererProps> = ({
   value,
@@ -62,6 +63,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   const handleRemove = async (
     imageUrl: string,
     event: React.MouseEvent,
+    items: any[],
   ): Promise<void> => {
     event.stopPropagation();
 
@@ -74,22 +76,37 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         productId,
         field,
       );
-
       const newValue = items.filter((item) => {
         if (item !== imageUrl) {
           return item;
         }
       });
-
       if (newValue.length) {
         setItems(newValue);
       } else {
         setItems([]);
       }
-
       onSuccess(newValue);
-
       setImageLoading(false);
+
+      const moreLinks = items.filter((fItem) => {
+        return fItem !== imageUrl;
+      });
+      const newValueToPatch = {
+        value: [
+          {
+            value: imageUrl,
+            destroy: true,
+          },
+          ...moreLinks,
+        ],
+      };
+
+      await productRequests.patchProductValue({
+        value: newValueToPatch.value as any,
+        productId,
+        fieldId: field,
+      });
     } catch (error) {
       setImageLoading(false);
       toast.error(
@@ -234,7 +251,9 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                           )}
                         </Image>
                         {!imageLoading ? (
-                          <CloseIcon onClick={(e) => handleRemove(item, e)} />
+                          <CloseIcon
+                            onClick={(e) => handleRemove(item, e, items)}
+                          />
                         ) : (
                           <></>
                         )}
