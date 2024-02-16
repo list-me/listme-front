@@ -14,6 +14,7 @@ const handleCellChange: any = async (
     productId: string,
     fieldId: string,
     newValue: string,
+    prevValue?: string,
   ) => Promise<any>,
   dataProvider: any[],
   setDataProvider: React.Dispatch<React.SetStateAction<any[]>>,
@@ -29,6 +30,19 @@ const handleCellChange: any = async (
     ) {
       // eslint-disable-next-line prefer-destructuring
       previousCellValue = customChanges[0][2];
+
+      const newValue = () => {
+        if (
+          type === "radio" ||
+          type === "relation" ||
+          type === "checked" ||
+          type === "list"
+        ) {
+          return customChanges[0][3][0];
+        }
+
+        return customChanges[0][3];
+      };
       try {
         if (!isNew) setIsTableLocked(true);
         const response = await handleSave(
@@ -36,7 +50,8 @@ const handleCellChange: any = async (
           isNew,
           dataProvider[customChanges[0][0]]?.id,
           customChanges[0][1] as string,
-          customChanges[0][3] as string,
+          newValue(),
+          previousCellValue as string,
         );
         if (
           response.id &&
@@ -83,18 +98,25 @@ const handleCellChange: any = async (
 
       try {
         if (!isNew) setIsTableLocked(true);
-        console.log(customChanges[0][3]);
+        const newValue = () => {
+          if (
+            type === "radio" ||
+            type === "relation" ||
+            type === "checked" ||
+            type === "list" ||
+            type === "file"
+          ) {
+            return customChanges[0][3][0];
+          }
+          return customChanges[0][3];
+        };
         const response = await handleSave(
           newDataProvider[customChanges[0][0]],
           isNew,
           newDataProvider[customChanges[0][0]]?.id,
           customChanges[0][1] as string,
-          type === "radio" ||
-            type === "relation" ||
-            type === "checked" ||
-            type === "list"
-            ? customChanges[0][3][0]
-            : (customChanges[0][3] as string),
+          newValue(),
+          previousCellValue as string,
         );
         if (
           response.id &&

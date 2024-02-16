@@ -72,7 +72,6 @@ export const fileRequests = {
     await api.patch(`file/delete`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "image/*",
       },
     });
   },

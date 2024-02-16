@@ -46,6 +46,7 @@ interface ITypeProductContext {
     productId: string,
     fieldId: string,
     newValue: string,
+    prevValue?: string,
   ) => Promise<any>;
   editing: boolean;
   setEditing: Function;
@@ -427,12 +428,35 @@ export const ProductContextProvider = ({
     productId: string,
     fieldId: string,
     newValue: string,
+    prevValue?: string,
   ): Promise<any> => {
     try {
       const fields = buildProduct(value);
       if (isNew) {
+        const newValueToPatch = () => {
+          if (newValue) {
+            return [newValue || ""];
+          }
+          if (typeof prevValue === "string") {
+            return [{ value: prevValue || "", destroy: true }];
+          }
+          if (typeof prevValue !== "string" && (prevValue as any).length > 0) {
+            const listToValue = (prevValue as any).map(
+              (itemPrevValue: string) => {
+                return { value: itemPrevValue || "", destroy: true };
+              },
+            );
+            return listToValue;
+          }
+          return [{ value: prevValue || "", destroy: true }];
+        };
+
         const response = await productRequests.patchProductValue({
-          value: [newValue],
+          value:
+            (newValueToPatch() as any)[0]?.destroy ||
+            typeof newValueToPatch()[0] === "string"
+              ? newValueToPatch()
+              : (newValueToPatch()[0] as any),
           productId,
           fieldId,
         });

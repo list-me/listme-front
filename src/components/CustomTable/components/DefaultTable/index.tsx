@@ -131,7 +131,10 @@ function DefaultTable({
       }
 
       if (currentColumn?.type === "decimal") {
-        if (!/^-?\d*\.?\d*$/.test(newValue.replace(",", "."))) {
+        if (
+          newValue !== null &&
+          !/^-?\d*\.?\d*$/.test(newValue?.replace(",", "."))
+        ) {
           toast.warn(
             `O valor deve ser numérico para a coluna ${currentColumn?.title}`,
           );
