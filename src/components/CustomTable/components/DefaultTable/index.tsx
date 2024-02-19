@@ -538,10 +538,15 @@ function DefaultTable({
     setIsOpenedParentIds([]);
     const idsToHiddens = products
       .map((itemProduct, indexProducts) => {
-        if (itemProduct?.parent_id) return indexProducts;
+        if (
+          itemProduct?.parent_id !== undefined &&
+          itemProduct.parent_id !== null
+        ) {
+          return indexProducts;
+        }
         return undefined;
       })
-      .filter(Boolean);
+      .filter((index) => index !== undefined);
     setHiddenRows(idsToHiddens as number[]);
   }, [products]);
 
