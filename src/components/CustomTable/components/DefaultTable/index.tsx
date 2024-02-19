@@ -531,24 +531,8 @@ function DefaultTable({
   );
 
   const [hiddenRows, setHiddenRows] = useState<number[]>([]);
+  console.log("🚀 ~ hiddenRows:", hiddenRows);
   const [isOpenedParentIds, setIsOpenedParentIds] = useState<string[]>([]);
-
-  useEffect(() => {
-    setHiddenRows([]);
-    setIsOpenedParentIds([]);
-    const idsToHiddens = products
-      .map((itemProduct, indexProducts) => {
-        if (
-          itemProduct?.parent_id !== undefined &&
-          itemProduct.parent_id !== null
-        ) {
-          return indexProducts;
-        }
-        return undefined;
-      })
-      .filter((index) => index !== undefined);
-    setHiddenRows(idsToHiddens as number[]);
-  }, [products]);
 
   const handleRowHeaderClick = useCallback(
     (currentParentId: string, currentProducts: IProductToTable[]): void => {
@@ -871,7 +855,8 @@ function DefaultTable({
                 const selectedRow = selection[0].start.row;
                 const selectedProduct = products[selectedRow];
                 if (selectedProduct && !selectedProduct.parent_id) {
-                  clearSubItensMode();
+                  setChildsSelectedIds([]);
+                  setRowsSelectedPosition([]);
                   setSubItemsMode("add");
                   setParentId(selectedProduct.id as any);
                 } else {
