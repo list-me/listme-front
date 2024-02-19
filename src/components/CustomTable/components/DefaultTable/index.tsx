@@ -858,7 +858,7 @@ function DefaultTable({
             TD.style.display = "none";
           }
           if (products[row].parent_id) {
-            TD.style.background = "#DEE2E6";
+            TD.style.background = "#F1F3F5";
           }
         }}
         contextMenu={{
