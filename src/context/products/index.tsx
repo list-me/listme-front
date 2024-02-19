@@ -277,7 +277,7 @@ export const ProductContextProvider = ({
             id: item.id,
             created_at: item.created_at,
             parent_id: item.parent_id,
-            is_parent: item.is_parent,
+            is_parent: item?.is_parent,
           };
 
           productFields.push(toProductFields);

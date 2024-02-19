@@ -531,29 +531,40 @@ function DefaultTable({
   );
 
   const [hiddenRows, setHiddenRows] = useState<number[]>([]);
-  const [isOpenedParentId, setIsOpenedParentId] = useState<string>("");
+  const [isOpenedParentIds, setIsOpenedParentIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    setHiddenRows([]);
+    setIsOpenedParentIds([]);
+    const idsToHiddens = products
+      .map((itemProduct, indexProducts) => {
+        if (itemProduct?.parent_id) return indexProducts;
+        return undefined;
+      })
+      .filter(Boolean);
+    setHiddenRows(idsToHiddens as number[]);
+  }, [products]);
 
   const handleRowHeaderClick = useCallback(
     (currentParentId: string, currentProducts: IProductToTable[]): void => {
-      if (isOpenedParentId !== currentParentId) {
-        const childsWithIndex = currentProducts.map((product, indexProduct) => {
-          return { item: product, index: indexProduct };
-        });
+      const isOpened = isOpenedParentIds.includes(currentParentId);
+      const childIndices = currentProducts
+        .map((product, index) => ({ item: product, index }))
+        .filter(({ item }) => item?.parent_id === currentParentId)
+        .map(({ index }) => index);
 
-        const childsFiltereds = childsWithIndex.filter((fitem) => {
-          return fitem.item.parent_id === currentParentId;
-        });
-        const childsId = childsFiltereds.map((lastItem) => lastItem.index);
-
-        setIsOpenedParentId(currentParentId);
-
-        setHiddenRows(childsId);
-      } else {
-        setIsOpenedParentId("");
-        setHiddenRows([]);
-      }
+      setIsOpenedParentIds(
+        isOpened
+          ? isOpenedParentIds.filter((id) => id !== currentParentId)
+          : [...isOpenedParentIds, currentParentId],
+      );
+      setHiddenRows(
+        isOpened
+          ? hiddenRows.filter((rowIndex) => !childIndices.includes(rowIndex))
+          : [...hiddenRows, ...childIndices],
+      );
     },
-    [isOpenedParentId],
+    [hiddenRows, isOpenedParentIds],
   );
 
   const styledRow = useCallback(
@@ -562,7 +573,8 @@ function DefaultTable({
       const onClickHandler = (currentParentId: string): void => {
         handleRowHeaderClick(currentParentId, products);
       };
-      const opened = isOpenedParentId === currentProduct.id;
+
+      const opened = isOpenedParentIds.includes(currentProduct?.id);
       TH.innerHTML = getStyleRowHeader(
         row,
         currentProduct,
@@ -570,7 +582,7 @@ function DefaultTable({
         opened,
       );
     },
-    [handleRowHeaderClick, products],
+    [handleRowHeaderClick],
   );
 
   const [dropDownStatus, setDropDownStatus] = useState<IDropDownStatus>({

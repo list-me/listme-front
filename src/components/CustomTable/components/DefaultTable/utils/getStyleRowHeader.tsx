@@ -21,7 +21,7 @@ const getStyleRowHeader = (
   onClickHandler: (currentParentId: string) => void,
   opened: boolean,
 ): string => {
-  const element = item.is_parent
+  const element = item?.is_parent
     ? `
     <div>
   <button style="${BUTTON_STYLES}" class="clickable-row" onclick="window.yourOnClickHandler('${
