@@ -342,6 +342,33 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     bucket_url: "",
   };
 
+  function reorganizeArray(array: IProductToTable[]): IProductToTable[] {
+    const children: IProductToTable[] = [];
+
+    array.forEach((obj) => {
+      if (!obj.is_parent && obj.parent_id !== null) {
+        children.push(obj);
+      }
+    });
+    const newArray: IProductToTable[] = [];
+
+    array.forEach((obj) => {
+      if (obj.is_parent && obj.parent_id === null) {
+        newArray.push(obj);
+        const parentChildren = children.filter(
+          (child) => child.parent_id === obj.id,
+        );
+        newArray.push(...parentChildren);
+      } else if (!obj.is_parent && obj.parent_id !== null) {
+        return null;
+      } else {
+        newArray.push(obj);
+      }
+    });
+
+    return newArray;
+  }
+
   return (
     <>
       <Confirmation
@@ -380,7 +407,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             key={colHeaders.join()}
             hotRef={hotRef}
             setColHeaders={setColHeaders}
-            products={products}
+            products={reorganizeArray(products)}
             setProducts={setProducts}
             handleDelete={handleDelete}
             handleSave={handleSave}
