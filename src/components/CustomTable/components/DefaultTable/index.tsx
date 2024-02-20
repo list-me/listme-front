@@ -749,6 +749,7 @@ function DefaultTable({
       )}
 
       <HotTable
+        key={parentId}
         nestedRows
         bindRowsWithHeaders
         className="hot-table"
