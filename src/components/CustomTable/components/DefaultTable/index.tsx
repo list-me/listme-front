@@ -459,33 +459,7 @@ function DefaultTable({
     },
     [],
   );
-  // const customRendererBoolean = useCallback(
-  //   (
-  //     instance: Handsontable,
-  //     td: HTMLTableCellElement,
-  //     row: number,
-  //     col: number,
-  //     prop: string | number,
-  //     value: any,
-  //   ): void => {
-  //     const handleChange = (checked: boolean): void => {
-  //       const newValue = [`${checked}`];
 
-  //       instance.setDataAtCell(row, col, newValue);
-  //     };
-
-  //     ReactDOM.render(
-  //       <div className="boolean-switch-cell">
-  //         <Switch
-  //           checked={value?.length > 0 && value[0] === "true"}
-  //           onChange={handleChange}
-  //         />
-  //       </div>,
-  //       td,
-  //     );
-  //   },
-  //   [],
-  // );
   const customRendererBoolean = useCallback(
     (
       instance: Handsontable,
