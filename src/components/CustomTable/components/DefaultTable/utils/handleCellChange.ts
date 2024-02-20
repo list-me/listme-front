@@ -32,12 +32,7 @@ const handleCellChange: any = async (
       previousCellValue = customChanges[0][2];
 
       const newValue = () => {
-        if (
-          type === "radio" ||
-          type === "relation" ||
-          type === "checked" ||
-          type === "list"
-        ) {
+        if (type === "radio" || type === "checked" || type === "list") {
           return customChanges[0][3][0];
         }
 
@@ -101,7 +96,6 @@ const handleCellChange: any = async (
         const newValue = () => {
           if (
             type === "radio" ||
-            type === "relation" ||
             type === "checked" ||
             type === "list" ||
             type === "file"
@@ -110,6 +104,7 @@ const handleCellChange: any = async (
           }
           return customChanges[0][3];
         };
+        console.log(newValue(), 2);
         const response = await handleSave(
           newDataProvider[customChanges[0][0]],
           isNew,

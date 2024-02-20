@@ -460,18 +460,39 @@ export const ProductContextProvider = ({
       const fields = buildProduct(value);
       if (isNew) {
         const newValueToPatch = () => {
-          if (newValue) {
+          if (newValue && !prevValue) {
             return [newValue || ""];
           }
           if (typeof prevValue === "string") {
             return [{ value: prevValue || "", destroy: true }];
           }
           if (typeof prevValue !== "string" && (prevValue as any).length > 0) {
-            const listToValue = (prevValue as any).map(
-              (itemPrevValue: string) => {
-                return { value: itemPrevValue || "", destroy: true };
-              },
-            );
+            const list = (prevValue as any).map((itemPrevValue: any) => {
+              if ((itemPrevValue as any)?.field) {
+                const idsNewValue: [] = (newValue as any).map(
+                  (itemNewValue: any) => {
+                    return itemNewValue.id;
+                  },
+                );
+                const prevId = itemPrevValue.id;
+                return {
+                  ...{
+                    ...(itemPrevValue as any),
+                    // @ts-ignore
+                    destroy: !idsNewValue.includes(prevId),
+                  },
+                };
+              }
+              return { value: itemPrevValue || "", destroy: true };
+            });
+            const listToValue = list.map((itemList: any) => {
+              if (itemList.destroy) {
+                return { ...itemList };
+              }
+
+              const { destroy, ...newItemList } = itemList;
+              return newItemList;
+            });
             return listToValue;
           }
           return [{ value: prevValue || "", destroy: true }];
