@@ -459,6 +459,7 @@ function DefaultTable({
     },
     [],
   );
+
   const customRendererBoolean = useCallback(
     (
       instance: Handsontable,
@@ -470,19 +471,25 @@ function DefaultTable({
     ): void => {
       const handleChange = (checked: boolean): void => {
         const newValue = [`${checked}`];
-
         instance.setDataAtCell(row, col, newValue);
       };
 
+      const switchContainer = document.createElement("div");
+      switchContainer.classList.add("boolean-switch-cell");
+
       ReactDOM.render(
-        <div className="boolean-switch-cell">
-          <Switch
-            checked={value?.length > 0 && value[0] === "true"}
-            onChange={handleChange}
-          />
-        </div>,
-        td,
+        <Switch
+          checked={value?.length > 0 && value[0] === "true"}
+          onChange={handleChange}
+        />,
+        switchContainer,
       );
+
+      while (td.firstChild) {
+        td.removeChild(td.firstChild);
+      }
+
+      td.appendChild(switchContainer);
     },
     [],
   );
@@ -531,29 +538,28 @@ function DefaultTable({
   );
 
   const [hiddenRows, setHiddenRows] = useState<number[]>([]);
-  const [isOpenedParentId, setIsOpenedParentId] = useState<string>("");
+  const [isOpenedParentIds, setIsOpenedParentIds] = useState<string[]>([]);
 
   const handleRowHeaderClick = useCallback(
     (currentParentId: string, currentProducts: IProductToTable[]): void => {
-      if (isOpenedParentId !== currentParentId) {
-        const childsWithIndex = currentProducts.map((product, indexProduct) => {
-          return { item: product, index: indexProduct };
-        });
+      const isOpened = isOpenedParentIds.includes(currentParentId);
+      const childIndices = currentProducts
+        .map((product, index) => ({ item: product, index }))
+        .filter(({ item }) => item?.parent_id === currentParentId)
+        .map(({ index }) => index);
 
-        const childsFiltereds = childsWithIndex.filter((fitem) => {
-          return fitem.item.parent_id === currentParentId;
-        });
-        const childsId = childsFiltereds.map((lastItem) => lastItem.index);
-
-        setIsOpenedParentId(currentParentId);
-
-        setHiddenRows(childsId);
-      } else {
-        setIsOpenedParentId("");
-        setHiddenRows([]);
-      }
+      setIsOpenedParentIds(
+        isOpened
+          ? isOpenedParentIds.filter((id) => id !== currentParentId)
+          : [...isOpenedParentIds, currentParentId],
+      );
+      setHiddenRows(
+        isOpened
+          ? hiddenRows.filter((rowIndex) => !childIndices.includes(rowIndex))
+          : [...hiddenRows, ...childIndices],
+      );
     },
-    [isOpenedParentId],
+    [hiddenRows, isOpenedParentIds],
   );
 
   const styledRow = useCallback(
@@ -562,7 +568,8 @@ function DefaultTable({
       const onClickHandler = (currentParentId: string): void => {
         handleRowHeaderClick(currentParentId, products);
       };
-      const opened = isOpenedParentId === currentProduct.id;
+
+      const opened = isOpenedParentIds.includes(currentProduct?.id);
       TH.innerHTML = getStyleRowHeader(
         row,
         currentProduct,
@@ -570,7 +577,7 @@ function DefaultTable({
         opened,
       );
     },
-    [handleRowHeaderClick, products],
+    [handleRowHeaderClick],
   );
 
   const [dropDownStatus, setDropDownStatus] = useState<IDropDownStatus>({
@@ -825,7 +832,7 @@ function DefaultTable({
             TD.style.display = "none";
           }
           if (products[row].parent_id) {
-            TD.style.background = "#DEE2E6";
+            TD.style.background = "#F1F3F5";
           }
         }}
         contextMenu={{
@@ -854,7 +861,8 @@ function DefaultTable({
                 const selectedRow = selection[0].start.row;
                 const selectedProduct = products[selectedRow];
                 if (selectedProduct && !selectedProduct.parent_id) {
-                  clearSubItensMode();
+                  setChildsSelectedIds([]);
+                  setRowsSelectedPosition([]);
                   setSubItemsMode("add");
                   setParentId(selectedProduct.id as any);
                 } else {
