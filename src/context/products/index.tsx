@@ -15,6 +15,7 @@ import {
   IField,
   IHeader,
   IHeaderTable,
+  IProduct,
   IProductToTable,
   IProductsRequest,
   ITemplate,
@@ -228,6 +229,26 @@ export const ProductContextProvider = ({
     }
   };
 
+  function reorganizeArrayWithChildren(list: IProduct[]): IProduct[] {
+    const newArray: IProduct[] = [];
+
+    list.forEach((fItem) => {
+      newArray.push(fItem);
+
+      if (fItem.children) {
+        fItem.children.forEach((child) => {
+          newArray.push(child);
+        });
+
+        // @ts-ignore
+        // eslint-disable-next-line no-param-reassign
+        delete fItem.children;
+      }
+    });
+
+    return newArray;
+  }
+
   const handleGetProducts = useCallback(
     async (
       templateId: string,
@@ -245,14 +266,18 @@ export const ProductContextProvider = ({
         operator,
       );
 
+      const listProducts = reorganizeArrayWithChildren(data?.products);
+
       const productFields: {
         [key: string]: string | string[] | boolean;
         id: string;
         created_at: string;
         is_parent: boolean;
+        childrens: any[];
       }[] = [];
-      if (data.products.length) {
-        data?.products?.forEach((item) => {
+
+      if (listProducts.length) {
+        listProducts.forEach((item) => {
           const object: { [key: string]: string | string[] } = {};
           if (item?.fields?.length) {
             item?.fields?.forEach((field) => {
@@ -277,6 +302,7 @@ export const ProductContextProvider = ({
             id: item.id,
             created_at: item.created_at,
             parent_id: item.parent_id,
+            childrens: item.children,
             is_parent: item?.is_parent,
           };
 

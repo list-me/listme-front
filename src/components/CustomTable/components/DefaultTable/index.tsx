@@ -577,7 +577,7 @@ function DefaultTable({
         opened,
       );
     },
-    [handleRowHeaderClick],
+    [handleRowHeaderClick, products],
   );
 
   const [dropDownStatus, setDropDownStatus] = useState<IDropDownStatus>({
@@ -749,7 +749,6 @@ function DefaultTable({
       )}
 
       <HotTable
-        key={parentId + subItensMode}
         nestedRows
         bindRowsWithHeaders
         className="hot-table"
@@ -861,8 +860,7 @@ function DefaultTable({
                 const selectedRow = selection[0].start.row;
                 const selectedProduct = products[selectedRow];
                 if (selectedProduct && !selectedProduct.parent_id) {
-                  setChildsSelectedIds([]);
-                  setRowsSelectedPosition([]);
+                  clearSubItensMode();
                   setSubItemsMode("add");
                   setParentId(selectedProduct.id as any);
                 } else {

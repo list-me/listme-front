@@ -99,6 +99,7 @@ interface IProduct {
   fields: IProductFields[];
   parent_id: string;
   is_parent: boolean;
+  children: any[];
 }
 
 interface IProductToTable {
@@ -107,6 +108,7 @@ interface IProductToTable {
   is_parent: boolean;
   id: string;
   created_at: string;
+  childrens?: IProductToTable[];
 }
 
 interface IProductsRequest {
