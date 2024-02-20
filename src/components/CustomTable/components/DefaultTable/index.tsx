@@ -861,8 +861,7 @@ function DefaultTable({
                 const selectedRow = selection[0].start.row;
                 const selectedProduct = products[selectedRow];
                 if (selectedProduct && !selectedProduct.parent_id) {
-                  setChildsSelectedIds([]);
-                  setRowsSelectedPosition([]);
+                  clearSubItensMode();
                   setSubItemsMode("add");
                   setParentId(selectedProduct.id as any);
                 } else {
