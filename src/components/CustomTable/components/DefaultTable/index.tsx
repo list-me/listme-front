@@ -577,7 +577,7 @@ function DefaultTable({
         opened,
       );
     },
-    [handleRowHeaderClick],
+    [handleRowHeaderClick, products],
   );
 
   const [dropDownStatus, setDropDownStatus] = useState<IDropDownStatus>({
@@ -749,7 +749,6 @@ function DefaultTable({
       )}
 
       <HotTable
-        key={parentId + subItensMode}
         nestedRows
         bindRowsWithHeaders
         className="hot-table"
