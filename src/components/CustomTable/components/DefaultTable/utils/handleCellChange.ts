@@ -15,6 +15,7 @@ const handleCellChange: any = async (
     fieldId: string,
     newValue: string,
     prevValue?: string,
+    type?: string,
   ) => Promise<any>,
   dataProvider: any[],
   setDataProvider: React.Dispatch<React.SetStateAction<any[]>>,
@@ -32,12 +33,7 @@ const handleCellChange: any = async (
       previousCellValue = customChanges[0][2];
 
       const newValue = () => {
-        if (
-          type === "radio" ||
-          type === "relation" ||
-          type === "checked" ||
-          type === "list"
-        ) {
+        if (type === "radio" || type === "checked" || type === "list") {
           return customChanges[0][3][0];
         }
 
@@ -52,6 +48,7 @@ const handleCellChange: any = async (
           customChanges[0][1] as string,
           newValue(),
           previousCellValue as string,
+          type,
         );
         if (
           response.id &&
@@ -101,7 +98,6 @@ const handleCellChange: any = async (
         const newValue = () => {
           if (
             type === "radio" ||
-            type === "relation" ||
             type === "checked" ||
             type === "list" ||
             type === "file"
@@ -117,6 +113,7 @@ const handleCellChange: any = async (
           customChanges[0][1] as string,
           newValue(),
           previousCellValue as string,
+          type,
         );
         if (
           response.id &&
