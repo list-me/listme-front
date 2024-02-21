@@ -15,6 +15,7 @@ const handleCellChange: any = async (
     fieldId: string,
     newValue: string,
     prevValue?: string,
+    type?: string,
   ) => Promise<any>,
   dataProvider: any[],
   setDataProvider: React.Dispatch<React.SetStateAction<any[]>>,
@@ -47,6 +48,7 @@ const handleCellChange: any = async (
           customChanges[0][1] as string,
           newValue(),
           previousCellValue as string,
+          type,
         );
         if (
           response.id &&
@@ -104,7 +106,6 @@ const handleCellChange: any = async (
           }
           return customChanges[0][3];
         };
-        console.log(newValue(), 2);
         const response = await handleSave(
           newDataProvider[customChanges[0][0]],
           isNew,
@@ -112,6 +113,7 @@ const handleCellChange: any = async (
           customChanges[0][1] as string,
           newValue(),
           previousCellValue as string,
+          type,
         );
         if (
           response.id &&

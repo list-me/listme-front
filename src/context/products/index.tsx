@@ -455,56 +455,72 @@ export const ProductContextProvider = ({
     fieldId: string,
     newValue: string,
     prevValue?: string,
+    type?: string,
   ): Promise<any> => {
     try {
       const fields = buildProduct(value);
       if (isNew) {
         const newValueToPatch = () => {
           if (newValue && !prevValue) {
+            if (type === "relation") {
+              return newValue;
+            }
             return [newValue || ""];
           }
-          if (typeof prevValue === "string") {
+          if (
+            !newValue &&
+            prevValue &&
+            (type === "text" ||
+              type === "paragraph" ||
+              type === "decimal" ||
+              type === "numeric" ||
+              type === "radio" ||
+              type === "checked" ||
+              type === "list" ||
+              type === "boolean")
+          ) {
             return [{ value: prevValue || "", destroy: true }];
           }
-          if (typeof prevValue !== "string" && (prevValue as any).length > 0) {
-            const list = (prevValue as any).map((itemPrevValue: any) => {
-              if ((itemPrevValue as any)?.field) {
-                const idsNewValue: [] = (newValue as any).map(
-                  (itemNewValue: any) => {
-                    return itemNewValue.id;
-                  },
-                );
-                const prevId = itemPrevValue.id;
-                return {
-                  ...{
-                    ...(itemPrevValue as any),
-                    // @ts-ignore
-                    destroy: !idsNewValue.includes(prevId),
-                  },
-                };
-              }
-              return { value: itemPrevValue || "", destroy: true };
+          if (!newValue && prevValue && type === "file") {
+            // @ts-ignore
+            const newArray = prevValue.map((mValue) => {
+              return { value: mValue, destroy: true };
             });
-            const listToValue = list.map((itemList: any) => {
-              if (itemList.destroy) {
-                return { ...itemList };
-              }
-
-              const { destroy, ...newItemList } = itemList;
-              return newItemList;
-            });
-            return listToValue;
+            return newArray;
           }
-          return [{ value: prevValue || "", destroy: true }];
+          if (newValue && prevValue && type === "file") {
+            return (newValue as unknown as []).flat();
+          }
+          if (type === "relation" && newValue && prevValue) {
+            const newIds = (newValue as unknown as any[]).map(
+              (item) => item.id,
+            );
+            const prevIds = (prevValue as unknown as any[]).map(
+              (item) => item.id,
+            );
+
+            const addedIds = newIds.filter((id) => !prevIds.includes(id));
+            const removedIds = prevIds.filter((id) => !newIds.includes(id));
+
+            const newArray = (prevValue as unknown as any[]).map((item) => {
+              if (removedIds.includes(item.id)) {
+                return { ...item, destroy: true };
+              }
+              return item;
+            });
+
+            const newItems = (newValue as unknown as any[]).filter((item) =>
+              addedIds.includes(item.id),
+            );
+            newArray.push(...newItems);
+
+            return newArray;
+          }
+
+          return null;
         };
         const response = await productRequests.patchProductValue({
-          // eslint-disable-next-line no-nested-ternary
-          value: newValueToPatch()[0].id
-            ? newValueToPatch()
-            : (newValueToPatch() as any)[0]?.destroy ||
-              typeof newValueToPatch()[0] === "string"
-            ? newValueToPatch()
-            : (newValueToPatch()[0] as any),
+          value: newValueToPatch() as any,
           productId,
           fieldId,
         });
