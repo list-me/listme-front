@@ -457,6 +457,9 @@ export const ProductContextProvider = ({
     prevValue?: string,
     type?: string,
   ): Promise<any> => {
+    console.log("🚀 ~ type:", type);
+    console.log("🚀 ~ prevValue:", prevValue);
+    console.log("🚀 ~ newValue:", newValue);
     try {
       const fields = buildProduct(value);
       if (isNew) {
@@ -479,6 +482,7 @@ export const ProductContextProvider = ({
               type === "list" ||
               type === "boolean")
           ) {
+            console.log("veio");
             return [{ value: prevValue || "", destroy: true }];
           }
           if (!newValue && prevValue && type === "file") {
@@ -517,7 +521,7 @@ export const ProductContextProvider = ({
             return newArray;
           }
 
-          return null;
+          return [newValue];
         };
         const response = await productRequests.patchProductValue({
           value: newValueToPatch() as any,
