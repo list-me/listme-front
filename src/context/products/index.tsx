@@ -457,9 +457,6 @@ export const ProductContextProvider = ({
     prevValue?: string,
     type?: string,
   ): Promise<any> => {
-    console.log("🚀 ~ type:", type);
-    console.log("🚀 ~ prevValue:", prevValue);
-    console.log("🚀 ~ newValue:", newValue);
     try {
       const fields = buildProduct(value);
       if (isNew) {
