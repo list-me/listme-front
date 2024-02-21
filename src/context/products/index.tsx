@@ -479,7 +479,6 @@ export const ProductContextProvider = ({
               type === "list" ||
               type === "boolean")
           ) {
-            console.log("veio");
             return [{ value: prevValue || "", destroy: true }];
           }
           if (!newValue && prevValue && type === "file") {
