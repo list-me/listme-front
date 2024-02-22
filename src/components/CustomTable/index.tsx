@@ -314,12 +314,12 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
   const checkToHeaderTable = {
     title: "Check",
-    data: "000000",
+    data: "check",
     className: "htLeft htMiddle",
     type: "checkSubItem",
     required: false,
     options: [""],
-    order: "-1",
+    order: "1",
     hidden: false,
     width: "300px",
     frozen: false,
@@ -329,7 +329,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
   const checkToCols = {
     title: "Check",
-    data: "000000",
+    data: "check",
     className: "htLeft htMiddle",
     type: "checkSubItem",
     required: false,
@@ -341,6 +341,15 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     isCustom: false,
     bucket_url: "",
   };
+
+  const colsToView = cols.length ? [checkToCols, ...cols] : [];
+
+  const colHeadersToView = colHeaders.length
+    ? [checkToColHeaders, ...colHeaders]
+    : [];
+  const headerTableToView = headerTable.length
+    ? [checkToHeaderTable, ...headerTable]
+    : [];
 
   return (
     <>
@@ -368,19 +377,15 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         </Content>
         <Container>
           <DefaultTable
-            cols={parentId ? [checkToCols, ...cols] : (cols as any)}
-            colHeaders={
-              parentId ? [checkToColHeaders, ...colHeaders] : colHeaders
-            }
-            headerTable={
-              parentId ? [checkToHeaderTable, ...headerTable] : headerTable
-            }
+            cols={colsToView as any}
+            colHeaders={colHeadersToView}
+            headerTable={headerTableToView}
             parentId={parentId}
             setParentId={setParentId}
             key={colHeaders.join()}
             hotRef={hotRef}
             setColHeaders={setColHeaders}
-            products={products}
+            products={products as any}
             setProducts={setProducts}
             handleDelete={handleDelete}
             handleSave={handleSave}
@@ -390,7 +395,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             setTotal={setTotal}
             template={template}
             renderHeaderComponent={renderHeaderComponent}
-            hidden={hidden}
+            hidden={!parentId ? [0, ...hidden] : hidden}
             handleResize={handleResize}
             columns={headerTable}
             setColumns={setHeaderTable}

@@ -259,7 +259,7 @@ function DefaultTable({
         });
       }
     },
-    [columns, svgStringDropDown],
+    [columns, svgStringDropDown, cols],
   );
   const customRendererChecked = useCallback(
     (
@@ -289,7 +289,7 @@ function DefaultTable({
         }
       }
     },
-    [columns, svgStringDropDown],
+    [columns, svgStringDropDown, cols],
   );
 
   const customRendererFileCallBack = useCallback(
@@ -325,7 +325,7 @@ function DefaultTable({
         td.style.border = "2px solid #F1BC02";
       }
     },
-    [hotRef, loadingRef, template, uploadImages],
+    [hotRef, loadingRef, template, uploadImages, cols],
   );
 
   const customRendererDropdown = useCallback(
@@ -346,7 +346,7 @@ function DefaultTable({
         setAlertTooltip,
       });
     },
-    [cols, svgStringDropDown],
+    [cols, svgStringDropDown, cols],
   );
   const customRendererText = useCallback(
     (
@@ -369,7 +369,7 @@ function DefaultTable({
 
       td.innerHTML = textValue;
     },
-    [cols, svgStringDropDown],
+    [cols, svgStringDropDown, cols],
   );
 
   const customRendererNumeric = useCallback(
@@ -400,7 +400,7 @@ function DefaultTable({
         td.innerHTML = numericValue;
       }
     },
-    [svgStringDropDown],
+    [svgStringDropDown, cols],
   );
 
   const customRendererDecimal = useCallback(
@@ -457,7 +457,7 @@ function DefaultTable({
       const totalItems = value ? value?.length : 0;
       td.innerHTML = `<div class="tag-content">${totalItems} Items relacionados</div>`;
     },
-    [],
+    [cols],
   );
 
   const customRendererBoolean = useCallback(
@@ -491,7 +491,7 @@ function DefaultTable({
 
       td.appendChild(switchContainer);
     },
-    [],
+    [cols],
   );
 
   const ICON_HEADER = useMemo(
@@ -534,7 +534,7 @@ function DefaultTable({
         colData,
       );
     },
-    [getIconByType, headerTable, hotRef, template?.fields?.fields],
+    [getIconByType, headerTable, hotRef, template?.fields?.fields, cols],
   );
 
   const [hiddenRows, setHiddenRows] = useState<number[]>([]);
@@ -671,7 +671,7 @@ function DefaultTable({
 
       td.appendChild(checkboxContainer);
     },
-    [products, rowsSelectedPosition, parentId, toggleRowSelection],
+    [products, rowsSelectedPosition, parentId, toggleRowSelection, cols],
   );
   const { handleRedirectAndGetProducts } = useProductContext();
 
