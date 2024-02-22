@@ -385,7 +385,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             key={colHeaders.join()}
             hotRef={hotRef}
             setColHeaders={setColHeaders}
-            products={products as any}
+            products={products}
             setProducts={setProducts}
             handleDelete={handleDelete}
             handleSave={handleSave}
