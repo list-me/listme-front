@@ -438,7 +438,7 @@ function DefaultTable({
 
       td.innerHTML = replacedValue;
     },
-    [svgStringDropDown],
+    [svgStringDropDown, cols],
   );
 
   const customRendererRelation = useCallback(
