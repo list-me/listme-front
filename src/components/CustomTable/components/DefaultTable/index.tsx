@@ -259,7 +259,7 @@ function DefaultTable({
         });
       }
     },
-    [columns, svgStringDropDown, cols],
+    [columns, svgStringDropDown],
   );
   const customRendererChecked = useCallback(
     (
@@ -289,7 +289,7 @@ function DefaultTable({
         }
       }
     },
-    [columns, svgStringDropDown, cols],
+    [columns, svgStringDropDown],
   );
 
   const customRendererFileCallBack = useCallback(
@@ -325,7 +325,7 @@ function DefaultTable({
         td.style.border = "2px solid #F1BC02";
       }
     },
-    [hotRef, loadingRef, template, uploadImages, cols],
+    [hotRef, loadingRef, template, uploadImages],
   );
 
   const customRendererDropdown = useCallback(
@@ -346,7 +346,7 @@ function DefaultTable({
         setAlertTooltip,
       });
     },
-    [cols, svgStringDropDown, cols],
+    [cols, svgStringDropDown],
   );
   const customRendererText = useCallback(
     (
@@ -369,7 +369,7 @@ function DefaultTable({
 
       td.innerHTML = textValue;
     },
-    [cols, svgStringDropDown, cols],
+    [cols, svgStringDropDown],
   );
 
   const customRendererNumeric = useCallback(
@@ -400,7 +400,7 @@ function DefaultTable({
         td.innerHTML = numericValue;
       }
     },
-    [svgStringDropDown, cols],
+    [svgStringDropDown],
   );
 
   const customRendererDecimal = useCallback(
@@ -438,7 +438,7 @@ function DefaultTable({
 
       td.innerHTML = replacedValue;
     },
-    [svgStringDropDown, cols],
+    [svgStringDropDown],
   );
 
   const customRendererRelation = useCallback(
@@ -457,7 +457,7 @@ function DefaultTable({
       const totalItems = value ? value?.length : 0;
       td.innerHTML = `<div class="tag-content">${totalItems} Items relacionados</div>`;
     },
-    [cols],
+    [],
   );
 
   const customRendererBoolean = useCallback(
@@ -491,7 +491,7 @@ function DefaultTable({
 
       td.appendChild(switchContainer);
     },
-    [cols],
+    [],
   );
 
   const ICON_HEADER = useMemo(
@@ -534,7 +534,7 @@ function DefaultTable({
         colData,
       );
     },
-    [getIconByType, headerTable, hotRef, template?.fields?.fields, cols],
+    [getIconByType, headerTable, hotRef, template?.fields?.fields],
   );
 
   const [hiddenRows, setHiddenRows] = useState<number[]>([]);
@@ -671,7 +671,7 @@ function DefaultTable({
 
       td.appendChild(checkboxContainer);
     },
-    [products, rowsSelectedPosition, parentId, toggleRowSelection, cols],
+    [products, rowsSelectedPosition, parentId, toggleRowSelection],
   );
   const { handleRedirectAndGetProducts } = useProductContext();
 

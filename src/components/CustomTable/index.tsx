@@ -314,12 +314,12 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
   const checkToHeaderTable = {
     title: "Check",
-    data: "check",
+    data: "000000",
     className: "htLeft htMiddle",
     type: "checkSubItem",
     required: false,
     options: [""],
-    order: "1",
+    order: "-1",
     hidden: false,
     width: "300px",
     frozen: false,
@@ -329,7 +329,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
 
   const checkToCols = {
     title: "Check",
-    data: "check",
+    data: "000000",
     className: "htLeft htMiddle",
     type: "checkSubItem",
     required: false,
