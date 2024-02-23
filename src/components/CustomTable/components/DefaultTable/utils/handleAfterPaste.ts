@@ -30,7 +30,15 @@ const handleAfterPaste: any = async (
   cols: any[],
   dataProvider: any[],
   componentCellPerType: ICustomCellType,
-  handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>,
+  handleSave: (
+    value: any,
+    isNew: boolean,
+    productId: string,
+    fieldId: string,
+    newValue: string,
+    prevValue?: string,
+    type?: string,
+  ) => Promise<any>,
 ) => {
   const { hotInstance } = hotRef.current!;
   if (data.length && !isTableLocked && hotInstance) {
@@ -76,12 +84,14 @@ const handleAfterPaste: any = async (
       changesPromises.push(changes);
     }
 
-    for await (const item of changesPromises) {
+    changesPromises.forEach(async (item, index) => {
       const isNew: boolean = !!item?.id;
       if (!isNew) item.id = item?.id ?? generateUUID();
 
-      await handleSave(item, isNew, item.id);
-    }
+      const fieldId = fieldColumns[index].field;
+
+      await handleSave(item, isNew, item.id, fieldId, data[0][0]);
+    });
 
     loadingRef.current!.style.display = "none";
 

@@ -831,7 +831,7 @@ function DefaultTable({
             // eslint-disable-next-line no-param-reassign
             TD.style.display = "none";
           }
-          if (products[row].parent_id) {
+          if (products[row]?.parent_id) {
             TD.style.background = "#F1F3F5";
           }
         }}

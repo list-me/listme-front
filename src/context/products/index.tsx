@@ -465,6 +465,12 @@ export const ProductContextProvider = ({
             if (type === "relation") {
               return newValue;
             }
+            if (type === "file" && typeof newValue !== "string") {
+              if (typeof newValue[0] !== "string") {
+                return (newValue as any).flat();
+              }
+              return newValue;
+            }
             return [newValue || ""];
           }
           if (
