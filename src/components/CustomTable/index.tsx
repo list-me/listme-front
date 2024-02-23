@@ -301,7 +301,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         if (hotInstance) {
           hotInstance.render();
         }
-        toast.error(errr.response.data.message);
+        toast.error(errr?.response?.data?.message);
       });
   };
 

@@ -465,7 +465,10 @@ export const ProductContextProvider = ({
             if (type === "relation") {
               return newValue;
             }
-            if (type === "file" && typeof newValue !== "string") {
+            if (
+              (type === "file" || type === "boolean") &&
+              typeof newValue !== "string"
+            ) {
               if (typeof newValue[0] !== "string") {
                 return (newValue as any).flat();
               }
@@ -480,7 +483,6 @@ export const ProductContextProvider = ({
               type === "paragraph" ||
               type === "decimal" ||
               type === "numeric" ||
-              type === "radio" ||
               type === "checked" ||
               type === "list" ||
               type === "boolean")
@@ -495,6 +497,9 @@ export const ProductContextProvider = ({
             return newArray;
           }
           if (newValue && prevValue && type === "file") {
+            return (newValue as unknown as []).flat();
+          }
+          if (newValue && prevValue && type === "boolean") {
             return (newValue as unknown as []).flat();
           }
           if (type === "relation" && newValue && prevValue) {
