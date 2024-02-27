@@ -301,6 +301,17 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ) => {
+      const div = document.createElement("div");
+      div.innerHTML = value;
+
+      const itemCountElement = div.querySelector(".itens-amount");
+      let itemCountNumber = 0;
+      if (itemCountElement) {
+        // @ts-ignore
+        const itemCountValue = itemCountElement.textContent.trim();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        itemCountNumber = parseInt(itemCountValue, 10);
+      }
       const colType = columns[col]?.type;
       const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
       const previousValue = _instance.getDataAtCell(_row, col);
@@ -321,7 +332,7 @@ function DefaultTable({
       );
 
       td.style.border = "";
-      if (value?.length > maxLength) {
+      if (itemCountNumber > maxLength) {
         td.style.border = "2px solid #F1BC02";
       }
     },
