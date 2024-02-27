@@ -4,6 +4,7 @@ export const ContainerPaginationError = styled.div`
   display: flex;
   margin-top: 22px;
   justify-content: center;
+  gap: 2px;
 `;
 export const ButtonPaginationError = styled.button<{
   right?: boolean;
