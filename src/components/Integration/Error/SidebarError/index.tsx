@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   CloseButtonSidebarError,
   ContainerListCardsSidebarError,
@@ -30,6 +31,11 @@ function SidebarError({
   setSearchSwitch: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
   const errorsData = errors.data;
+  useEffect(() => {
+    return () => {
+      setOffset(0);
+    };
+  }, [setOffset]);
   return (
     <ContainerSidebarError>
       <HeaderSidebarError>

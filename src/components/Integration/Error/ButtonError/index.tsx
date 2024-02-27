@@ -61,7 +61,7 @@ function ButtonError({
   errors: IErrorsIntegrations;
   setSidebarErrorOpened: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
-  const size = errors.data.length;
+  const size = errors.total;
   return (
     <Container onClick={() => setSidebarErrorOpened((prev) => !prev)}>
       <Ball />
