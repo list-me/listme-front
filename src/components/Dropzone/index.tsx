@@ -63,7 +63,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   const handleRemove = async (
     imageUrl: string,
     event: React.MouseEvent,
-    items: any[],
+    currentItems: any[],
   ): Promise<void> => {
     event.stopPropagation();
 
@@ -76,7 +76,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         productId,
         field,
       );
-      const newValue = items.filter((item) => {
+      const newValue = currentItems.filter((item) => {
         if (item !== imageUrl) {
           return item;
         }
@@ -88,25 +88,6 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
       }
       onSuccess(newValue);
       setImageLoading(false);
-
-      const moreLinks = items.filter((fItem) => {
-        return fItem !== imageUrl;
-      });
-      const newValueToPatch = {
-        value: [
-          {
-            value: imageUrl,
-            destroy: true,
-          },
-          ...moreLinks,
-        ],
-      };
-
-      await productRequests.patchProductValue({
-        value: newValueToPatch.value as any,
-        productId,
-        fieldId: field,
-      });
     } catch (error) {
       setImageLoading(false);
       toast.error(
