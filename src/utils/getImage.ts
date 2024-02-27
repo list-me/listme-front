@@ -1,5 +1,6 @@
 import { getFilenameFromUrl } from ".";
 import DocumentIcon from "../assets/icons/document-icon.svg";
+import ImageErrorIcon from "../assets/icons/image-error-icon.svg";
 
 async function getImage(value: any): Promise<string | undefined> {
   if (typeof value === "string" && value.length) {
