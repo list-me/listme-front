@@ -227,6 +227,11 @@ function DefaultTable({
     movePossible: boolean,
     orderChanged: boolean,
   ): void => {
+    if (dropIndex !== undefined && dropIndex === cols.length) {
+      hotRef.current.hotInstance.loadData(products);
+      return;
+    }
+
     handleAfterColumnMove(
       movedColumns,
       finalIndex,
