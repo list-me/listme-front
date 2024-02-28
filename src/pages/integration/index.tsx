@@ -79,7 +79,7 @@ function Integration(): JSX.Element {
   };
 
   return (
-    <TemplateDefault handleGetTemplates={() => ""}>
+    <TemplateDefault handleGetTemplates={() => ""} templates={[]}>
       <Content>
         <TitlePage> Integrações </TitlePage>
         <ContainerIntegration>

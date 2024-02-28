@@ -23,7 +23,9 @@ import { ROUTES } from "../../constants/routes";
 
 export function Header({
   handleGetTemplates,
+  templates,
 }: {
+  templates: any;
   handleGetTemplates: ({ page, limit }: IPaginationTemplate) => void;
 }): JSX.Element {
   const navigate = useNavigate();
@@ -39,6 +41,10 @@ export function Header({
       await templateRequests.post("list");
       handleGetTemplates({ page: 0, limit: 100 });
       toast.success("Template criado com sucesso");
+      const newTemplateId = templates[templates.length - 1].id;
+      if (newTemplateId) {
+        navigate(`${ROUTES.PRODUCTS}/${newTemplateId}`);
+      }
     } catch (error) {
       toast.error("Ocorreu um erro ao criar o template");
     }

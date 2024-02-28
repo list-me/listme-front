@@ -160,7 +160,10 @@ function Template(): JSX.Element {
   ];
 
   return (
-    <TemplateDefault handleGetTemplates={handleGetTemplates}>
+    <TemplateDefault
+      handleGetTemplates={handleGetTemplates}
+      templates={templates}
+    >
       <Content>
         <TitlePage> Templates </TitlePage>
         <CustomTable
