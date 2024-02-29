@@ -167,8 +167,14 @@ function customRendererFile(
           response.headers.get("Content-Length");
 
         if (contentLength && parseInt(contentLength) <= 1000 * 1024) {
-          let imageSource: string = imgUrl;
-          const fileNameWithExtension: string = getFilenameFromUrl(imgUrl);
+          const regex = /https:\/\/[^/]+\//;
+          const verifyTrue = regex.test(imgUrl);
+          let newImageUrl = "";
+          if (imgUrl !== null) {
+            newImageUrl = verifyTrue ? imgUrl : `${template.bucket}/${imgUrl}`;
+          }
+          let imageSource: string = newImageUrl;
+          const fileNameWithExtension: string = getFilenameFromUrl(newImageUrl);
           const lastDotIndex: number = fileNameWithExtension.lastIndexOf(".");
           const fileType: string = fileNameWithExtension.substring(
             lastDotIndex + 1,

@@ -70,3 +70,22 @@ const handleCellChange: any = async (
 };
 
 export default handleCellChange;
+
+// const typeFileIdList = template?.fields?.fields
+//   ?.map((itemTemplate: any) => {
+//     if (itemTemplate.type === "file") {
+//       return itemTemplate.id;
+//     }
+//     return null;
+//   })
+//   .filter(Boolean);
+
+// typeFileIdList.forEach((itemTypeFileId: any) => {
+//   if (newValue[itemTypeFileId]) {
+//     const arrayImages = newValue[itemTypeFileId];
+//     const convertedUrl = arrayImages?.map((imageUrl: string) => {
+//       return imageUrl?.replace(/^https:\/\/[^/]+\//, "");
+//     });
+//     newValue[itemTypeFileId] = convertedUrl || [convertedUrl];
+//   }
+// });

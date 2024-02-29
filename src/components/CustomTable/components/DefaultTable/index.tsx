@@ -105,6 +105,7 @@ function DefaultTable({
         handleSave,
         products,
         setProducts,
+        template,
       );
     }
   };
