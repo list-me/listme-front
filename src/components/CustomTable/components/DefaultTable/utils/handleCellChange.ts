@@ -9,10 +9,29 @@ const handleCellChange: any = async (
   handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>,
   dataProvider: any[],
   setDataProvider: React.Dispatch<React.SetStateAction<any[]>>,
+  template: any,
 ) => {
+  const typeFileIdList = template?.fields?.fields
+    ?.map((itemTemplate: any) => {
+      if (itemTemplate.type === "file") {
+        return itemTemplate.id;
+      }
+      return null;
+    })
+    .filter(Boolean);
   if (changes !== null && changes.length && !isTableLocked && hotInstance) {
     const isNew = !!dataProvider[changes[0][0]].id;
     const customChanges = changes as Handsontable.CellChange[];
+    const newValue = dataProvider[customChanges[0][0]];
+    typeFileIdList.forEach((itemTypeFileId: any) => {
+      if (newValue[itemTypeFileId]) {
+        const arrayImages = newValue[itemTypeFileId];
+        const convertedUrl = arrayImages?.map((imageUrl: string) => {
+          return imageUrl?.replace(/^https:\/\/[^/]+\//, "");
+        });
+        newValue[itemTypeFileId] = convertedUrl || [convertedUrl];
+      }
+    });
     if (
       typeof customChanges[0][2] === "object" &&
       typeof customChanges[0][3] === "object" &&
@@ -70,22 +89,3 @@ const handleCellChange: any = async (
 };
 
 export default handleCellChange;
-
-// const typeFileIdList = template?.fields?.fields
-//   ?.map((itemTemplate: any) => {
-//     if (itemTemplate.type === "file") {
-//       return itemTemplate.id;
-//     }
-//     return null;
-//   })
-//   .filter(Boolean);
-
-// typeFileIdList.forEach((itemTypeFileId: any) => {
-//   if (newValue[itemTypeFileId]) {
-//     const arrayImages = newValue[itemTypeFileId];
-//     const convertedUrl = arrayImages?.map((imageUrl: string) => {
-//       return imageUrl?.replace(/^https:\/\/[^/]+\//, "");
-//     });
-//     newValue[itemTypeFileId] = convertedUrl || [convertedUrl];
-//   }
-// });
