@@ -8,6 +8,7 @@ interface DropzoneRendererProps {
   instance: any;
   row: number;
   companyId: string;
+  template: any;
 }
 
 export type { DropzoneRendererProps };

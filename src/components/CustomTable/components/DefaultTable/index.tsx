@@ -94,19 +94,41 @@ function DefaultTable({
     source: string,
   ): Promise<void> => {
     if (source === "CopyPaste.paste") return;
-
-    if (hotRef.current) {
-      const { hotInstance } = hotRef.current;
-      await handleCellChange(
-        changes,
-        hotInstance,
-        isTableLocked,
-        setIsTableLocked,
-        handleSave,
-        products,
-        setProducts,
-        template,
-      );
+    if (changes) {
+      if (Array.isArray(changes[0][2])) {
+        if (changes[0][2].length !== changes[0][3].length) {
+          const verify = changes[0][2].every(
+            (element: string, index: number) =>
+              element === changes[0][3][index],
+          );
+          if (!verify) return;
+          if (hotRef.current) {
+            const { hotInstance } = hotRef.current;
+            await handleCellChange(
+              changes,
+              hotInstance,
+              isTableLocked,
+              setIsTableLocked,
+              handleSave,
+              products,
+              setProducts,
+              template,
+            );
+          }
+        }
+      } else if (hotRef.current) {
+        const { hotInstance } = hotRef.current;
+        await handleCellChange(
+          changes,
+          hotInstance,
+          isTableLocked,
+          setIsTableLocked,
+          handleSave,
+          products,
+          setProducts,
+          template,
+        );
+      }
     }
   };
 
@@ -452,6 +474,7 @@ function DefaultTable({
                   hot-editor
                   editorColumnScope={0}
                   templateId={template.id}
+                  template={template}
                   dataProvider={products}
                   companyId={template.companyId}
                 />

@@ -25,6 +25,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   instance,
   row,
   companyId,
+  template,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -198,7 +199,14 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
             <>
               {items.length ? (
                 items?.map((item: string, index: number) => {
-                  const fileNameWithExtension = getFilenameFromUrl(item);
+                  const regex = /https:\/\/[^/]+\//;
+                  const verifyTrue = regex.test(item);
+                  let urlItem = "";
+                  if (item !== null) {
+                    urlItem = verifyTrue ? item : `${template.bucket}/${item}`;
+                  }
+
+                  const fileNameWithExtension = getFilenameFromUrl(urlItem);
                   if (fileNameWithExtension) {
                     const lastDotIndex = fileNameWithExtension.lastIndexOf(".");
                     const fileType = fileNameWithExtension.substring(
@@ -214,7 +222,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                           ) ? (
                             <>
                               <a
-                                href={item}
+                                href={urlItem}
                                 target="_blank"
                                 rel="noreferrer"
                                 download
@@ -231,17 +239,21 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                               </a>
                               <label
                                 htmlFor="null"
-                                title={getFilenameFromUrl(item) ?? ""}
+                                title={getFilenameFromUrl(urlItem) ?? ""}
                               >
-                                {getFilenameFromUrl(item)}
+                                {getFilenameFromUrl(urlItem)}
                               </label>
                             </>
                           ) : (
                             <>
-                              <a href={item} target="_blank" rel="noreferrer">
+                              <a
+                                href={urlItem}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
                                 <img
-                                  src={item}
-                                  alt={getFilenameFromUrl(item) ?? ""}
+                                  src={urlItem}
+                                  alt={getFilenameFromUrl(urlItem) ?? ""}
                                   style={{ backgroundColor: "white" }}
                                   // onError={(e) => {
                                   //   (e.target as HTMLImageElement).src =
@@ -251,15 +263,17 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                               </a>
                               <label
                                 htmlFor="null"
-                                title={getFilenameFromUrl(item) ?? ""}
+                                title={getFilenameFromUrl(urlItem) ?? ""}
                               >
-                                {getFilenameFromUrl(item)}
+                                {getFilenameFromUrl(urlItem)}
                               </label>
                             </>
                           )}
                         </Image>
                         {!imageLoading ? (
-                          <CloseIcon onClick={(e) => handleRemove(item, e)} />
+                          <CloseIcon
+                            onClick={(e) => handleRemove(urlItem, e)}
+                          />
                         ) : (
                           <></>
                         )}

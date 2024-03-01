@@ -3,6 +3,7 @@ type FileProps = {
   companyId: string;
   dataProvider: Array<any>;
   changeLoading?: (isLoading: boolean, row?: number, column?: number) => void;
+  template: any;
 };
 
 type FileState = {
