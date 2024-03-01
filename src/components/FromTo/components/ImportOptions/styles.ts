@@ -6,3 +6,15 @@ export const ContainerImportOptions = styled.div`
   flex-direction: column;
   gap: 24px;
 `;
+export const SwitchOption = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  p {
+    color: ${({ theme }) => theme.colors.grayscale.primary};
+    font-family: ${({ theme }) => theme.fonts.family.default};
+    font-size: ${({ theme }) => theme.fonts.sizes.normal};
+    font-weight: ${({ theme }) => theme.fonts.weights.bold};
+    margin: 0;
+  }
+`;

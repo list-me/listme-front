@@ -34,7 +34,7 @@ function FromTo(): JSX.Element | null {
           <TitleModal>
             {currentStep === 1
               ? "Importar arquivo de produtos"
-              : stepsArray[currentStep - 1].title}
+              : stepsArray[currentStep - 1]?.title || "Importar produtos"}
           </TitleModal>
           <CloseButton onClick={() => setFromToIsOpened(false)}>
             <CloseIcon />
