@@ -15,6 +15,7 @@ export const Dragger: React.FC<IDraggerProps> = ({
   setOptions = (values: any) => {},
   form,
 }) => {
+  console.log("🚀 ~ options:", options);
   useEffect(() => {}, [options]);
 
   return (

@@ -10,6 +10,7 @@ export const SwitchOption = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: 24px;
   p {
     color: ${({ theme }) => theme.colors.grayscale.primary};
     font-family: ${({ theme }) => theme.fonts.family.default};

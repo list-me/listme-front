@@ -14,6 +14,7 @@ import {
   ICSVResponse,
   IValuesImportConfiguration,
   IValuesImportOptions,
+  IValuesIntegrationsConfig,
 } from "./fromToContext";
 import {
   initialValuesImportConfiguration,
@@ -60,6 +61,10 @@ export function FromToContextProvider({
 
   const [valuesImportConfiguration, setValuesImportConfiguration] =
     useState<IValuesImportConfiguration>(initialValuesImportConfiguration);
+
+  const [valuesIntegrationsConfig, setValuesIntegrationsConfig] = useState<
+    IValuesIntegrationsConfig[]
+  >([""]);
 
   const [valuesImportOptions, setValuesImportOptions] =
     useState<IValuesImportOptions>(initialValuesImportOptions);
@@ -181,6 +186,8 @@ export function FromToContextProvider({
     setSelectedLinkFields,
     csvResponse,
     toClean,
+    valuesIntegrationsConfig,
+    setValuesIntegrationsConfig,
   };
 
   return (
