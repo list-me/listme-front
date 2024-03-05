@@ -3,10 +3,11 @@ import styled from "styled-components";
 const bgColors = {
   warn: "#fffaeb",
   error: "#FFE6E6",
+  success: "#F1F3F5",
 };
 
 export const AccordionContainer = styled.div<{
-  backgroundType: "warn" | "error";
+  backgroundType: "warn" | "error" | "success";
 }>`
   width: 100%;
   margin-bottom: 16px;
@@ -59,10 +60,28 @@ export const AccordionColumnContentText = styled.p`
     width: 26%;
   }
 `;
+export const AccordionSuccessTitle = styled.p`
+  font-family: ${({ theme }) => theme.fonts.family.default};
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
+  font-weight: ${({ theme }) => theme.fonts.weights.medium};
+  margin: 0;
+`;
 export const AccordionItemContent = styled.p`
   display: flex;
   margin-top: 4px;
   background: #fff;
   padding: 8px 12px;
   border-radius: 4px;
+`;
+export const ItemIntegrationSuccess = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  gap: 8px;
+  font-family: ${({ theme }) => theme.fonts.family.default};
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
 `;

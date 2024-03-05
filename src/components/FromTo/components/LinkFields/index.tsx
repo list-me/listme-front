@@ -29,7 +29,7 @@ function LinkFields(): JSX.Element {
   const [warnList, setWarnList] = useState<string[]>([]);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
-  const [finisedContent, setFinisehdContent] = useState<boolean>(false);
+  const [finisedContent, setFinisehdContent] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
 
   const {

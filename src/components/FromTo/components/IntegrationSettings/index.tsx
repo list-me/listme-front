@@ -65,7 +65,7 @@ function IntegrationSettings(): JSX.Element {
   const multiSelectRef = useRef(null);
 
   useEffect(() => {
-    function handleClickOutside(event: any) {
+    function handleClickOutside(event: any): void {
       if (
         multiSelectRef.current &&
         // @ts-ignore
