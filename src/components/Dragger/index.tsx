@@ -15,6 +15,7 @@ export const Dragger: React.FC<IDraggerProps> = ({
   setOptions = (values: any) => {},
   form,
 }) => {
+  console.log('options', options)
   useEffect(() => {}, [options]);
 
   return (
@@ -46,6 +47,9 @@ export const Dragger: React.FC<IDraggerProps> = ({
               <Input
                 value={item}
                 onChange={(e) => {
+                  const updatedOptions = [...options];
+                  updatedOptions[index] = e.target.value;
+                  setOptions(updatedOptions);
                   form.setFieldsValue({ [fieldName]: e.target.value });
                 }}
                 onPressEnter={(e) => {
