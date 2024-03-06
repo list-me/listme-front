@@ -28,7 +28,7 @@ function AccordionError({
     return true;
   });
 
-  const { csvResponse } = useFromToContext();
+  const { csvResponse, providersToIntegration } = useFromToContext();
 
   // eslint-disable-next-line consistent-return
   const itemsToView = useMemo(() => {
@@ -43,13 +43,11 @@ function AccordionError({
   }`;
 
   const icons: { [key: string]: any } = {
-    Nexaas: IconNexaas,
-    NuvemShop: IconNuvemShop,
-    Shopify: IconShopify,
-    VTEX: IconVTEX,
+    nexaas: IconNexaas,
+    nuvemshop: IconNuvemShop,
+    shopify: IconShopify,
+    vtex: IconVTEX,
   };
-
-  const mockIntegs = ["Nexaas", "Shopify", "VTEX"];
 
   return (
     <AccordionContainer backgroundType={typeFinished}>
@@ -89,7 +87,7 @@ function AccordionError({
           ))
         ) : (
           <>
-            {mockIntegs.map((item) => (
+            {providersToIntegration.map((item) => (
               <ItemIntegrationSuccess>
                 <img src={icons[item]} alt={item} width={20} height={20} />
                 {item}

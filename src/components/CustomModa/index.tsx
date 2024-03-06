@@ -215,6 +215,7 @@ export const PersonalModal = ({
   }: Field): Promise<any> => {
     let templateUpdated = [];
     let newField: any;
+    if (!title.trim()) return;
     if (isUpdate) {
       templateUpdated = template.fields.fields.map((item: any) => {
         if (item.id === data.id) {
@@ -321,6 +322,7 @@ export const PersonalModal = ({
                 limit: characterLimit,
               }}
               onFinish={(fields) => {
+                if (!title.trim()) return;
                 if (!fields.type) fields.type = type;
                 if (
                   fields.type == "relation" &&
@@ -419,8 +421,7 @@ export const PersonalModal = ({
                       value={title}
                       onChange={(e) => {
                         e.preventDefault();
-
-                        setTitle(e.target.value);
+                        if (e.target.value.trim()) setTitle(e.target.value);
                       }}
                       placeholder="Informe o titulo da coluna"
                     />
