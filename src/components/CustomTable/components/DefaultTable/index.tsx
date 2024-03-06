@@ -95,7 +95,7 @@ function DefaultTable({
   ): Promise<void> => {
     if (source === "CopyPaste.paste") return;
     if (changes) {
-      if (Array.isArray(changes[0][2])) {
+      if (Array.isArray(changes[0][2]) && Array.isArray(changes[0][3])) {
         if (changes[0][2].length !== changes[0][3].length) {
           const verify = changes[0][2].every(
             (element: string, index: number) =>

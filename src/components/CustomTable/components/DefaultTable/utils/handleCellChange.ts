@@ -22,7 +22,7 @@ const handleCellChange: any = async (
   if (changes !== null && changes.length && !isTableLocked && hotInstance) {
     const isNew = !!dataProvider[changes[0][0]].id;
     const customChanges = changes as Handsontable.CellChange[];
-    if (Array.isArray(customChanges[0][2])) {
+    if (Array.isArray(customChanges[0][3])) {
       const newValue = dataProvider[customChanges[0][0]];
       typeFileIdList.forEach((itemTypeFileId: any) => {
         if (newValue[itemTypeFileId]) {

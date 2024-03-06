@@ -271,9 +271,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                           )}
                         </Image>
                         {!imageLoading ? (
-                          <CloseIcon
-                            onClick={(e) => handleRemove(urlItem, e)}
-                          />
+                          <CloseIcon onClick={(e) => handleRemove(item, e)} />
                         ) : (
                           <></>
                         )}
