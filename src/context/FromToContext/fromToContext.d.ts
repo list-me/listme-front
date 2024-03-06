@@ -56,6 +56,10 @@ export interface FromToContextType {
   setValuesIntegrationsConfig: React.Dispatch<
     React.SetStateAction<IValuesIntegrationsConfig[]>
   >;
+  providersToIntegration: string[];
+  setProdvidersToIntegration: React.Dispatch<React.SetStateAction<string[]>>;
+  allProductsToIntegration: boolean;
+  setAllProductsToIntegration: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface CSVRow {

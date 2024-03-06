@@ -26,35 +26,39 @@ import { ReactComponent as ChevronIcon } from "../../../../assets/chevron-down-s
 function IntegrationSettings(): JSX.Element {
   const {
     setCurrentStep,
+    providersToIntegration,
+    setProdvidersToIntegration,
+    allProductsToIntegration,
+    setAllProductsToIntegration,
     // guardar valores aqui
     // valuesIntegrationsConfig,
     // setValuesIntegrationsConfig,
   } = useFromToContext();
-  const [switchActive, setSwitchActive] = useState(false);
 
   const [optionsOpened, setOptionsOpened] = useState(false);
 
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-
   const icons: { [key: string]: any } = {
-    Nexaas: IconNexaas,
-    NuvemShop: IconNuvemShop,
-    Shopify: IconShopify,
-    VTEX: IconVTEX,
+    nexaas: IconNexaas,
+    nuvemshop: IconNuvemShop,
+    shopify: IconShopify,
+    vtex: IconVTEX,
   };
 
   const options = [
-    { value: "Nexaas", label: "Nexaas", icon: icons.Nexaas },
-    { value: "NuvemShop", label: "NuvemShop", icon: icons.NuvemShop },
-    { value: "Shopify", label: "Shopify", icon: icons.Shopify },
-    { value: "VTEX", label: "VTEX", icon: icons.VTEX },
+    { value: "nexaas", label: "Nexaas", icon: icons.nexaas },
+    // { value: "nuvemshop", label: "NuvemShop", icon: icons.nuvemshop },
+    // { value: "shopify", label: "Shopify", icon: icons.shopify },
+    // { value: "vtex", label: "VTEX", icon: icons.vtex },
   ];
 
-  const listToVerifyAllOptions = ["Nexaas", "NuvemShop", "Shopify", "VTEX"];
+  const listToVerifyAllOptions = [
+    "nexaas",
+    //  , "NuvemShop", "Shopify", "VTEX"
+  ];
 
   function verifyAllOptions(): boolean {
     const selecteds = listToVerifyAllOptions.filter((item) => {
-      return selectedOptions.includes(item);
+      return providersToIntegration.includes(item);
     });
     if (selecteds.length === listToVerifyAllOptions.length) {
       return true;
@@ -92,9 +96,9 @@ function IntegrationSettings(): JSX.Element {
               onClick={() => setOptionsOpened((prev) => !prev)}
               opened={optionsOpened}
             >
-              {selectedOptions.length ? (
+              {providersToIntegration.length ? (
                 <div style={{ display: "flex", gap: "8px" }}>
-                  {selectedOptions.map((opt) => (
+                  {providersToIntegration.map((opt) => (
                     <img src={icons[opt]} alt={opt} width={32} height={32} />
                   ))}
                 </div>
@@ -110,7 +114,7 @@ function IntegrationSettings(): JSX.Element {
                     className="custom-checkbox"
                     checked={verifyAllOptions()}
                     onChange={() => {
-                      setSelectedOptions(
+                      setProdvidersToIntegration(
                         verifyAllOptions() ? [] : listToVerifyAllOptions,
                       );
                     }}
@@ -122,17 +126,20 @@ function IntegrationSettings(): JSX.Element {
                   <ItemIntegrationSettings key={opt.label}>
                     <Checkbox
                       className="custom-checkbox"
-                      checked={selectedOptions.includes(opt.value)}
+                      checked={providersToIntegration.includes(opt.value)}
                       onChange={() => {
-                        if (selectedOptions.includes(opt.value)) {
-                          const listWithoutItem = selectedOptions.filter(
+                        if (providersToIntegration.includes(opt.value)) {
+                          const listWithoutItem = providersToIntegration.filter(
                             (item) => {
                               return item !== opt.value;
                             },
                           );
-                          setSelectedOptions(listWithoutItem);
+                          setProdvidersToIntegration(listWithoutItem);
                         } else {
-                          setSelectedOptions((prev) => [...prev, opt.value]);
+                          setProdvidersToIntegration((prev) => [
+                            ...prev,
+                            opt.value,
+                          ]);
                         }
                       }}
                     >
@@ -154,9 +161,11 @@ function IntegrationSettings(): JSX.Element {
       <SwitchOption>
         <p>Enviar todos os produtos da planilha para integração</p>
         <Switch
-          checked={switchActive}
+          checked={allProductsToIntegration}
           size="small"
-          onChange={(e) => setSwitchActive(e)}
+          onChange={(checked) => {
+            setAllProductsToIntegration(checked);
+          }}
         />
       </SwitchOption>
       <AlertSwitch>
