@@ -456,7 +456,7 @@ function CharacteriscFormIntegration(): JSX.Element {
   }, [currentField?.id, mode]);
 
   return (
-    <TemplateDefault handleGetTemplates={() => ""}>
+    <TemplateDefault handleGetTemplates={() => ""} templates={[]}>
       <ContainerContent>
         <ContentIntegration>
           <TitleSwitchContainer>

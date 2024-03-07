@@ -14,6 +14,7 @@ import {
   ICSVResponse,
   IValuesImportConfiguration,
   IValuesImportOptions,
+  IValuesIntegrationsConfig,
 } from "./fromToContext";
 import {
   initialValuesImportConfiguration,
@@ -61,8 +62,18 @@ export function FromToContextProvider({
   const [valuesImportConfiguration, setValuesImportConfiguration] =
     useState<IValuesImportConfiguration>(initialValuesImportConfiguration);
 
+  const [valuesIntegrationsConfig, setValuesIntegrationsConfig] = useState<
+    IValuesIntegrationsConfig[]
+  >([""]);
+
   const [valuesImportOptions, setValuesImportOptions] =
     useState<IValuesImportOptions>(initialValuesImportOptions);
+
+  const [providersToIntegration, setProdvidersToIntegration] = useState<
+    string[]
+  >([]);
+  const [allProductsToIntegration, setAllProductsToIntegration] =
+    useState<boolean>(false);
 
   const parseCSV = useCallback(
     (file: File): void => {
@@ -109,6 +120,10 @@ export function FromToContextProvider({
         action: valuesImportOptions.import.value,
         status: valuesImportOptions.status.value,
         multioptions: valuesImportConfiguration.multiOptions.value,
+        integration: {
+          providers: providersToIntegration,
+          allProducts: allProductsToIntegration,
+        },
 
         template_id: template.id,
       },
@@ -181,6 +196,12 @@ export function FromToContextProvider({
     setSelectedLinkFields,
     csvResponse,
     toClean,
+    valuesIntegrationsConfig,
+    setValuesIntegrationsConfig,
+    providersToIntegration,
+    setProdvidersToIntegration,
+    allProductsToIntegration,
+    setAllProductsToIntegration,
   };
 
   return (

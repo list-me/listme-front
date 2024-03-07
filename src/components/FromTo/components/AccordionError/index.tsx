@@ -6,23 +6,29 @@ import {
   AccordionHeader,
   AccordionHeaderContent,
   AccordionItemContent,
+  AccordionSuccessTitle,
+  ItemIntegrationSuccess,
 } from "./styles";
 import { ReactComponent as DropDownIconSmall } from "../../../../assets/chevron-down-small.svg";
 import { useFromToContext } from "../../../../context/FromToContext";
+import IconNexaas from "../../../../assets/icons/MiniIconNexaas.png";
+import IconNuvemShop from "../../../../assets/icons/MiniIcon-NuvemShop.png";
+import IconShopify from "../../../../assets/icons/MiniIconShopify.png";
+import IconVTEX from "../../../../assets/icons/MiniIconVTEX.png";
 
 const headerTitles = ["Coluna", "Erro", " Nº de ocorrências"];
 
 function AccordionError({
   typeFinished,
 }: {
-  typeFinished: "warn" | "error";
+  typeFinished: "warn" | "error" | "success";
 }): JSX.Element {
   const [isOpen, setIsOpen] = useState(() => {
     if (typeFinished === "warn") return false;
     return true;
   });
 
-  const { csvResponse } = useFromToContext();
+  const { csvResponse, providersToIntegration } = useFromToContext();
 
   // eslint-disable-next-line consistent-return
   const itemsToView = useMemo(() => {
@@ -30,11 +36,18 @@ function AccordionError({
     if (typeFinished === "error") return csvResponse.errors;
   }, [csvResponse.errors, csvResponse.warnings, typeFinished]);
 
-  const warnTextError = `Infelizmente, ${csvResponse.warnings.length} ${
-    csvResponse.warnings.length > 1
+  const warnTextError = `Infelizmente, ${csvResponse.warnings?.length} ${
+    csvResponse.warnings?.length > 1
       ? "colunas foram importadas com falhas"
       : "coluna foi importada com falha"
   }`;
+
+  const icons: { [key: string]: any } = {
+    nexaas: IconNexaas,
+    nuvemshop: IconNuvemShop,
+    shopify: IconShopify,
+    vtex: IconVTEX,
+  };
 
   return (
     <AccordionContainer backgroundType={typeFinished}>
@@ -46,25 +59,42 @@ function AccordionError({
       )}
       <AccordionContent className={isOpen ? "open" : ""}>
         <AccordionHeaderContent>
-          {headerTitles.map((title: string) => (
-            <AccordionColumnContentText key={title}>
-              {title}
-            </AccordionColumnContentText>
-          ))}
+          {typeFinished !== "success" ? (
+            headerTitles.map((title: string) => (
+              <AccordionColumnContentText key={title}>
+                {title}
+              </AccordionColumnContentText>
+            ))
+          ) : (
+            <AccordionSuccessTitle>
+              Envio iniciado para as seguintes integrações:
+            </AccordionSuccessTitle>
+          )}
         </AccordionHeaderContent>
-        {itemsToView?.map((item) => (
-          <AccordionItemContent>
-            <AccordionColumnContentText>
-              {item.column}
-            </AccordionColumnContentText>
-            <AccordionColumnContentText>
-              {item.reason}
-            </AccordionColumnContentText>
-            <AccordionColumnContentText>
-              {item.total}
-            </AccordionColumnContentText>
-          </AccordionItemContent>
-        ))}
+        {typeFinished !== "success" ? (
+          itemsToView?.map((item) => (
+            <AccordionItemContent>
+              <AccordionColumnContentText>
+                {item.column}
+              </AccordionColumnContentText>
+              <AccordionColumnContentText>
+                {item.reason}
+              </AccordionColumnContentText>
+              <AccordionColumnContentText>
+                {item.total}
+              </AccordionColumnContentText>
+            </AccordionItemContent>
+          ))
+        ) : (
+          <>
+            {providersToIntegration.map((item) => (
+              <ItemIntegrationSuccess>
+                <img src={icons[item]} alt={item} width={20} height={20} />
+                {item}
+              </ItemIntegrationSuccess>
+            ))}
+          </>
+        )}
       </AccordionContent>
     </AccordionContainer>
   );

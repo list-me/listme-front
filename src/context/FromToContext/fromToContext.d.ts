@@ -15,6 +15,12 @@ export interface IValuesImportOptions {
   status: IItemValueImport;
   assets: IItemValueImport;
 }
+export type IValuesIntegrationsConfig =
+  | "Nexaas"
+  | "NuvemShop"
+  | "Shopify"
+  | "VTEX"
+  | "";
 
 export interface FromToContextType {
   currentStep: number;
@@ -46,6 +52,14 @@ export interface FromToContextType {
   >;
   csvResponse: ICSVResponse;
   toClean: () => void;
+  valuesIntegrationsConfig: IValuesIntegrationsConfig[];
+  setValuesIntegrationsConfig: React.Dispatch<
+    React.SetStateAction<IValuesIntegrationsConfig[]>
+  >;
+  providersToIntegration: string[];
+  setProdvidersToIntegration: React.Dispatch<React.SetStateAction<string[]>>;
+  allProductsToIntegration: boolean;
+  setAllProductsToIntegration: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface CSVRow {

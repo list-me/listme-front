@@ -49,30 +49,30 @@ function FinishedStep({
       ),
       warn: (
         <>
-          {csvResponse.warnings.length > 1 ? (
+          {csvResponse.warnings?.length > 1 ? (
             <>
               Foram exportados{" "}
-              <span>{csvResponse.warnings.length} itens com sucesso</span>
+              <span>{csvResponse.warnings?.length} itens com sucesso</span>
             </>
           ) : (
             <>
               Foi exportado{" "}
-              <span>{csvResponse.warnings.length} item com sucesso</span>
+              <span>{csvResponse.warnings?.length} item com sucesso</span>
             </>
           )}
         </>
       ),
       error: (
         <>
-          {csvResponse.errors.length > 1 ? (
+          {csvResponse.errors?.length > 1 ? (
             <>
               Seu arquivo deu falha em{" "}
-              <span>{csvResponse.errors.length} itens</span>
+              <span>{csvResponse.errors?.length} itens</span>
             </>
           ) : (
             <>
               Seu arquivo deu falha em{" "}
-              <span>{csvResponse.errors.length} item</span>
+              <span>{csvResponse.errors?.length} item</span>
             </>
           )}
         </>
@@ -97,9 +97,7 @@ function FinishedStep({
         <TitleFinishedStep>{configView.title[typeFinished]}</TitleFinishedStep>
         <TextFinishedStep>{configView.text[typeFinished]}</TextFinishedStep>
       </ContentFinishedStep>
-      {typeFinished !== "success" && (
-        <AccordionError typeFinished={typeFinished} />
-      )}
+      <AccordionError typeFinished={typeFinished} />
       <BoxButtons>
         {typeFinished !== "error" && (
           <NavigationButton
