@@ -138,16 +138,24 @@ export function FromToContextProvider({
         formData.append("file", currentFile as Blob);
 
         formData.append("templateId", templateId);
-        return productRequests.postFromToCSV(formData);
+        return productRequests.validateCSV(formData);
       })
       .then((productResponse) => {
+        const formData = new FormData();
+        formData.append("file", currentFile as Blob);
+        formData.append("templateId", templateId);
+        productRequests.postFromToCSV(formData);
         setCsvResponse(productResponse);
         templateRequests.deleteTemplateImport(templateId);
         return productResponse;
       })
       .catch((error) => {
         if (error.response) {
-          toast.error(error.response.data.message[0]);
+          const message =
+            typeof error.response.data.message === "string"
+              ? error.response.data.message
+              : error.response.data.message[0];
+          toast.error(message);
         } else {
           console.error("Erro na requisição:", error.message);
           toast.error(error.message);
