@@ -91,6 +91,17 @@ export const productRequests = {
 
     return response.data;
   },
+  validateCSV: async (formData: FormData): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(`/products/validate/csv`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data;
+  },
   postProductChildren: async (body: {
     product_id: string;
     childs: string[];

@@ -59,17 +59,17 @@ function AccordionError({
       )}
       <AccordionContent className={isOpen ? "open" : ""}>
         <AccordionHeaderContent>
-          {typeFinished !== "success" ? (
-            headerTitles.map((title: string) => (
-              <AccordionColumnContentText key={title}>
-                {title}
-              </AccordionColumnContentText>
-            ))
-          ) : (
-            <AccordionSuccessTitle>
-              Envio iniciado para as seguintes integrações:
-            </AccordionSuccessTitle>
-          )}
+          {typeFinished !== "success"
+            ? headerTitles.map((title: string) => (
+                <AccordionColumnContentText key={title}>
+                  {title}
+                </AccordionColumnContentText>
+              ))
+            : providersToIntegration.length > 10 && (
+                <AccordionSuccessTitle>
+                  Envio iniciado para as seguintes integrações:
+                </AccordionSuccessTitle>
+              )}
         </AccordionHeaderContent>
         {typeFinished !== "success" ? (
           itemsToView?.map((item) => (
@@ -87,12 +87,13 @@ function AccordionError({
           ))
         ) : (
           <>
-            {providersToIntegration.map((item) => (
-              <ItemIntegrationSuccess>
-                <img src={icons[item]} alt={item} width={20} height={20} />
-                {item}
-              </ItemIntegrationSuccess>
-            ))}
+            {providersToIntegration.length > 10 &&
+              providersToIntegration.map((item) => (
+                <ItemIntegrationSuccess>
+                  <img src={icons[item]} alt={item} width={20} height={20} />
+                  {item}
+                </ItemIntegrationSuccess>
+              ))}
           </>
         )}
       </AccordionContent>

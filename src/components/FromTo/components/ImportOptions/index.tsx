@@ -33,14 +33,14 @@ function ImportOptions(): JSX.Element {
           labelText={item.title}
         />
       ))}
-      <SwitchOption>
+      {/* <SwitchOption>
         <p>Crie uma lista estática de todos os produtos importados</p>
         <Switch
           // checked={activeCharacterLimit}
           size="small"
           // onChange={(e) => setActiveCharacterLimit(e)}
         />
-      </SwitchOption>
+      </SwitchOption> */}
       {/* <CheckboxCustom
         onChange={() => setCheckBox}
         label="Crie uma lista estática de todos os produtos importados"
