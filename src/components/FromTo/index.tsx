@@ -29,7 +29,7 @@ function FromTo(): JSX.Element | null {
   if (!fromToIsOpened) return null;
   return (
     <ContainerFromTo>
-      <BoxFromTo large={currentStep === 2}>
+      <BoxFromTo className="BoxFromTo" large={currentStep === 2}>
         <HeaderModal>
           <TitleModal>
             {currentStep === 1
