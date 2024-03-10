@@ -43,9 +43,11 @@ export const fileRequests = {
     return response.data;
   },
   uploadFile: async (file: File, url: string): Promise<void> => {
-    await axios.put(url, file).catch((error) => {
-      toast.error("Ocorreu um erro ao realizar o upload de uma das imagens");
-    });
+    await axios
+      .put(url, file, { headers: { "x-amz-acl": "public-read" } })
+      .catch((error) => {
+        toast.error("Ocorreu um erro ao realizar o upload de uma das imagens");
+      });
   },
   dropFile: async (
     file: string,
