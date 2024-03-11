@@ -45,6 +45,7 @@ export const fileRequests = {
       const contentType = file.type;
       const headers = {
         "Content-Type": contentType,
+        "x-amz-acl": "public-read",
       };
 
       await axios.put(url, file, { headers });
@@ -52,6 +53,7 @@ export const fileRequests = {
       toast.error("Ocorreu um erro ao realizar o upload de uma das imagens");
     }
   },
+
   dropFile: async (
     file: string,
     entity: string,
