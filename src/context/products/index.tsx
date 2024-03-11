@@ -385,12 +385,6 @@ export const ProductContextProvider = ({
       if (isNew) {
         await productRequests.update({ id: productId, fields });
         toast.success("Produto atualizado com sucesso");
-        const id = window.location.pathname.substring(10);
-        if (id) {
-          setTimeout(() => {
-            handleRedirectAndGetProducts(id).then(() => {});
-          }, 0);
-        }
       } else {
         const newProduct = {
           id: productId,
@@ -404,12 +398,7 @@ export const ProductContextProvider = ({
         newItem = product.id;
 
         toast.success("Produto cadastrado com sucesso");
-        const id = window.location.pathname.substring(10);
-        if (id) {
-          setTimeout(() => {
-            handleRedirectAndGetProducts(id).then(() => {});
-          }, 0);
-        }
+
         return newItem;
       }
     } catch (error: any) {
