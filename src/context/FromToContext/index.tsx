@@ -73,7 +73,7 @@ export function FromToContextProvider({
     string[]
   >([]);
   const [allProductsToIntegration, setAllProductsToIntegration] =
-    useState<boolean>(false);
+    useState<boolean>(true);
 
   const parseCSV = useCallback(
     (file: File): void => {
