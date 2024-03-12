@@ -40,7 +40,6 @@ const handleAfterPaste: any = async (
     type?: string,
   ) => Promise<any>,
 ) => {
-  console.log("veio");
   const { hotInstance } = hotRef.current!;
   if (data.length && !isTableLocked && hotInstance) {
     loadingRef.current!.style.display = "block";
