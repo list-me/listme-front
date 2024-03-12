@@ -94,40 +94,44 @@ function DefaultTable({
     source: string,
   ): Promise<void> => {
     if (source === "CopyPaste.paste") return;
-    if (changes) {
-      if (Array.isArray(changes[0][2]) && Array.isArray(changes[0][3])) {
+
+    const processChanges = async () => {
+      if (!hotRef.current) return;
+
+      const { hotInstance } = hotRef.current;
+      await handleCellChange(
+        changes,
+        hotInstance,
+        isTableLocked,
+        setIsTableLocked,
+        handleSave,
+        products,
+        setProducts,
+        template,
+      );
+    };
+
+    if (changes?.length) {
+      if (
+        Array.isArray(changes[0][2]) &&
+        Array.isArray(changes[0][3]) &&
+        changes[0][3].length > 0
+      ) {
         if (changes[0][2].length !== changes[0][3].length) {
           const verify = changes[0][2].every(
             (element: string, index: number) =>
               element === changes[0][3][index],
           );
+
           if (!verify) return;
           if (hotRef.current) {
-            const { hotInstance } = hotRef.current;
-            await handleCellChange(
-              changes,
-              hotInstance,
-              isTableLocked,
-              setIsTableLocked,
-              handleSave,
-              products,
-              setProducts,
-              template,
-            );
+            await processChanges();
           }
+        } else {
+          await processChanges();
         }
       } else if (hotRef.current) {
-        const { hotInstance } = hotRef.current;
-        await handleCellChange(
-          changes,
-          hotInstance,
-          isTableLocked,
-          setIsTableLocked,
-          handleSave,
-          products,
-          setProducts,
-          template,
-        );
+        await processChanges();
       }
     }
   };
