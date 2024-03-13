@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   ContainerFinishedStep,
   TitleFinishedStep,
@@ -14,6 +14,8 @@ import errorIcon from "../../../../assets/images/error.png";
 import AccordionError from "../AccordionError";
 import { useProductContext } from "../../../../context/products";
 import { ReactComponent as PlusIcon } from "../../../../assets/plus-fromto.svg";
+import { integrationsRequest } from "../../../../services/apis/requests/integration";
+import { useIntegration } from "../../../../context/IntegrationContext";
 
 function FinishedStep({
   typeFinished,
@@ -26,6 +28,7 @@ function FinishedStep({
     useFromToContext();
   console.log("🚀 ~ csvResponse:", csvResponse);
   const { handleRedirectAndGetProducts } = useProductContext();
+  const { setErrors } = useIntegration();
 
   const configView = {
     title: {
@@ -87,10 +90,29 @@ function FinishedStep({
     },
   };
 
+  const getErrors = useCallback(async () => {
+    try {
+      const id = window.location.pathname.split("/")[2];
+      const response = await integrationsRequest.listIntegrationsErrors({
+        limit: 10,
+        offset: 0,
+        id,
+      });
+
+      setErrors(response);
+    } catch (error) {
+      // Handle errors here
+      console.error("Error fetching errors:", error);
+    }
+  }, [setErrors]);
+
   useEffect(() => {
-    const id = window.location.pathname.substring(10);
-    handleRedirectAndGetProducts(id).then(() => {});
-  }, [handleRedirectAndGetProducts]);
+    return () => {
+      const id = window.location.pathname.substring(10);
+      handleRedirectAndGetProducts(id).then(() => {});
+      getErrors();
+    };
+  }, [getErrors, handleRedirectAndGetProducts]);
 
   return (
     <ContainerFinishedStep>
@@ -115,7 +137,11 @@ function FinishedStep({
           </NavigationButton>
         )}
         {typeFinished !== "error" ? (
-          <NavigationButton onClick={() => setFromToIsOpened(false)}>
+          <NavigationButton
+            onClick={() => {
+              setFromToIsOpened(false);
+            }}
+          >
             <PlusIcon />
             Finalizar
           </NavigationButton>
