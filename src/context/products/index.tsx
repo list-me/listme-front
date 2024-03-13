@@ -169,6 +169,7 @@ export const ProductContextProvider = ({
       optionals?: { brand?: string; name?: string },
     ): Promise<string[] | void> => {
       try {
+        console.log("🚀 ~ optionals:", optionals);
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {
           const [fileName, fileType] = file.name.split(".");
@@ -176,6 +177,8 @@ export const ProductContextProvider = ({
           let signedUrl: SignedUrlResponse;
           if (isCollectionCompany(companyId)) {
             if (!optionals?.brand || !optionals?.name) {
+              console.log("cai aqui");
+
               // eslint-disable-next-line @typescript-eslint/no-throw-literal
               throw "Marca e Nome devem estar preenchidos";
             }
@@ -411,12 +414,7 @@ export const ProductContextProvider = ({
 
   const handlePost = async (product: any): Promise<any> => {
     const responseHandlePost = productRequests.save(product);
-    const id = window.location.pathname.substring(10);
-    if (id) {
-      setTimeout(() => {
-        handleRedirectAndGetProducts(id).then(() => {});
-      }, 0);
-    }
+
     return responseHandlePost;
   };
 
