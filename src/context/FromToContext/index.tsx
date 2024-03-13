@@ -149,7 +149,6 @@ export function FromToContextProvider({
           productRequests.postFromToCSV(formData);
         }
         setCsvResponse(productResponse);
-        templateRequests.deleteTemplateImport(templateId);
         return productResponse;
       })
       .catch((error) => {
@@ -163,7 +162,8 @@ export function FromToContextProvider({
           console.error("Erro na requisição:", error.message);
           toast.error(error.message);
         }
-      });
+      })
+      .finally(() => templateRequests.deleteTemplateImport(templateId));
     return result;
   }
 

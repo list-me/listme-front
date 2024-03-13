@@ -656,7 +656,7 @@ function DefaultTable({
       if (products[row]?.id === parentId) {
         checkbox.disabled = true;
       }
-      if (subItensMode === "add" && products[row]?.parent_id === parentId) {
+      if (subItensMode === "add" && products[row]?.parent_id) {
         checkbox.disabled = true;
       }
       if (subItensMode === "remove" && products[row]?.parent_id !== parentId) {
