@@ -169,7 +169,6 @@ export const ProductContextProvider = ({
       optionals?: { brand?: string; name?: string },
     ): Promise<string[] | void> => {
       try {
-        console.log("🚀 ~ optionals:", optionals);
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {
           const [fileName, fileType] = file.name.split(".");
@@ -177,8 +176,6 @@ export const ProductContextProvider = ({
           let signedUrl: SignedUrlResponse;
           if (isCollectionCompany(companyId)) {
             if (!optionals?.brand || !optionals?.name) {
-              console.log("cai aqui");
-
               // eslint-disable-next-line @typescript-eslint/no-throw-literal
               throw "Marca e Nome devem estar preenchidos";
             }
