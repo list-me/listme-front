@@ -29,6 +29,7 @@ function AccordionError({
   });
 
   const { csvResponse, providersToIntegration } = useFromToContext();
+  console.log("🚀 ~ providersToIntegration:", providersToIntegration);
 
   // eslint-disable-next-line consistent-return
   const itemsToView = useMemo(() => {
@@ -65,7 +66,7 @@ function AccordionError({
                   {title}
                 </AccordionColumnContentText>
               ))
-            : providersToIntegration.length > 10 && (
+            : providersToIntegration.length > 0 && (
                 <AccordionSuccessTitle>
                   Envio iniciado para as seguintes integrações:
                 </AccordionSuccessTitle>
@@ -87,7 +88,7 @@ function AccordionError({
           ))
         ) : (
           <>
-            {providersToIntegration.length > 10 &&
+            {providersToIntegration.length > 0 &&
               providersToIntegration.map((item) => (
                 <ItemIntegrationSuccess>
                   <img src={icons[item]} alt={item} width={20} height={20} />

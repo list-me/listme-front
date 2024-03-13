@@ -37,7 +37,7 @@ function FinishedStep({
         <>
           {csvResponse.total > 1 ? (
             <>
-              Foram exportados{" "}
+              Foram importados{" "}
               <span>{csvResponse.total} itens com sucesso</span>
             </>
           ) : (
@@ -51,7 +51,7 @@ function FinishedStep({
         <>
           {csvResponse.warnings?.length > 1 ? (
             <>
-              Foram exportados{" "}
+              Foram importados{" "}
               <span>{csvResponse.warnings?.length} itens com sucesso</span>
             </>
           ) : (
