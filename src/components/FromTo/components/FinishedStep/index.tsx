@@ -24,6 +24,7 @@ function FinishedStep({
 }): JSX.Element {
   const { setFromToIsOpened, setCurrentStep, toClean, csvResponse } =
     useFromToContext();
+  console.log("🚀 ~ csvResponse:", csvResponse);
   const { handleRedirectAndGetProducts } = useProductContext();
 
   const configView = {
@@ -35,14 +36,15 @@ function FinishedStep({
     text: {
       success: (
         <>
-          {csvResponse.total > 1 ? (
+          {csvResponse.newFields.length > 1 ? (
             <>
               Foram importados{" "}
-              <span>{csvResponse.total} itens com sucesso</span>
+              <span>{csvResponse.newFields.length} itens com sucesso</span>
             </>
           ) : (
             <>
-              Foi exportado <span>{csvResponse.total} item com sucesso</span>
+              Foi importado{" "}
+              <span>{csvResponse.newFields.length} item com sucesso</span>
             </>
           )}
         </>
@@ -56,7 +58,7 @@ function FinishedStep({
             </>
           ) : (
             <>
-              Foi exportado{" "}
+              Foi importado{" "}
               <span>{csvResponse.warnings?.length} item com sucesso</span>
             </>
           )}

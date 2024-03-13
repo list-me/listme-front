@@ -68,5 +68,6 @@ export interface CSVRow {
 export interface ICSVResponse {
   errors: { column: string; total: number; reason: string }[];
   warnings: { column: string; total: number; reason: string }[];
+  newFields: [];
   total: number;
 }
