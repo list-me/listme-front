@@ -107,7 +107,6 @@ function LinkFields(): JSX.Element {
     selectedLinkFields,
     setSelectedLinkFields,
   ]);
-  console.log(colHeadersToPreviewTable);
 
   const options: IOption[] = template.fields.fields
     .map((item: any) => {
