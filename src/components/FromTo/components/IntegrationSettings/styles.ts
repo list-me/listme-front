@@ -12,7 +12,7 @@ export const AlertSwitch = styled.p`
   border-radius: 8px;
   padding: 16px;
   border: 1px solid #fcc419;
-  margin-top: 8px;
+
   position: relative;
   span {
     font-weight: ${({ theme }) => theme.fonts.weights.bold};

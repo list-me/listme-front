@@ -168,17 +168,19 @@ function IntegrationSettings(): JSX.Element {
           }}
         />
       </SwitchOption>
-      <AlertSwitch>
-        <span>Para escolher quais produtos serão enviados:</span> Verifique se
-        sua planilha CSV contém a coluna: 'send_to_integrations' antes de
-        importar.
-        <br />
-        <br />
-        Utilize '1' ou 'true' para os produtos que serão salvos{" "}
-        <span>e ENVIADOS para as integrações;</span> E utilize '0' ou 'false'
-        para os produtos que serão salvos{" "}
-        <span>e NÃO ENVIADOS para as integrações.</span>
-      </AlertSwitch>
+      {!allProductsToIntegration && (
+        <AlertSwitch>
+          <span>Para escolher quais produtos serão enviados:</span> Verifique se
+          sua planilha CSV contém a coluna: 'send_to_integrations' antes de
+          importar.
+          <br />
+          <br />
+          Utilize '1' ou 'true' para os produtos que serão salvos{" "}
+          <span>e ENVIADOS para as integrações;</span> E utilize '0' ou 'false'
+          para os produtos que serão salvos{" "}
+          <span>e NÃO ENVIADOS para as integrações.</span>
+        </AlertSwitch>
+      )}
       <BoxButtons>
         <NavigationButton
           abort

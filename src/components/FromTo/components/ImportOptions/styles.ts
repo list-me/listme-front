@@ -11,6 +11,7 @@ export const SwitchOption = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-top: 24px;
+  margin-bottom: 16px;
   p {
     color: ${({ theme }) => theme.colors.grayscale.primary};
     font-family: ${({ theme }) => theme.fonts.family.default};
