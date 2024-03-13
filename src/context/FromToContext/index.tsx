@@ -73,7 +73,7 @@ export function FromToContextProvider({
     string[]
   >([]);
   const [allProductsToIntegration, setAllProductsToIntegration] =
-    useState<boolean>(false);
+    useState<boolean>(true);
 
   const parseCSV = useCallback(
     (file: File): void => {
@@ -144,7 +144,10 @@ export function FromToContextProvider({
         const formData = new FormData();
         formData.append("file", currentFile as Blob);
         formData.append("templateId", templateId);
-        productRequests.postFromToCSV(formData);
+        const withErrors = productResponse.errors.length > 0;
+        if (!withErrors) {
+          productRequests.postFromToCSV(formData);
+        }
         setCsvResponse(productResponse);
         templateRequests.deleteTemplateImport(templateId);
         return productResponse;

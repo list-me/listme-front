@@ -210,35 +210,40 @@ function LinkFields(): JSX.Element {
         <ColumnTitleLinkFields>Destino</ColumnTitleLinkFields>
       </HeaderLinkFields>
       <ContentLinkFields>
-        {colHeadersToPreviewTable?.map((item) => (
-          <ContentRowLinkFields key={item}>
-            <Origin title={item} example={data[0][item]} />
-            <ContainerSelectText>
-              <SelectComponent
-                select={selectedLinkFields[item] || null}
-                onChange={(value) => handleSelectChange(item, value)}
-                options={options}
-                placeHolder="Selecione"
-                small
-                isSearchable
-                fixedOptions={fixedOptions}
-                DropDownComponent={() => (
-                  <DropdownMenu
-                    isOpen
-                    icoRef={iconRef}
-                    openModal={(e) => {
-                      setIsOpenDropDown(!isOpenDropDown);
-                      setIsOpenModal(!isOpenModal);
-                      setDataToModal({ type: e?.type });
-                    }}
-                    options={newColumnOptions}
-                    setIsOpen={() => setIsOpenDropDown(false)}
+        {colHeadersToPreviewTable?.map(
+          (item) =>
+            item !== "sent_to_integrations" &&
+            item !== "third_party_id" &&
+            item !== "parent_third_party_id" && (
+              <ContentRowLinkFields key={item}>
+                <Origin title={item} example={data[0][item]} />
+                <ContainerSelectText>
+                  <SelectComponent
+                    select={selectedLinkFields[item] || null}
+                    onChange={(value) => handleSelectChange(item, value)}
+                    options={options}
+                    placeHolder="Selecione"
+                    small
+                    isSearchable
+                    fixedOptions={fixedOptions}
+                    DropDownComponent={() => (
+                      <DropdownMenu
+                        isOpen
+                        icoRef={iconRef}
+                        openModal={(e) => {
+                          setIsOpenDropDown(!isOpenDropDown);
+                          setIsOpenModal(!isOpenModal);
+                          setDataToModal({ type: e?.type });
+                        }}
+                        options={newColumnOptions}
+                        setIsOpen={() => setIsOpenDropDown(false)}
+                      />
+                    )}
                   />
-                )}
-              />
-            </ContainerSelectText>
-          </ContentRowLinkFields>
-        ))}
+                </ContainerSelectText>
+              </ContentRowLinkFields>
+            ),
+        )}
       </ContentLinkFields>
       <BoxButtons>
         <NavigationButton

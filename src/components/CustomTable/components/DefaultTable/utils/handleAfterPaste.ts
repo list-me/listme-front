@@ -45,11 +45,15 @@ const handleAfterPaste: any = async (
     loadingRef.current!.style.display = "block";
 
     const range = coords[0];
+
     const fieldColumns = cols
       .slice(range.startCol, range.endCol + 1)
       .map((column) => {
         return { field: column.data, type: column.type };
       });
+    const fieldColumnsId = fieldColumns.map((mColumn) => {
+      return mColumn.field;
+    });
 
     const rangeOfRows: number = range.endRow - range.startRow + 1;
     const rows: number[] = getRowsInterval(range.startRow, range.endRow);
@@ -84,13 +88,14 @@ const handleAfterPaste: any = async (
       changesPromises.push(changes);
     }
 
-    changesPromises.forEach(async (item, index) => {
+    changesPromises.forEach(async (item) => {
       const isNew: boolean = !!item?.id;
       if (!isNew) item.id = item?.id ?? generateUUID();
 
-      const fieldId = fieldColumns[index].field;
-
-      await handleSave(item, isNew, item.id, fieldId, data[0][0]);
+      fieldColumnsId.forEach(async (fItem) => {
+        const value = Array.isArray(item[fItem]) ? item[fItem][0] : item[fItem];
+        await handleSave(value, isNew, item.id, fItem, value);
+      });
     });
 
     loadingRef.current!.style.display = "none";

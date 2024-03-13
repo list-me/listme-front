@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   ContainerFinishedStep,
   TitleFinishedStep,
@@ -14,6 +14,8 @@ import errorIcon from "../../../../assets/images/error.png";
 import AccordionError from "../AccordionError";
 import { useProductContext } from "../../../../context/products";
 import { ReactComponent as PlusIcon } from "../../../../assets/plus-fromto.svg";
+import { integrationsRequest } from "../../../../services/apis/requests/integration";
+import { useIntegration } from "../../../../context/IntegrationContext";
 
 function FinishedStep({
   typeFinished,
@@ -25,6 +27,7 @@ function FinishedStep({
   const { setFromToIsOpened, setCurrentStep, toClean, csvResponse } =
     useFromToContext();
   const { handleRedirectAndGetProducts } = useProductContext();
+  const { setErrors } = useIntegration();
 
   const configView = {
     title: {
@@ -35,14 +38,15 @@ function FinishedStep({
     text: {
       success: (
         <>
-          {csvResponse.total > 1 ? (
+          {csvResponse.newFields.length > 1 ? (
             <>
-              Foram exportados{" "}
-              <span>{csvResponse.total} itens com sucesso</span>
+              Foram importados{" "}
+              <span>{csvResponse.newFields.length} itens com sucesso</span>
             </>
           ) : (
             <>
-              Foi exportado <span>{csvResponse.total} item com sucesso</span>
+              Foi importado{" "}
+              <span>{csvResponse.newFields.length} item com sucesso</span>
             </>
           )}
         </>
@@ -51,12 +55,12 @@ function FinishedStep({
         <>
           {csvResponse.warnings?.length > 1 ? (
             <>
-              Foram exportados{" "}
+              Foram importados{" "}
               <span>{csvResponse.warnings?.length} itens com sucesso</span>
             </>
           ) : (
             <>
-              Foi exportado{" "}
+              Foi importado{" "}
               <span>{csvResponse.warnings?.length} item com sucesso</span>
             </>
           )}
@@ -85,10 +89,29 @@ function FinishedStep({
     },
   };
 
+  const getErrors = useCallback(async () => {
+    try {
+      const id = window.location.pathname.split("/")[2];
+      const response = await integrationsRequest.listIntegrationsErrors({
+        limit: 10,
+        offset: 0,
+        id,
+      });
+
+      setErrors(response);
+    } catch (error) {
+      // Handle errors here
+      console.error("Error fetching errors:", error);
+    }
+  }, [setErrors]);
+
   useEffect(() => {
-    const id = window.location.pathname.substring(10);
-    handleRedirectAndGetProducts(id).then(() => {});
-  }, [handleRedirectAndGetProducts]);
+    return () => {
+      const id = window.location.pathname.substring(10);
+      handleRedirectAndGetProducts(id).then(() => {});
+      getErrors();
+    };
+  }, [getErrors, handleRedirectAndGetProducts]);
 
   return (
     <ContainerFinishedStep>
@@ -113,7 +136,11 @@ function FinishedStep({
           </NavigationButton>
         )}
         {typeFinished !== "error" ? (
-          <NavigationButton onClick={() => setFromToIsOpened(false)}>
+          <NavigationButton
+            onClick={() => {
+              setFromToIsOpened(false);
+            }}
+          >
             <PlusIcon />
             Finalizar
           </NavigationButton>

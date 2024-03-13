@@ -14,7 +14,7 @@ export const ContainerFromTo = styled.div`
 `;
 export const BoxFromTo = styled.div<{ large?: boolean }>`
   width: ${(props) => (props.large ? "1038px" : "600px")};
-  min-height: ${(props) => (props.large ? "890px" : "350px")};
+  min-height: ${(props) => (props.large ? "890px" : "300px")};
   max-height: 900px;
   background: ${({ theme }) => theme.colors.background.primary};
   border-radius: 8px;
