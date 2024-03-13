@@ -103,6 +103,12 @@ function customRendererFile(
             optionals.name = _instance.getDataAtRowProp(row, "889711");
           }
 
+          if (template.id === "23625c16-ca24-48d7-9f4d-d00364c66d8b") {
+            const brand = _instance.getDataAtRowProp(row, "896495");
+            optionals.brand = brand?.length ? brand[0]?.id : undefined;
+            optionals.name = _instance.getDataAtRowProp(row, "993384");
+          }
+
           const newFiles: Array<string> | void = await uploadImages(
             parsedFiles,
             template.id,

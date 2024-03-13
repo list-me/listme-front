@@ -411,12 +411,7 @@ export const ProductContextProvider = ({
 
   const handlePost = async (product: any): Promise<any> => {
     const responseHandlePost = productRequests.save(product);
-    const id = window.location.pathname.substring(10);
-    if (id) {
-      setTimeout(() => {
-        handleRedirectAndGetProducts(id).then(() => {});
-      }, 0);
-    }
+
     return responseHandlePost;
   };
 
