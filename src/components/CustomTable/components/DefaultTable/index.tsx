@@ -177,27 +177,7 @@ function DefaultTable({
           };
 
           if (changes?.length) {
-            if (
-              Array.isArray(changes[0][2]) &&
-              Array.isArray(changes[0][3]) &&
-              changes[0][3].length > 0
-            ) {
-              if (changes[0][2].length !== changes[0][3].length) {
-                const verify = changes[0][2].every(
-                  (element: string, index: number) =>
-                    element === changes[0][3][index],
-                );
-
-                if (!verify) return;
-                if (hotRef.current) {
-                  await processChanges();
-                }
-              } else {
-                await processChanges();
-              }
-            } else if (hotRef.current) {
-              await processChanges();
-            }
+            await processChanges();
           }
         } else if (hotRef.current) {
           const { hotInstance } = hotRef.current;
