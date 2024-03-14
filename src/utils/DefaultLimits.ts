@@ -13,7 +13,7 @@ const DefaultLimits: FieldConfigMap = {
     default: 255,
   },
   paragraph: {
-    max: 1000,
+    max: 2000,
     default: 550,
   },
   list: {
