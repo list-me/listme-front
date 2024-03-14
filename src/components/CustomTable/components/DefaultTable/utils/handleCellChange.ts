@@ -21,7 +21,6 @@ const handleCellChange: any = async (
   setDataProvider: React.Dispatch<React.SetStateAction<any[]>>,
   type: string,
 ) => {
-  console.log("🚀 ~ changes:", changes);
   if (changes !== null && changes.length && !isTableLocked && hotInstance) {
     const isNew = !!dataProvider[changes[0][0]].id;
     const customChanges = changes as Handsontable.CellChange[];
@@ -39,7 +38,9 @@ const handleCellChange: any = async (
         }
         if (type === "file") {
           return customChanges[0][3]
-            ? customChanges[0][3][0].replace(/^https:\/\/[^/]+\//, "")
+            ? customChanges[0][3].map((mItem: string) => {
+                return mItem.replace(/^https:\/\/[^/]+\//, "");
+              })
             : customChanges[0][3];
         }
 
@@ -102,13 +103,15 @@ const handleCellChange: any = async (
       try {
         if (!isNew) setIsTableLocked(true);
         const newValue = () => {
-          if (
-            type === "radio" ||
-            type === "checked" ||
-            type === "list" ||
-            type === "file"
-          ) {
+          if (type === "radio" || type === "checked" || type === "list") {
             return customChanges[0][3][0];
+          }
+          if (type === "file") {
+            return customChanges[0][3]
+              ? customChanges[0][3].map((mItem: string) => {
+                  return mItem.replace(/^https:\/\/[^/]+\//, "");
+                })
+              : customChanges[0][3];
           }
           return customChanges[0][3];
         };
