@@ -1,7 +1,8 @@
 // import React, { useState } from "react";
-import { ContainerImportOptions } from "./styles";
+import { Switch } from "antd";
+import { ContainerImportOptions, SwitchOption } from "./styles";
 import Select from "../../../Select";
-import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
+import { BoxButtons, NavigationButton } from "../../../NavigationButton/styles";
 // import CheckboxCustom from "../../../Checkbox";
 import { useFromToContext } from "../../../../context/FromToContext";
 import options from "./utils/options";
@@ -32,6 +33,14 @@ function ImportOptions(): JSX.Element {
           labelText={item.title}
         />
       ))}
+      {/* <SwitchOption>
+        <p>Crie uma lista estática de todos os produtos importados</p>
+        <Switch
+          // checked={activeCharacterLimit}
+          size="small"
+          // onChange={(e) => setActiveCharacterLimit(e)}
+        />
+      </SwitchOption> */}
       {/* <CheckboxCustom
         onChange={() => setCheckBox}
         label="Crie uma lista estática de todos os produtos importados"

@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   ContainerFinishedStep,
   TitleFinishedStep,
   ContentFinishedStep,
   TextFinishedStep,
 } from "./styles";
-import { BoxButtons, NavigationButton } from "../NavigationButton/styles";
+import { BoxButtons, NavigationButton } from "../../../NavigationButton/styles";
 import { useFromToContext } from "../../../../context/FromToContext";
 // @ts-ignore
 import check from "../../../../assets/images/checkImage.png";
@@ -14,6 +14,8 @@ import errorIcon from "../../../../assets/images/error.png";
 import AccordionError from "../AccordionError";
 import { useProductContext } from "../../../../context/products";
 import { ReactComponent as PlusIcon } from "../../../../assets/plus-fromto.svg";
+import { integrationsRequest } from "../../../../services/apis/requests/integration";
+import { useIntegration } from "../../../../context/IntegrationContext";
 
 function FinishedStep({
   typeFinished,
@@ -25,6 +27,7 @@ function FinishedStep({
   const { setFromToIsOpened, setCurrentStep, toClean, csvResponse } =
     useFromToContext();
   const { handleRedirectAndGetProducts } = useProductContext();
+  const { setErrors } = useIntegration();
 
   const configView = {
     title: {
@@ -35,44 +38,45 @@ function FinishedStep({
     text: {
       success: (
         <>
-          {csvResponse.total > 1 ? (
+          {csvResponse.newFields.length > 1 ? (
             <>
-              Foram exportados{" "}
-              <span>{csvResponse.total} itens com sucesso</span>
+              Foram importados{" "}
+              <span>{csvResponse.newFields.length} itens com sucesso</span>
             </>
           ) : (
             <>
-              Foi exportado <span>{csvResponse.total} item com sucesso</span>
+              Foi importado{" "}
+              <span>{csvResponse.newFields.length} item com sucesso</span>
             </>
           )}
         </>
       ),
       warn: (
         <>
-          {csvResponse.warnings.length > 1 ? (
+          {csvResponse.warnings?.length > 1 ? (
             <>
-              Foram exportados{" "}
-              <span>{csvResponse.warnings.length} itens com sucesso</span>
+              Foram importados{" "}
+              <span>{csvResponse.warnings?.length} itens com sucesso</span>
             </>
           ) : (
             <>
-              Foi exportado{" "}
-              <span>{csvResponse.warnings.length} item com sucesso</span>
+              Foi importado{" "}
+              <span>{csvResponse.warnings?.length} item com sucesso</span>
             </>
           )}
         </>
       ),
       error: (
         <>
-          {csvResponse.errors.length > 1 ? (
+          {csvResponse.errors?.length > 1 ? (
             <>
               Seu arquivo deu falha em{" "}
-              <span>{csvResponse.errors.length} itens</span>
+              <span>{csvResponse.errors?.length} itens</span>
             </>
           ) : (
             <>
               Seu arquivo deu falha em{" "}
-              <span>{csvResponse.errors.length} item</span>
+              <span>{csvResponse.errors?.length} item</span>
             </>
           )}
         </>
@@ -85,10 +89,29 @@ function FinishedStep({
     },
   };
 
+  const getErrors = useCallback(async () => {
+    try {
+      const id = window.location.pathname.split("/")[2];
+      const response = await integrationsRequest.listIntegrationsErrors({
+        limit: 10,
+        offset: 0,
+        id,
+      });
+
+      setErrors(response);
+    } catch (error) {
+      // Handle errors here
+      console.error("Error fetching errors:", error);
+    }
+  }, [setErrors]);
+
   useEffect(() => {
-    const id = window.location.pathname.substring(10);
-    handleRedirectAndGetProducts(id).then(() => {});
-  }, [handleRedirectAndGetProducts]);
+    return () => {
+      const id = window.location.pathname.substring(10);
+      handleRedirectAndGetProducts(id).then(() => {});
+      getErrors();
+    };
+  }, [getErrors, handleRedirectAndGetProducts]);
 
   return (
     <ContainerFinishedStep>
@@ -97,9 +120,7 @@ function FinishedStep({
         <TitleFinishedStep>{configView.title[typeFinished]}</TitleFinishedStep>
         <TextFinishedStep>{configView.text[typeFinished]}</TextFinishedStep>
       </ContentFinishedStep>
-      {typeFinished !== "success" && (
-        <AccordionError typeFinished={typeFinished} />
-      )}
+      <AccordionError typeFinished={typeFinished} />
       <BoxButtons>
         {typeFinished !== "error" && (
           <NavigationButton
@@ -115,7 +136,11 @@ function FinishedStep({
           </NavigationButton>
         )}
         {typeFinished !== "error" ? (
-          <NavigationButton onClick={() => setFromToIsOpened(false)}>
+          <NavigationButton
+            onClick={() => {
+              setFromToIsOpened(false);
+            }}
+          >
             <PlusIcon />
             Finalizar
           </NavigationButton>

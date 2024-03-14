@@ -25,8 +25,9 @@ export const Input: React.FC<IInputProps> = ({
   validation,
   padding,
   onPressEnter = () => {},
+  disabledValidade,
 }) => {
-  const [inputText, setInputText] = useState<string>("");
+  const [inputText, setInputText] = useState<string>(value || "");
   const inputRef = useRef<InputRef | null>(null);
 
   const validateExactWord = (rule: any, word: any) => {
@@ -59,6 +60,10 @@ export const Input: React.FC<IInputProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    setInputText(value || "");
+  }, [value]);
+
   return (
     <Container>
       {label?.length ? (
@@ -69,20 +74,23 @@ export const Input: React.FC<IInputProps> = ({
           </span>
         </Label>
       ) : null}
-      <Form>
+      <Form autoComplete="off">
         <Form.Item
           className="formInput"
           name={name}
-          rules={[{ validator: validateExactWord }]}
+          rules={[
+            { validator: !disabledValidade ? validateExactWord : undefined },
+          ]}
         >
           <InputCustom
+            key={inputText}
             ref={inputRef}
             style={{ height: height ?? "35px", width }}
-            placeholder={placeholder}
+            placeholder={placeholder || value}
             type={type}
             name={name}
             custom={{ background, bordered, padding }}
-            value={value ?? inputText}
+            value={inputText}
             autoComplete="off"
             onChange={(e) => {
               const newValue = e.target.value;
@@ -92,6 +100,17 @@ export const Input: React.FC<IInputProps> = ({
             }}
             autoFocus={autoFocus}
             onPressEnter={() => onPressEnter()}
+          />
+          <input
+            style={{ display: "none" }}
+            type="text"
+            value={inputText}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setInputText(newValue);
+
+              if (handleCustomChange) handleCustomChange(newValue);
+            }}
           />
         </Form.Item>
       </Form>

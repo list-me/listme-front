@@ -30,18 +30,30 @@ const handleAfterPaste: any = async (
   cols: any[],
   dataProvider: any[],
   componentCellPerType: ICustomCellType,
-  handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>,
+  handleSave: (
+    value: any,
+    isNew: boolean,
+    productId: string,
+    fieldId: string,
+    newValue: string,
+    prevValue?: string,
+    type?: string,
+  ) => Promise<any>,
 ) => {
   const { hotInstance } = hotRef.current!;
   if (data.length && !isTableLocked && hotInstance) {
     loadingRef.current!.style.display = "block";
 
     const range = coords[0];
+
     const fieldColumns = cols
       .slice(range.startCol, range.endCol + 1)
       .map((column) => {
         return { field: column.data, type: column.type };
       });
+    const fieldColumnsId = fieldColumns.map((mColumn) => {
+      return mColumn.field;
+    });
 
     const rangeOfRows: number = range.endRow - range.startRow + 1;
     const rows: number[] = getRowsInterval(range.startRow, range.endRow);
@@ -76,12 +88,15 @@ const handleAfterPaste: any = async (
       changesPromises.push(changes);
     }
 
-    for await (const item of changesPromises) {
+    changesPromises.forEach(async (item) => {
       const isNew: boolean = !!item?.id;
       if (!isNew) item.id = item?.id ?? generateUUID();
 
-      await handleSave(item, isNew, item.id);
-    }
+      fieldColumnsId.forEach(async (fItem) => {
+        const value = Array.isArray(item[fItem]) ? item[fItem][0] : item[fItem];
+        await handleSave(value, isNew, item.id, fItem, value);
+      });
+    });
 
     loadingRef.current!.style.display = "none";
 

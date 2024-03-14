@@ -14,6 +14,7 @@ import {
   ICSVResponse,
   IValuesImportConfiguration,
   IValuesImportOptions,
+  IValuesIntegrationsConfig,
 } from "./fromToContext";
 import {
   initialValuesImportConfiguration,
@@ -61,8 +62,18 @@ export function FromToContextProvider({
   const [valuesImportConfiguration, setValuesImportConfiguration] =
     useState<IValuesImportConfiguration>(initialValuesImportConfiguration);
 
+  const [valuesIntegrationsConfig, setValuesIntegrationsConfig] = useState<
+    IValuesIntegrationsConfig[]
+  >([""]);
+
   const [valuesImportOptions, setValuesImportOptions] =
     useState<IValuesImportOptions>(initialValuesImportOptions);
+
+  const [providersToIntegration, setProdvidersToIntegration] = useState<
+    string[]
+  >([]);
+  const [allProductsToIntegration, setAllProductsToIntegration] =
+    useState<boolean>(true);
 
   const parseCSV = useCallback(
     (file: File): void => {
@@ -109,6 +120,10 @@ export function FromToContextProvider({
         action: valuesImportOptions.import.value,
         status: valuesImportOptions.status.value,
         multioptions: valuesImportConfiguration.multiOptions.value,
+        integration: {
+          providers: providersToIntegration,
+          allProducts: allProductsToIntegration,
+        },
 
         template_id: template.id,
       },
@@ -123,16 +138,27 @@ export function FromToContextProvider({
         formData.append("file", currentFile as Blob);
 
         formData.append("templateId", templateId);
-        return productRequests.postFromToCSV(formData);
+        return productRequests.validateCSV(formData);
       })
       .then((productResponse) => {
+        const formData = new FormData();
+        formData.append("file", currentFile as Blob);
+        formData.append("templateId", templateId);
+        const withErrors = productResponse.errors.length > 0;
+        if (!withErrors) {
+          productRequests.postFromToCSV(formData);
+        }
         setCsvResponse(productResponse);
         templateRequests.deleteTemplateImport(templateId);
         return productResponse;
       })
       .catch((error) => {
         if (error.response) {
-          toast.error(error.response.data.message[0]);
+          const message =
+            typeof error.response.data.message === "string"
+              ? error.response.data.message
+              : error.response.data.message[0];
+          toast.error(message);
         } else {
           console.error("Erro na requisição:", error.message);
           toast.error(error.message);
@@ -181,6 +207,12 @@ export function FromToContextProvider({
     setSelectedLinkFields,
     csvResponse,
     toClean,
+    valuesIntegrationsConfig,
+    setValuesIntegrationsConfig,
+    providersToIntegration,
+    setProdvidersToIntegration,
+    allProductsToIntegration,
+    setAllProductsToIntegration,
   };
 
   return (

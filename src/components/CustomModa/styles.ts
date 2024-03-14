@@ -86,7 +86,7 @@ export const Description = styled.h2`
   font-weight: 400;
   font-size: 16px;
   line-height: 150%;
-  color: #868e96;
+  color: ${({ theme }) => theme.colors.tertiary};
 
   flex: none;
   order: 1;
@@ -480,5 +480,23 @@ export const IconContent = styled.span`
   &:hover {
     filter: brightness(0.2);
     transition: 0.5s;
+  }
+`;
+export const CharacterLimitContainer = styled.div`
+  .ant-form-item-label {
+    .ant-form-item-no-colon {
+      width: 100%;
+      padding: 0;
+    }
+  }
+  .label-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+  }
+  button {
+    position: relative;
+    right: -10px;
   }
 `;

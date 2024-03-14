@@ -23,7 +23,7 @@ function Template(): JSX.Element {
     setConditions([]);
     setFilters([defaultFilter]);
     setFilterStatus(false);
-  }, [defaultFilter, setConditions, setFilterStatus, setFilters]);
+  }, []);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]): void => {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -31,7 +31,7 @@ function Template(): JSX.Element {
 
   const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
     templateRequests
-      .list({ limit, page })
+      .list({ limit, page, list: true })
       .then((response) => {
         setTemplates(response);
       })
@@ -160,7 +160,10 @@ function Template(): JSX.Element {
   ];
 
   return (
-    <TemplateDefault handleGetTemplates={handleGetTemplates}>
+    <TemplateDefault
+      handleGetTemplates={handleGetTemplates}
+      templates={templates}
+    >
       <Content>
         <TitlePage> Templates </TitlePage>
         <CustomTable

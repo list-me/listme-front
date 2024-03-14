@@ -185,7 +185,7 @@ export const Container = styled.div`
 
         font-family: ${({ theme }) => theme.fonts.family.default};
         font-size: ${({ theme }) => theme.fonts.sizes.small};
-        color: #868e96;
+        color: ${({ theme }) => theme.colors.tertiary};
         font-weight: 400;
         line-height: 150%;
 
@@ -252,6 +252,12 @@ export const Container = styled.div`
 
       padding-top: 16px;
       align-content: center;
+      .boolean-switch-cell {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
       .tag-content {
         background-color: #dee2e6 !important;
@@ -333,6 +339,55 @@ export const Container = styled.div`
 
       border: 1px solid #f1bc02;
       border-radius: 24px;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      position: relative;
+    }
+
+    .checked-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 45px;
+      width: fit-content;
+      height: 30px;
+
+      background: #f8f9fa;
+      border-radius: 24px;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .checked-item-warn {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 45px;
+      width: fit-content;
+      height: 30px;
+
+      border-radius: 24px;
+      background: #fffaeb;
 
       padding-left: 8px;
       margin: 10.5px 0 0 8px;

@@ -10,7 +10,7 @@ export const ErrorMessage = styled.div<{ position: { x: number; y: number } }>`
   left: ${(props) => props.position.x}px;
 
   width: 285px;
-  height: 136px;
+  /* height: 136px; */
   background-color: rgba(0, 0, 0, 0.88);
   border-radius: 6px;
   p {
