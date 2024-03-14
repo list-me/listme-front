@@ -157,6 +157,8 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
 
                 this.TD.setAttribute("data-new-value", JSON.stringify(images));
               }}
+              instance={this.hotInstance}
+              row={this.row}
               optionals={this.state.optionals}
             />
           ) : (

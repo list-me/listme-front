@@ -23,6 +23,8 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   field,
   onCancel,
   onSuccess,
+  instance,
+  row,
   companyId,
   optionals,
 }) => {
