@@ -7,4 +7,5 @@ export const Container = styled.div`
 
 export const Content = styled.div`
   display: flex;
+  padding-left: 222px;
 `;

@@ -17,6 +17,9 @@ import { ReactComponent as DropdownIcon } from "../../../../assets/icons/headers
 import { ReactComponent as FileIcon } from "../../../../assets/icons/headers/file-icon.svg";
 import { ReactComponent as RadioIcon } from "../../../../assets/icons/headers/radio-icon.svg";
 import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers/relation-icon.svg";
+import { ReactComponent as NumericIcon } from "../../../../assets/numeric-icon.svg";
+import { ReactComponent as DecimalIcon } from "../../../../assets/decimal-icon.svg";
+import { ReactComponent as BooleanIcon } from "../../../../assets/boolean-icon.svg";
 
 enum IconType {
   Text = "text",
@@ -26,6 +29,9 @@ enum IconType {
   File = "file",
   Radio = "radio",
   Relation = "relation",
+  Numeric = "numeric",
+  Decimal = "decimal",
+  Boolean = "boolean",
 }
 
 const CustomOption = (AdditionalComponent: any): JSX.Element => {
@@ -40,6 +46,9 @@ const CustomOption = (AdditionalComponent: any): JSX.Element => {
       [IconType.File]: <FileIcon />,
       [IconType.Radio]: <RadioIcon />,
       [IconType.Relation]: <RelationIcon />,
+      [IconType.Numeric]: <NumericIcon />,
+      [IconType.Decimal]: <DecimalIcon />,
+      [IconType.Boolean]: <BooleanIcon />,
     }),
     [],
   );
@@ -54,7 +63,7 @@ const CustomOption = (AdditionalComponent: any): JSX.Element => {
   // @ts-ignore
   return (props: any) => {
     const { label } = props?.data;
-    const { type } = props?.data;
+    const type = props?.data?.type || props?.value?.type;
     if (!props!.data.openDropdown)
       return (
         <components.Option {...props}>

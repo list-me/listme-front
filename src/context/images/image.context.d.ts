@@ -10,9 +10,9 @@ type FileOptional = {
 interface ImageContext {
   uploadImages: (
     files: File[],
-    templateId: string,
+    bucket_url: string,
     companyId: string,
-    optionals?: FileOptional,
+    optionals?: { brand?: string; name?: string },
   ) => Promise<string[] | void>;
   isDragActive: boolean;
   handleActiveDrag: () => void;

@@ -23,7 +23,15 @@ function customRendererFile(
     optionals?: { brand?: string; name?: string },
   ) => Promise<void | string[]>,
   template: any,
+  totalExistingImages: number,
+  limit: number,
 ): void {
+  let totalImages = totalExistingImages;
+
+  if (value && Array.isArray(value)) {
+    totalImages += value.length;
+  }
+
   td.className = "file-cell";
 
   td.draggable = true;
@@ -51,6 +59,10 @@ function customRendererFile(
   td.ondrop = async (event: DragEvent) => {
     event.preventDefault();
     event.stopPropagation();
+    // if (totalImages >= limit) {
+    //   toast.warn(`Limite de imagens excedido`);
+    //   return;
+    // }
 
     const { hotInstance } = hotRef.current!;
     const target = event.target as HTMLElement;
@@ -81,7 +93,6 @@ function customRendererFile(
 
           if (template.id === "8956d969-d769-4f09-8736-e0b4d73b3e3d") {
             const brand = _instance.getDataAtRowProp(row, "730291");
-
             optionals.brand = brand?.length ? brand[0]?.id : undefined;
             optionals.name = _instance.getDataAtRowProp(row, "474091");
           }
@@ -167,8 +178,14 @@ function customRendererFile(
           response.headers.get("Content-Length");
 
         if (contentLength && parseInt(contentLength) <= 1000 * 1024) {
-          let imageSource: string = imgUrl;
-          const fileNameWithExtension: string = getFilenameFromUrl(imgUrl);
+          const regex = /https:\/\/[^/]+\//;
+          const verifyTrue = regex.test(imgUrl);
+          let newImageUrl = "";
+          if (imgUrl !== null) {
+            newImageUrl = verifyTrue ? imgUrl : `${template.bucket}/${imgUrl}`;
+          }
+          let imageSource: string = newImageUrl;
+          const fileNameWithExtension: string = getFilenameFromUrl(newImageUrl);
           const lastDotIndex: number = fileNameWithExtension.lastIndexOf(".");
           const fileType: string = fileNameWithExtension.substring(
             lastDotIndex + 1,

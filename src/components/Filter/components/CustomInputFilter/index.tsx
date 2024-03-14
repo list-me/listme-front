@@ -7,6 +7,9 @@ import { ReactComponent as DropdownIcon } from "../../../../assets/icons/headers
 import { ReactComponent as FileIcon } from "../../../../assets/icons/headers/file-icon.svg";
 import { ReactComponent as RadioIcon } from "../../../../assets/icons/headers/radio-icon.svg";
 import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers/relation-icon.svg";
+import { ReactComponent as NumericIcon } from "../../../../assets/numeric-icon.svg";
+import { ReactComponent as DecimalIcon } from "../../../../assets/decimal-icon.svg";
+import { ReactComponent as BooleanIcon } from "../../../../assets/boolean-icon.svg";
 import { CustomInputFilterContainer } from "./styles";
 // import { Container } from './styles';
 enum IconType {
@@ -17,6 +20,9 @@ enum IconType {
   File = "file",
   Radio = "radio",
   Relation = "relation",
+  Numeric = "numeric",
+  Decimal = "decimal",
+  Boolean = "boolean",
 }
 
 function CustomInputFilter(props: any): JSX.Element {
@@ -31,6 +37,9 @@ function CustomInputFilter(props: any): JSX.Element {
       [IconType.File]: <FileIcon />,
       [IconType.Radio]: <RadioIcon />,
       [IconType.Relation]: <RelationIcon />,
+      [IconType.Numeric]: <NumericIcon />,
+      [IconType.Decimal]: <DecimalIcon />,
+      [IconType.Boolean]: <BooleanIcon />,
     }),
     [],
   );
