@@ -201,9 +201,9 @@ function customRendererFile(
           td.innerHTML =
             value.length > 1
               ? `<div style="display:flex; align-items: center; margin-top: 16px; margin-left: 8px;">
-                  ${imgTag.concat(
-                    `<div class="itens-amount"> +${value.length - 1}</div>`,
-                  )} </div>`
+                    ${imgTag.concat(
+                      `<div class="itens-amount"> +${value.length - 1}</div>`,
+                    )} </div>`
               : imgTag;
         }
       })
