@@ -10,6 +10,7 @@ interface DropzoneRendererProps {
   companyId: string;
   companyId: string;
   optionals: { brand: string; name: string };
+  template: any;
 }
 
 export type { DropzoneRendererProps };

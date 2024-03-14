@@ -160,6 +160,7 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
               instance={this.hotInstance}
               row={this.row}
               optionals={this.state.optionals}
+              template={this.props.template}
             />
           ) : (
             <></>

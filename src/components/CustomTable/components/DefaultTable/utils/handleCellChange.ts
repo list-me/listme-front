@@ -24,6 +24,7 @@ const handleCellChange: any = async (
   if (changes !== null && changes.length && !isTableLocked && hotInstance) {
     const isNew = !!dataProvider[changes[0][0]].id;
     const customChanges = changes as Handsontable.CellChange[];
+
     if (
       typeof customChanges[0][2] === "object" &&
       typeof customChanges[0][3] === "object" &&
@@ -31,10 +32,14 @@ const handleCellChange: any = async (
     ) {
       // eslint-disable-next-line prefer-destructuring
       previousCellValue = customChanges[0][2];
-
       const newValue = () => {
         if (type === "radio" || type === "checked" || type === "list") {
           return customChanges[0][3][0];
+        }
+        if (type === "file") {
+          return customChanges[0][3]
+            ? customChanges[0][3][0].replace(/^https:\/\/[^/]+\//, "")
+            : customChanges[0][3];
         }
 
         return customChanges[0][3];
