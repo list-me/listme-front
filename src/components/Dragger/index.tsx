@@ -2,10 +2,10 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import { Form, Input, Tree } from "antd";
+import { toast } from "react-toastify";
 import { IDraggerProps } from "./Dragger.d";
 import { Container, Content, IconContent } from "./styles";
 import { ReactComponent as MenuIcon } from "../../assets/menu-small-gray.svg";
-import { toast } from "react-toastify";
 
 import { ReactComponent as TrashIcon } from "../../assets/trash-icon.svg";
 
@@ -15,15 +15,13 @@ export const Dragger: React.FC<IDraggerProps> = ({
   setOptions = (values: any) => {},
   form,
 }) => {
-  useEffect(() => {}, [options]);
-
   return (
     <Container>
       {options.map((item, index) => {
-        const fieldName = "option" + index;
+        const fieldName = `option${index}`;
 
         return (
-          <Content key={index}>
+          <Content key={fieldName}>
             <Form.Item
               wrapperCol={{ flex: "auto" }}
               label={index + 1}
@@ -42,9 +40,13 @@ export const Dragger: React.FC<IDraggerProps> = ({
               }}
               initialValue={item}
             >
+              <p style={{ display: "none" }}>{item}</p>
               <Input
                 value={item}
                 onChange={(e) => {
+                  const updatedOptions = [...options];
+                  updatedOptions[index] = e.target.value;
+                  setOptions(updatedOptions);
                   form.setFieldsValue({ [fieldName]: e.target.value });
                 }}
                 onPressEnter={(e) => {

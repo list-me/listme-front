@@ -72,6 +72,7 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
               bordered
               label="Para confirmar digite a palavra"
               name={pass}
+              value={inputText}
               type="text"
               width="482px"
               height="64px"
@@ -81,6 +82,8 @@ export const Confirmation: React.FC<IPropsConfirmation> = ({
               padding="20px"
               onPressEnter={handleKeyDown}
               handleCustomChange={handleChangeValue}
+              disabledValidade={false}
+              autoFocus
             />
             <ButtonCotainer>
               <Button

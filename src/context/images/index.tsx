@@ -22,17 +22,20 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
     fileName: string,
     fileType: string,
     templateId: string,
-    optionals?: FileOptional,
+    optionals?: { brand?: string; name?: string },
   ): Promise<SignedUrlResponse> => {
-    return fileRequests.getSignedUrl(fileName, fileType, templateId, optionals);
+    return fileRequests.getSignedUrl(fileName, fileType, templateId, {
+      brand: optionals?.brand,
+      name: optionals?.name,
+    });
   };
 
   const uploadImages = useCallback(
     async (
       files: File[],
-      templateId: string,
+      bucketUrl: string,
       companyId: string,
-      optionals?: FileOptional,
+      optionals?: { brand?: string; name?: string },
     ): Promise<string[] | void> => {
       try {
         const filesNames: string[] = [];
@@ -40,19 +43,16 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
           const [fileName, fileType] = file.name.split(".");
 
           let signedUrl: SignedUrlResponse;
-          if (isCollectionCompany(companyId)) {
-            if (!optionals?.brand || !optionals?.name) {
-              // eslint-disable-next-line @typescript-eslint/no-throw-literal
-              throw "Marca e Nome devem estar preenchidos";
-            }
 
-            signedUrl = await getSignedUrl(fileName, fileType, templateId, {
-              brand: optionals.brand,
-              name: optionals.name,
-            });
-          } else {
-            signedUrl = await getSignedUrl(fileName, fileType, templateId);
+          if (!optionals?.brand || !optionals?.name) {
+            // eslint-disable-next-line @typescript-eslint/no-throw-literal
+            throw "Marca e Nome devem estar preenchidos";
           }
+
+          signedUrl = await getSignedUrl(fileName, fileType, bucketUrl, {
+            brand: optionals.brand,
+            name: optionals.name,
+          });
 
           filesNames.push(signedUrl.access_url);
           return fileRequests.uploadFile(file, signedUrl.url);

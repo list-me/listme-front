@@ -14,6 +14,7 @@ import { fileRequests } from "../../services/apis/requests/file";
 import Modal from "../Modal";
 import { Loading } from "../Loading";
 import { getFilenameFromUrl } from "../../utils";
+import { productRequests } from "../../services/apis/requests/product";
 
 const Dropzone: React.FC<DropzoneRendererProps> = ({
   value,
@@ -22,9 +23,8 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   field,
   onCancel,
   onSuccess,
-  instance,
-  row,
   companyId,
+  optionals,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -39,11 +39,6 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     if (acceptedFiles.length > 0) {
       setLoading(true);
       try {
-        const optionals = {
-          brand: "",
-          name: "",
-        };
-
         if (templateId === "8956d969-d769-4f09-8736-e0b4d73b3e3d") {
           const brand = instance.getDataAtRowProp(row, "730291");
 
@@ -87,6 +82,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   const handleRemove = async (
     imageUrl: string,
     event: React.MouseEvent,
+    currentItems: any[],
   ): Promise<void> => {
     event.stopPropagation();
 
@@ -99,21 +95,17 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         productId,
         field,
       );
-
-      const newValue = items.filter((item) => {
+      const newValue = currentItems.filter((item) => {
         if (item !== imageUrl) {
           return item;
         }
       });
-
       if (newValue.length) {
         setItems(newValue);
       } else {
         setItems([]);
       }
-
       onSuccess(newValue);
-
       setImageLoading(false);
     } catch (error) {
       setImageLoading(false);
@@ -259,7 +251,9 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                           )}
                         </Image>
                         {!imageLoading ? (
-                          <CloseIcon onClick={(e) => handleRemove(item, e)} />
+                          <CloseIcon
+                            onClick={(e) => handleRemove(item, e, items)}
+                          />
                         ) : (
                           <></>
                         )}

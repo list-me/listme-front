@@ -6,6 +6,7 @@ import ImportConfiguration from "../ImportConfiguration";
 import { useFromToContext } from "../../../../context/FromToContext";
 import ImportOptions from "../ImportOptions";
 import LinkFields from "../LinkFields";
+import IntegrationSettings from "../IntegrationSettings";
 
 function StepContent(): JSX.Element {
   const { currentStep } = useFromToContext();
@@ -22,7 +23,8 @@ function StepContent(): JSX.Element {
         <ImportConfiguration />
       )}
       {currentStep === 3 && <ImportOptions />}
-      {currentStep === 4 && <LinkFields />}
+      {currentStep === 4 && <IntegrationSettings />}
+      {currentStep === 5 && <LinkFields />}
     </StepContentContainer>
   );
 }

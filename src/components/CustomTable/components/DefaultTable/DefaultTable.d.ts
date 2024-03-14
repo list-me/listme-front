@@ -13,7 +13,13 @@ export interface IDefaultTable {
   products: IProductToTable[];
   setProducts: React.Dispatch<React.SetStateAction<IProductToTable[]>>;
   handleDelete: Function;
-  handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>;
+  handleSave: (
+    value: any,
+    isNew: boolean,
+    productId: string,
+    fieldId: string,
+    newValue: string,
+  ) => Promise<any>;
   loadingRef: React.RefObject<HTMLDivElement>;
   componentCellPerType: ICustomCellType;
   total: number;
@@ -43,4 +49,8 @@ export interface IDefaultTable {
   setCurrentCell: React.Dispatch<any>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleFreeze: any;
+  parentId: string | null;
+  setParentId: React.Dispatch<React.SetStateAction<string | null>>;
+  subItensMode: "add" | "remove";
+  setSubItemsMode: React.Dispatch<React.SetStateAction<"add" | "remove">>;
 }

@@ -2,6 +2,7 @@
 import { ProductContextProvider } from "./products";
 import { FromToContextProvider } from "./FromToContext";
 import { FilterContextProvider } from "./FilterContext";
+import { IntegrationProvider } from "./IntegrationContext";
 import { combineContexts } from "./combineContexts";
 import { ImageContextProvider } from "./images";
 
@@ -10,6 +11,7 @@ const providers = [
   FromToContextProvider,
   FilterContextProvider,
   ImageContextProvider,
+  IntegrationProvider,
 ];
 
 export const AppContextProvider = combineContexts(...providers);

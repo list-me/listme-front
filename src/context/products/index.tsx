@@ -2,7 +2,6 @@ import React, {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -16,6 +15,7 @@ import {
   IField,
   IHeader,
   IHeaderTable,
+  IProduct,
   IProductToTable,
   IProductsRequest,
   ITemplate,
@@ -41,7 +41,14 @@ interface ITypeProductContext {
   headerTable: IHeader[];
   setHeaderTable: React.Dispatch<React.SetStateAction<IHeader[]>>;
   handleAdd: Function;
-  handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>;
+  handleSave: (
+    value: any,
+    isNew: boolean,
+    productId: string,
+    fieldId: string,
+    newValue: string,
+    prevValue?: string,
+  ) => Promise<any>;
   editing: boolean;
   setEditing: Function;
   colHeaders: string[];
@@ -124,6 +131,7 @@ export const ProductContextProvider = ({
       CHECKED: "checkbox",
       FILE: "file",
       RELATION: "relation",
+      BOOLEAN: "boolean",
     }),
     [],
   );
@@ -221,6 +229,26 @@ export const ProductContextProvider = ({
     }
   };
 
+  function reorganizeArrayWithChildren(list: IProduct[]): IProduct[] {
+    const newArray: IProduct[] = [];
+
+    list.forEach((fItem) => {
+      newArray.push(fItem);
+
+      if (fItem.children) {
+        fItem.children.forEach((child) => {
+          newArray.push(child);
+        });
+
+        // @ts-ignore
+        // eslint-disable-next-line no-param-reassign
+        delete fItem.children;
+      }
+    });
+
+    return newArray;
+  }
+
   const handleGetProducts = useCallback(
     async (
       templateId: string,
@@ -238,13 +266,18 @@ export const ProductContextProvider = ({
         operator,
       );
 
+      const listProducts = reorganizeArrayWithChildren(data?.products);
+
       const productFields: {
-        [key: string]: string | string[];
+        [key: string]: string | string[] | boolean;
         id: string;
         created_at: string;
+        is_parent: boolean;
+        childrens: any[];
       }[] = [];
-      if (data.products.length) {
-        data?.products?.forEach((item) => {
+
+      if (listProducts.length) {
+        listProducts.forEach((item) => {
           const object: { [key: string]: string | string[] } = {};
           if (item?.fields?.length) {
             item?.fields?.forEach((field) => {
@@ -263,17 +296,21 @@ export const ProductContextProvider = ({
               }
             });
           }
+
           const toProductFields = {
             ...object,
             id: item.id,
             created_at: item.created_at,
+            parent_id: item.parent_id,
+            childrens: item.children,
+            is_parent: item?.is_parent,
           };
 
           productFields.push(toProductFields);
         });
       }
 
-      setProducts(productFields);
+      setProducts(productFields as any);
       setTotal(data?.total);
       return { productFields, headerTable };
     },
@@ -303,6 +340,8 @@ export const ProductContextProvider = ({
             width: item.width ? item.width : "300px",
             frozen: item.frozen ? item.frozen : false,
             bucket_url: response?.bucket_url,
+            limit: item.limit,
+            integrations: item.integrations,
           };
         },
       );
@@ -371,35 +410,140 @@ export const ProductContextProvider = ({
   );
 
   const handlePost = async (product: any): Promise<any> => {
-    return productRequests.save(product);
+    const responseHandlePost = productRequests.save(product);
+
+    return responseHandlePost;
+  };
+
+  const buildProduct = (fields: any) => {
+    const obj: any[] = [];
+    if (Object.keys(fields).length) {
+      // @ts-ignore
+      const columnKeys = headerTable.map((column) => column?.data);
+      let newValue;
+      Object.keys(fields).forEach((field: any) => {
+        if (
+          !["id", "created_at"].includes(field) &&
+          columnKeys.includes(field)
+        ) {
+          newValue =
+            typeof fields[field] === "object"
+              ? fields[field] || ""
+              : [fields[field]];
+
+          if (newValue[0] !== "")
+            obj.push({
+              id: field,
+              value: newValue || [],
+            });
+        }
+      });
+    }
+
+    return obj;
   };
 
   const handleSave = async (
     value: any,
     isNew: boolean,
     productId: string,
+    fieldId: string,
+    newValue: string,
+    prevValue?: string,
+    type?: string,
   ): Promise<any> => {
     try {
       const fields = buildProduct(value);
-
       if (isNew) {
-        await productRequests.update({ id: productId, fields });
-        toast.success("Produto atualizado com sucesso");
-      } else {
-        const newProduct = {
-          id: productId,
-          templateId: window.location.pathname.substring(10),
-          is_public: true,
-          fields,
+        const newValueToPatch = () => {
+          if (newValue && !prevValue) {
+            if (type === "relation") {
+              return newValue;
+            }
+            if (
+              (type === "file" || type === "boolean") &&
+              typeof newValue !== "string"
+            ) {
+              if (typeof newValue[0] !== "string") {
+                return (newValue as any).flat();
+              }
+              return newValue;
+            }
+            return [newValue || ""];
+          }
+          if (
+            !newValue &&
+            prevValue &&
+            (type === "text" ||
+              type === "paragraph" ||
+              type === "decimal" ||
+              type === "numeric" ||
+              type === "checked" ||
+              type === "list" ||
+              type === "boolean")
+          ) {
+            return [{ value: prevValue || "", destroy: true }];
+          }
+          if (!newValue && prevValue && type === "file") {
+            // @ts-ignore
+            const newArray = prevValue.map((mValue) => {
+              return { value: mValue, destroy: true };
+            });
+            return newArray;
+          }
+          if (newValue && prevValue && type === "file") {
+            return (newValue as unknown as []).flat();
+          }
+          if (newValue && prevValue && type === "boolean") {
+            return (newValue as unknown as []).flat();
+          }
+          if (type === "relation" && newValue && prevValue) {
+            const newIds = (newValue as unknown as any[]).map(
+              (item) => item.id,
+            );
+            const prevIds = (prevValue as unknown as any[]).map(
+              (item) => item.id,
+            );
+
+            const addedIds = newIds.filter((id) => !prevIds.includes(id));
+            const removedIds = prevIds.filter((id) => !newIds.includes(id));
+
+            const newArray = (prevValue as unknown as any[]).map((item) => {
+              if (removedIds.includes(item.id)) {
+                return { ...item, destroy: true };
+              }
+              return item;
+            });
+
+            const newItems = (newValue as unknown as any[]).filter((item) =>
+              addedIds.includes(item.id),
+            );
+            newArray.push(...newItems);
+
+            return newArray;
+          }
+
+          return [newValue];
         };
-        let newItem;
-
-        const product = await handlePost(newProduct);
-        newItem = product.id;
-
-        toast.success("Produto cadastrado com sucesso");
-        return newItem;
+        const response = await productRequests.patchProductValue({
+          value: newValueToPatch() as any,
+          productId,
+          fieldId,
+        });
+        toast.success("Produto atualizado com sucesso");
+        return response;
       }
+      const newProduct = {
+        id: productId,
+        templateId: window.location.pathname.substring(10),
+        is_public: true,
+        fields,
+      };
+
+      const product = await handlePost(newProduct);
+
+      toast.success("Produto cadastrado com sucesso");
+      return product;
     } catch (error: any) {
       const message =
         typeof error?.response?.data?.message === "object"
@@ -408,31 +552,6 @@ export const ProductContextProvider = ({
 
       toast.error(message);
     }
-  };
-
-  const buildProduct = (fields: any) => {
-    const obj: any[] = [];
-    if (Object.keys(fields).length) {
-      // @ts-ignore
-      const columnKeys = headerTable.map((column) => column?.data);
-      Object.keys(fields).forEach((field: any) => {
-        if (
-          !["id", "created_at"].includes(field) &&
-          columnKeys.includes(field)
-        ) {
-          const newValue =
-            typeof fields[field] === "object" ? fields[field] : [fields[field]];
-
-          if (newValue[0] !== "")
-            obj.push({
-              id: field,
-              value: newValue || [""],
-            });
-        }
-      });
-    }
-
-    return obj;
   };
 
   const handleAdd = () => {

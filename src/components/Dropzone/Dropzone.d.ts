@@ -5,9 +5,8 @@ interface DropzoneRendererProps {
   field: string;
   onSuccess: (images: Array<string>) => void;
   onCancel: () => void;
-  instance: any;
-  row: number;
   companyId: string;
+  optionals: { brand: string; name: string };
 }
 
 export type { DropzoneRendererProps };
