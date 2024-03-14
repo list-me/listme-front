@@ -240,7 +240,11 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                             </>
                           ) : (
                             <>
-                              <a href={item} target="_blank" rel="noreferrer">
+                              <a
+                                href={urlItem}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
                                 <img
                                   src={urlItem}
                                   alt={getFilenameFromUrl(urlItem) ?? ""}

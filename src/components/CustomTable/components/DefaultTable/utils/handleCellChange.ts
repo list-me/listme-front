@@ -21,6 +21,7 @@ const handleCellChange: any = async (
   setDataProvider: React.Dispatch<React.SetStateAction<any[]>>,
   type: string,
 ) => {
+  console.log("🚀 ~ changes:", changes);
   if (changes !== null && changes.length && !isTableLocked && hotInstance) {
     const isNew = !!dataProvider[changes[0][0]].id;
     const customChanges = changes as Handsontable.CellChange[];
