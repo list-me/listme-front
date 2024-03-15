@@ -11,6 +11,7 @@ import {
   IConditions,
   IOperator,
 } from "../../../../../context/FilterContext/FilterContextType";
+import getImage from "../../../../../utils/getImages";
 
 let isFetchingNextPage = false;
 
@@ -86,6 +87,9 @@ const handleAfterScrollVertically = async (
                 ...object,
                 id: item.id,
                 created_at: item.created_at,
+                parent_id: item.parent_id,
+                childrens: item.children,
+                is_parent: item?.is_parent,
               });
             });
 
@@ -93,7 +97,46 @@ const handleAfterScrollVertically = async (
               productFields.push({ [template[0]]: "" });
             }
 
-            setDataProvider((prev) => [...prev, ...productFields]);
+            const dataFiles = headerTable
+              .map((mField) => {
+                if (mField.type === "file") {
+                  return mField.data;
+                }
+                return null;
+              })
+              .filter(Boolean);
+
+            const newProductsFields = Promise.all(
+              productFields.map(async (mProductFields) => {
+                const newData: any = {};
+                await Promise.all(
+                  dataFiles.map(async (fDataFiles: any) => {
+                    if (mProductFields[fDataFiles]) {
+                      try {
+                        const newValue = await getImage(
+                          mProductFields[fDataFiles],
+                          template,
+                        );
+                        newData[fDataFiles] = newValue;
+                      } catch (error) {
+                        console.error(error);
+                        newData[fDataFiles] = null;
+                      }
+                    }
+                  }),
+                );
+                return { ...mProductFields, ...newData };
+              }),
+            );
+
+            (async () => {
+              try {
+                const toProducts = await newProductsFields;
+                setDataProvider((prev) => [...prev, ...toProducts]);
+              } catch (error) {
+                console.error("Erro ao processar:", error);
+              }
+            })();
             setTotal(data.total);
             setPage(page + 1);
             loadingRef.current!.style.display = "none";
