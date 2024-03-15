@@ -63,6 +63,19 @@ function ConditionFilterComponent({
     }
   }, [filters]);
 
+  const disabledConditionInput = (currentIndex: number): boolean => {
+    if (item.column.type === null || item.column.type === undefined) {
+      return true;
+    }
+    if (item.column.type !== "relation") {
+      return !filters[index].column.value;
+    }
+    if (optionsToMultiSelect[currentIndex]?.length > 0) {
+      return !filters[index].column.value;
+    }
+    return true;
+  };
+
   return (
     <Filter
       key={item.id}
@@ -84,7 +97,7 @@ function ConditionFilterComponent({
       </FilterItem>
       <FilterItem>
         <SingleSelect
-          isDisabled={!filters[index].column.value}
+          isDisabled={disabledConditionInput(index)}
           placeHolder="Condição"
           options={typesOptions[item.column.type]}
           changeValue={changeValue}
