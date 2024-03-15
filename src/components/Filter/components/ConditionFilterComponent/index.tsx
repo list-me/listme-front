@@ -68,10 +68,10 @@ function ConditionFilterComponent({
       return true;
     }
     if (item.column.type !== "relation") {
-      return !filters[index].column.value;
+      return !filters[currentIndex].column.value;
     }
     if (optionsToMultiSelect[currentIndex]?.length > 0) {
-      return !filters[index].column.value;
+      return !filters[currentIndex].column.value;
     }
     return true;
   };
