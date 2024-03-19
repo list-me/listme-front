@@ -341,6 +341,18 @@ function DefaultTable({
       const colType = columns[col]?.type;
       const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
       const previousValue = _instance.getDataAtCell(_row, col);
+      let newValue;
+
+      if (value) {
+        newValue = value?.map((itemValue: string) => {
+          if (itemValue[0] !== undefined && itemValue[0] !== "<") {
+            return `<img class="imgItem" title="imgtdlpj8heqg.jpeg" src=${itemValue} style="width:25px;height:25px;margin-right:4px;">`;
+          }
+          return itemValue;
+        });
+      } else {
+        newValue = value;
+      }
 
       customRendererFile(
         _instance,
@@ -348,7 +360,7 @@ function DefaultTable({
         _row,
         col,
         prop,
-        value,
+        newValue,
         hotRef,
         loadingRef,
         uploadImages,

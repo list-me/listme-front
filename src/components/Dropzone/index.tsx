@@ -46,7 +46,6 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
   const [items, setItems] = useState<any[]>(valueUrls ?? []);
-  console.log("🚀 ~ items:", items);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 

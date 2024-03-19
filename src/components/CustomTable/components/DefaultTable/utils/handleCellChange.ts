@@ -30,9 +30,13 @@ const handleCellChange: any = async (
       typeof customChanges[0][3] === "object" &&
       !isEquivalent(customChanges[0][2], customChanges[0][3])
     ) {
+      const regex = /src=\"([^\"]*)\"/;
+
       // eslint-disable-next-line prefer-destructuring
       previousCellValue = customChanges[0][2];
+
       const newValue = () => {
+        console.log("aqui1");
         if (type === "radio" || type === "checked" || type === "list") {
           return customChanges[0][3][0];
         }
@@ -46,6 +50,18 @@ const handleCellChange: any = async (
 
         return customChanges[0][3];
       };
+      const preValueToSave =
+        type !== "file"
+          ? customChanges[0][2]
+          : customChanges[0][2]
+              .map((string: string) => {
+                const match = string.match(regex);
+                if (match) {
+                  return match[1];
+                }
+                return null;
+              })
+              .filter((value: any) => value !== null);
       try {
         if (!isNew) setIsTableLocked(true);
         const response = await handleSave(
@@ -54,7 +70,7 @@ const handleCellChange: any = async (
           dataProvider[customChanges[0][0]]?.id,
           customChanges[0][1] as string,
           newValue(),
-          previousCellValue as string,
+          preValueToSave as string,
           type,
         );
         if (
@@ -130,6 +146,7 @@ const handleCellChange: any = async (
             response.id.toString(),
           )
         ) {
+          console.log("entrou no if");
           const updated = newDataProvider;
           updated[customChanges[0][0]].id = response.id;
           setDataProvider(updated);
