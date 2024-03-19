@@ -149,7 +149,6 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
       window.removeEventListener("keydown", onBeforeKeyDown);
     };
   }, []);
-  console.log(items);
 
   return (
     <ImageContextProvider>

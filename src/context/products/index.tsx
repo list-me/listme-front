@@ -321,7 +321,6 @@ export const ProductContextProvider = ({
         .filter(Boolean);
       const newProductsFields = Promise.all(
         productFields.map(async (mProductFields) => {
-          console.log("🚀 ~ productFields.map ~ productFields:", productFields);
           const newData: any = {};
           await Promise.all(
             dataFiles.map(async (fDataFiles: any) => {
