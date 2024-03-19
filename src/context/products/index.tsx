@@ -319,9 +319,9 @@ export const ProductContextProvider = ({
           return null;
         })
         .filter(Boolean);
-
       const newProductsFields = Promise.all(
         productFields.map(async (mProductFields) => {
+          console.log("🚀 ~ productFields.map ~ productFields:", productFields);
           const newData: any = {};
           await Promise.all(
             dataFiles.map(async (fDataFiles: any) => {
@@ -329,7 +329,7 @@ export const ProductContextProvider = ({
                 try {
                   const newValue = await getImage(
                     mProductFields[fDataFiles],
-                    template,
+                    templateFields,
                   );
                   newData[fDataFiles] = newValue;
                 } catch (error) {
@@ -368,6 +368,7 @@ export const ProductContextProvider = ({
       const headers: IHeader[] = fields?.fields?.map(
         (item: IField, index: number) => {
           headersCell.push(item.title);
+
           return {
             title: item.title,
             data: item.id,
@@ -379,7 +380,7 @@ export const ProductContextProvider = ({
             hidden: item.hidden ? item.hidden : false,
             width: item.width ? item.width : "300px",
             frozen: item.frozen ? item.frozen : false,
-            bucket_url: response?.bucket_url,
+            bucket: response?.bucket,
             limit: item.limit,
             integrations: item.integrations,
           };

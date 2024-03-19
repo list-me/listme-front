@@ -45,7 +45,7 @@ interface IField {
 }
 
 interface ITemplate {
-  bucket_url: string;
+  bucket: string;
   company_id: string;
   created_at: string;
   deleted_at: string | null;
@@ -67,7 +67,7 @@ interface IHeader {
   hidden: boolean;
   width: string;
   frozen: boolean;
-  bucket_url: string;
+  bucket: string;
   limit: number;
   integrations: {
     provider: string;
