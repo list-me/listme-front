@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
 import { DropzoneRendererProps } from "./Dropzone";
@@ -29,10 +29,24 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   optionals,
   template,
 }) => {
+  const valueUrls = useMemo(() => {
+    const div = document.createElement("div");
+
+    // Adicionar as strings HTML ao elemento div
+    div.innerHTML = value.join("");
+
+    // Selecionar todos os elementos img e mapear para o valor do atributo src
+    const srcValues = Array.from(div.querySelectorAll("img")).map((img) =>
+      img.getAttribute("src"),
+    );
+    return srcValues;
+  }, [value]);
+
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
-  const [items, setItems] = useState<any[]>(value ?? []);
+  const [items, setItems] = useState<any[]>(valueUrls ?? []);
+  console.log("🚀 ~ items:", items);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
