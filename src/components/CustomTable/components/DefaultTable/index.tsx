@@ -346,13 +346,15 @@ function DefaultTable({
       if (value) {
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
-            return `<img class="imgItem" title="imgtdlpj8heqg.jpeg" src=${itemValue} style="width:25px;height:25px;margin-right:4px;">`;
+            return `<img class="imgItem" src=${itemValue} style="width:25px;height:25px;margin-right:4px;">`;
           }
           return itemValue;
         });
       } else {
         newValue = value;
       }
+
+      console.log(newValue);
 
       customRendererFile(
         _instance,

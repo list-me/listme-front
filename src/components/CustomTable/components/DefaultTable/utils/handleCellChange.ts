@@ -54,7 +54,7 @@ const handleCellChange: any = async (
         type !== "file"
           ? customChanges[0][2]
           : customChanges[0][2]
-              .map((string: string) => {
+              ?.map((string: string) => {
                 const match = string.match(regex);
                 if (match) {
                   return match[1];

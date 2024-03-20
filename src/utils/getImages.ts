@@ -9,6 +9,7 @@ async function getImage(
     value = JSON.parse(value);
   }
   if (value?.length) {
+    console.log(value);
     let newValue = "";
     newValue = value.map((url: string) => {
       let imageSource: string = "";
@@ -17,7 +18,8 @@ async function getImage(
       const verifyTrue = regex.test(url);
       let newImageUrl = "";
       if (url !== null) {
-        newImageUrl = verifyTrue ? url : `${template.bucket}/${url}`;
+        if (!verifyTrue) console.log(`${template[0].bucket}/${url}`);
+        newImageUrl = verifyTrue ? url : `${template[0].bucket}/${url}`;
       }
       imageSource = newImageUrl;
 
@@ -27,6 +29,7 @@ async function getImage(
       const fileType: string = fileNameWithExtension.substring(
         lastDotIndex + 1,
       );
+      console.log("🚀 ~ newValue=value.map ~ fileType:", fileType);
 
       if (!["jpg", "jpeg", "png", "thumb", "svg", "webp"].includes(fileType)) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
