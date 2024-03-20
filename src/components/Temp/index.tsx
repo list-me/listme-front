@@ -50,7 +50,11 @@ export const Temp: React.FC<IProps> = ({
 
   useEffect(() => {
     window.addEventListener("keydown", function (e) {
-      if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) {
+      if (
+        e.keyCode === 114 ||
+        (e.ctrlKey && e.keyCode === 70) ||
+        (e.metaKey && e.keyCode === 70)
+      ) {
         e.preventDefault();
         setOnSearch(true);
       }

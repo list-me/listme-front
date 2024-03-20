@@ -22,6 +22,9 @@ const handleCellChange: any = async (
   type: string,
 ) => {
   if (changes !== null && changes.length && !isTableLocked && hotInstance) {
+    if (changes[0][2] === undefined && changes[0][3].length === 0) {
+      return;
+    }
     const isNew = !!dataProvider[changes[0][0]].id;
     const customChanges = changes as Handsontable.CellChange[];
 
