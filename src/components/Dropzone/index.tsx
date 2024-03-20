@@ -14,6 +14,7 @@ import { fileRequests } from "../../services/apis/requests/file";
 import Modal from "../Modal";
 import { Loading } from "../Loading";
 import { getFilenameFromUrl } from "../../utils";
+import { productRequests } from "../../services/apis/requests/product";
 
 const Dropzone: React.FC<DropzoneRendererProps> = ({
   value,
@@ -22,6 +23,11 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   field,
   onCancel,
   onSuccess,
+  instance,
+  row,
+  companyId,
+  optionals,
+  template,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -36,7 +42,31 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     if (acceptedFiles.length > 0) {
       setLoading(true);
       try {
-        const newFiles = await uploadImages(acceptedFiles, templateId);
+        if (templateId === "8956d969-d769-4f09-8736-e0b4d73b3e3d") {
+          const brand = instance.getDataAtRowProp(row, "730291");
+
+          optionals.brand = brand?.length ? brand[0]?.id : undefined;
+          optionals.name = instance.getDataAtRowProp(row, "474091");
+        }
+
+        if (templateId === "a13f5317-d855-4766-9063-c916f4d90b83") {
+          const brand = instance.getDataAtRowProp(row, "956614");
+          optionals.brand = brand?.length ? brand[0]?.id : undefined;
+          optionals.name = instance.getDataAtRowProp(row, "889711");
+        }
+
+        if (templateId === "23625c16-ca24-48d7-9f4d-d00364c66d8b") {
+          const brand = instance.getDataAtRowProp(row, "771752");
+          optionals.brand = brand?.length ? brand[0]?.id : undefined;
+          optionals.name = instance.getDataAtRowProp(row, "993384");
+        }
+
+        const newFiles = await uploadImages(
+          acceptedFiles,
+          templateId,
+          companyId,
+          optionals,
+        );
 
         if (newFiles) {
           setItems((prev) => [...prev, ...newFiles]);
@@ -55,6 +85,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   const handleRemove = async (
     imageUrl: string,
     event: React.MouseEvent,
+    currentItems: any[],
   ): Promise<void> => {
     event.stopPropagation();
 
@@ -67,21 +98,17 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         productId,
         field,
       );
-
-      const newValue = items.filter((item) => {
+      const newValue = currentItems.filter((item) => {
         if (item !== imageUrl) {
           return item;
         }
       });
-
       if (newValue.length) {
         setItems(newValue);
       } else {
         setItems([]);
       }
-
       onSuccess(newValue);
-
       setImageLoading(false);
     } catch (error) {
       setImageLoading(false);
@@ -166,7 +193,14 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
             <>
               {items.length ? (
                 items?.map((item: string, index: number) => {
-                  const fileNameWithExtension = getFilenameFromUrl(item);
+                  const regex = /https:\/\/[^/]+\//;
+                  const verifyTrue = regex.test(item);
+                  let urlItem = "";
+                  if (item !== null) {
+                    urlItem = verifyTrue ? item : `${template.bucket}/${item}`;
+                  }
+
+                  const fileNameWithExtension = getFilenameFromUrl(urlItem);
                   if (fileNameWithExtension) {
                     const lastDotIndex = fileNameWithExtension.lastIndexOf(".");
                     const fileType = fileNameWithExtension.substring(
@@ -182,7 +216,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                           ) ? (
                             <>
                               <a
-                                href={item}
+                                href={urlItem}
                                 target="_blank"
                                 rel="noreferrer"
                                 download
@@ -199,17 +233,21 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                               </a>
                               <label
                                 htmlFor="null"
-                                title={getFilenameFromUrl(item) ?? ""}
+                                title={getFilenameFromUrl(urlItem) ?? ""}
                               >
-                                {getFilenameFromUrl(item)}
+                                {getFilenameFromUrl(urlItem)}
                               </label>
                             </>
                           ) : (
                             <>
-                              <a href={item} target="_blank" rel="noreferrer">
+                              <a
+                                href={urlItem}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
                                 <img
-                                  src={item}
-                                  alt={getFilenameFromUrl(item) ?? ""}
+                                  src={urlItem}
+                                  alt={getFilenameFromUrl(urlItem) ?? ""}
                                   style={{ backgroundColor: "white" }}
                                   // onError={(e) => {
                                   //   (e.target as HTMLImageElement).src =
@@ -219,15 +257,17 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                               </a>
                               <label
                                 htmlFor="null"
-                                title={getFilenameFromUrl(item) ?? ""}
+                                title={getFilenameFromUrl(urlItem) ?? ""}
                               >
-                                {getFilenameFromUrl(item)}
+                                {getFilenameFromUrl(urlItem)}
                               </label>
                             </>
                           )}
                         </Image>
                         {!imageLoading ? (
-                          <CloseIcon onClick={(e) => handleRemove(item, e)} />
+                          <CloseIcon
+                            onClick={(e) => handleRemove(item, e, items)}
+                          />
                         ) : (
                           <></>
                         )}

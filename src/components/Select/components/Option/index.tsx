@@ -63,7 +63,7 @@ const CustomOption = (AdditionalComponent: any): JSX.Element => {
   // @ts-ignore
   return (props: any) => {
     const { label } = props?.data;
-    const { type } = props?.data;
+    const type = props?.data?.type || props?.value?.type;
     if (!props!.data.openDropdown)
       return (
         <components.Option {...props}>

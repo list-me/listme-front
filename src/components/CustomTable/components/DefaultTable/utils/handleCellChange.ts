@@ -8,7 +8,15 @@ const handleCellChange: any = async (
   hotInstance: Handsontable | null | undefined,
   isTableLocked: boolean,
   setIsTableLocked: React.Dispatch<React.SetStateAction<boolean>>,
-  handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>,
+  handleSave: (
+    value: any,
+    isNew: boolean,
+    productId: string,
+    fieldId: string,
+    newValue: string,
+    prevValue?: string,
+    type?: string,
+  ) => Promise<any>,
   dataProvider: any[],
   setDataProvider: React.Dispatch<React.SetStateAction<any[]>>,
   type: string,
@@ -16,6 +24,7 @@ const handleCellChange: any = async (
   if (changes !== null && changes.length && !isTableLocked && hotInstance) {
     const isNew = !!dataProvider[changes[0][0]].id;
     const customChanges = changes as Handsontable.CellChange[];
+
     if (
       typeof customChanges[0][2] === "object" &&
       typeof customChanges[0][3] === "object" &&
@@ -23,12 +32,30 @@ const handleCellChange: any = async (
     ) {
       // eslint-disable-next-line prefer-destructuring
       previousCellValue = customChanges[0][2];
+      const newValue = () => {
+        if (type === "radio" || type === "checked" || type === "list") {
+          return customChanges[0][3][0];
+        }
+        if (type === "file") {
+          return customChanges[0][3]
+            ? customChanges[0][3].map((mItem: string) => {
+                return mItem.replace(/^https:\/\/[^/]+\//, "");
+              })
+            : customChanges[0][3];
+        }
+
+        return customChanges[0][3];
+      };
       try {
         if (!isNew) setIsTableLocked(true);
         const response = await handleSave(
           dataProvider[customChanges[0][0]],
           isNew,
           dataProvider[customChanges[0][0]]?.id,
+          customChanges[0][1] as string,
+          newValue(),
+          previousCellValue as string,
+          type,
         );
         if (
           response.id &&
@@ -41,7 +68,7 @@ const handleCellChange: any = async (
           setDataProvider(updated);
         }
       } catch {
-        // eslint-disable-next-line no-param-reassign
+        // @ts-ignore
         dataProvider[customChanges[0][0]][customChanges[0][1]] =
           previousCellValue;
 
@@ -75,10 +102,27 @@ const handleCellChange: any = async (
 
       try {
         if (!isNew) setIsTableLocked(true);
+        const newValue = () => {
+          if (type === "radio" || type === "checked" || type === "list") {
+            return customChanges[0][3][0];
+          }
+          if (type === "file") {
+            return customChanges[0][3]
+              ? customChanges[0][3].map((mItem: string) => {
+                  return mItem.replace(/^https:\/\/[^/]+\//, "");
+                })
+              : customChanges[0][3];
+          }
+          return customChanges[0][3];
+        };
         const response = await handleSave(
           newDataProvider[customChanges[0][0]],
           isNew,
           newDataProvider[customChanges[0][0]]?.id,
+          customChanges[0][1] as string,
+          newValue(),
+          previousCellValue as string,
+          type,
         );
         if (
           response.id &&

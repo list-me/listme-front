@@ -63,6 +63,12 @@ export const PersonalModal = ({
   onUpdate,
 }: PropsModal) => {
   const [title, setTitle] = useState<string>(data?.title ?? "");
+  const [limitStatus, setLimitStatus] = useState<boolean>(
+    data?.limitStatus ?? false,
+  );
+  const [limit, setLimit] = useState<number>(
+    limitStatus ? data?.limit ?? 0 : 256,
+  );
   const [type, setType] = useState<string>(data?.type);
   const [required, setRequired] = useState<boolean>(data?.required ?? false);
   // @ts-ignore
@@ -209,7 +215,7 @@ export const PersonalModal = ({
   }: Field): Promise<any> => {
     let templateUpdated = [];
     let newField: any;
-
+    if (!title.trim()) return;
     if (isUpdate) {
       templateUpdated = template.fields.fields.map((item: any) => {
         if (item.id === data.id) {
@@ -218,7 +224,7 @@ export const PersonalModal = ({
           data.name = name;
           data.title = title;
           data.required = required;
-          data.limit = characterLimit;
+          data.limit = type === "relation" ? 20 : characterLimit;
           item = data;
           return item;
         }
@@ -232,7 +238,7 @@ export const PersonalModal = ({
         type,
         title,
         name,
-        limit: characterLimit,
+        limit: type === "relation" ? 20 : characterLimit,
         options: type !== "decimal" ? option || [""] : [decimalPoint],
         required,
         is_public: false,
@@ -247,6 +253,7 @@ export const PersonalModal = ({
       delete item.order;
       delete item.width;
       delete item.hidden;
+      delete item.integrations;
     });
 
     const newFields = templateUpdated.map((item: any) => {
@@ -315,6 +322,7 @@ export const PersonalModal = ({
                 limit: characterLimit,
               }}
               onFinish={(fields) => {
+                if (!title.trim()) return;
                 if (!fields.type) fields.type = type;
                 if (
                   fields.type == "relation" &&
@@ -413,8 +421,7 @@ export const PersonalModal = ({
                       value={title}
                       onChange={(e) => {
                         e.preventDefault();
-
-                        setTitle(e.target.value);
+                        if (e.target.value.trim()) setTitle(e.target.value);
                       }}
                       placeholder="Informe o titulo da coluna"
                     />

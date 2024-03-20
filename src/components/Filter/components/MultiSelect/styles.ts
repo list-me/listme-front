@@ -133,7 +133,7 @@ export const SearchOption = styled.input`
   font-weight: 400;
 `;
 export const Alert = styled.p`
-  color: #868e96;
+  color: ${({ theme }) => theme.colors.tertiary};
   text-align: start;
   font-size: 14px;
   margin-left: 16px;

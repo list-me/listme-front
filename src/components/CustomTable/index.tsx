@@ -301,13 +301,46 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         if (hotInstance) {
           hotInstance.render();
         }
-        toast.error(errr.response.data.message);
+        toast.error(errr?.response?.data?.message);
       });
   };
 
   useEffect(() => {
     handleMountColumns();
   }, [handleMountColumns]);
+
+  const [parentId, setParentId] = useState<string | null>(null);
+  const [subItensMode, setSubItemsMode] = useState<"add" | "remove">("add");
+
+  const checkToHeaderTable = {
+    title: "Check",
+    data: "000000",
+    className: "htLeft htMiddle",
+    type: "checkSubItem",
+    required: false,
+    options: [""],
+    order: "-1",
+    hidden: false,
+    width: "300px",
+    frozen: false,
+  };
+
+  const checkToColHeaders = "checkSubItem";
+
+  const checkToCols = {
+    title: "Check",
+    data: "000000",
+    className: "htLeft htMiddle",
+    type: "checkSubItem",
+    required: false,
+    options: [""],
+    order: "-1",
+    hidden: false,
+    width: "300px",
+    frozen: false,
+    isCustom: false,
+    bucket_url: "",
+  };
 
   return (
     <>
@@ -335,11 +368,18 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         </Content>
         <Container>
           <DefaultTable
+            cols={parentId ? [checkToCols, ...cols] : (cols as any)}
+            colHeaders={
+              parentId ? [checkToColHeaders, ...colHeaders] : colHeaders
+            }
+            headerTable={
+              parentId ? [checkToHeaderTable, ...headerTable] : headerTable
+            }
+            parentId={parentId}
+            setParentId={setParentId}
             key={colHeaders.join()}
             hotRef={hotRef}
-            colHeaders={colHeaders}
             setColHeaders={setColHeaders}
-            cols={cols}
             products={products}
             setProducts={setProducts}
             handleDelete={handleDelete}
@@ -358,13 +398,14 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             uploadImages={uploadImages}
             page={page}
             setPage={setPage}
-            headerTable={headerTable}
             currentKeyword={currentKeyword}
             handleNewColumn={handleNewColumn}
             handleHidden={handleHidden}
             setCurrentCell={setCurrentCell}
             setIsOpen={setIsOpen}
             handleFreeze={handleFreeze}
+            subItensMode={subItensMode}
+            setSubItemsMode={setSubItemsMode}
           />
           {!!conditionsFilter.length && products.length < 1 && <NotFound />}
         </Container>

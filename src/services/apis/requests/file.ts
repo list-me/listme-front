@@ -29,7 +29,9 @@ export const fileRequests = {
     let url: string = `template/signed-url?file_type=${fileType}&template_id=${templateId}&file_name=${fileName}`;
 
     if (optionals?.brand && optionals?.name) {
-      url = `template/signed-url?file_type=${fileType}&template_id=${templateId}&file_name=${fileName}&brand=${optionals.brand}&name=${optionals.name}`;
+      url = `template/signed-url?file_type=${fileType}&template_id=${templateId}&file_name=${fileName}&brand=${
+        optionals.brand
+      }&name=${encodeURIComponent(optionals.name)}`;
     }
 
     const response = await api.get(url, {
@@ -41,10 +43,19 @@ export const fileRequests = {
     return response.data;
   },
   uploadFile: async (file: File, url: string): Promise<void> => {
-    await axios.put(url, file).catch((error) => {
+    try {
+      const contentType = file.type;
+      const headers = {
+        "Content-Type": contentType,
+        "x-amz-acl": "public-read",
+      };
+
+      await axios.put(url, file, { headers });
+    } catch (error) {
       toast.error("Ocorreu um erro ao realizar o upload de uma das imagens");
-    });
+    }
   },
+
   dropFile: async (
     file: string,
     entity: string,

@@ -3,8 +3,10 @@ import { ArrowRight, ErrorMessage } from "./styles";
 
 function AlertTooltip({
   setAlertTooltip,
+  children,
 }: {
   setAlertTooltip: React.Dispatch<React.SetStateAction<boolean>>;
+  children: React.ReactNode;
 }): JSX.Element {
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
@@ -34,6 +36,7 @@ function AlertTooltip({
     }
     function handleMouseMove(event: MouseEvent): void {
       const targetElement = event.target as HTMLElement;
+
       if (!hasDropdownAncestor(targetElement)) {
         setAlertTooltip(false);
       }
@@ -53,14 +56,7 @@ function AlertTooltip({
   return (
     <ErrorMessage position={position}>
       <ArrowRight />
-      <p className="error-title">Inválido:</p>
-      <p>
-        A entrada não é aceitável, pois não
-        <br />
-        corresponde a nenhum dos itens da
-        <br />
-        coluna especificada.
-      </p>
+      {children}
     </ErrorMessage>
   );
 }

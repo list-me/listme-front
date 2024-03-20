@@ -46,7 +46,7 @@ export const Container = styled.div<IStyleProps>`
     font-weight: 400;
     font-size: 14px;
     line-height: 150%;
-    color: #868e96;
+    color: ${({ theme }) => theme.colors.tertiary};
   }
 
   .ant-input-group-addon {

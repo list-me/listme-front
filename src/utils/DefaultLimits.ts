@@ -9,20 +9,20 @@ type FieldConfigMap = {
 
 const DefaultLimits: FieldConfigMap = {
   text: {
-    max: 255,
-    default: 150,
-  },
-  paragraph: {
     max: 550,
     default: 255,
   },
+  paragraph: {
+    max: 2000,
+    default: 1000,
+  },
   list: {
-    max: 1,
-    default: 1,
+    max: 100,
+    default: 50,
   },
   radio: {
-    max: 1,
-    default: 1,
+    max: 100,
+    default: 50,
   },
   checked: {
     max: 100,

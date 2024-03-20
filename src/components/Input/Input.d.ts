@@ -15,6 +15,7 @@ interface IInputProps {
   };
   padding?: string;
   onPressEnter?: Function;
+  disabledValidade?: boolean;
 }
 
 export type { IInputProps };

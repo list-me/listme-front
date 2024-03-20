@@ -93,7 +93,6 @@ function customRendererFile(
 
           if (template.id === "8956d969-d769-4f09-8736-e0b4d73b3e3d") {
             const brand = _instance.getDataAtRowProp(row, "730291");
-
             optionals.brand = brand?.length ? brand[0]?.id : undefined;
             optionals.name = _instance.getDataAtRowProp(row, "474091");
           }
@@ -102,6 +101,12 @@ function customRendererFile(
             const brand = _instance.getDataAtRowProp(row, "956614");
             optionals.brand = brand?.length ? brand[0]?.id : undefined;
             optionals.name = _instance.getDataAtRowProp(row, "889711");
+          }
+
+          if (template.id === "23625c16-ca24-48d7-9f4d-d00364c66d8b") {
+            const brand = _instance.getDataAtRowProp(row, "771752");
+            optionals.brand = brand?.length ? brand[0]?.id : undefined;
+            optionals.name = _instance.getDataAtRowProp(row, "993384");
           }
 
           const newFiles: Array<string> | void = await uploadImages(
@@ -173,8 +178,14 @@ function customRendererFile(
           response.headers.get("Content-Length");
 
         if (contentLength && parseInt(contentLength) <= 1000 * 1024) {
-          let imageSource: string = imgUrl;
-          const fileNameWithExtension: string = getFilenameFromUrl(imgUrl);
+          const regex = /https:\/\/[^/]+\//;
+          const verifyTrue = regex.test(imgUrl);
+          let newImageUrl = "";
+          if (imgUrl !== null) {
+            newImageUrl = verifyTrue ? imgUrl : `${template.bucket}/${imgUrl}`;
+          }
+          let imageSource: string = newImageUrl;
+          const fileNameWithExtension: string = getFilenameFromUrl(newImageUrl);
           const lastDotIndex: number = fileNameWithExtension.lastIndexOf(".");
           const fileType: string = fileNameWithExtension.substring(
             lastDotIndex + 1,
@@ -190,9 +201,9 @@ function customRendererFile(
           td.innerHTML =
             value.length > 1
               ? `<div style="display:flex; align-items: center; margin-top: 16px; margin-left: 8px;">
-                  ${imgTag.concat(
-                    `<div class="itens-amount"> +${value.length - 1}</div>`,
-                  )} </div>`
+                    ${imgTag.concat(
+                      `<div class="itens-amount"> +${value.length - 1}</div>`,
+                    )} </div>`
               : imgTag;
         }
       })

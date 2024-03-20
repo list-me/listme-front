@@ -15,15 +15,13 @@ export const Dragger: React.FC<IDraggerProps> = ({
   setOptions = (values: any) => {},
   form,
 }) => {
-  useEffect(() => {}, [options]);
-
   return (
     <Container>
       {options.map((item, index) => {
         const fieldName = `option${index}`;
 
         return (
-          <Content key={index}>
+          <Content key={fieldName}>
             <Form.Item
               wrapperCol={{ flex: "auto" }}
               label={index + 1}
@@ -42,9 +40,13 @@ export const Dragger: React.FC<IDraggerProps> = ({
               }}
               initialValue={item}
             >
+              <p style={{ display: "none" }}>{item}</p>
               <Input
                 value={item}
                 onChange={(e) => {
+                  const updatedOptions = [...options];
+                  updatedOptions[index] = e.target.value;
+                  setOptions(updatedOptions);
                   form.setFieldsValue({ [fieldName]: e.target.value });
                 }}
                 onPressEnter={(e) => {

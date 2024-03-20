@@ -1,7 +1,10 @@
 type FileProps = {
   templateId: string;
+  companyId: string;
   dataProvider: Array<any>;
   changeLoading?: (isLoading: boolean, row?: number, column?: number) => void;
+  hotRef: React.RefObject<HotTable>;
+  template: any;
 };
 
 type FileState = {
@@ -12,6 +15,8 @@ type FileState = {
   col: number;
   row: number;
   isLoading: boolean;
+  companyId: string;
+  optionals: { brand: string; name: string };
 };
 
 export { FileState, FileProps };

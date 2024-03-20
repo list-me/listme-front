@@ -22,6 +22,7 @@ import { productContext, useProductContext } from "../../context/products";
 import Button from "../Button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFilterContext } from "../../context/FilterContext";
+import { useIntegration } from "../../context/IntegrationContext";
 
 interface IProps {
   options?: any[];
@@ -34,6 +35,7 @@ export const Temp: React.FC<IProps> = ({
 }) => {
   const { setOpenedFilter, filterStatus } = useFilterContext();
   const { conditionsFilter } = useProductContext();
+  const { searchIntegration, searchSwitch } = useIntegration();
   const iconRef = useRef(null);
   const searchRef = useRef(null);
 
@@ -54,6 +56,14 @@ export const Temp: React.FC<IProps> = ({
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (searchIntegration) {
+      setOnSearch(true);
+      setFilter(searchIntegration);
+      handleSearch(searchIntegration, window.location.pathname.substring(10));
+    }
+  }, [searchIntegration, searchSwitch]);
 
   return (
     <Contents>
@@ -103,8 +113,9 @@ export const Temp: React.FC<IProps> = ({
               }}
             >
               <Input
-                name="search"
-                type="input"
+                value={filter}
+                name="searchInput"
+                type="text"
                 autoFocus
                 handleCustomChange={setFilter}
                 background
@@ -112,6 +123,7 @@ export const Temp: React.FC<IProps> = ({
                   handleSearch(filter, window.location.pathname.substring(10))
                 }
                 height="39px"
+                disabledValidade
               />
               <ButtonCustom
                 height="37px"
