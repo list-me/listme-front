@@ -88,15 +88,21 @@ const handleAfterPaste: any = async (
       changesPromises.push(changes);
     }
 
-    changesPromises.forEach(async (item) => {
-      const isNew: boolean = !!item?.id;
-      item.id = isNew ? item?.id : generateUUID();
+    const isNotNew: boolean = !!changesPromises[0]?.id;
+    if (isNotNew) {
+      changesPromises.forEach(async (item) => {
+        item.id = isNotNew ? item?.id : generateUUID();
 
-      fieldColumnsId.forEach(async (fItem) => {
-        const value = Array.isArray(item[fItem]) ? item[fItem][0] : item[fItem];
-        await handleSave(value, isNew, item.id, fItem, value);
+        fieldColumnsId.forEach(async (fItem) => {
+          const value = Array.isArray(item[fItem])
+            ? item[fItem][0]
+            : item[fItem];
+          await handleSave(value, isNotNew, item.id, fItem, value);
+        });
       });
-    });
+    } else {
+      await handleSave(changesPromises[0], isNotNew, generateUUID(), "", "");
+    }
 
     loadingRef.current!.style.display = "none";
 

@@ -454,10 +454,8 @@ export const ProductContextProvider = ({
     type?: string,
   ): Promise<any> => {
     try {
-      const fields =
-        typeof value === "string"
-          ? buildProduct({ [fieldId]: value })
-          : buildProduct(value);
+      const fields = buildProduct(value);
+
       if (isNew) {
         const newValueToPatch = () => {
           if (newValue && !prevValue) {
