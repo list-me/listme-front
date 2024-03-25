@@ -44,7 +44,10 @@ export const fileRequests = {
   },
   uploadFile: async (file: File, url: string): Promise<void> => {
     try {
-      const contentType = file.type;
+      let contentType: string = file.type;
+      if (["skp", "sku"].includes(file.type))
+        contentType = `application/${file.type}`;
+
       const headers = {
         "Content-Type": contentType,
         "x-amz-acl": "public-read",
