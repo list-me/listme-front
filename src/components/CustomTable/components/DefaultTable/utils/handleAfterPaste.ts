@@ -90,7 +90,7 @@ const handleAfterPaste: any = async (
 
     changesPromises.forEach(async (item) => {
       const isNew: boolean = !!item?.id;
-      if (!isNew) item.id = item?.id ?? generateUUID();
+      item.id = isNew ? item?.id : generateUUID();
 
       fieldColumnsId.forEach(async (fItem) => {
         const value = Array.isArray(item[fItem]) ? item[fItem][0] : item[fItem];
