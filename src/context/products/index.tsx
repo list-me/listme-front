@@ -421,6 +421,7 @@ export const ProductContextProvider = ({
       // @ts-ignore
       const columnKeys = headerTable.map((column) => column?.data);
       let newValue;
+
       Object.keys(fields).forEach((field: any) => {
         if (
           !["id", "created_at"].includes(field) &&
@@ -454,6 +455,7 @@ export const ProductContextProvider = ({
   ): Promise<any> => {
     try {
       const fields = buildProduct(value);
+
       if (isNew) {
         const newValueToPatch = () => {
           if (newValue && !prevValue) {
