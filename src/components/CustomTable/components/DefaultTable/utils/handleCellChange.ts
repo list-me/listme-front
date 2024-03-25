@@ -39,7 +39,6 @@ const handleCellChange: any = async (
       previousCellValue = customChanges[0][2];
 
       const newValue = () => {
-        console.log("aqui1");
         if (type === "radio" || type === "checked" || type === "list") {
           return customChanges[0][3][0];
         }
@@ -149,7 +148,6 @@ const handleCellChange: any = async (
             response.id.toString(),
           )
         ) {
-          console.log("entrou no if");
           const updated = newDataProvider;
           updated[customChanges[0][0]].id = response.id;
           setDataProvider(updated);

@@ -342,19 +342,28 @@ function DefaultTable({
       const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
       const previousValue = _instance.getDataAtCell(_row, col);
       let newValue;
-
       if (value) {
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
             return `<img class="imgItem" src=${itemValue} style="width:25px;height:25px;margin-right:4px;">`;
           }
-          return itemValue;
+
+          const regexSRC = /src="([^"]+)"/;
+
+          const match = itemValue.match(regexSRC);
+
+          const regex = /https:\/\/[^/]+\//;
+          if (match && regex.test(match[1])) {
+            return itemValue;
+          }
+          return (
+            match &&
+            `<img class="imgItem" src="${template.bucket}${match[1]}" style="width:25px;height:25px;margin-right:4px;">`
+          );
         });
       } else {
         newValue = value;
       }
-
-      console.log(newValue);
 
       customRendererFile(
         _instance,
