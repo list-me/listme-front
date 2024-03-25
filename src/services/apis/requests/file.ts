@@ -58,7 +58,7 @@ export const fileRequests = {
       const currentEnviroment: string | undefined =
         process.env.REACT_APP_ENVIRONMENT;
 
-      if (currentEnviroment === DEVELOPMENT_ENVIRONMENT)
+      if (currentEnviroment !== DEVELOPMENT_ENVIRONMENT)
         headers["x-amz-acl"] = "public-read";
 
       await axios.put(url, file, { headers });
