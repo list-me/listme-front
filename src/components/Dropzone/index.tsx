@@ -212,7 +212,6 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                   if (item !== null) {
                     urlItem = verifyTrue ? item : `${template.bucket}/${item}`;
                   }
-
                   const fileNameWithExtension = getFilenameFromUrl(urlItem);
                   if (fileNameWithExtension) {
                     const lastDotIndex = fileNameWithExtension.lastIndexOf(".");

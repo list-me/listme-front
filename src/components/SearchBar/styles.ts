@@ -26,11 +26,6 @@ const Container = styled.div`
   &:hover {
     cursor: pointer;
   }
-
-  width: 80px;
-
-  position: relative;
-  right: 220px;
 `;
 
 export const ButtonCustom = styled.button<{ width: string; height: string }>`

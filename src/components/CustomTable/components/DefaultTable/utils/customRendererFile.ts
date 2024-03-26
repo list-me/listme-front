@@ -3,9 +3,6 @@
 import Handsontable from "handsontable";
 import { toast } from "react-toastify";
 import { HotTable } from "@handsontable/react";
-import { getFilenameFromUrl } from "../../../../../utils";
-import DocumentIcon from "../../../../../assets/icons/document-icon.svg";
-import ImageErrorIcon from "../../../../../assets/icons/image-error-icon.svg";
 
 function customRendererFile(
   _instance: Handsontable,

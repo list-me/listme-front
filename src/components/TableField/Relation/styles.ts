@@ -39,6 +39,18 @@ export const Container = styled.div`
   }
 `;
 
+export const ContainerTitleSearch = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (max-width: 1170px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
+
 export const ButtonContainer = styled.div`
   width: 100%;
   padding: 2rem 1rem 0 1rem;
@@ -93,7 +105,6 @@ export const Title = styled.h1`
 
   margin-bottom: 8px;
 
-  width: 100%;
   display: flex;
   justify-content: space-between;
 

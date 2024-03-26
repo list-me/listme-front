@@ -99,6 +99,7 @@ interface ITypeProductContext {
 
 interface SignedUrlResponse {
   url: string;
+  key?: string;
   access_url: string;
 }
 
@@ -189,7 +190,8 @@ export const ProductContextProvider = ({
             signedUrl = await getSignedUrl(fileName, fileType, bucketUrl);
           }
 
-          filesNames.push(signedUrl.access_url);
+          if (signedUrl?.key) filesNames.push(signedUrl.key);
+
           return fileRequests.uploadFile(file, signedUrl.url);
         });
 
