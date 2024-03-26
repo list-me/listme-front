@@ -40,11 +40,18 @@ const handleCellChange: any = async (
           return customChanges[0][3][0];
         }
         if (type === "file") {
-          return customChanges[0][3]
+          const newCustom = customChanges[0][3]
             ? customChanges[0][3].map((mItem: string) => {
-                return mItem.replace(/^https:\/\/[^/]+\//, "");
+                const regexSRC = /src="([^"]+)"/;
+                const match = mItem?.match(regexSRC);
+                return ((match && match[1]) || mItem).replace(
+                  /^https:\/\/[^/]+\//,
+                  "",
+                );
               })
             : customChanges[0][3];
+          console.log("🚀 ~ newValue ~ newCustom:", newCustom);
+          return newCustom;
         }
 
         return customChanges[0][3];
@@ -110,11 +117,12 @@ const handleCellChange: any = async (
             return customChanges[0][3][0];
           }
           if (type === "file") {
-            return customChanges[0][3]
+            const newCustom = customChanges[0][3]
               ? customChanges[0][3].map((mItem: string) => {
                   return mItem.replace(/^https:\/\/[^/]+\//, "");
                 })
               : customChanges[0][3];
+            return newCustom;
           }
           return customChanges[0][3];
         };

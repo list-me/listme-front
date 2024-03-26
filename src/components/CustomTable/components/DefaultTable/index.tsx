@@ -160,12 +160,27 @@ function DefaultTable({
         if (source === "CopyPaste.paste") return;
 
         if (currentColumn.type === "file") {
-          const processChanges = async () => {
-            if (!hotRef.current) return;
+          const newChanges: any = [...changes];
+          newChanges[0][2] = changes[0][2]?.map((itemChange: string) => {
+            const regexSRC = /src="([^"]+)"/;
+            const match = itemChange?.match(regexSRC);
+            if (match) {
+              if (match[1].includes(template.bucket)) {
+                const regexHttp = /https?:\/\/[^/]+\//;
+                const modifiedString = match[1]?.replace(regexHttp, "");
+                return modifiedString;
+              }
+              return itemChange;
+            }
+            return itemChange;
+          });
 
+          const processChanges = async (values: any) => {
+            if (!hotRef.current) return;
             const { hotInstance } = hotRef.current;
+            console.log("veiooo 222");
             await handleCellChange(
-              changes,
+              values,
               hotInstance,
               isTableLocked,
               setIsTableLocked,
@@ -177,8 +192,8 @@ function DefaultTable({
             );
           };
 
-          if (changes?.length) {
-            await processChanges();
+          if (newChanges?.length) {
+            await processChanges(newChanges);
           }
         } else if (hotRef.current) {
           const { hotInstance } = hotRef.current;

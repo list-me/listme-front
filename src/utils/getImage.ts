@@ -23,7 +23,7 @@ function getImage(value: any, template: any): void {
 
     const fileNameWithExtension: string = getFilenameFromUrl(newImageUrl);
 
-    const placeholder: string = `<img class="imgItem" title="${fileNameWithExtension}" loading='lazy' src="${imageSource}" style="width:25px;height:25px;margin-right:4px;">`;
+    const placeholder: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px;margin-right:4px;">`;
     return placeholder;
   });
   return newValue;
