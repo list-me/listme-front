@@ -160,7 +160,16 @@ function customRendererFile(
     }
     return itemValue;
   });
-  td.innerHTML = newValue || "";
+
+  const toInnerHTML =
+    newValue?.length > 1
+      ? `<div style="display:flex; align-items: center; margin-top: 16px; margin-left: 8px;">
+        ${newValue[0].concat(
+          `<div class="itens-amount"> +${newValue.length - 1}</div>`,
+        )} </div>`
+      : newValue || "";
+
+  td.innerHTML = toInnerHTML;
 }
 
 export default customRendererFile;
