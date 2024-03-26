@@ -184,6 +184,8 @@ function customRendererFile(
           if (imgUrl !== null) {
             newImageUrl = verifyTrue ? imgUrl : `${template.bucket}/${imgUrl}`;
           }
+          if (row === 0) console.log("🚀 ~ newImageUrl:", newImageUrl);
+
           let imageSource: string = newImageUrl;
           const fileNameWithExtension: string = getFilenameFromUrl(newImageUrl);
           const lastDotIndex: number = fileNameWithExtension.lastIndexOf(".");
@@ -196,7 +198,6 @@ function customRendererFile(
           ) {
             imageSource = DocumentIcon;
           }
-
           const imgTag: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px; margin-right:4px;" loading="lazy">`;
           td.innerHTML =
             value.length > 1
