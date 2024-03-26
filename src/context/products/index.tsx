@@ -23,6 +23,7 @@ import {
 import { fileRequests } from "../../services/apis/requests/file";
 import { isCollectionCompany } from "../../utils";
 import { IConditions } from "../FilterContext/FilterContextType";
+import getImage from "../../utils/getImage";
 
 export interface ICustom {
   show?: boolean;
@@ -312,7 +313,44 @@ export const ProductContextProvider = ({
         });
       }
 
-      setProducts(productFields as any);
+      const dataFiles = templateFields
+        .map((mField) => {
+          if (mField.type === "file") {
+            return mField.data;
+          }
+          return null;
+        })
+        .filter(Boolean);
+      const newProductsFields = Promise.all(
+        productFields.map(async (mProductFields) => {
+          const newData: any = {};
+          await Promise.all(
+            dataFiles.map(async (fDataFiles: any) => {
+              if (mProductFields[fDataFiles]) {
+                try {
+                  const newValue = getImage(
+                    mProductFields[fDataFiles],
+                    templateFields,
+                  );
+                  newData[fDataFiles] = newValue;
+                } catch (error) {
+                  console.error(error);
+                  newData[fDataFiles] = null;
+                }
+              }
+            }),
+          );
+          return { ...mProductFields, ...newData };
+        }),
+      );
+      (async () => {
+        try {
+          const toProducts = await newProductsFields;
+          setProducts(toProducts as any);
+        } catch (error) {
+          console.error("Erro ao processar:", error);
+        }
+      })();
       setTotal(data?.total);
       return { productFields, headerTable };
     },
@@ -341,7 +379,7 @@ export const ProductContextProvider = ({
             hidden: item.hidden ? item.hidden : false,
             width: item.width ? item.width : "300px",
             frozen: item.frozen ? item.frozen : false,
-            bucket_url: response?.bucket_url,
+            bucket: response?.bucket,
             limit: item.limit,
             integrations: item.integrations,
           };

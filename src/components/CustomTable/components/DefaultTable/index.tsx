@@ -49,6 +49,7 @@ import ModalSelectChildrens from "../ModalSelectChildrens";
 import { productRequests } from "../../../../services/apis/requests/product";
 import { IProductToTable } from "../../../../context/products/product.context";
 import getStyleRowHeader from "./utils/getStyleRowHeader";
+import { getFilenameFromUrl } from "../../../../utils";
 
 function DefaultTable({
   hotRef,
@@ -327,9 +328,52 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ) => {
+      const div = document.createElement("div");
+      div.innerHTML = value;
+
+      const itemCountElement = div.querySelector(".itens-amount");
+      let itemCountNumber = 0;
+      if (itemCountElement) {
+        // @ts-ignore
+        const itemCountValue = itemCountElement.textContent.trim();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        itemCountNumber = parseInt(itemCountValue, 10);
+      }
+
       const colType = columns[col]?.type;
       const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
       const previousValue = _instance.getDataAtCell(_row, col);
+
+      let newValue;
+      const regex = /https:\/\/[^/]+\//;
+
+      if (value) {
+        newValue = value?.map((itemValue: string) => {
+          if (itemValue[0] !== undefined && itemValue[0] !== "<") {
+            const newtag = `<img class="imgItem" src=${
+              regex.test(itemValue)
+                ? itemValue
+                : `${template.bucket}/${itemValue}`
+            } style="width:25px;height:25px;margin-right:4px;">`;
+
+            return newtag;
+          }
+
+          const regexSRC = /src="([^"]+)"/;
+
+          const match = itemValue.match(regexSRC);
+
+          if (match && regex.test(match[1])) {
+            return itemValue;
+          }
+          return (
+            match &&
+            `<img class="imgItem" src="${template.bucket}${match[1]}" style="width:25px;height:25px;margin-right:4px;">`
+          );
+        });
+      } else {
+        newValue = value;
+      }
 
       customRendererFile(
         _instance,
@@ -337,7 +381,7 @@ function DefaultTable({
         _row,
         col,
         prop,
-        value,
+        newValue,
         hotRef,
         loadingRef,
         uploadImages,
@@ -347,7 +391,7 @@ function DefaultTable({
       );
 
       td.style.border = "";
-      if (value?.length > maxLength) {
+      if (itemCountNumber > maxLength) {
         td.style.border = "2px solid #F1BC02";
       }
     },

@@ -10,7 +10,7 @@ type FileOptional = {
 interface ImageContext {
   uploadImages: (
     files: File[],
-    bucket_url: string,
+    bucket: string,
     companyId: string,
     optionals?: { brand?: string; name?: string },
   ) => Promise<string[] | void>;
