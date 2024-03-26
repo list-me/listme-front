@@ -178,7 +178,6 @@ function DefaultTable({
           const processChanges = async (values: any) => {
             if (!hotRef.current) return;
             const { hotInstance } = hotRef.current;
-            console.log("veiooo 222");
             await handleCellChange(
               values,
               hotInstance,
