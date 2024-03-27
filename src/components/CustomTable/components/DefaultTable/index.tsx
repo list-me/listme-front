@@ -151,8 +151,20 @@ function DefaultTable({
       if (currentColumn?.title) {
         const limit =
           currentColumn?.limit || DefaultLimits[currentColumn?.type]?.default;
+        let newValueParsed;
+        try {
+          const jsonObject = JSON.parse(newValue);
+          newValueParsed = jsonObject;
+        } catch (error) {
+          newValueParsed = newValue;
+        }
+        console.log("🚀 ~ jsonObject:", newValueParsed);
 
-        if (currentColumn?.type !== "boolean" && newValue?.length > limit) {
+        if (
+          currentColumn?.type !== "boolean" &&
+          currentColumn?.type !== "radio" &&
+          newValueParsed?.length > limit
+        ) {
           toast.warn(`Limite excedido em "${currentColumn?.title}"`);
           return;
         }
