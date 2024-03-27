@@ -37,14 +37,17 @@ const handleCellChange: any = async (
       previousCellValue = customChanges[0][2];
       const newValue = () => {
         if (type === "radio" || type === "checked" || type === "list") {
-          return customChanges[0][3][0];
+          return Array.isArray(customChanges[0][3]) &&
+            customChanges[0][3].length > 0
+            ? customChanges[0][3][0]
+            : customChanges[0][3];
         }
         if (type === "file") {
           const newCustom = customChanges[0][3]
-            ? customChanges[0][3].map((mItem: string) => {
+            ? customChanges[0][3]?.map((mItem: string) => {
                 const regexSRC = /src="([^"]+)"/;
                 const match = mItem?.match(regexSRC);
-                return ((match && match[1]) || mItem).replace(
+                return ((match && match[1]) || mItem)?.replace(
                   /^https:\/\/[^/]+\//,
                   "",
                 );
@@ -58,7 +61,7 @@ const handleCellChange: any = async (
 
       try {
         if (!isNew) setIsTableLocked(true);
-        if (newValue().toString() === previousCellValue.toString()) {
+        if (newValue()?.toString() === previousCellValue?.toString()) {
           return;
         }
         const response = await handleSave(
@@ -80,8 +83,9 @@ const handleCellChange: any = async (
           updated[customChanges[0][0]].id = response.id;
           setDataProvider(updated);
         }
-      } catch {
+      } catch (err) {
         // @ts-ignore
+        console.log(err);
         dataProvider[customChanges[0][0]][customChanges[0][1]] =
           previousCellValue;
 

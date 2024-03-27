@@ -73,7 +73,6 @@ function Integration(): JSX.Element {
       getConfigTemplatesList(menuActivated);
       toast.success(`Integração deletada com sucesso`);
     } catch (error) {
-      console.log(error);
       toast.error(`Ocorreu um erro ao deletar integração`);
     }
   };
