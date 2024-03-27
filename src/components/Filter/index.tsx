@@ -231,6 +231,7 @@ function FilterComponent(): JSX.Element {
           onClick={() => {
             setFilters([defaultFilter]);
             setOptionsToMultiSelect([null]);
+            applyFilter([]);
           }}
         >
           {filters.some((filter) => filter.column && filter.column.value) && (

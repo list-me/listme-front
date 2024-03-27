@@ -520,7 +520,9 @@ export const ProductContextProvider = ({
               type === "paragraph" ||
               type === "decimal" ||
               type === "numeric" ||
+              type === "radio" ||
               type === "checked" ||
+              type === "relation" ||
               type === "list" ||
               type === "boolean")
           ) {
