@@ -158,7 +158,6 @@ function DefaultTable({
         } catch (error) {
           newValueParsed = newValue;
         }
-        console.log("🚀 ~ jsonObject:", newValueParsed);
 
         if (
           currentColumn?.type !== "boolean" &&
