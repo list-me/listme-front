@@ -339,7 +339,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     width: "300px",
     frozen: false,
     isCustom: false,
-    bucket_url: "",
+    bucket: "",
   };
 
   return (

@@ -22,7 +22,7 @@ const handleCellChange: any = async (
   type: string,
 ) => {
   if (changes !== null && changes.length && !isTableLocked && hotInstance) {
-    if (changes[0][2] === undefined && changes[0][3].length === 0) {
+    if (changes[0][2] === undefined && changes[0][3]?.length === 0) {
       return;
     }
     const isNew = !!dataProvider[changes[0][0]].id;
@@ -40,17 +40,27 @@ const handleCellChange: any = async (
           return customChanges[0][3][0];
         }
         if (type === "file") {
-          return customChanges[0][3]
+          const newCustom = customChanges[0][3]
             ? customChanges[0][3].map((mItem: string) => {
-                return mItem.replace(/^https:\/\/[^/]+\//, "");
+                const regexSRC = /src="([^"]+)"/;
+                const match = mItem?.match(regexSRC);
+                return ((match && match[1]) || mItem).replace(
+                  /^https:\/\/[^/]+\//,
+                  "",
+                );
               })
             : customChanges[0][3];
+          return newCustom;
         }
 
         return customChanges[0][3];
       };
+
       try {
         if (!isNew) setIsTableLocked(true);
+        if (newValue().toString() === previousCellValue.toString()) {
+          return;
+        }
         const response = await handleSave(
           dataProvider[customChanges[0][0]],
           isNew,
@@ -110,11 +120,17 @@ const handleCellChange: any = async (
             return customChanges[0][3][0];
           }
           if (type === "file") {
-            return customChanges[0][3]
+            const newCustom = customChanges[0][3]
               ? customChanges[0][3].map((mItem: string) => {
-                  return mItem.replace(/^https:\/\/[^/]+\//, "");
+                  const regexSRC = /src="([^"]+)"/;
+                  const match = mItem?.match(regexSRC);
+                  return ((match && match[1]) || mItem).replace(
+                    /^https:\/\/[^/]+\//,
+                    "",
+                  );
                 })
               : customChanges[0][3];
+            return newCustom;
           }
           return customChanges[0][3];
         };
