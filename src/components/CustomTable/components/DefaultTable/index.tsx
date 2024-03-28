@@ -49,7 +49,7 @@ import ModalSelectChildrens from "../ModalSelectChildrens";
 import { productRequests } from "../../../../services/apis/requests/product";
 import { IProductToTable } from "../../../../context/products/product.context";
 import getStyleRowHeader from "./utils/getStyleRowHeader";
-import { getFilenameFromUrl } from "../../../../utils";
+import DocumentIcon from "../../../../assets/icons/document-icon.svg";
 
 function DefaultTable({
   hotRef,
@@ -375,6 +375,15 @@ function DefaultTable({
       if (value) {
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
+            if (
+              !["jpg", "jpeg", "png", "thumb", "svg", "webp"].includes(
+                itemValue,
+              )
+            ) {
+              const imageDocument = `<img class="imgItem" loading="lazy" src="${DocumentIcon}" style="width:25px;height:25px;margin-right:4px;">`;
+              return imageDocument;
+            }
+
             const newtag = `<img class="imgItem" loading="lazy" src=${
               regex.test(itemValue)
                 ? itemValue
