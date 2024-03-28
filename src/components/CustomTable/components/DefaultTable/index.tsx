@@ -183,7 +183,9 @@ function DefaultTable({
               }
               return itemChange;
             }
-            return itemChange;
+            const regexHttp = /https?:\/\/[^/]+\//;
+            const modifiedString = itemChange?.replace(regexHttp, "");
+            return modifiedString;
           });
 
           const processChanges = async (values: any) => {
