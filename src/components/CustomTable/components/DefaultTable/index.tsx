@@ -154,11 +154,11 @@ function DefaultTable({
         let newValueParsed;
         try {
           const jsonObject = JSON.parse(newValue);
-          newValueParsed = jsonObject;
+
+          newValueParsed = jsonObject === Infinity ? newValue : jsonObject;
         } catch (error) {
           newValueParsed = newValue;
         }
-
         if (
           currentColumn?.type !== "boolean" &&
           currentColumn?.type !== "radio" &&
