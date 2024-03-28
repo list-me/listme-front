@@ -375,7 +375,7 @@ function DefaultTable({
       if (value) {
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
-            const newtag = `<img class="imgItem" src=${
+            const newtag = `<img class="imgItem" loading="lazy" src=${
               regex.test(itemValue)
                 ? itemValue
                 : `${template.bucket}/${itemValue}`
@@ -393,7 +393,7 @@ function DefaultTable({
           }
           return (
             match &&
-            `<img class="imgItem" src="${template.bucket}${match[1]}" style="width:25px;height:25px;margin-right:4px;">`
+            `<img class="imgItem" loading="lazy" src="${template.bucket}${match[1]}" style="width:25px;height:25px;margin-right:4px;">`
           );
         });
       } else {

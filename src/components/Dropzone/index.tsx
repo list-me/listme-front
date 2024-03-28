@@ -34,7 +34,6 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
   const [items, setItems] = useState<any[]>([]);
-  const { handleRedirectAndGetProducts } = useContext(productContext);
 
   useEffect(() => {
     const div = document.createElement("div");
@@ -45,6 +44,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
       img.getAttribute("src"),
     );
     if (srcValues.length > 0) setItems(srcValues);
+    else setItems(value);
   }, [value]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -141,12 +141,6 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
 
   const onClose = (): void => {
     setIsOpen(false);
-    const id = window.location.pathname.substring(10);
-    if (id) {
-      setTimeout(() => {
-        handleRedirectAndGetProducts(id).then(() => {});
-      }, 0);
-    }
   };
 
   const handleAddIconClick = () => {
