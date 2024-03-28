@@ -386,7 +386,7 @@ function DefaultTable({
 
           const regexSRC = /src="([^"]+)"/;
 
-          const match = itemValue.match(regexSRC);
+          const match = itemValue?.match(regexSRC);
 
           if (match && regex.test(match[1])) {
             return itemValue;

@@ -147,7 +147,7 @@ function customRendererFile(
 
   const newValue = value?.map((itemValue: string) => {
     const regexSRC = /src="([^"]+)"/;
-    const match = itemValue.match(regexSRC);
+    const match = itemValue?.match(regexSRC);
     if (match && match?.length > 0) {
       const lastDotIndex: number = match[1].lastIndexOf(".");
       const fileType: string = match[1].substring(lastDotIndex + 1);
