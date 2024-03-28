@@ -50,6 +50,7 @@ import { productRequests } from "../../../../services/apis/requests/product";
 import { IProductToTable } from "../../../../context/products/product.context";
 import getStyleRowHeader from "./utils/getStyleRowHeader";
 import { getFilenameFromUrl } from "../../../../utils";
+import SwitchEditor from "../../Editors/Switch";
 
 function DefaultTable({
   hotRef,
@@ -1104,8 +1105,9 @@ function DefaultTable({
                 key={col.order + col.data}
                 // eslint-disable-next-line react/jsx-no-bind
                 renderer={customRendererBoolean}
-                readOnly
-              />
+              >
+                <SwitchEditor hot-editor editorColumnScope={0} />
+              </HotColumn>
             );
           }
 
