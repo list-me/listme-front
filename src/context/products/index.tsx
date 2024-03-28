@@ -593,8 +593,14 @@ export const ProductContextProvider = ({
         typeof error?.response?.data?.message === "object"
           ? error?.response?.data?.message[0]
           : error?.response?.data?.message;
-
-      toast.error(message);
+      let fieldTitle;
+      if (message.includes("Limite do campo excedido")) {
+        const arrayMessage = message.split('"');
+        fieldTitle = template?.fields.fields.find(
+          (item) => item.id === arrayMessage[1],
+        )?.title;
+      }
+      toast.error(fieldTitle ? `Limite excedido em "${fieldTitle}"` : message);
     }
   };
 

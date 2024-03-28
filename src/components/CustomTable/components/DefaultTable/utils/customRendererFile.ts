@@ -147,12 +147,12 @@ function customRendererFile(
 
   const newValue = value?.map((itemValue: string) => {
     const regexSRC = /src="([^"]+)"/;
-    const match = itemValue.match(regexSRC);
+    const match = itemValue?.match(regexSRC);
     if (match && match?.length > 0) {
       const lastDotIndex: number = match[1].lastIndexOf(".");
       const fileType: string = match[1].substring(lastDotIndex + 1);
       if (!["jpg", "jpeg", "png", "thumb", "svg", "webp"].includes(fileType)) {
-        const imageDocument = `<img class="imgItem" src="${DocumentIcon}" style="width:25px;height:25px;margin-right:4px;">`;
+        const imageDocument = `<img class="imgItem" loading="lazy" src="${DocumentIcon}" style="width:25px;height:25px;margin-right:4px;">`;
         return imageDocument;
       }
 
