@@ -43,7 +43,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
     const srcValues = Array.from(div.querySelectorAll("img")).map((img) =>
       img.getAttribute("src"),
     );
-    if (srcValues.length > 0) setItems(srcValues);
+    if (srcValues?.length > 0) setItems(srcValues);
     else setItems(value);
   }, [value]);
 
@@ -204,7 +204,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         <Container>
           {!loading ? (
             <>
-              {items.length ? (
+              {items?.length ? (
                 items?.map((item: string, index: number) => {
                   const regex = /https:\/\/[^/]+\//;
                   const verifyTrue = regex.test(item);
