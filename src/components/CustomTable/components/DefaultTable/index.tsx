@@ -375,10 +375,10 @@ function DefaultTable({
       if (value) {
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
+            const lastDotIndex: number = itemValue.lastIndexOf(".");
+            const fileType: string = itemValue.substring(lastDotIndex + 1);
             if (
-              !["jpg", "jpeg", "png", "thumb", "svg", "webp"].includes(
-                itemValue,
-              )
+              !["jpg", "jpeg", "png", "thumb", "svg", "webp"].includes(fileType)
             ) {
               const imageDocument = `<img class="imgItem" loading="lazy" src="${DocumentIcon}" style="width:25px;height:25px;margin-right:4px;">`;
               return imageDocument;
