@@ -47,10 +47,12 @@ const handleCellChange: any = async (
             ? customChanges[0][3]?.map((mItem: string) => {
                 const regexSRC = /src="([^"]+)"/;
                 const match = mItem?.match(regexSRC);
-                return ((match && match[1]) || mItem)?.replace(
-                  /^https:\/\/[^/]+\//,
-                  "",
-                );
+                const matchConverted = ((match && match[1]) || mItem)
+                  ?.replace(/^https:\/\/[^/]+\//, "")
+                  .replace(/^https:\/\/[^/]+\//, "");
+
+                console.log("🚀 ~ matchConverted:", matchConverted);
+                return matchConverted;
               })
             : customChanges[0][3];
           return newCustom;

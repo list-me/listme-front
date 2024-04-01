@@ -386,11 +386,11 @@ function DefaultTable({
               return imageDocument;
             }
 
-            const newtag = `<img class="imgItem" loading="lazy" src=${
+            const newtag = `<img class="imgItem" loading="lazy" src="${
               regex.test(itemValue)
                 ? itemValue
                 : `${template.bucket}/${itemValue}`
-            } style="width:25px;height:25px;margin-right:4px;">`;
+            }" style="width:25px;height:25px;margin-right:4px;">`;
 
             return newtag;
           }

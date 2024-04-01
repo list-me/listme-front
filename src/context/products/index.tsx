@@ -536,6 +536,9 @@ export const ProductContextProvider = ({
             return newArray;
           }
           if (newValue && prevValue && type === "file") {
+            console.log("🚀 ~ newValueToPatch ~ prevValue:", prevValue);
+            console.log("🚀 ~ newValueToPatch ~ newValue:", newValue);
+            console.log("veio 2");
             return (newValue as unknown as []).flat();
           }
           if (newValue && prevValue && type === "boolean") {
