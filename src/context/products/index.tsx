@@ -536,7 +536,20 @@ export const ProductContextProvider = ({
             return newArray;
           }
           if (newValue && prevValue && type === "file") {
-            return (newValue as unknown as []).flat();
+            // @ts-ignore
+            const missingItems = prevValue.filter(
+              (item: string) => !newValue.includes(item),
+            );
+
+            if (missingItems.length > 0) {
+              const missingItemsObject = missingItems.map((item: string) => ({
+                item,
+                destroy: true,
+              }));
+              // @ts-ignore
+              const combinedArray = [...newValue, ...missingItemsObject];
+              return combinedArray;
+            }
           }
           if (newValue && prevValue && type === "boolean") {
             return (newValue as unknown as []).flat();
@@ -593,8 +606,14 @@ export const ProductContextProvider = ({
         typeof error?.response?.data?.message === "object"
           ? error?.response?.data?.message[0]
           : error?.response?.data?.message;
-
-      toast.error(message);
+      let fieldTitle;
+      if (message.includes("Limite do campo excedido")) {
+        const arrayMessage = message.split('"');
+        fieldTitle = template?.fields.fields.find(
+          (item) => item.id === arrayMessage[1],
+        )?.title;
+      }
+      toast.error(fieldTitle ? `Limite excedido em "${fieldTitle}"` : message);
     }
   };
 

@@ -49,7 +49,7 @@ import ModalSelectChildrens from "../ModalSelectChildrens";
 import { productRequests } from "../../../../services/apis/requests/product";
 import { IProductToTable } from "../../../../context/products/product.context";
 import getStyleRowHeader from "./utils/getStyleRowHeader";
-import { getFilenameFromUrl } from "../../../../utils";
+import DocumentIcon from "../../../../assets/icons/document-icon.svg";
 
 function DefaultTable({
   hotRef,
@@ -154,11 +154,11 @@ function DefaultTable({
         let newValueParsed;
         try {
           const jsonObject = JSON.parse(newValue);
-          newValueParsed = jsonObject;
+
+          newValueParsed = jsonObject === Infinity ? newValue : jsonObject;
         } catch (error) {
           newValueParsed = newValue;
         }
-
         if (
           currentColumn?.type !== "boolean" &&
           currentColumn?.type !== "radio" &&
@@ -183,7 +183,9 @@ function DefaultTable({
               }
               return itemChange;
             }
-            return itemChange;
+            const regexHttp = /https?:\/\/[^/]+\//;
+            const modifiedString = itemChange?.replace(regexHttp, "");
+            return modifiedString;
           });
 
           const processChanges = async (values: any) => {
@@ -375,25 +377,34 @@ function DefaultTable({
       if (value) {
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
-            const newtag = `<img class="imgItem" src=${
+            const lastDotIndex: number = itemValue.lastIndexOf(".");
+            const fileType: string = itemValue.substring(lastDotIndex + 1);
+            if (
+              !["jpg", "jpeg", "png", "thumb", "svg", "webp"].includes(fileType)
+            ) {
+              const imageDocument = `<img class="imgItem" loading="lazy" src="${DocumentIcon}" style="width:25px;height:25px;margin-right:4px;">`;
+              return imageDocument;
+            }
+
+            const newtag = `<img class="imgItem" loading="lazy" src="${
               regex.test(itemValue)
                 ? itemValue
                 : `${template.bucket}/${itemValue}`
-            } style="width:25px;height:25px;margin-right:4px;">`;
+            }" style="width:25px;height:25px;margin-right:4px;">`;
 
             return newtag;
           }
 
           const regexSRC = /src="([^"]+)"/;
 
-          const match = itemValue.match(regexSRC);
+          const match = itemValue?.match(regexSRC);
 
           if (match && regex.test(match[1])) {
             return itemValue;
           }
           return (
             match &&
-            `<img class="imgItem" src="${template.bucket}${match[1]}" style="width:25px;height:25px;margin-right:4px;">`
+            `<img class="imgItem" loading="lazy" src="${template.bucket}${match[1]}" style="width:25px;height:25px;margin-right:4px;">`
           );
         });
       } else {
