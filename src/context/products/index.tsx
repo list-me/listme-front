@@ -173,6 +173,11 @@ export const ProductContextProvider = ({
       try {
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {
+          const numberOfDots = file.name.split(".");
+          if (numberOfDots.length > 2) {
+            // eslint-disable-next-line @typescript-eslint/no-throw-literal
+            throw "O nome do arquivo não pode conter ponto(.)";
+          }
           const [fileName, fileType] = file.name.split(".");
 
           let signedUrl: SignedUrlResponse;
