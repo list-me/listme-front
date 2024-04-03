@@ -548,8 +548,10 @@ export const ProductContextProvider = ({
               }));
               // @ts-ignore
               const combinedArray = [...newValue, ...missingItemsObject];
-              return combinedArray;
+
+              return combinedArray.flat();
             }
+            return (newValue as unknown as []).flat();
           }
           if (newValue && prevValue && type === "boolean") {
             return (newValue as unknown as []).flat();
