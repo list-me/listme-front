@@ -15,10 +15,11 @@ function customRendererRadioComponent({
   svgStringDropDown: string;
   setAlertTooltip: React.Dispatch<React.SetStateAction<boolean>>;
 }): string {
+  console.log("🚀 ~ value:", value);
   const svgStringInfo: string = renderToString(<InfoIcon />);
 
   const itemCorrect = value
-    ? columns[col]?.options?.includes(value?.[0])
+    ? columns[col]?.options?.includes(value?.[0]) || value[0] === ""
     : true;
 
   const radioClass = itemCorrect ? "radio-item" : "radio-item-warn";

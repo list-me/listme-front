@@ -159,6 +159,11 @@ function DefaultTable({
         } catch (error) {
           newValueParsed = newValue;
         }
+        if (currentColumn?.type === "radio") {
+          if (changes[0][2] === undefined && changes[0][3][0] === "") {
+            return;
+          }
+        }
         if (
           currentColumn?.type !== "boolean" &&
           currentColumn?.type !== "radio" &&
