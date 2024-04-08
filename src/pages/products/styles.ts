@@ -161,6 +161,10 @@ export const Container = styled.div`
     height: 50%;
   }
 
+  .hanson-table thead tr:first-child {
+    height: 24px; /* Definir altura da primeira linha como 24 pixels */
+  }
+
   thead {
     th {
       .customHeader {
@@ -214,6 +218,15 @@ export const Container = styled.div`
 
   thead tr th {
     background-color: ${({ theme }) => theme.colors.grayscale.ninth};
+  }
+
+  thead tr:first-child th {
+    background-color: white;
+    border: none;
+  }
+
+  .style-th-group {
+    border: none;
   }
 
   tbody tr th {

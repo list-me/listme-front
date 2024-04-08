@@ -92,6 +92,12 @@ function DefaultTable({
   const { operator } = useFilterContext();
   const { conditionsFilter } = useProductContext();
 
+  const groups: string[] = template?.fields?.groups.map(
+    (mItemGroup: string) => {
+      return { label: mItemGroup, colspan: 2 };
+    },
+  );
+
   useEffect(() => {
     if (hotRef.current) {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -543,24 +549,45 @@ function DefaultTable({
   );
   const styledHeader = useCallback(
     (column: number, TH: HTMLTableHeaderCellElement): void => {
-      const colData = template?.fields?.fields.find(
-        (item: any) => item.id === headerTable[column]?.data,
-      );
-      const { required: isRequired } = colData || {};
-      const columnHeaderValue =
-        hotRef.current?.hotInstance?.getColHeader(column);
-      const valueToVisible =
-        columnHeaderValue !== " " ? columnHeaderValue : "+";
-      const iconType = getIconByType(colData?.type);
+      const spanContent = TH.querySelector("span")?.textContent;
+      console.log("🚀 ~ spanContent:", spanContent);
 
-      TH.innerHTML = getStyledContent(
-        iconType,
-        valueToVisible,
-        isRequired,
-        colData,
-      );
+      const groupsName = groups.map((group: any) => group.label);
+
+      if (spanContent && !groupsName.includes(spanContent)) {
+        const colData = template?.fields?.fields.find(
+          (item: any) => item.id === headerTable[column]?.data,
+        );
+        const { required: isRequired } = colData || {};
+        const columnHeaderValue =
+          hotRef.current?.hotInstance?.getColHeader(column);
+        const valueToVisible =
+          columnHeaderValue !== " " ? columnHeaderValue : "+";
+        const iconType = getIconByType(colData?.type);
+
+        TH.innerHTML = getStyledContent(
+          iconType,
+          valueToVisible,
+          isRequired,
+          colData,
+        );
+      } else if (spanContent && groupsName.includes(spanContent)) {
+        const colors = ["red", "", "blue", "", "green", "pink", "gray"];
+        const containerGroupStyle = `
+          cursor: pointer;
+          border: none;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: ${colors[column]};
+        `;
+        TH.className = "style-th-group";
+        TH.innerHTML = `<div style="${containerGroupStyle}">${spanContent}</div>`;
+      }
     },
-    [getIconByType, headerTable, hotRef, template?.fields?.fields],
+    [getIconByType, groups, headerTable, hotRef, template?.fields?.fields],
   );
 
   const [hiddenRows, setHiddenRows] = useState<number[]>([]);
@@ -777,6 +804,7 @@ function DefaultTable({
       <HotTable
         key={parentId}
         nestedRows
+        nestedHeaders={[groups, colHeaders]}
         bindRowsWithHeaders
         className="hot-table"
         readOnly={!!parentId || isTableLocked}
