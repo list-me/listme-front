@@ -293,15 +293,15 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           }
         }
       })
-      .catch((errr: any) => {
-        console.log(errr);
+      .catch((err: any) => {
+        console.log(err);
         loadingRef.current!.style.display = "none";
 
         const hotInstance = hotRef.current!?.hotInstance;
         if (hotInstance) {
           hotInstance.render();
         }
-        toast.error(errr?.response?.data?.message);
+        toast.error(err?.response?.data?.message);
       });
   };
 
@@ -339,7 +339,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     width: "300px",
     frozen: false,
     isCustom: false,
-    bucket_url: "",
+    bucket: "",
   };
 
   return (

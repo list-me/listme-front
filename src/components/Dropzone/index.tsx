@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
 import { DropzoneRendererProps } from "./Dropzone";
@@ -15,6 +15,7 @@ import Modal from "../Modal";
 import { Loading } from "../Loading";
 import { getFilenameFromUrl } from "../../utils";
 import { productRequests } from "../../services/apis/requests/product";
+import { productContext } from "../../context/products";
 
 const Dropzone: React.FC<DropzoneRendererProps> = ({
   value,
@@ -32,7 +33,19 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
-  const [items, setItems] = useState<any[]>(value ?? []);
+  const [items, setItems] = useState<any[]>([]);
+
+  useEffect(() => {
+    const div = document.createElement("div");
+
+    div.innerHTML = value?.join("");
+
+    const srcValues = Array.from(div.querySelectorAll("img")).map((img) =>
+      img.getAttribute("src"),
+    );
+    if (srcValues?.length > 0) setItems(srcValues);
+    else setItems(value);
+  }, [value]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -191,7 +204,7 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         <Container>
           {!loading ? (
             <>
-              {items.length ? (
+              {items?.length ? (
                 items?.map((item: string, index: number) => {
                   const regex = /https:\/\/[^/]+\//;
                   const verifyTrue = regex.test(item);
@@ -199,7 +212,6 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
                   if (item !== null) {
                     urlItem = verifyTrue ? item : `${template.bucket}/${item}`;
                   }
-
                   const fileNameWithExtension = getFilenameFromUrl(urlItem);
                   if (fileNameWithExtension) {
                     const lastDotIndex = fileNameWithExtension.lastIndexOf(".");

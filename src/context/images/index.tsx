@@ -42,7 +42,7 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
         const uploadPromises = files.map(async (file) => {
           const [fileName, fileType] = file.name.split(".");
 
-          let signedUrl: SignedUrlResponse;
+          let signedUrl: any;
 
           if (!optionals?.brand || !optionals?.name) {
             // eslint-disable-next-line @typescript-eslint/no-throw-literal
@@ -54,7 +54,7 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
             name: optionals.name,
           });
 
-          filesNames.push(signedUrl.access_url);
+          filesNames.push(signedUrl.key);
           return fileRequests.uploadFile(file, signedUrl.url);
         });
 

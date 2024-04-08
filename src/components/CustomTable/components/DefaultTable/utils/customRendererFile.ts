@@ -145,74 +145,31 @@ function customRendererFile(
     }
   };
 
-  if (typeof value === "string" && value.length) {
-    value = JSON.parse(value);
-  }
+  const newValue = value?.map((itemValue: string) => {
+    const regexSRC = /src="([^"]+)"/;
+    const match = itemValue?.match(regexSRC);
+    if (match && match?.length > 0) {
+      const lastDotIndex: number = match[1].lastIndexOf(".");
+      const fileType: string = match[1].substring(lastDotIndex + 1);
+      if (!["jpg", "jpeg", "png", "thumb", "svg", "webp"].includes(fileType)) {
+        const imageDocument = `<img class="imgItem" loading="lazy" src="${DocumentIcon}" style="width:25px;height:25px;margin-right:4px;">`;
+        return imageDocument;
+      }
 
-  if (value?.length) {
-    td.innerHTML = value
-      .map((url: string) => {
-        let imageSource: string = url;
-        const fileNameWithExtension: string = getFilenameFromUrl(url);
-        const lastDotIndex: number = fileNameWithExtension.lastIndexOf(".");
-        const fileType: string = fileNameWithExtension.substring(
-          lastDotIndex + 1,
-        );
+      return itemValue;
+    }
+    return itemValue;
+  });
 
-        if (
-          !["jpg", "jpeg", "png", "thumb", "svg", "webp"].includes(fileType)
-        ) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          imageSource = DocumentIcon;
-        }
+  const toInnerHTML =
+    newValue?.length > 1
+      ? `<div style="display:flex; align-items: center; margin-top: 16px; margin-left: 8px;">
+        ${newValue[0].concat(
+          `<div class="itens-amount"> +${newValue.length - 1}</div>`,
+        )} </div>`
+      : newValue || "";
 
-        const placeholder: string = `<img class="imgItem" title="${fileNameWithExtension}" loading='lazy' src="${ImageErrorIcon}" style="width:25px;height:25px;margin-right:4px;">`;
-        return placeholder;
-      })
-      .join("");
-
-    const imgUrl: string = value[value.length - 1];
-    fetch(imgUrl, { method: "HEAD", cache: "no-cache" })
-      .then((response: Response) => {
-        const contentLength: string | null =
-          response.headers.get("Content-Length");
-
-        if (contentLength && parseInt(contentLength) <= 1000 * 1024) {
-          const regex = /https:\/\/[^/]+\//;
-          const verifyTrue = regex.test(imgUrl);
-          let newImageUrl = "";
-          if (imgUrl !== null) {
-            newImageUrl = verifyTrue ? imgUrl : `${template.bucket}/${imgUrl}`;
-          }
-          let imageSource: string = newImageUrl;
-          const fileNameWithExtension: string = getFilenameFromUrl(newImageUrl);
-          const lastDotIndex: number = fileNameWithExtension.lastIndexOf(".");
-          const fileType: string = fileNameWithExtension.substring(
-            lastDotIndex + 1,
-          );
-
-          if (
-            !["jpg", "jpeg", "png", "thumb", "svg", "webp"].includes(fileType)
-          ) {
-            imageSource = DocumentIcon;
-          }
-
-          const imgTag: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px; margin-right:4px;" loading="lazy">`;
-          td.innerHTML =
-            value.length > 1
-              ? `<div style="display:flex; align-items: center; margin-top: 16px; margin-left: 8px;">
-                    ${imgTag.concat(
-                      `<div class="itens-amount"> +${value.length - 1}</div>`,
-                    )} </div>`
-              : imgTag;
-        }
-      })
-      .catch((error) => {
-        console.error("Erro ao verificar o tamanho da imagem:", error);
-      });
-  } else {
-    td.innerHTML = "";
-  }
+  td.innerHTML = toInnerHTML;
 }
 
 export default customRendererFile;
