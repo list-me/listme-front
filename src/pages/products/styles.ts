@@ -483,6 +483,7 @@ export const Container = styled.div`
 
     .drag-over {
       border: 2px dashed #3818d9;
+      text-justify: center;
     }
 
     .drag-over::after {

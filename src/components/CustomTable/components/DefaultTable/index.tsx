@@ -49,6 +49,7 @@ import ModalSelectChildrens from "../ModalSelectChildrens";
 import { productRequests } from "../../../../services/apis/requests/product";
 import { IProductToTable } from "../../../../context/products/product.context";
 import getStyleRowHeader from "./utils/getStyleRowHeader";
+import DocumentIcon from "../../../../assets/icons/document-icon.svg";
 
 function DefaultTable({
   hotRef,
@@ -156,8 +157,19 @@ function DefaultTable({
       if (currentColumn?.title) {
         const limit =
           currentColumn?.limit || DefaultLimits[currentColumn?.type]?.default;
+        let newValueParsed;
+        try {
+          const jsonObject = JSON.parse(newValue);
 
-        if (currentColumn?.type !== "boolean" && newValue?.length > limit) {
+          newValueParsed = jsonObject === Infinity ? newValue : jsonObject;
+        } catch (error) {
+          newValueParsed = newValue;
+        }
+        if (
+          currentColumn?.type !== "boolean" &&
+          currentColumn?.type !== "radio" &&
+          newValueParsed?.length > limit
+        ) {
           toast.warn(`Limite excedido em "${currentColumn?.title}"`);
           return;
         }
@@ -165,12 +177,28 @@ function DefaultTable({
         if (source === "CopyPaste.paste") return;
 
         if (currentColumn.type === "file") {
-          const processChanges = async () => {
-            if (!hotRef.current) return;
+          const newChanges: any = [...changes];
+          newChanges[0][2] = changes[0][2]?.map((itemChange: string) => {
+            const regexSRC = /src="([^"]+)"/;
+            const match = itemChange?.match(regexSRC);
+            if (match) {
+              if (match[1].includes(template.bucket)) {
+                const regexHttp = /https?:\/\/[^/]+\//;
+                const modifiedString = match[1]?.replace(regexHttp, "");
+                return modifiedString;
+              }
+              return itemChange;
+            }
+            const regexHttp = /https?:\/\/[^/]+\//;
+            const modifiedString = itemChange?.replace(regexHttp, "");
+            return modifiedString;
+          });
 
+          const processChanges = async (values: any) => {
+            if (!hotRef.current) return;
             const { hotInstance } = hotRef.current;
             await handleCellChange(
-              changes,
+              values,
               hotInstance,
               isTableLocked,
               setIsTableLocked,
@@ -182,8 +210,8 @@ function DefaultTable({
             );
           };
 
-          if (changes?.length) {
-            await processChanges();
+          if (newChanges?.length) {
+            await processChanges(newChanges);
           }
         } else if (hotRef.current) {
           const { hotInstance } = hotRef.current;
@@ -333,9 +361,61 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ) => {
+      const div = document.createElement("div");
+      div.innerHTML = value;
+
+      const itemCountElement = div.querySelector(".itens-amount");
+      let itemCountNumber = 0;
+      if (itemCountElement) {
+        // @ts-ignore
+        const itemCountValue = itemCountElement.textContent.trim();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        itemCountNumber = parseInt(itemCountValue, 10);
+      }
+
       const colType = columns[col]?.type;
       const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
       const previousValue = _instance.getDataAtCell(_row, col);
+
+      let newValue;
+      const regex = /https:\/\/[^/]+\//;
+
+      if (value) {
+        newValue = value?.map((itemValue: string) => {
+          if (itemValue[0] !== undefined && itemValue[0] !== "<") {
+            const lastDotIndex: number = itemValue.lastIndexOf(".");
+            const fileType: string = itemValue.substring(lastDotIndex + 1);
+            if (
+              !["jpg", "jpeg", "png", "thumb", "svg", "webp"].includes(fileType)
+            ) {
+              const imageDocument = `<img class="imgItem" loading="lazy" src="${DocumentIcon}" style="width:25px;height:25px;margin-right:4px;">`;
+              return imageDocument;
+            }
+
+            const newtag = `<img class="imgItem" loading="lazy" src="${
+              regex.test(itemValue)
+                ? itemValue
+                : `${template.bucket}/${itemValue}`
+            }" style="width:25px;height:25px;margin-right:4px;">`;
+
+            return newtag;
+          }
+
+          const regexSRC = /src="([^"]+)"/;
+
+          const match = itemValue?.match(regexSRC);
+
+          if (match && regex.test(match[1])) {
+            return itemValue;
+          }
+          return (
+            match &&
+            `<img class="imgItem" loading="lazy" src="${template.bucket}${match[1]}" style="width:25px;height:25px;margin-right:4px;">`
+          );
+        });
+      } else {
+        newValue = value;
+      }
 
       customRendererFile(
         _instance,
@@ -343,7 +423,7 @@ function DefaultTable({
         _row,
         col,
         prop,
-        value,
+        newValue,
         hotRef,
         loadingRef,
         uploadImages,
@@ -353,7 +433,7 @@ function DefaultTable({
       );
 
       td.style.border = "";
-      if (value?.length > maxLength) {
+      if (itemCountNumber > maxLength) {
         td.style.border = "2px solid #F1BC02";
       }
     },

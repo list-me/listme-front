@@ -23,6 +23,7 @@ import {
 import { fileRequests } from "../../services/apis/requests/file";
 import { isCollectionCompany } from "../../utils";
 import { IConditions } from "../FilterContext/FilterContextType";
+import getImage from "../../utils/getImage";
 
 export interface ICustom {
   show?: boolean;
@@ -98,6 +99,7 @@ interface ITypeProductContext {
 
 interface SignedUrlResponse {
   url: string;
+  key?: string;
   access_url: string;
 }
 
@@ -188,7 +190,8 @@ export const ProductContextProvider = ({
             signedUrl = await getSignedUrl(fileName, fileType, bucketUrl);
           }
 
-          filesNames.push(signedUrl.access_url);
+          if (signedUrl?.key) filesNames.push(signedUrl.key);
+
           return fileRequests.uploadFile(file, signedUrl.url);
         });
 
@@ -310,7 +313,44 @@ export const ProductContextProvider = ({
         });
       }
 
-      setProducts(productFields as any);
+      const dataFiles = templateFields
+        .map((mField) => {
+          if (mField.type === "file") {
+            return mField.data;
+          }
+          return null;
+        })
+        .filter(Boolean);
+      const newProductsFields = Promise.all(
+        productFields.map(async (mProductFields) => {
+          const newData: any = {};
+          await Promise.all(
+            dataFiles.map(async (fDataFiles: any) => {
+              if (mProductFields[fDataFiles]) {
+                try {
+                  const newValue = getImage(
+                    mProductFields[fDataFiles],
+                    templateFields,
+                  );
+                  newData[fDataFiles] = newValue;
+                } catch (error) {
+                  console.error(error);
+                  newData[fDataFiles] = null;
+                }
+              }
+            }),
+          );
+          return { ...mProductFields, ...newData };
+        }),
+      );
+      (async () => {
+        try {
+          const toProducts = await newProductsFields;
+          setProducts(toProducts as any);
+        } catch (error) {
+          console.error("Erro ao processar:", error);
+        }
+      })();
       setTotal(data?.total);
       return { productFields, headerTable };
     },
@@ -339,7 +379,7 @@ export const ProductContextProvider = ({
             hidden: item.hidden ? item.hidden : false,
             width: item.width ? item.width : "300px",
             frozen: item.frozen ? item.frozen : false,
-            bucket_url: response?.bucket_url,
+            bucket: response?.bucket,
             limit: item.limit,
             integrations: item.integrations,
           };
@@ -421,6 +461,7 @@ export const ProductContextProvider = ({
       // @ts-ignore
       const columnKeys = headerTable.map((column) => column?.data);
       let newValue;
+
       Object.keys(fields).forEach((field: any) => {
         if (
           !["id", "created_at"].includes(field) &&
@@ -454,6 +495,7 @@ export const ProductContextProvider = ({
   ): Promise<any> => {
     try {
       const fields = buildProduct(value);
+
       if (isNew) {
         const newValueToPatch = () => {
           if (newValue && !prevValue) {
@@ -478,7 +520,9 @@ export const ProductContextProvider = ({
               type === "paragraph" ||
               type === "decimal" ||
               type === "numeric" ||
+              type === "radio" ||
               type === "checked" ||
+              type === "relation" ||
               type === "list" ||
               type === "boolean")
           ) {
@@ -492,6 +536,21 @@ export const ProductContextProvider = ({
             return newArray;
           }
           if (newValue && prevValue && type === "file") {
+            // @ts-ignore
+            const missingItems = prevValue.filter(
+              (item: string) => !newValue.includes(item),
+            );
+
+            if (missingItems.length > 0) {
+              const missingItemsObject = missingItems.map((item: string) => ({
+                item,
+                destroy: true,
+              }));
+              // @ts-ignore
+              const combinedArray = [...newValue, ...missingItemsObject];
+
+              return combinedArray.flat();
+            }
             return (newValue as unknown as []).flat();
           }
           if (newValue && prevValue && type === "boolean") {
@@ -549,8 +608,14 @@ export const ProductContextProvider = ({
         typeof error?.response?.data?.message === "object"
           ? error?.response?.data?.message[0]
           : error?.response?.data?.message;
-
-      toast.error(message);
+      let fieldTitle;
+      if (message.includes("Limite do campo excedido")) {
+        const arrayMessage = message.split('"');
+        fieldTitle = template?.fields.fields.find(
+          (item) => item.id === arrayMessage[1],
+        )?.title;
+      }
+      toast.error(fieldTitle ? `Limite excedido em "${fieldTitle}"` : message);
     }
   };
 

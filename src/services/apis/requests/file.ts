@@ -4,11 +4,17 @@ import axios from "axios";
 import { STORAGE } from "../../../constants/localStorage";
 import { api } from "../api";
 import { toast } from "react-toastify";
+import { DEVELOPMENT_ENVIRONMENT } from "../../../constants/environments";
 
 interface SignedUrlResponse {
   url: string;
   access_url: string;
 }
+
+type Headers = {
+  "Content-Type": string;
+  "x-amz-acl"?: string;
+};
 
 function generateUUID(): string {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
@@ -48,10 +54,15 @@ export const fileRequests = {
       if (["skp", "sku"].includes(file.type))
         contentType = `application/${file.type}`;
 
-      const headers = {
+      const headers: Headers = {
         "Content-Type": contentType,
-        "x-amz-acl": "public-read",
       };
+
+      const currentEnviroment: string | undefined =
+        process.env.REACT_APP_ENVIRONMENT;
+
+      if (currentEnviroment !== DEVELOPMENT_ENVIRONMENT)
+        headers["x-amz-acl"] = "public-read";
 
       await axios.put(url, file, { headers });
     } catch (error) {

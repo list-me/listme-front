@@ -20,6 +20,7 @@ import {
   PrimaryButton,
   Tag,
   Title,
+  ContainerTitleSearch,
 } from "./styles";
 
 import { ReactComponent as CloseIcon } from "../../../assets/close-xsmall-blue.svg";
@@ -362,12 +363,14 @@ const RelationComponent: React.FC<PropsRelation> = ({
               ) : (
                 <>
                   <HeaderTable>
-                    <Title> Relacionar items </Title>
-                    <SearchBar
-                      handleChangeInput={(value: string) => setKeyword(value)}
-                      onPressEnter={handleSearchProducts}
-                      onFocus
-                    />
+                    <ContainerTitleSearch>
+                      <Title> Relacionar items </Title>
+                      <SearchBar
+                        handleChangeInput={(value: string) => setKeyword(value)}
+                        onPressEnter={handleSearchProducts}
+                        onFocus
+                      />
+                    </ContainerTitleSearch>
                   </HeaderTable>
                   {isLoading ? (
                     <Loading />

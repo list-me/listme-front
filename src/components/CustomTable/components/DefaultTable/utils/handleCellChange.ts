@@ -22,6 +22,9 @@ const handleCellChange: any = async (
   type: string,
 ) => {
   if (changes !== null && changes.length && !isTableLocked && hotInstance) {
+    if (changes[0][2] === undefined && changes[0][3]?.length === 0) {
+      return;
+    }
     const isNew = !!dataProvider[changes[0][0]].id;
     const customChanges = changes as Handsontable.CellChange[];
 
@@ -34,20 +37,35 @@ const handleCellChange: any = async (
       previousCellValue = customChanges[0][2];
       const newValue = () => {
         if (type === "radio" || type === "checked" || type === "list") {
-          return customChanges[0][3][0];
+          return Array.isArray(customChanges[0][3]) &&
+            customChanges[0][3].length > 0
+            ? customChanges[0][3][0]
+            : customChanges[0][3];
         }
         if (type === "file") {
-          return customChanges[0][3]
-            ? customChanges[0][3].map((mItem: string) => {
-                return mItem.replace(/^https:\/\/[^/]+\//, "");
+          const newCustom = customChanges[0][3]
+            ? customChanges[0][3]?.map((mItem: string) => {
+                const regexSRC = /src="([^"]+)"/;
+                const match = mItem?.match(regexSRC);
+                const matchConverted = ((match && match[1]) || mItem)?.replace(
+                  /^https:\/\/[^/]+\//,
+                  "",
+                );
+
+                return matchConverted;
               })
             : customChanges[0][3];
+          return newCustom;
         }
 
         return customChanges[0][3];
       };
+
       try {
         if (!isNew) setIsTableLocked(true);
+        if (newValue()?.toString() === previousCellValue?.toString()) {
+          return;
+        }
         const response = await handleSave(
           dataProvider[customChanges[0][0]],
           isNew,
@@ -67,8 +85,9 @@ const handleCellChange: any = async (
           updated[customChanges[0][0]].id = response.id;
           setDataProvider(updated);
         }
-      } catch {
+      } catch (err) {
         // @ts-ignore
+        console.log(err);
         dataProvider[customChanges[0][0]][customChanges[0][1]] =
           previousCellValue;
 
@@ -107,11 +126,17 @@ const handleCellChange: any = async (
             return customChanges[0][3][0];
           }
           if (type === "file") {
-            return customChanges[0][3]
+            const newCustom = customChanges[0][3]
               ? customChanges[0][3].map((mItem: string) => {
-                  return mItem.replace(/^https:\/\/[^/]+\//, "");
+                  const regexSRC = /src="([^"]+)"/;
+                  const match = mItem?.match(regexSRC);
+                  return ((match && match[1]) || mItem).replace(
+                    /^https:\/\/[^/]+\//,
+                    "",
+                  );
                 })
               : customChanges[0][3];
+            return newCustom;
           }
           return customChanges[0][3];
         };
