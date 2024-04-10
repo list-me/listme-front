@@ -53,6 +53,7 @@ import DocumentIcon from "../../../../assets/icons/document-icon.svg";
 import { ReactComponent as ConfigGroupHeaderSVG } from "../../../../assets/configGroupHeader.svg";
 import { ReactComponent as ArrowRightHeaderGroup } from "../../../../assets/arrow-right-header-group.svg";
 import ParentHeaderEdit from "./components/ParentHeaderEdit";
+import generateColorArray from "./utils/generateColorArray";
 
 function DefaultTable({
   hotRef,
@@ -109,8 +110,8 @@ function DefaultTable({
   );
 
   useEffect(() => {
-    const toGroups = template?.fields?.groups.map((mItemGroup: string) => {
-      return { label: mItemGroup, colspan: 2 };
+    const toGroups = template?.fields?.groups.map((mItemGroup: any) => {
+      return { label: mItemGroup.label, colspan: mItemGroup.total };
     });
 
     if (toGroups?.length > 0) {
@@ -660,6 +661,15 @@ function DefaultTable({
         });
       }
 
+      if (spanContent === "+ Criar novo grupo") {
+        TH.innerHTML = `
+        <div class='newGroupHeader'>
+          <span>${spanContent}</span>
+        </div>`;
+
+        return;
+      }
+
       if (spanContent && !groupsName.includes(spanContent)) {
         const colData = template?.fields?.fields.find(
           (item: any) => item.id === headerTable[column]?.data,
@@ -678,20 +688,7 @@ function DefaultTable({
           colData,
         );
       } else if (spanContent && groupsName.includes(spanContent)) {
-        const colors = [
-          "#CC5DE8",
-          "#1CC2D8",
-          "#AE423D",
-          "#88C13D",
-          "#E17A38",
-          "#DE3948",
-          "#CC9833",
-          "#69155F",
-          "#3D8A9C",
-          "#7E8A84",
-          "#371B22",
-          "#34344C",
-        ];
+        const colors = generateColorArray(cols.length);
         const containerGroupStyle = `
           cursor: pointer;
           border: none;
@@ -930,6 +927,20 @@ function DefaultTable({
     setGroups(newGroups);
   };
 
+  const totalGroupedColumns = groups.reduce(
+    (ttl, itemGroup) => ttl + itemGroup.colspan,
+    0,
+  );
+  const totalUngroupedColumns = cols.length - 1 - totalGroupedColumns;
+
+  const ungroupeds =
+    totalUngroupedColumns > 0
+      ? new Array(totalUngroupedColumns).fill({
+          label: "+ Criar novo grupo",
+          colspan: 1,
+        })
+      : [];
+
   return (
     <>
       {openAlertTooltip && (
@@ -966,7 +977,7 @@ function DefaultTable({
       <HotTable
         key={parentId + groups.join("-")}
         nestedRows
-        nestedHeaders={[groups, colHeaders]}
+        nestedHeaders={[[...groups, ...ungroupeds], colHeaders]}
         bindRowsWithHeaders
         className="hot-table"
         readOnly={!!parentId || isTableLocked || !!parentHeaderSelectedIndex}

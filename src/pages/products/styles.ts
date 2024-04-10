@@ -504,6 +504,27 @@ export const Container = styled.div`
       content: "Solte aqui";
     }
   }
+  .newGroupHeader {
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    height: 20px;
+    border-radius: 5px 5px 0px 0px;
+    transition: all 0.1s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: transparent;
+    background: transparent;
+    :hover {
+      color: #3818d9;
+      background: #e2e0ff;
+    }
+  }
 `;
 
 export const Filters = styled.div`
