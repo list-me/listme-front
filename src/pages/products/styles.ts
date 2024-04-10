@@ -160,6 +160,11 @@ export const Container = styled.div`
 
     height: 50%;
   }
+  thead {
+    * {
+      border-top: none;
+    }
+  }
 
   .handsontable table.htCore thead tr:first-child th {
     height: 24px !important;
@@ -167,7 +172,12 @@ export const Container = styled.div`
     margin: 0;
     * {
       height: 24px !important;
+      padding: 0;
     }
+  }
+
+  .style-th-group {
+    border: none !important;
   }
 
   thead {
@@ -505,6 +515,7 @@ export const Filters = styled.div`
   padding: 16px;
   background: white;
   border: 1px solid #e9ecef;
+  border-bottom: none;
 `;
 
 export const Line = styled.div`

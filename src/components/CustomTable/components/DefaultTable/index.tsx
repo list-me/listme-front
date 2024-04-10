@@ -52,6 +52,7 @@ import getStyleRowHeader from "./utils/getStyleRowHeader";
 import DocumentIcon from "../../../../assets/icons/document-icon.svg";
 import { ReactComponent as ConfigGroupHeaderSVG } from "../../../../assets/configGroupHeader.svg";
 import { ReactComponent as ArrowRightHeaderGroup } from "../../../../assets/arrow-right-header-group.svg";
+import ParentHeaderEdit from "./components/ParentHeaderEdit";
 
 function DefaultTable({
   hotRef,
@@ -87,6 +88,8 @@ function DefaultTable({
   subItensMode,
   setSubItemsMode,
 }: IDefaultTable): JSX.Element {
+  const [parentHeaderSelectedIndex, setParentHeaderSelectedIndex] =
+    useState<number>();
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
   const svgStringConfigHeaderGroup: string = renderToString(
     <ConfigGroupHeaderSVG />,
@@ -101,11 +104,19 @@ function DefaultTable({
   const { operator } = useFilterContext();
   const { conditionsFilter } = useProductContext();
 
-  const groups: string[] = template?.fields?.groups.map(
-    (mItemGroup: string) => {
-      return { label: mItemGroup, colspan: 2 };
-    },
+  const [groups, setGroups] = useState<{ label: string; colspan: number }[]>(
+    [],
   );
+
+  useEffect(() => {
+    const toGroups = template?.fields?.groups.map((mItemGroup: string) => {
+      return { label: mItemGroup, colspan: 2 };
+    });
+
+    if (toGroups?.length > 0) {
+      setGroups(toGroups);
+    }
+  }, [template?.fields?.groups]);
 
   useEffect(() => {
     if (hotRef.current) {
@@ -641,6 +652,14 @@ function DefaultTable({
 
       const groupsName = groups.map((group: any) => group.label);
 
+      function selectParentHeader(): void {
+        groupsName.forEach((itemGname, index) => {
+          if (itemGname === spanContent) {
+            setParentHeaderSelectedIndex(index);
+          }
+        });
+      }
+
       if (spanContent && !groupsName.includes(spanContent)) {
         const colData = template?.fields?.fields.find(
           (item: any) => item.id === headerTable[column]?.data,
@@ -684,6 +703,7 @@ function DefaultTable({
           font-size: 14px;
           background-color: ${colors[column]};
           height: 20px;
+          border-radius: 5px 5px 0px 0px;
         `;
         const configSvg = `
           padding-left: 4px;
@@ -702,13 +722,16 @@ function DefaultTable({
         TH.className = "style-th-group";
 
         TH.innerHTML = `<div style="${containerGroupStyle}">
-          <div></div>
-          <span>${spanContent}</span>
-          <div style="${divSvgs}">
-            <div style="${configSvg}">${svgStringConfigHeaderGroup}</div>
-            <div style="${configSvg}">${svgArrowRightHeaderGroup}</div>
-          </div>
-        </div>`;
+        <div></div>
+        <span>${spanContent}</span>
+        <div style="${divSvgs}">
+          <div class="configSvgDiv">${svgStringConfigHeaderGroup}</div>
+          <div style="${configSvg}">${svgArrowRightHeaderGroup}</div>
+        </div>
+      </div>`;
+
+        const configSvgDiv = TH.querySelector(".configSvgDiv");
+        configSvgDiv?.addEventListener("click", selectParentHeader);
       }
     },
     [
@@ -901,62 +924,12 @@ function DefaultTable({
     }
   };
 
-  const afterColumnMove = (columns: any, target: any) => {
-    const { hotInstance } = hotRef.current;
-    const { nestedHeaders } = hotInstance.getSettings();
-
-    let targetParent;
-
-    for (let i = 0; i < nestedHeaders.length; i++) {
-      for (let j = 0; j < nestedHeaders[i].length; j++) {
-        if (
-          nestedHeaders[i][j].colspan &&
-          nestedHeaders[i][j].colspan.indexOf(target) !== -1
-        ) {
-          targetParent = nestedHeaders[i][j];
-          break;
-        }
-      }
-      if (targetParent) break;
-    }
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const col of columns) {
-      let parent;
-      for (let i = 0; i < nestedHeaders.length; i++) {
-        for (let j = 0; j < nestedHeaders[i].length; j++) {
-          if (
-            nestedHeaders[i][j].colspan &&
-            nestedHeaders[i][j].colspan.indexOf(col) !== -1
-          ) {
-            parent = nestedHeaders[i][j];
-            break;
-          }
-        }
-        if (parent) break;
-      }
-      if (!parent) {
-        parent = {
-          label: "Group",
-          colspan: [col],
-        };
-        nestedHeaders[0].splice(
-          targetParent.colspan[targetParent.colspan.length - 1] + 1,
-          0,
-          parent,
-        );
-      } else if (!parent.colspan) {
-        parent.colspan = [col];
-      } else {
-        parent.colspan.push(col);
-        parent.colspan.sort((a: any, b: any) => a - b);
-      }
-    }
-
-    hotInstance.updateSettings({
-      nestedHeaders,
-    });
+  const changeHeaderGroup = (value: string, index: number): void => {
+    const newGroups = [...groups];
+    newGroups[index] = { ...groups[index], label: value };
+    setGroups(newGroups);
   };
+
   return (
     <>
       {openAlertTooltip && (
@@ -991,12 +964,12 @@ function DefaultTable({
       )}
 
       <HotTable
-        key={parentId}
+        key={parentId + groups.join("-")}
         nestedRows
         nestedHeaders={[groups, colHeaders]}
         bindRowsWithHeaders
         className="hot-table"
-        readOnly={!!parentId || isTableLocked}
+        readOnly={!!parentId || isTableLocked || !!parentHeaderSelectedIndex}
         ref={hotRef}
         colHeaders={colHeaders}
         columns={cols}
@@ -1313,6 +1286,14 @@ function DefaultTable({
           amount={childsSelectedIds.length}
           clearSubItensMode={clearSubItensMode}
           onFinishProductChild={onFinishProductChild}
+        />
+      )}
+      {parentHeaderSelectedIndex && (
+        <ParentHeaderEdit
+          value={groups[parentHeaderSelectedIndex].label}
+          onClose={() => setParentHeaderSelectedIndex(undefined)}
+          onChange={changeHeaderGroup}
+          index={parentHeaderSelectedIndex}
         />
       )}
     </>
