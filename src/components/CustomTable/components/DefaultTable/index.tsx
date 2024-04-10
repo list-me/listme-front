@@ -50,6 +50,8 @@ import { productRequests } from "../../../../services/apis/requests/product";
 import { IProductToTable } from "../../../../context/products/product.context";
 import getStyleRowHeader from "./utils/getStyleRowHeader";
 import DocumentIcon from "../../../../assets/icons/document-icon.svg";
+import { ReactComponent as ConfigGroupHeaderSVG } from "../../../../assets/configGroupHeader.svg";
+import { ReactComponent as ArrowRightHeaderGroup } from "../../../../assets/arrow-right-header-group.svg";
 
 function DefaultTable({
   hotRef,
@@ -86,6 +88,12 @@ function DefaultTable({
   setSubItemsMode,
 }: IDefaultTable): JSX.Element {
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
+  const svgStringConfigHeaderGroup: string = renderToString(
+    <ConfigGroupHeaderSVG />,
+  );
+  const svgArrowRightHeaderGroup: string = renderToString(
+    <ArrowRightHeaderGroup />,
+  );
   const [openAlertTooltip, setAlertTooltip] = useState(false);
   const [openAlertTooltipIntegration, setAlertTooltipIntegration] =
     useState(false);
@@ -630,7 +638,6 @@ function DefaultTable({
   const styledHeader = useCallback(
     (column: number, TH: HTMLTableHeaderCellElement): void => {
       const spanContent = TH.querySelector("span")?.textContent;
-      console.log("🚀 ~ spanContent:", spanContent);
 
       const groupsName = groups.map((group: any) => group.label);
 
@@ -652,22 +659,67 @@ function DefaultTable({
           colData,
         );
       } else if (spanContent && groupsName.includes(spanContent)) {
-        const colors = ["red", "", "blue", "", "green", "pink", "gray"];
+        const colors = [
+          "#CC5DE8",
+          "#1CC2D8",
+          "#AE423D",
+          "#88C13D",
+          "#E17A38",
+          "#DE3948",
+          "#CC9833",
+          "#69155F",
+          "#3D8A9C",
+          "#7E8A84",
+          "#371B22",
+          "#34344C",
+        ];
         const containerGroupStyle = `
           cursor: pointer;
           border: none;
           width: 100%;
-          height: 100%;
           display: flex;
-          justify-content: center;
+          justify-content: space-between;
           align-items: center;
+          color: white;
+          font-size: 14px;
           background-color: ${colors[column]};
+          height: 20px;
+        `;
+        const configSvg = `
+          padding-left: 4px;
+          height: 16px !important;
+          display: flex;
+          border-left: 1px solid rgba(0, 0, 0, 0.2);
+          align-items: center;
+        `;
+        const divSvgs = `
+         display: flex;
+         height: 100%;
+         align-items: center;
+         gap: 12px;
+         margin-right: 4px;
         `;
         TH.className = "style-th-group";
-        TH.innerHTML = `<div style="${containerGroupStyle}">${spanContent}</div>`;
+
+        TH.innerHTML = `<div style="${containerGroupStyle}">
+          <div></div>
+          <span>${spanContent}</span>
+          <div style="${divSvgs}">
+            <div style="${configSvg}">${svgStringConfigHeaderGroup}</div>
+            <div style="${configSvg}">${svgArrowRightHeaderGroup}</div>
+          </div>
+        </div>`;
       }
     },
-    [getIconByType, groups, headerTable, hotRef, template?.fields?.fields],
+    [
+      getIconByType,
+      groups,
+      headerTable,
+      hotRef,
+      svgArrowRightHeaderGroup,
+      svgStringConfigHeaderGroup,
+      template?.fields?.fields,
+    ],
   );
 
   const [hiddenRows, setHiddenRows] = useState<number[]>([]);
@@ -848,6 +900,63 @@ function DefaultTable({
       }
     }
   };
+
+  const afterColumnMove = (columns: any, target: any) => {
+    const { hotInstance } = hotRef.current;
+    const { nestedHeaders } = hotInstance.getSettings();
+
+    let targetParent;
+
+    for (let i = 0; i < nestedHeaders.length; i++) {
+      for (let j = 0; j < nestedHeaders[i].length; j++) {
+        if (
+          nestedHeaders[i][j].colspan &&
+          nestedHeaders[i][j].colspan.indexOf(target) !== -1
+        ) {
+          targetParent = nestedHeaders[i][j];
+          break;
+        }
+      }
+      if (targetParent) break;
+    }
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const col of columns) {
+      let parent;
+      for (let i = 0; i < nestedHeaders.length; i++) {
+        for (let j = 0; j < nestedHeaders[i].length; j++) {
+          if (
+            nestedHeaders[i][j].colspan &&
+            nestedHeaders[i][j].colspan.indexOf(col) !== -1
+          ) {
+            parent = nestedHeaders[i][j];
+            break;
+          }
+        }
+        if (parent) break;
+      }
+      if (!parent) {
+        parent = {
+          label: "Group",
+          colspan: [col],
+        };
+        nestedHeaders[0].splice(
+          targetParent.colspan[targetParent.colspan.length - 1] + 1,
+          0,
+          parent,
+        );
+      } else if (!parent.colspan) {
+        parent.colspan = [col];
+      } else {
+        parent.colspan.push(col);
+        parent.colspan.sort((a: any, b: any) => a - b);
+      }
+    }
+
+    hotInstance.updateSettings({
+      nestedHeaders,
+    });
+  };
   return (
     <>
       {openAlertTooltip && (
@@ -910,6 +1019,7 @@ function DefaultTable({
         }}
         afterPaste={afterPasteCallback}
         afterColumnMove={afterColumnMoveCallback}
+        // afterColumnMove={afterColumnMove}
         afterGetColHeader={styledHeader}
         afterGetRowHeader={styledRow}
         afterColumnResize={async (newSize: number, column: number) => {

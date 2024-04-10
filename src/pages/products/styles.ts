@@ -161,16 +161,19 @@ export const Container = styled.div`
     height: 50%;
   }
 
-  .hanson-table thead tr:first-child {
-    height: 24px; /* Definir altura da primeira linha como 24 pixels */
+  .handsontable table.htCore thead tr:first-child th {
+    height: 24px !important;
+    padding: 0;
+    margin: 0;
+    * {
+      height: 24px !important;
+    }
   }
 
   thead {
     th {
       .customHeader {
-        height: 51px;
         background: #f1f3f5;
-
         z-index: 9999;
       }
 
@@ -227,6 +230,7 @@ export const Container = styled.div`
 
   .style-th-group {
     border: none;
+    height: 22px;
   }
 
   tbody tr th {
