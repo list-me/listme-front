@@ -881,11 +881,10 @@ function DefaultTable({
     setGroups(newGroups);
   };
 
-  const totalGroupedColumns = groups.reduce(
-    (ttl, itemGroup) => ttl + itemGroup.colspan,
-    0,
-  );
-  const totalUngroupedColumns = cols.length - 1 - totalGroupedColumns;
+  const totalGroupedColumns = groups[0]?.label
+    ? groups.reduce((ttl, itemGroup) => ttl + itemGroup?.colspan, 0)
+    : 0;
+  const totalUngroupedColumns = cols?.length - 1 - totalGroupedColumns;
 
   const ungroupeds =
     totalUngroupedColumns > 0
@@ -927,11 +926,14 @@ function DefaultTable({
           </p>
         </AlertTooltip>
       )}
-
       <HotTable
         key={parentId + groups.join("-")}
         nestedRows
-        nestedHeaders={[[...groups, ...ungroupeds], colHeaders]}
+        nestedHeaders={
+          groups[0]?.label
+            ? [[...groups, ...ungroupeds], colHeaders]
+            : [[...ungroupeds], colHeaders]
+        }
         bindRowsWithHeaders
         className="hot-table"
         readOnly={
