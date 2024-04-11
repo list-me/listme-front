@@ -25,6 +25,7 @@ function HeaderDropDown({
   setCurrentCell,
   setIsOpen,
   handleFreeze,
+  setEditModeGroup,
 }: {
   dropDownStatus: IDropDownStatus;
   setDropDownStatus: React.Dispatch<React.SetStateAction<IDropDownStatus>>;
@@ -40,6 +41,7 @@ function HeaderDropDown({
   setCurrentCell: React.Dispatch<any>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleFreeze: any;
+  setEditModeGroup: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element | null {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -115,6 +117,7 @@ function HeaderDropDown({
               setCurrentCell(() => col);
               setIsOpen((prev) => !prev);
             }}
+            handleGroupEdit={() => setEditModeGroup(true)}
           />
         </BoxDropDown>
       </ContainerHeaderDropDown>

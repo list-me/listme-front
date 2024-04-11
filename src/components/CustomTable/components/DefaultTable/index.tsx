@@ -663,7 +663,6 @@ function DefaultTable({
   const [editModeGroup, setEditModeGroup] = useState(false);
 
   const [idsColumnsSelecteds, setIdsColumnsSelecteds] = useState<string[]>([]);
-  console.log("🚀 ~ idsColumnsSelecteds:", idsColumnsSelecteds);
 
   const styledHeader = useCallback(
     (column: number, TH: HTMLTableHeaderCellElement): void => {
@@ -1255,6 +1254,7 @@ function DefaultTable({
         setCurrentCell={setCurrentCell}
         setIsOpen={setIsOpen}
         handleFreeze={handleFreeze}
+        setEditModeGroup={setEditModeGroup}
       />
       {parentId && (
         <ModalSelectChildrens
