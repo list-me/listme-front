@@ -54,6 +54,7 @@ import { ReactComponent as ConfigGroupHeaderSVG } from "../../../../assets/confi
 import { ReactComponent as ArrowRightHeaderGroup } from "../../../../assets/arrow-right-header-group.svg";
 import ParentHeaderEdit from "./components/ParentHeaderEdit";
 import generateColorArray from "./utils/generateColorArray";
+import customStyledHeader from "./utils/customStyledHeader";
 
 function DefaultTable({
   hotRef,
@@ -647,98 +648,54 @@ function DefaultTable({
     },
     [ICON_HEADER],
   );
+
+  // const collapseColumn = () => {
+  //   const { hotInstance } = hotRef.current;
+  //   const plugin = hotInstance.getPlugin("nestedHeaders");
+  //   console.log("🚀 ~ collapseColumn ~ plugin:", plugin);
+
+  //   plugin.collapseChildren(1);
+
+  //   // plugin?.collapseColumn(0);
+  //   // hotInstance.render();
+  // };
+
+  const [editModeGroup, setEditModeGroup] = useState(false);
+
+  const [idsColumnsSelecteds, setIdsColumnsSelecteds] = useState<string[]>([]);
+  console.log("🚀 ~ idsColumnsSelecteds:", idsColumnsSelecteds);
+
   const styledHeader = useCallback(
     (column: number, TH: HTMLTableHeaderCellElement): void => {
-      const spanContent = TH.querySelector("span")?.textContent;
-
-      const groupsName = groups.map((group: any) => group.label);
-
-      function selectParentHeader(): void {
-        groupsName.forEach((itemGname, index) => {
-          if (itemGname === spanContent) {
-            setParentHeaderSelectedIndex(index);
-          }
-        });
-      }
-
-      if (spanContent === "+ Criar novo grupo") {
-        TH.innerHTML = `
-        <div class='newGroupHeader'>
-          <span>${spanContent}</span>
-        </div>`;
-
-        return;
-      }
-
-      if (spanContent && !groupsName.includes(spanContent)) {
-        const colData = template?.fields?.fields.find(
-          (item: any) => item.id === headerTable[column]?.data,
-        );
-        const { required: isRequired } = colData || {};
-        const columnHeaderValue =
-          hotRef.current?.hotInstance?.getColHeader(column);
-        const valueToVisible =
-          columnHeaderValue !== " " ? columnHeaderValue : "+";
-        const iconType = getIconByType(colData?.type);
-
-        TH.innerHTML = getStyledContent(
-          iconType,
-          valueToVisible,
-          isRequired,
-          colData,
-        );
-      } else if (spanContent && groupsName.includes(spanContent)) {
-        const colors = generateColorArray(cols.length);
-        const containerGroupStyle = `
-          cursor: pointer;
-          border: none;
-          width: 100%;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          color: white;
-          font-size: 14px;
-          background-color: ${colors[column]};
-          height: 20px;
-          border-radius: 5px 5px 0px 0px;
-        `;
-        const configSvg = `
-          padding-left: 4px;
-          height: 16px !important;
-          display: flex;
-          border-left: 1px solid rgba(0, 0, 0, 0.2);
-          align-items: center;
-        `;
-        const divSvgs = `
-         display: flex;
-         height: 100%;
-         align-items: center;
-         gap: 12px;
-         margin-right: 4px;
-        `;
-        TH.className = "style-th-group";
-
-        TH.innerHTML = `<div style="${containerGroupStyle}">
-        <div></div>
-        <span>${spanContent}</span>
-        <div style="${divSvgs}">
-          <div class="configSvgDiv">${svgStringConfigHeaderGroup}</div>
-          <div style="${configSvg}">${svgArrowRightHeaderGroup}</div>
-        </div>
-      </div>`;
-
-        const configSvgDiv = TH.querySelector(".configSvgDiv");
-        configSvgDiv?.addEventListener("click", selectParentHeader);
-      }
+      customStyledHeader(
+        TH,
+        groups,
+        setParentHeaderSelectedIndex,
+        template,
+        headerTable,
+        column,
+        hotRef,
+        getIconByType,
+        cols,
+        svgStringConfigHeaderGroup,
+        svgArrowRightHeaderGroup,
+        editModeGroup,
+        setEditModeGroup,
+        idsColumnsSelecteds,
+        setIdsColumnsSelecteds,
+      );
     },
     [
+      cols,
+      editModeGroup,
       getIconByType,
       groups,
       headerTable,
       hotRef,
+      idsColumnsSelecteds,
       svgArrowRightHeaderGroup,
       svgStringConfigHeaderGroup,
-      template?.fields?.fields,
+      template,
     ],
   );
 
@@ -980,7 +937,12 @@ function DefaultTable({
         nestedHeaders={[[...groups, ...ungroupeds], colHeaders]}
         bindRowsWithHeaders
         className="hot-table"
-        readOnly={!!parentId || isTableLocked || !!parentHeaderSelectedIndex}
+        readOnly={
+          !!parentId ||
+          isTableLocked ||
+          !!parentHeaderSelectedIndex ||
+          editModeGroup
+        }
         ref={hotRef}
         colHeaders={colHeaders}
         columns={cols}
@@ -1001,9 +963,9 @@ function DefaultTable({
         beforeOnCellMouseDown={(event) => {
           disableMultiSelectionWithControl(event, hotRef);
         }}
+        collapsibleColumns
         afterPaste={afterPasteCallback}
         afterColumnMove={afterColumnMoveCallback}
-        // afterColumnMove={afterColumnMove}
         afterGetColHeader={styledHeader}
         afterGetRowHeader={styledRow}
         afterColumnResize={async (newSize: number, column: number) => {
@@ -1063,56 +1025,58 @@ function DefaultTable({
             TD.style.background = "#F1F3F5";
           }
         }}
-        contextMenu={{
-          items: {
-            remove_row: {
-              name: "Excluir produto",
-              async callback(key: string, selection: any[]) {
-                const { hotInstance } = hotRef.current!;
-                if (hasAtLeastOneProduct(products)) {
-                  if (hotInstance) {
-                    handleRemoveRow(
-                      hotInstance,
-                      selection,
-                      handleDelete,
-                      products,
-                    );
+        contextMenu={
+          !editModeGroup && {
+            items: {
+              remove_row: {
+                name: "Excluir produto",
+                async callback(key: string, selection: any[]) {
+                  const { hotInstance } = hotRef.current!;
+                  if (hasAtLeastOneProduct(products)) {
+                    if (hotInstance) {
+                      handleRemoveRow(
+                        hotInstance,
+                        selection,
+                        handleDelete,
+                        products,
+                      );
+                    }
+                  } else {
+                    toast.warn("O catálogo deve conter ao menos um produto");
                   }
-                } else {
-                  toast.warn("O catálogo deve conter ao menos um produto");
-                }
+                },
+              },
+              subItems_row: {
+                name: "Vincular variações",
+                callback(key, selection) {
+                  const selectedRow = selection[0].start.row;
+                  const selectedProduct = products[selectedRow];
+                  if (selectedProduct && !selectedProduct.parent_id) {
+                    clearSubItensMode();
+                    setSubItemsMode("add");
+                    setParentId(selectedProduct.id as any);
+                  } else {
+                    toast.warn("Este produto não pode ter subitens");
+                  }
+                },
+              },
+              subItems_row_remove: {
+                name: "Desvincular variação",
+                callback(key, selection) {
+                  const selectedRow = selection[0].start.row;
+                  const selectedProduct = products[selectedRow];
+                  if (selectedProduct && selectedProduct.parent_id) {
+                    clearSubItensMode();
+                    setSubItemsMode("remove");
+                    setParentId(selectedProduct.parent_id as any);
+                  } else {
+                    toast.warn("Este produto não é um subitem");
+                  }
+                },
               },
             },
-            subItems_row: {
-              name: "Vincular variações",
-              callback(key, selection) {
-                const selectedRow = selection[0].start.row;
-                const selectedProduct = products[selectedRow];
-                if (selectedProduct && !selectedProduct.parent_id) {
-                  clearSubItensMode();
-                  setSubItemsMode("add");
-                  setParentId(selectedProduct.id as any);
-                } else {
-                  toast.warn("Este produto não pode ter subitens");
-                }
-              },
-            },
-            subItems_row_remove: {
-              name: "Desvincular variação",
-              callback(key, selection) {
-                const selectedRow = selection[0].start.row;
-                const selectedProduct = products[selectedRow];
-                if (selectedProduct && selectedProduct.parent_id) {
-                  clearSubItensMode();
-                  setSubItemsMode("remove");
-                  setParentId(selectedProduct.parent_id as any);
-                } else {
-                  toast.warn("Este produto não é um subitem");
-                }
-              },
-            },
-          },
-        }}
+          }
+        }
         afterChange={afterChangeCallback}
       >
         {cols.map((col, _index: number) => {
@@ -1296,6 +1260,16 @@ function DefaultTable({
         <ModalSelectChildrens
           amount={childsSelectedIds.length}
           clearSubItensMode={clearSubItensMode}
+          onFinishProductChild={onFinishProductChild}
+        />
+      )}
+      {editModeGroup && (
+        <ModalSelectChildrens
+          amount={idsColumnsSelecteds.length}
+          clearSubItensMode={() => {
+            setIdsColumnsSelecteds([]);
+            setEditModeGroup(false);
+          }}
           onFinishProductChild={onFinishProductChild}
         />
       )}

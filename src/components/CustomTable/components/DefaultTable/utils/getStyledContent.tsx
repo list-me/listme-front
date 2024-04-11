@@ -95,12 +95,22 @@ const getStyledContent = (
   valueToVisible: string,
   isRequired: boolean,
   colData: any,
+  editModeGroup: boolean,
+  idsColumnsSelecteds: string[],
 ) => {
   const integrationsList = colData?.integrations;
   const moreNumber = integrationsList - 1;
+  const colSelected = idsColumnsSelecteds.includes(colData?.id);
 
   return `
     <div style="${valueToVisible !== "+" ? BASE_STYLES : PLUS_BASE_STYLES}">
+     ${
+       valueToVisible !== "+" && editModeGroup && valueToVisible
+         ? `<input class='checkGroup' type="checkbox" ${
+             colSelected ? "checked" : ""
+           } />`
+         : ""
+     }
       <div style="${FLEX_GAP_STYLE}">
         ${renderToString(iconType)}
         <p style="${
