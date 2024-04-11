@@ -35,7 +35,6 @@ import customRendererFile from "./utils/customRendererFile";
 import HeaderDropDown from "../HeaderDropDown";
 import { IDropDownStatus } from "../HeaderDropDown/HeaderDropDown";
 import { IconType } from "../HeaderDropDown/components/Cell/Cell.d";
-import getStyledContent from "./utils/getStyledContent";
 import { ICol } from "../../CustomTable";
 import disableMultiSelectionWithControl from "./utils/disableMultiSelectionWithControl";
 import customRendererRadioComponent from "./components/customRendererRadioComponent";
@@ -679,7 +678,6 @@ function DefaultTable({
         svgStringConfigHeaderGroup,
         svgArrowRightHeaderGroup,
         editModeGroup,
-        setEditModeGroup,
         idsColumnsSelecteds,
         setIdsColumnsSelecteds,
       );

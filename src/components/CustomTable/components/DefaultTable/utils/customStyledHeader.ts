@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { HotTable } from "@handsontable/react";
 import { ReactElement } from "react";
 import { IHeaderTable } from "../../../../../context/products/product.context";
@@ -5,6 +6,33 @@ import { IconType } from "../../../../Cell/Cell";
 import getStyledContent from "./getStyledContent";
 import generateColorArray from "./generateColorArray";
 import { ICol } from "../../../CustomTable";
+
+async function createNewGroup(
+  cols: ICol[],
+  currentColumnIndex: number,
+  template: any,
+): Promise<void> {
+  const currentColumn = cols[currentColumnIndex];
+  let templateUpdated = [];
+
+  templateUpdated = template.fields.fields.map((field: any) => {
+    if (field.id === currentColumn.data) {
+      field.group = `Novo grupo #${currentColumn.data}`;
+      return field;
+    }
+
+    return field;
+  });
+
+  const newTemplates = {
+    fields: templateUpdated,
+    groups: [
+      ...template.fields.groups,
+      { label: `Novo grupo #${currentColumn.data}`, total: 1 },
+    ],
+  };
+  console.log("🚀 ~ newTemplates:", newTemplates);
+}
 
 function customStyledHeader(
   TH: HTMLTableHeaderCellElement,
@@ -24,10 +52,11 @@ function customStyledHeader(
   svgStringConfigHeaderGroup: string,
   svgArrowRightHeaderGroup: string,
   editModeGroup: boolean,
-  setEditModeGroup: React.Dispatch<React.SetStateAction<boolean>>,
   idsColumnsSelecteds: string[],
   setIdsColumnsSelecteds: React.Dispatch<React.SetStateAction<string[]>>,
 ): void {
+  // console.log("🚀 ~ cols:", cols);
+  // console.log("🚀 ~ headerTable:", headerTable);
   const spanContent = TH.querySelector("span")?.textContent;
 
   const groupsName = groups.map((group: any) => group.label);
@@ -48,7 +77,7 @@ function customStyledHeader(
 
     const configSvgDiv = TH.querySelector(".newGroupHeader");
     configSvgDiv?.addEventListener("click", () =>
-      setEditModeGroup(!editModeGroup),
+      createNewGroup(cols, column, template),
     );
 
     return;
