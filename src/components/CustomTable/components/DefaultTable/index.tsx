@@ -52,7 +52,6 @@ import DocumentIcon from "../../../../assets/icons/document-icon.svg";
 import { ReactComponent as ConfigGroupHeaderSVG } from "../../../../assets/configGroupHeader.svg";
 import { ReactComponent as ArrowRightHeaderGroup } from "../../../../assets/arrow-right-header-group.svg";
 import ParentHeaderEdit from "./components/ParentHeaderEdit";
-import generateColorArray from "./utils/generateColorArray";
 import customStyledHeader from "./utils/customStyledHeader";
 
 function DefaultTable({

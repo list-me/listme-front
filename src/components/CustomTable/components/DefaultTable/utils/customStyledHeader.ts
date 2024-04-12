@@ -6,6 +6,7 @@ import { IconType } from "../../../../Cell/Cell";
 import getStyledContent from "./getStyledContent";
 import generateColorArray from "./generateColorArray";
 import { ICol } from "../../../CustomTable";
+import { templateRequests } from "../../../../../services/apis/requests/template";
 
 async function createNewGroup(
   cols: ICol[],
@@ -18,8 +19,19 @@ async function createNewGroup(
   templateUpdated = template.fields.fields.map((field: any) => {
     if (field.id === currentColumn.data) {
       field.group = `Novo grupo #${currentColumn.data}`;
+      delete field.order;
+      delete field.width;
+      delete field.frozen;
+      delete field.hidden;
+      delete field.integrations;
+
       return field;
     }
+    delete field.order;
+    delete field.width;
+    delete field.frozen;
+    delete field.hidden;
+    delete field.integrations;
 
     return field;
   });
@@ -31,7 +43,7 @@ async function createNewGroup(
       { label: `Novo grupo #${currentColumn.data}`, total: 1 },
     ],
   };
-  console.log("🚀 ~ newTemplates:", newTemplates);
+  templateRequests.update(template.id, newTemplates);
 }
 
 function customStyledHeader(
