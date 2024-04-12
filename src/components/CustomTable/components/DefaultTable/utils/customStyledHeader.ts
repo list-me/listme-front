@@ -146,7 +146,7 @@ function customStyledHeader(
           border: none;
           width: 100%;
           display: flex;
-          justify-content: space-between;
+          justify-content: center;
           align-items: center;
           color: white;
           font-size: 14px;
@@ -170,11 +170,11 @@ function customStyledHeader(
         `;
     TH.className = "style-th-group";
 
-    TH.innerHTML = `<div style="${containerGroupStyle}">
+    TH.innerHTML = `<div style="${containerGroupStyle}" class='groupHeader'>
         <div></div>
         <span>${spanContent}</span>
-        <div style="${divSvgs}">
-          <div class="configSvgDiv">${svgStringConfigHeaderGroup}</div>
+        <div style="${divSvgs}" class='buttonsGroupHeader'>
+          <div class="configSvgDiv" style="${configSvg}">${svgStringConfigHeaderGroup}</div>
           <div style="${configSvg}">${svgArrowRightHeaderGroup}</div>
         </div>
       </div>`;

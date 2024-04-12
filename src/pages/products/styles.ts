@@ -504,6 +504,24 @@ export const Container = styled.div`
       content: "Solte aqui";
     }
   }
+
+  .groupHeader {
+    position: relative;
+    .buttonsGroupHeader {
+      position: absolute;
+      right: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease-in-out;
+    }
+    :hover {
+      .buttonsGroupHeader {
+        display: initial;
+        pointer-events: initial;
+        opacity: 1;
+      }
+    }
+  }
   .newGroupHeader {
     cursor: pointer;
     border: none;
