@@ -942,6 +942,9 @@ function DefaultTable({
       };
       await templateRequests.update(template.id, newTemplates);
       toast.success("Grupo editado com sucesso");
+      const newGroupsToState = [...groups];
+      newGroupsToState[index] = { ...groups[index], label: value };
+      setGroups(newGroupsToState);
     } catch (error) {
       toast.error("Ocorreu um erro durante a edição do novo grupo:");
       console.log(error);
