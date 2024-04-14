@@ -13,6 +13,7 @@ async function createNewGroup(
   cols: ICol[],
   currentColumnIndex: number,
   template: any,
+  handleRedirectAndGetProducts: (template: any) => Promise<any>,
 ): Promise<void> {
   try {
     const currentColumn = cols[currentColumnIndex];
@@ -47,6 +48,12 @@ async function createNewGroup(
     };
     await templateRequests.update(template.id, newTemplates);
     toast.success("Grupo criado com sucesso");
+    const id = window.location.pathname.substring(10);
+    if (id) {
+      setTimeout(() => {
+        handleRedirectAndGetProducts(id).then(() => {});
+      }, 0);
+    }
   } catch (error) {
     toast.error("Ocorreu um erro durante a criação do novo grupo:");
     console.log(error);
@@ -74,6 +81,7 @@ function customStyledHeader(
   editModeGroup: boolean,
   idsColumnsSelecteds: string[],
   setIdsColumnsSelecteds: React.Dispatch<React.SetStateAction<string[]>>,
+  handleRedirectAndGetProducts: (template: any) => Promise<any>,
 ): void {
   // console.log("🚀 ~ cols:", cols);
   // console.log("🚀 ~ headerTable:", headerTable);
@@ -97,7 +105,7 @@ function customStyledHeader(
 
     const configSvgDiv = TH.querySelector(".newGroupHeader");
     configSvgDiv?.addEventListener("click", () =>
-      createNewGroup(cols, column, template),
+      createNewGroup(cols, column, template, handleRedirectAndGetProducts),
     );
 
     return;

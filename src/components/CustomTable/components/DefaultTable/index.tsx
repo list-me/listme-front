@@ -715,6 +715,7 @@ function DefaultTable({
         editModeGroup,
         idsColumnsSelecteds,
         setIdsColumnsSelecteds,
+        handleRedirectAndGetProducts,
       );
     },
     [
@@ -722,6 +723,7 @@ function DefaultTable({
       editModeGroup,
       getIconByType,
       groups,
+      handleRedirectAndGetProducts,
       headerTable,
       hotRef,
       idsColumnsSelecteds,
