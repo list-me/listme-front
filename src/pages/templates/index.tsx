@@ -11,6 +11,7 @@ import { templateRequests } from "../../services/apis/requests/template";
 import TemplateDefault from "../../components/TemplateDefault";
 import { IPaginationTemplate } from "./templates";
 import { useFilterContext } from "../../context/FilterContext";
+import ModalSelectDefaultTemplate from "../../components/ModalSelectDefaultTemplate";
 
 function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
@@ -160,21 +161,24 @@ function Template(): JSX.Element {
   ];
 
   return (
-    <TemplateDefault
-      handleGetTemplates={handleGetTemplates}
-      templates={templates}
-    >
-      <Content>
-        <TitlePage> Templates </TitlePage>
-        <CustomTable
-          columns={columns}
-          dataProvider={templates}
-          size="large"
-          rowSelection={rowSelection}
-          onLoadMore={handleTakeNewPages}
-        />
-      </Content>
-    </TemplateDefault>
+    <>
+      <ModalSelectDefaultTemplate />
+      <TemplateDefault
+        handleGetTemplates={handleGetTemplates}
+        templates={templates}
+      >
+        <Content>
+          <TitlePage> Templates </TitlePage>
+          <CustomTable
+            columns={columns}
+            dataProvider={templates}
+            size="large"
+            rowSelection={rowSelection}
+            onLoadMore={handleTakeNewPages}
+          />
+        </Content>
+      </TemplateDefault>
+    </>
   );
 }
 

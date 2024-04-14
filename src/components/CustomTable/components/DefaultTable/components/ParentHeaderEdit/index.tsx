@@ -41,6 +41,7 @@ function ParentHeaderEdit({
             Cancelar
           </NavigationButton>
           <NavigationButton
+            disabled={!currentValue}
             onClick={() => {
               onChange(currentValue, index);
               onClose();

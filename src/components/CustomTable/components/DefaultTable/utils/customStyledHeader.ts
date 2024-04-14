@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { HotTable } from "@handsontable/react";
 import { ReactElement } from "react";
+import { toast } from "react-toastify";
 import { IHeaderTable } from "../../../../../context/products/product.context";
 import { IconType } from "../../../../Cell/Cell";
 import getStyledContent from "./getStyledContent";
@@ -13,12 +14,21 @@ async function createNewGroup(
   currentColumnIndex: number,
   template: any,
 ): Promise<void> {
-  const currentColumn = cols[currentColumnIndex];
-  let templateUpdated = [];
+  try {
+    const currentColumn = cols[currentColumnIndex];
+    let templateUpdated = [];
 
-  templateUpdated = template.fields.fields.map((field: any) => {
-    if (field.id === currentColumn.data) {
-      field.group = `Novo grupo #${currentColumn.data}`;
+    templateUpdated = template.fields.fields.map((field: any) => {
+      if (field.id === currentColumn.data) {
+        field.group = `Novo grupo #${currentColumn.data}`;
+        delete field.order;
+        delete field.width;
+        delete field.frozen;
+        delete field.hidden;
+        delete field.integrations;
+
+        return field;
+      }
       delete field.order;
       delete field.width;
       delete field.frozen;
@@ -26,24 +36,22 @@ async function createNewGroup(
       delete field.integrations;
 
       return field;
-    }
-    delete field.order;
-    delete field.width;
-    delete field.frozen;
-    delete field.hidden;
-    delete field.integrations;
+    });
 
-    return field;
-  });
-
-  const newTemplates = {
-    fields: templateUpdated,
-    groups: [
-      ...template.fields.groups,
-      { label: `Novo grupo #${currentColumn.data}`, total: 1 },
-    ],
-  };
-  templateRequests.update(template.id, newTemplates);
+    const newTemplates = {
+      fields: templateUpdated,
+      groups: [
+        ...template.fields.groups.map((itemgroup: any) => itemgroup.label),
+        `Novo grupo #${currentColumn.data}`,
+      ],
+    };
+    await templateRequests.update(template.id, newTemplates);
+    toast.success("Grupo criado com sucesso");
+  } catch (error) {
+    toast.error("Ocorreu um erro durante a criação do novo grupo:");
+    console.log(error);
+    throw error;
+  }
 }
 
 function customStyledHeader(

@@ -53,6 +53,7 @@ import { ReactComponent as ConfigGroupHeaderSVG } from "../../../../assets/confi
 import { ReactComponent as ArrowRightHeaderGroup } from "../../../../assets/arrow-right-header-group.svg";
 import ParentHeaderEdit from "./components/ParentHeaderEdit";
 import customStyledHeader from "./utils/customStyledHeader";
+import { templateRequests } from "../../../../services/apis/requests/template";
 
 function DefaultTable({
   hotRef,
@@ -874,10 +875,44 @@ function DefaultTable({
     }
   };
 
-  const changeHeaderGroup = (value: string, index: number): void => {
-    const newGroups = [...groups];
-    newGroups[index] = { ...groups[index], label: value };
-    setGroups(newGroups);
+  const changeHeaderGroup = async (
+    value: string,
+    index: number,
+  ): Promise<void> => {
+    try {
+      const newGroups = [...groups].map((group) => group.label);
+      newGroups[index] = value;
+
+      const newFields = template.fields.fields.map((field: any) => {
+        if (field.group && !newGroups.includes(field.group)) {
+          const newField = { ...field, group: value };
+          delete newField.order;
+          delete newField.width;
+          delete newField.frozen;
+          delete newField.hidden;
+          delete newField.integrations;
+          return newField;
+        }
+        const newField = { ...field };
+        delete newField.order;
+        delete newField.width;
+        delete newField.frozen;
+        delete newField.hidden;
+        delete newField.integrations;
+
+        return newField;
+      });
+      const newTemplates = {
+        fields: newFields,
+        groups: newGroups,
+      };
+      await templateRequests.update(template.id, newTemplates);
+      toast.success("Grupo editado com sucesso");
+    } catch (error) {
+      toast.error("Ocorreu um erro durante a edição do novo grupo:");
+      console.log(error);
+      throw error;
+    }
   };
 
   const totalGroupedColumns = groups[0]?.label
