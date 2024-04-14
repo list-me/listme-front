@@ -54,6 +54,7 @@ import { ReactComponent as ArrowRightHeaderGroup } from "../../../../assets/arro
 import ParentHeaderEdit from "./components/ParentHeaderEdit";
 import customStyledHeader from "./utils/customStyledHeader";
 import { templateRequests } from "../../../../services/apis/requests/template";
+import ModalSelectColumns from "../ModalSelectColumns";
 
 function DefaultTable({
   hotRef,
@@ -89,6 +90,7 @@ function DefaultTable({
   subItensMode,
   setSubItemsMode,
 }: IDefaultTable): JSX.Element {
+  const { handleRedirectAndGetProducts } = useProductContext();
   const [parentHeaderSelectedIndex, setParentHeaderSelectedIndex] =
     useState<number>();
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
@@ -648,20 +650,53 @@ function DefaultTable({
     [ICON_HEADER],
   );
 
-  // const collapseColumn = () => {
-  //   const { hotInstance } = hotRef.current;
-  //   const plugin = hotInstance.getPlugin("nestedHeaders");
-  //   console.log("🚀 ~ collapseColumn ~ plugin:", plugin);
-
-  //   plugin.collapseChildren(1);
-
-  //   // plugin?.collapseColumn(0);
-  //   // hotInstance.render();
-  // };
-
   const [editModeGroup, setEditModeGroup] = useState(false);
 
   const [idsColumnsSelecteds, setIdsColumnsSelecteds] = useState<string[]>([]);
+
+  const createHeaderGroup = async (newGroup: string): Promise<void> => {
+    try {
+      const newGroups = [...[...groups].map((group) => group.label), newGroup];
+
+      const newFields = template.fields.fields.map((field: any) => {
+        if (idsColumnsSelecteds.includes(field.id)) {
+          const newField = { ...field, group: newGroup };
+          delete newField.order;
+          delete newField.width;
+          delete newField.frozen;
+          delete newField.hidden;
+          delete newField.integrations;
+          return newField;
+        }
+        const newField = { ...field };
+        delete newField.order;
+        delete newField.width;
+        delete newField.frozen;
+        delete newField.hidden;
+        delete newField.integrations;
+        return newField;
+      });
+
+      const newTemplates = {
+        fields: newFields,
+        groups: newGroups,
+      };
+      await templateRequests.update(template.id, newTemplates);
+      toast.success("Grupo criado com sucesso");
+      const id = window.location.pathname.substring(10);
+      if (id) {
+        setTimeout(() => {
+          handleRedirectAndGetProducts(id).then(() => {});
+        }, 0);
+      }
+      setIdsColumnsSelecteds([]);
+      setEditModeGroup(false);
+    } catch (error) {
+      toast.error("Ocorreu um erro durante a criação do novo grupo:");
+      console.log(error);
+      throw error;
+    }
+  };
 
   const styledHeader = useCallback(
     (column: number, TH: HTMLTableHeaderCellElement): void => {
@@ -832,7 +867,6 @@ function DefaultTable({
     },
     [products, rowsSelectedPosition, parentId, toggleRowSelection],
   );
-  const { handleRedirectAndGetProducts } = useProductContext();
 
   const [contentTooltipIntegration, setContentTooltipIntegration] = useState([
     {
@@ -1298,13 +1332,13 @@ function DefaultTable({
         />
       )}
       {editModeGroup && (
-        <ModalSelectChildrens
-          amount={idsColumnsSelecteds.length}
+        <ModalSelectColumns
+          ids={idsColumnsSelecteds}
           clearSubItensMode={() => {
             setIdsColumnsSelecteds([]);
             setEditModeGroup(false);
           }}
-          onFinishProductChild={onFinishProductChild}
+          onFinishProductChild={createHeaderGroup}
         />
       )}
       {parentHeaderSelectedIndex && (
