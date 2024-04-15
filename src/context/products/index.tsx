@@ -360,8 +360,6 @@ export const ProductContextProvider = ({
   const handleGetTemplate = useCallback(async (templateId: string) => {
     try {
       const response: ITemplate = await templateRequests.get(templateId);
-      const groups = response.fields.groups.map((group) => group.label);
-      console.log("🚀 ~ handleGetTemplate ~ groups:", groups);
 
       setTemplate(response);
 
@@ -385,6 +383,8 @@ export const ProductContextProvider = ({
             bucket: response?.bucket,
             limit: item.limit,
             integrations: item.integrations,
+            enforce_exact_length: item.enforce_exact_length,
+            default: item.default,
           };
         },
       );
@@ -421,6 +421,8 @@ export const ProductContextProvider = ({
             width: result.width,
             frozen: result.frozen,
             id: result.data,
+            default: result.default,
+            enforce_exact_length: result.enforce_exact_length,
           };
         });
       setCustomFields(toCustomFields);

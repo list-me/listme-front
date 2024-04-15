@@ -705,7 +705,7 @@ function DefaultTable({
     try {
       const newFields = template.fields.fields.map((field: any) => {
         if (idsColumnsSelecteds.includes(field.id)) {
-          const newField = { ...field };
+          const newField = { ...field, group: "" };
           delete newField.order;
           delete newField.width;
           delete newField.frozen;
@@ -735,7 +735,7 @@ function DefaultTable({
       }
       const newTemplates = {
         fields: newFields,
-        groups,
+        groups: groups.map((mGroup) => mGroup.label),
       };
       await templateRequests.update(template.id, newTemplates);
       toast.success("Grupo criado com sucesso");

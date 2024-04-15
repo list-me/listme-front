@@ -42,6 +42,8 @@ interface IField {
     provider: string;
     entities: string[];
   }[];
+  enforce_exact_length: boolean;
+  default: boolean;
 }
 
 interface ITemplate {
@@ -74,6 +76,8 @@ interface IHeader {
     provider: string;
     entities: string[];
   }[];
+  enforce_exact_length: boolean;
+  default: boolean;
 }
 
 interface ICustomField {
