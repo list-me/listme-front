@@ -650,7 +650,9 @@ function DefaultTable({
     [ICON_HEADER],
   );
 
-  const [editModeGroup, setEditModeGroup] = useState(false);
+  const [editModeGroup, setEditModeGroup] = useState<"group" | "ungroup" | "">(
+    "",
+  );
 
   const [idsColumnsSelecteds, setIdsColumnsSelecteds] = useState<string[]>([]);
 
@@ -690,7 +692,7 @@ function DefaultTable({
         }, 0);
       }
       setIdsColumnsSelecteds([]);
-      setEditModeGroup(false);
+      setEditModeGroup("");
     } catch (error) {
       toast.error("Ocorreu um erro durante a criação do novo grupo:");
       console.log(error);
@@ -1013,7 +1015,7 @@ function DefaultTable({
           !!parentId ||
           isTableLocked ||
           !!parentHeaderSelectedIndex ||
-          editModeGroup
+          editModeGroup !== ""
         }
         ref={hotRef}
         colHeaders={colHeaders}
@@ -1339,9 +1341,10 @@ function DefaultTable({
       {editModeGroup && (
         <ModalSelectColumns
           ids={idsColumnsSelecteds}
+          editModeGroup={editModeGroup}
           clearSubItensMode={() => {
             setIdsColumnsSelecteds([]);
-            setEditModeGroup(false);
+            setEditModeGroup("");
           }}
           onFinishProductChild={createHeaderGroup}
         />

@@ -95,7 +95,7 @@ const getStyledContent = (
   valueToVisible: string,
   isRequired: boolean,
   colData: any,
-  editModeGroup: boolean,
+  editModeGroup: "group" | "ungroup" | "",
   idsColumnsSelecteds: string[],
 ) => {
   const integrationsList = colData?.integrations;
@@ -108,7 +108,8 @@ const getStyledContent = (
        valueToVisible !== "+" &&
        editModeGroup &&
        valueToVisible &&
-       !colData.group
+       ((!colData.group && editModeGroup === "group") ||
+         (colData.group && editModeGroup === "ungroup"))
          ? `<input class='checkGroup' type="checkbox" ${
              colSelected ? "checked" : ""
            } />`

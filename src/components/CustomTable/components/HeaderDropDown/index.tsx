@@ -42,7 +42,9 @@ function HeaderDropDown({
   setCurrentCell: React.Dispatch<any>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleFreeze: any;
-  setEditModeGroup: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditModeGroup: React.Dispatch<
+    React.SetStateAction<"group" | "ungroup" | "">
+  >;
 }): JSX.Element | null {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -120,9 +122,9 @@ function HeaderDropDown({
             }}
             handleGroupEdit={() => {
               if (col?.group) {
-                toast.warn("Esta coluna já faz parte de um grupo");
+                setEditModeGroup("ungroup");
               } else {
-                setEditModeGroup(true);
+                setEditModeGroup("group");
               }
             }}
           />

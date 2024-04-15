@@ -78,7 +78,7 @@ function customStyledHeader(
   cols: ICol[],
   svgStringConfigHeaderGroup: string,
   svgArrowRightHeaderGroup: string,
-  editModeGroup: boolean,
+  editModeGroup: "group" | "ungroup" | "",
   idsColumnsSelecteds: string[],
   setIdsColumnsSelecteds: React.Dispatch<React.SetStateAction<string[]>>,
   handleRedirectAndGetProducts: (template: any) => Promise<any>,
