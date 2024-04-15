@@ -97,11 +97,12 @@ const getStyledContent = (
   colData: any,
   editModeGroup: "group" | "ungroup" | "",
   idsColumnsSelecteds: string[],
+  groupReferenceEditMode: string,
 ) => {
   const integrationsList = colData?.integrations;
   const moreNumber = integrationsList - 1;
   const colSelected = idsColumnsSelecteds.includes(colData?.id);
-
+  console.log(colData);
   return `
     <div style="${valueToVisible !== "+" ? BASE_STYLES : PLUS_BASE_STYLES}">
      ${
@@ -109,7 +110,9 @@ const getStyledContent = (
        editModeGroup &&
        valueToVisible &&
        ((!colData.group && editModeGroup === "group") ||
-         (colData.group && editModeGroup === "ungroup"))
+         (colData.group &&
+           editModeGroup === "ungroup" &&
+           colData.group === groupReferenceEditMode))
          ? `<input class='checkGroup' type="checkbox" ${
              colSelected ? "checked" : ""
            } />`

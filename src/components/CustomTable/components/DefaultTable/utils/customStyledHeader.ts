@@ -82,6 +82,7 @@ function customStyledHeader(
   idsColumnsSelecteds: string[],
   setIdsColumnsSelecteds: React.Dispatch<React.SetStateAction<string[]>>,
   handleRedirectAndGetProducts: (template: any) => Promise<any>,
+  groupReferenceEditMode: string,
 ): void {
   const spanContent = TH.querySelector("span")?.textContent;
 
@@ -125,6 +126,7 @@ function customStyledHeader(
       colData,
       editModeGroup,
       idsColumnsSelecteds,
+      groupReferenceEditMode,
     );
 
     const addOrRemoveStringFromArray = (

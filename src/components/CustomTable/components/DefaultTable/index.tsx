@@ -653,6 +653,7 @@ function DefaultTable({
   const [editModeGroup, setEditModeGroup] = useState<"group" | "ungroup" | "">(
     "",
   );
+  const [groupReferenceEditMode, setGroupReferenceEditMode] = useState("");
 
   const [idsColumnsSelecteds, setIdsColumnsSelecteds] = useState<string[]>([]);
 
@@ -718,6 +719,7 @@ function DefaultTable({
         idsColumnsSelecteds,
         setIdsColumnsSelecteds,
         handleRedirectAndGetProducts,
+        groupReferenceEditMode,
       );
     },
     [
@@ -1330,6 +1332,7 @@ function DefaultTable({
         setIsOpen={setIsOpen}
         handleFreeze={handleFreeze}
         setEditModeGroup={setEditModeGroup}
+        setGroupReferenceEditMode={setGroupReferenceEditMode}
       />
       {parentId && (
         <ModalSelectChildrens

@@ -27,6 +27,7 @@ function HeaderDropDown({
   setIsOpen,
   handleFreeze,
   setEditModeGroup,
+  setGroupReferenceEditMode,
 }: {
   dropDownStatus: IDropDownStatus;
   setDropDownStatus: React.Dispatch<React.SetStateAction<IDropDownStatus>>;
@@ -45,6 +46,7 @@ function HeaderDropDown({
   setEditModeGroup: React.Dispatch<
     React.SetStateAction<"group" | "ungroup" | "">
   >;
+  setGroupReferenceEditMode: React.Dispatch<React.SetStateAction<string>>;
 }): JSX.Element | null {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -122,6 +124,7 @@ function HeaderDropDown({
             }}
             handleGroupEdit={() => {
               if (col?.group) {
+                setGroupReferenceEditMode(col.group);
                 setEditModeGroup("ungroup");
               } else {
                 setEditModeGroup("group");
