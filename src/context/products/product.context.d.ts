@@ -53,7 +53,7 @@ interface ITemplate {
   name: string;
   templateId: string;
   updated_at: string | null;
-  fields: { fields: IField[]; groups: string[] };
+  fields: { fields: IField[]; groups: { label: string; colspan: number }[] };
 }
 
 interface IHeader {
@@ -63,6 +63,7 @@ interface IHeader {
   type: string;
   required: boolean;
   options: string[];
+  group: string;
   order: string | number;
   hidden: boolean;
   width: string;

@@ -360,6 +360,8 @@ export const ProductContextProvider = ({
   const handleGetTemplate = useCallback(async (templateId: string) => {
     try {
       const response: ITemplate = await templateRequests.get(templateId);
+      const groups = response.fields.groups.map((group) => group.label);
+      console.log("🚀 ~ handleGetTemplate ~ groups:", groups);
 
       setTemplate(response);
 
@@ -374,6 +376,7 @@ export const ProductContextProvider = ({
             className: "htLeft htMiddle",
             type: item.type,
             required: item.required,
+            group: item.group,
             options: item.options,
             order: item.order !== undefined ? item.order : index.toString(),
             hidden: item.hidden ? item.hidden : false,
@@ -385,10 +388,14 @@ export const ProductContextProvider = ({
           };
         },
       );
+      const groupeds = headers.filter((fItem) => fItem.group);
+      const ungroupeds = headers.filter((fItem) => !fItem.group);
 
-      const sortedHeaders: IHeader[] = headers.sort((a, b) => {
+      const sortedUngroupeds: IHeader[] = ungroupeds.sort((a, b) => {
         return Number(a.order) - Number(b.order);
       });
+
+      const sortedHeaders: IHeader[] = [...groupeds, ...sortedUngroupeds];
 
       const headerTitles = sortedHeaders.map((item: any) => {
         return item?.title;
