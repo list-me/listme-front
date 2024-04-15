@@ -102,7 +102,6 @@ const getStyledContent = (
   const integrationsList = colData?.integrations;
   const moreNumber = integrationsList - 1;
   const colSelected = idsColumnsSelecteds.includes(colData?.id);
-  console.log(colData);
   return `
     <div style="${valueToVisible !== "+" ? BASE_STYLES : PLUS_BASE_STYLES}">
      ${

@@ -705,12 +705,13 @@ function DefaultTable({
     try {
       const newFields = template.fields.fields.map((field: any) => {
         if (idsColumnsSelecteds.includes(field.id)) {
-          const newField = { ...field, group: "" };
+          const newField = { ...field };
           delete newField.order;
           delete newField.width;
           delete newField.frozen;
           delete newField.hidden;
           delete newField.integrations;
+          delete newField.group;
           return newField;
         }
         const newField = { ...field };
