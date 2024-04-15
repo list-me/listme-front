@@ -43,11 +43,13 @@ function ModalSelectColumns({
   clearSubItensMode,
   onFinishProductChild,
   editModeGroup,
+  groupReferenceEditMode,
 }: {
   ids: string[];
   clearSubItensMode: () => void;
   onFinishProductChild: (newGroup: string) => Promise<void>;
   editModeGroup: "group" | "ungroup" | "";
+  groupReferenceEditMode: string;
 }): JSX.Element {
   return (
     <ContainerModalSelectColumns>
@@ -58,7 +60,13 @@ function ModalSelectColumns({
         </NavigationButton>
         <NavigationButton
           disabled={ids.length === 0}
-          onClick={() => onFinishProductChild(`Novo Grupo #${ids[0]}`)}
+          onClick={() =>
+            onFinishProductChild(
+              editModeGroup === "group"
+                ? `Novo Grupo #${ids[0]}`
+                : groupReferenceEditMode,
+            )
+          }
         >
           {editModeGroup === "group" ? "Agrupar colunas" : "Desagrupar colunas"}
         </NavigationButton>

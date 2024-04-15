@@ -695,7 +695,59 @@ function DefaultTable({
       setIdsColumnsSelecteds([]);
       setEditModeGroup("");
     } catch (error) {
-      toast.error("Ocorreu um erro durante a criação do novo grupo:");
+      toast.error("Ocorreu um erro durante a criação do novo grupo");
+      console.log(error);
+      throw error;
+    }
+  };
+
+  const removeHeaderGroup = async (referenceGroup: string): Promise<void> => {
+    try {
+      const newFields = template.fields.fields.map((field: any) => {
+        if (idsColumnsSelecteds.includes(field.id)) {
+          const newField = { ...field, group: "" };
+          delete newField.order;
+          delete newField.width;
+          delete newField.frozen;
+          delete newField.hidden;
+          delete newField.integrations;
+          return newField;
+        }
+        const newField = { ...field };
+        delete newField.order;
+        delete newField.width;
+        delete newField.frozen;
+        delete newField.hidden;
+        delete newField.integrations;
+        return newField;
+      });
+
+      const fieldsFiltered = newFields.filter((fItem: any) => {
+        return fItem.group === referenceGroup;
+      });
+
+      if (fieldsFiltered.length === 0) {
+        const indexGroup = groups.findIndex(
+          (obj) => obj.label === referenceGroup,
+        );
+        groups.splice(indexGroup, 1);
+      }
+      const newTemplates = {
+        fields: newFields,
+        groups,
+      };
+      await templateRequests.update(template.id, newTemplates);
+      toast.success("Grupo criado com sucesso");
+      const id = window.location.pathname.substring(10);
+      if (id) {
+        setTimeout(() => {
+          handleRedirectAndGetProducts(id).then(() => {});
+        }, 0);
+      }
+      setIdsColumnsSelecteds([]);
+      setEditModeGroup("");
+    } catch (error) {
+      toast.error("Ocorreu um erro durante o desagrupamento do grupo");
       console.log(error);
       throw error;
     }
@@ -1349,7 +1401,10 @@ function DefaultTable({
             setIdsColumnsSelecteds([]);
             setEditModeGroup("");
           }}
-          onFinishProductChild={createHeaderGroup}
+          onFinishProductChild={
+            editModeGroup === "group" ? createHeaderGroup : removeHeaderGroup
+          }
+          groupReferenceEditMode={groupReferenceEditMode}
         />
       )}
       {parentHeaderSelectedIndex && (
