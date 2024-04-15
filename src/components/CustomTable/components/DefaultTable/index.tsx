@@ -747,7 +747,7 @@ function DefaultTable({
       setIdsColumnsSelecteds([]);
       setEditModeGroup("");
     } catch (error) {
-      toast.error("Ocorreu um erro durante o desagrupamento do grupo");
+      toast.error("Ocorreu um erro tentar remover coluna de grupo");
       console.log(error);
       throw error;
     }
