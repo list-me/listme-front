@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { HotTable } from "@handsontable/react";
+import { toast } from "react-toastify";
 import { IDropDownStatus } from "./HeaderDropDown";
 import { BoxDropDown, ContainerHeaderDropDown } from "./styles";
 import {
@@ -117,7 +118,13 @@ function HeaderDropDown({
               setCurrentCell(() => col);
               setIsOpen((prev) => !prev);
             }}
-            handleGroupEdit={() => setEditModeGroup(true)}
+            handleGroupEdit={() => {
+              if (col?.group) {
+                toast.warn("Esta coluna já faz parte de um grupo");
+              } else {
+                setEditModeGroup(true);
+              }
+            }}
           />
         </BoxDropDown>
       </ContainerHeaderDropDown>

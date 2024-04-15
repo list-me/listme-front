@@ -83,8 +83,6 @@ function customStyledHeader(
   setIdsColumnsSelecteds: React.Dispatch<React.SetStateAction<string[]>>,
   handleRedirectAndGetProducts: (template: any) => Promise<any>,
 ): void {
-  // console.log("🚀 ~ cols:", cols);
-  // console.log("🚀 ~ headerTable:", headerTable);
   const spanContent = TH.querySelector("span")?.textContent;
 
   const groupsName = groups.map((group: any) => group.label);

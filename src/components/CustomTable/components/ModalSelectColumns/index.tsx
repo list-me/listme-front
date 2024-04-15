@@ -55,6 +55,7 @@ function ModalSelectColumns({
           Cancelar
         </NavigationButton>
         <NavigationButton
+          disabled={ids.length === 0}
           onClick={() => onFinishProductChild(`Novo Grupo #${ids[0]}`)}
         >
           Agrupar colunas

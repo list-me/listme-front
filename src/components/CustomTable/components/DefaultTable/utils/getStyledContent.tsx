@@ -105,7 +105,10 @@ const getStyledContent = (
   return `
     <div style="${valueToVisible !== "+" ? BASE_STYLES : PLUS_BASE_STYLES}">
      ${
-       valueToVisible !== "+" && editModeGroup && valueToVisible
+       valueToVisible !== "+" &&
+       editModeGroup &&
+       valueToVisible &&
+       !colData.group
          ? `<input class='checkGroup' type="checkbox" ${
              colSelected ? "checked" : ""
            } />`
