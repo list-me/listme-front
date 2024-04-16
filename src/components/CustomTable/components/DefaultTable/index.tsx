@@ -55,6 +55,7 @@ import ParentHeaderEdit from "./components/ParentHeaderEdit";
 import customStyledHeader from "./utils/customStyledHeader";
 import { templateRequests } from "../../../../services/apis/requests/template";
 import ModalSelectColumns from "../ModalSelectColumns";
+import LimitAlert from "./components/LimitAlert";
 
 function DefaultTable({
   hotRef,
@@ -1029,8 +1030,45 @@ function DefaultTable({
         })
       : [];
 
+  const [coordsLimitAlert, setCoordsLimitAlert] = useState({
+    coordX: 0,
+    coordY: 0,
+    text: "",
+  });
+
+  const afterSelectionHandler = (event: any, coords: any) => {
+    const cellX = coords.col;
+    const cellY = coords.row;
+    const currentCol = cols[cellX];
+    if (cellX >= 0 && cellY >= 0 && !currentCol.enforce_exact_length) {
+      const mouseX = event.clientX;
+      const mouseY = event.clientY;
+      setCoordsLimitAlert({
+        coordX: mouseX,
+        coordY: mouseY,
+        text: `Este campo deve ter ${currentCol.limit} caracteres`,
+      });
+    } else {
+      setCoordsLimitAlert({
+        coordX: 0,
+        coordY: 0,
+        text: "",
+      });
+    }
+  };
+
   return (
     <>
+      {!!coordsLimitAlert.coordX &&
+        !!coordsLimitAlert.coordY &&
+        !!coordsLimitAlert.text && (
+          <LimitAlert
+            coordX={coordsLimitAlert.coordX}
+            coordY={coordsLimitAlert.coordY}
+            text={coordsLimitAlert.text}
+            setCoordsLimitAlert={setCoordsLimitAlert}
+          />
+        )}
       {openAlertTooltip && (
         <AlertTooltip setAlertTooltip={setAlertTooltip}>
           <p className="error-title">Inválido:</p>
@@ -1109,6 +1147,7 @@ function DefaultTable({
         //   const clickedElementClassList = event.target.classList;
         // }}
         afterOnCellMouseUp={(event: any, coords, _TD) => {
+          afterSelectionHandler(event, coords);
           const limitWidth = window.innerWidth - 350;
           setContentTooltipIntegration(cols[coords?.col]?.integrations);
 

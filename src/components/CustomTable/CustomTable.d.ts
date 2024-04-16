@@ -36,6 +36,7 @@ type CustomEditors = {
 
 interface ICol {
   isCustom: boolean;
+  enforce_exact_length: boolean;
   title: string;
   data: string;
   className: string;
