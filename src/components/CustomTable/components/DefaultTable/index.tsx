@@ -588,8 +588,13 @@ function DefaultTable({
         // eslint-disable-next-line no-param-reassign
         value = JSON?.parse(value);
 
-      const totalItems = value ? value?.length : 0;
-      td.innerHTML = `<div class="tag-content">${totalItems} Items relacionados</div>`;
+      td.innerHTML =
+        value?.length > 0
+          ? value?.map(
+              (mValue: any) =>
+                `<div class="tag-content">${mValue?.field}</div>`,
+            )
+          : `<div class="tag-content">Nenhum item relacionado</div>`;
     },
     [],
   );

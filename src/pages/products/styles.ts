@@ -289,13 +289,12 @@ export const Container = styled.div`
       .tag-content {
         background-color: #dee2e6 !important;
 
-        width: 140px !important;
         height: 27px !important;
-
-        display: flex;
+        width: auto;
+        display: inline-flex;
         align-items: center;
 
-        padding-left: 8px;
+        padding: 0 8px;
         border-radius: 7px;
 
         margin: 16px 0 0 8px;
