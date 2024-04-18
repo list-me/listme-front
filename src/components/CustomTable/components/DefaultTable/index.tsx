@@ -779,6 +779,7 @@ function DefaultTable({
         setIdsColumnsSelecteds,
         handleRedirectAndGetProducts,
         groupReferenceEditMode,
+        handleHidden,
       );
     },
     [

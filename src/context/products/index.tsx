@@ -700,6 +700,7 @@ export const ProductContextProvider = ({
     temp: any,
     able: boolean,
   ): Promise<number[]> => {
+    console.log("veio");
     const content = hidden;
     let newValue;
     if (content.includes(col)) {

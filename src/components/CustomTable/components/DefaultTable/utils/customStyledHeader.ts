@@ -83,6 +83,7 @@ function customStyledHeader(
   setIdsColumnsSelecteds: React.Dispatch<React.SetStateAction<string[]>>,
   handleRedirectAndGetProducts: (template: any) => Promise<any>,
   groupReferenceEditMode: string,
+  handleHidden: Function,
 ): void {
   const spanContent = TH.querySelector("span")?.textContent;
 
@@ -191,12 +192,14 @@ function customStyledHeader(
         <span>${spanContent}</span>
         <div style="${divSvgs}" class='buttonsGroupHeader'>
           <div class="configSvgDiv" style="${configSvg}">${svgStringConfigHeaderGroup}</div>
-          <div style="${configSvg}">${svgArrowRightHeaderGroup}</div>
+          <div class="collapseIconGroup" style="${configSvg}">${svgArrowRightHeaderGroup}</div>
         </div>
       </div>`;
 
     const configSvgDiv = TH.querySelector(".configSvgDiv");
     configSvgDiv?.addEventListener("click", selectParentHeader);
+    const collapseDiv = TH.querySelector(".collapseIconGroup");
+    collapseDiv?.addEventListener("click", () => console.log("oioioi"));
   }
 }
 
