@@ -1148,7 +1148,9 @@ function DefaultTable({
         //   const clickedElementClassList = event.target.classList;
         // }}
         afterOnCellMouseUp={(event: any, coords, _TD) => {
-          afterSelectionHandler(event, coords);
+          if (coords.row >= 0) {
+            afterSelectionHandler(event, coords);
+          }
           const limitWidth = window.innerWidth - 350;
           setContentTooltipIntegration(cols[coords?.col]?.integrations);
 
