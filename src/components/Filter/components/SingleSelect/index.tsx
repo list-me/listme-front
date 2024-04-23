@@ -21,6 +21,9 @@ import { ReactComponent as FileIcon } from "../../../../assets/icons/headers/fil
 import { ReactComponent as RadioIcon } from "../../../../assets/icons/headers/radio-icon.svg";
 import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers/relation-icon.svg";
 import { ReactComponent as SearchIcon } from "../../../../assets/search-gray.svg";
+import { ReactComponent as NumericIcon } from "../../../../assets/numeric-icon.svg";
+import { ReactComponent as DecimalIcon } from "../../../../assets/decimal-icon.svg";
+import { ReactComponent as BooleanIcon } from "../../../../assets/boolean-icon.svg";
 import useOutsideClick from "../../../../hooks/useOnClickOutside/useOnClickOutside";
 import { IColumnFilter } from "../../../../context/FilterContext/FilterContextType";
 import useDebounce from "../../../../hooks/useDebounce/useDebounce";
@@ -33,6 +36,9 @@ enum IconType {
   File = "file",
   Radio = "radio",
   Relation = "relation",
+  Numeric = "numeric",
+  Decimal = "decimal",
+  Boolean = "boolean",
 }
 
 function SingleSelect({
@@ -87,6 +93,9 @@ function SingleSelect({
       [IconType.File]: <FileIcon />,
       [IconType.Radio]: <RadioIcon />,
       [IconType.Relation]: <RelationIcon />,
+      [IconType.Numeric]: <NumericIcon />,
+      [IconType.Decimal]: <DecimalIcon />,
+      [IconType.Boolean]: <BooleanIcon />,
     }),
     [],
   );

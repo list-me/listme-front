@@ -47,7 +47,12 @@ interface ICol {
   hidden: boolean;
   width: string;
   frozen: boolean;
-  bucket_url: string;
+  bucket: string;
+  limit: number;
+  integrations: {
+    provider: string;
+    entities: string[];
+  }[];
 }
 
 export type {

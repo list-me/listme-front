@@ -70,8 +70,6 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
     conditionsFilter,
   } = useProductContext();
 
-  const { openedFilter } = useFilterContext();
-
   const [cols, setCols] = useState<ICol[]>([]);
   const [page, setPage] = useState<number>(1);
 
@@ -96,6 +94,13 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
         return {
           ...column,
           isCustom: true,
+        };
+      }
+      if (column.type === "numeric" || column.type === "decimal") {
+        return {
+          ...column,
+          width: column?.order == undefined ? "193" : column.width,
+          isCustom: false,
         };
       }
       return {
@@ -288,21 +293,54 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
           }
         }
       })
-      .catch((errr: any) => {
-        console.log(errr);
+      .catch((err: any) => {
+        console.log(err);
         loadingRef.current!.style.display = "none";
 
         const hotInstance = hotRef.current!?.hotInstance;
         if (hotInstance) {
           hotInstance.render();
         }
-        toast.error(errr.response.data.message);
+        toast.error(err?.response?.data?.message);
       });
   };
 
   useEffect(() => {
     handleMountColumns();
   }, [handleMountColumns]);
+
+  const [parentId, setParentId] = useState<string | null>(null);
+  const [subItensMode, setSubItemsMode] = useState<"add" | "remove">("add");
+
+  const checkToHeaderTable = {
+    title: "Check",
+    data: "000000",
+    className: "htLeft htMiddle",
+    type: "checkSubItem",
+    required: false,
+    options: [""],
+    order: "-1",
+    hidden: false,
+    width: "300px",
+    frozen: false,
+  };
+
+  const checkToColHeaders = "checkSubItem";
+
+  const checkToCols = {
+    title: "Check",
+    data: "000000",
+    className: "htLeft htMiddle",
+    type: "checkSubItem",
+    required: false,
+    options: [""],
+    order: "-1",
+    hidden: false,
+    width: "300px",
+    frozen: false,
+    isCustom: false,
+    bucket: "",
+  };
 
   return (
     <>
@@ -331,11 +369,18 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
         </Content>
         <Container>
           <DefaultTable
+            cols={parentId ? [checkToCols, ...cols] : (cols as any)}
+            colHeaders={
+              parentId ? [checkToColHeaders, ...colHeaders] : colHeaders
+            }
+            headerTable={
+              parentId ? [checkToHeaderTable, ...headerTable] : headerTable
+            }
+            parentId={parentId}
+            setParentId={setParentId}
             key={colHeaders.join()}
             hotRef={hotRef}
-            colHeaders={colHeaders}
             setColHeaders={setColHeaders}
-            cols={cols}
             products={products}
             setProducts={setProducts}
             handleDelete={handleDelete}
@@ -354,7 +399,6 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
             uploadImages={uploadImages}
             page={page}
             setPage={setPage}
-            headerTable={headerTable}
             currentKeyword={currentKeyword}
             handleNewColumn={handleNewColumn}
             handleHidden={handleHidden}
@@ -362,6 +406,8 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
             setIsOpen={setIsOpen}
             handleFreeze={handleFreeze}
             isPublic={isPublic}
+            subItensMode={subItensMode}
+            setSubItemsMode={setSubItemsMode}
           />
           {!!conditionsFilter.length && products.length < 1 && <NotFound />}
         </Container>

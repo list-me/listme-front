@@ -37,10 +37,15 @@ interface IField {
   hidden?: boolean;
   width?: string;
   frozen?: boolean;
+  limit: number;
+  integrations: {
+    provider: string;
+    entities: string[];
+  }[];
 }
 
 interface ITemplate {
-  bucket_url: string;
+  bucket: string;
   company_id: string;
   created_at: string;
   deleted_at: string | null;
@@ -62,7 +67,12 @@ interface IHeader {
   hidden: boolean;
   width: string;
   frozen: boolean;
-  bucket_url: string;
+  bucket: string;
+  limit: number;
+  integrations: {
+    provider: string;
+    entities: string[];
+  }[];
 }
 
 interface ICustomField {
@@ -87,12 +97,18 @@ interface IProduct {
   product_template_id: string;
   status: string;
   fields: IProductFields[];
+  parent_id: string;
+  is_parent: boolean;
+  children: any[];
 }
 
 interface IProductToTable {
   [key: string]: string | string[];
+  parent_id: string;
+  is_parent: boolean;
   id: string;
   created_at: string;
+  childrens?: IProductToTable[];
 }
 
 interface IProductsRequest {

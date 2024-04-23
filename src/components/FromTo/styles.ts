@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import styled from "styled-components";
 
 export const ContainerFromTo = styled.div`
@@ -12,9 +13,15 @@ export const ContainerFromTo = styled.div`
   align-items: center;
   z-index: 10;
 `;
-export const BoxFromTo = styled.div<{ large?: boolean }>`
-  width: ${(props) => (props.large ? "1038px" : "600px")};
-  min-height: ${(props) => (props.large ? "890px" : "350px")};
+export const BoxFromTo = styled.div<{
+  large?: boolean;
+  widthAuto?: boolean;
+  heightAuto?: boolean;
+}>`
+  width: ${(props) =>
+    props.widthAuto ? "auto" : props.large ? "1038px" : "600px"};
+  min-height: ${(props) =>
+    props.heightAuto ? "auto" : props.large ? "890px" : "300px"};
   max-height: 900px;
   background: ${({ theme }) => theme.colors.background.primary};
   border-radius: 8px;

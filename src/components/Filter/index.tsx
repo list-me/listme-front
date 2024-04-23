@@ -1,5 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 import {
   CloseButton,
   ContainerFilter,
@@ -143,6 +144,20 @@ function FilterComponent(): JSX.Element {
     }
   }
 
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = (): void => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <ContainerFilter openedFilter={openedFilter}>
       {openedFilter && (
@@ -154,7 +169,7 @@ function FilterComponent(): JSX.Element {
           }}
         />
       )}
-      <SidebarFilter openedFilter={openedFilter}>
+      <SidebarFilter openedFilter={openedFilter} windowWidth={windowWidth}>
         <HeaderFilter>
           <TitleFilter>Filtrar por</TitleFilter>
           <CloseButton
@@ -216,6 +231,7 @@ function FilterComponent(): JSX.Element {
           onClick={() => {
             setFilters([defaultFilter]);
             setOptionsToMultiSelect([null]);
+            applyFilter([]);
           }}
         >
           {filters.some((filter) => filter.column && filter.column.value) && (

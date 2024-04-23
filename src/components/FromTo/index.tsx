@@ -21,10 +21,20 @@ const INITIAL_STEP = 0;
 function FromTo(): JSX.Element | null {
   const { currentStep, fromToIsOpened, setFromToIsOpened, stepType } =
     useFromToContext();
-  const stepsArray = [
+  const stepsArrayPublic = [
     { title: "Importar arquivo de produtos", stepTitle: "Importar arquivo" },
     { title: "Importar arquivo de produtos", stepTitle: "Config. de import." },
     { title: "Importar arquivo de produtos", stepTitle: "Opç. de import." },
+    { title: "Importar arquivo de produtos", stepTitle: "Vincular campos" },
+  ];
+
+  const stepsArray = [
+    { title: "Configurações de importação", stepTitle: "Config. de import." },
+    {
+      title: "Selecione as opções de importação",
+      stepTitle: "Opç. de import.",
+    },
+    { title: "Configurações de integração", stepTitle: "Config. de integra." },
     { title: "Importar arquivo de produtos", stepTitle: "Vincular campos" },
   ];
 
@@ -53,7 +63,7 @@ function FromTo(): JSX.Element | null {
               <TitleModal>
                 {currentStep === 0
                   ? "Importar produtos"
-                  : stepsArray[currentStep - 1].title}
+                  : stepsArrayPublic[currentStep - 1].title}
               </TitleModal>
               <CloseButton onClick={() => setFromToIsOpened(false)}>
                 <CloseIcon />
@@ -61,13 +71,15 @@ function FromTo(): JSX.Element | null {
             </HeaderModal>
             {currentStep !== INITIAL_STEP && (
               <StepsContainer>
-                {stepsArray.map((item, index) => (
+                {stepsArrayPublic.map((item, index) => (
                   <StepItem>
                     <StepNumber
                       active={index + 1 <= currentStep}
                       className={
                         (index === 0 ? "firstStep " : "") +
-                        (index + 1 === stepsArray.length ? "lastStep " : "")
+                        (index + 1 === stepsArrayPublic.length
+                          ? "lastStep "
+                          : "")
                       }
                     >
                       {index + 1}
@@ -82,7 +94,39 @@ function FromTo(): JSX.Element | null {
             <StepContent />
           </BoxFromTo>
         ) : (
-          <StepContent />
+          <BoxFromTo widthAuto heightAuto>
+            <HeaderModal>
+              <TitleModal>
+                {currentStep === 1
+                  ? "Importar arquivo de produtos"
+                  : stepsArray[currentStep - 1]?.title || "Importar produtos"}
+              </TitleModal>
+              <CloseButton onClick={() => setFromToIsOpened(false)}>
+                <CloseIcon />
+              </CloseButton>
+            </HeaderModal>
+            {currentStep !== INITIAL_STEP && currentStep !== 1 && (
+              <StepsContainer>
+                {stepsArray.map((item, index) => (
+                  <StepItem>
+                    <StepNumber
+                      active={index + 2 <= currentStep}
+                      className={
+                        (index === 0 ? "firstStep " : "") +
+                        (index + 1 === stepsArray.length ? "lastStep " : "")
+                      }
+                    >
+                      {index + 1}
+                    </StepNumber>
+                    <StepSubtitle active={index + 2 <= currentStep}>
+                      {item.stepTitle}
+                    </StepSubtitle>
+                  </StepItem>
+                ))}
+              </StepsContainer>
+            )}
+            <StepContent />
+          </BoxFromTo>
         )}
       </div>
     </ContainerFromTo>

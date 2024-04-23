@@ -15,6 +15,12 @@ export interface IValuesImportOptions {
   status: IItemValueImport;
   assets: IItemValueImport;
 }
+export type IValuesIntegrationsConfig =
+  | "Nexaas"
+  | "NuvemShop"
+  | "Shopify"
+  | "VTEX"
+  | "";
 
 export interface FromToContextType {
   currentStep: number;
@@ -50,6 +56,14 @@ export interface FromToContextType {
   setStepType: React.Dispatch<React.SetStateAction<"fromTo" | "publicList">>;
   templates: never[];
   setTemplates: React.Dispatch<React.SetStateAction<never[]>>;
+  valuesIntegrationsConfig: IValuesIntegrationsConfig[];
+  setValuesIntegrationsConfig: React.Dispatch<
+    React.SetStateAction<IValuesIntegrationsConfig[]>
+  >;
+  providersToIntegration: string[];
+  setProdvidersToIntegration: React.Dispatch<React.SetStateAction<string[]>>;
+  allProductsToIntegration: boolean;
+  setAllProductsToIntegration: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface CSVRow {
@@ -58,5 +72,6 @@ export interface CSVRow {
 export interface ICSVResponse {
   errors: { column: string; total: number; reason: string }[];
   warnings: { column: string; total: number; reason: string }[];
+  newFields: [];
   total: number;
 }

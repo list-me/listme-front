@@ -77,7 +77,7 @@ export const productRequests = {
       },
     );
 
-    return response.data;
+    return response;
   },
   delete: async (id: string): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
@@ -107,6 +107,73 @@ export const productRequests = {
         "Content-Type": "multipart/form-data",
       },
     });
+
+    return response.data;
+  },
+  validateCSV: async (formData: FormData): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(`/products/validate/csv`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data;
+  },
+  postProductChildren: async (body: {
+    product_id: string;
+    childs: string[];
+  }): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(`/product/children`, body, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  },
+  deleteProductChildren: async ({
+    parent_id,
+    childs,
+  }: {
+    parent_id: string;
+    childs: string[];
+  }): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: { childs },
+    };
+
+    const response = await api.delete(`/product/${parent_id}/children`, config);
+
+    return response.data;
+  },
+  patchProductValue: async ({
+    value,
+    productId,
+    fieldId,
+  }: {
+    value: string[];
+    productId: string;
+    fieldId: string;
+  }): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.patch(
+      `/product/${productId}/field/${fieldId}`,
+      {
+        value,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
 
     return response.data;
   },

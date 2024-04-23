@@ -9,17 +9,25 @@ interface IPagination {
   sort?: string;
   name?: string;
   category_id?: string;
+  list?: boolean;
 }
 
 // eslint-disable-next-line import/prefer-default-export
 export const templateRequests = {
-  list: async ({ page = 0, limit = 20 }: IPagination): Promise<any> => {
+  list: async ({
+    page = 0,
+    limit = 20,
+    list = false,
+  }: IPagination): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
-    const response = await api.get(`/templates?offset=${page}&limit=${limit}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await api.get(
+      `/templates/?offset=${page}&limit=${limit}${list ? "&type=list" : ""}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
 
     return response?.data?.templates
       ?.sort((lastItem: any, nextItem: any) => {
@@ -86,6 +94,26 @@ export const templateRequests = {
         },
       },
     );
+
+    return response.data;
+  },
+  postIntegration: async (body: any): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(`/template`, body, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  },
+  patchIntegration: async (id: string, body: any): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.patch(`/template/${id}`, body, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     return response.data;
   },

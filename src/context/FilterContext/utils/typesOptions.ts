@@ -38,6 +38,92 @@ const typesOptions: ITypes = {
       input: "",
     },
   ],
+  boolean: [
+    {
+      label: "O texto contém",
+      value: "contain",
+      input: "text",
+    },
+    {
+      label: "O texto não contém",
+      value: "not_contain",
+      input: "text",
+    },
+  ],
+  decimal: [
+    {
+      label: "O texto contém",
+      value: "contain",
+      input: "text",
+    },
+    {
+      label: "O texto não contém",
+      value: "not_contain",
+      input: "text",
+    },
+    {
+      label: "O texto começa com",
+      value: "begins_with",
+      input: "text",
+    },
+    {
+      label: "O texto termina com",
+      value: "ends_with",
+      input: "text",
+    },
+    {
+      label: "O texto é exatamente igual a",
+      value: "is_equal",
+      input: "text",
+    },
+    {
+      label: "Está preenchido (não está em branco)",
+      value: "is_not_empty",
+      input: "",
+    },
+    {
+      label: "Não está preenchido (vazio)",
+      value: "is_empty",
+      input: "",
+    },
+  ],
+  numeric: [
+    {
+      label: "O texto contém",
+      value: "contain",
+      input: "text",
+    },
+    {
+      label: "O texto não contém",
+      value: "not_contain",
+      input: "text",
+    },
+    {
+      label: "O texto começa com",
+      value: "begins_with",
+      input: "text",
+    },
+    {
+      label: "O texto termina com",
+      value: "ends_with",
+      input: "text",
+    },
+    {
+      label: "O texto é exatamente igual a",
+      value: "is_equal",
+      input: "text",
+    },
+    {
+      label: "Está preenchido (não está em branco)",
+      value: "is_not_empty",
+      input: "",
+    },
+    {
+      label: "Não está preenchido (vazio)",
+      value: "is_empty",
+      input: "",
+    },
+  ],
   paragraph: [
     {
       label: "O texto contém",

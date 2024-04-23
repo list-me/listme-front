@@ -19,7 +19,7 @@ export const TitleFinishedStep = styled.h4`
   line-height: 150%;
 `;
 export const TextFinishedStep = styled.p`
-  color: #868e96;
+  color: ${({ theme }) => theme.colors.tertiary};
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.small};
   font-weight: ${({ theme }) => theme.fonts.weights.regular};

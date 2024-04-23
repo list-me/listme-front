@@ -7,6 +7,8 @@ import Login from "../pages/login";
 import { PublicRoute } from "./PublicRoute";
 import { Products } from "../pages/products";
 import { ProductsPublic } from "../pages/productsPublic";
+import Integration from "../pages/integration";
+import CompanyIntegration from "../pages/companyIntegration";
 
 export function Router(): JSX.Element {
   return (
@@ -19,6 +21,11 @@ export function Router(): JSX.Element {
           <Route path="/templates" element={<Template />} />
           <Route path="/products/:id" element={<Products />} />
           <Route path="/products/public/:id" element={<ProductsPublic />} />
+          <Route path="/integration/" element={<Integration />} />
+          <Route
+            path="/integration/:path/:id"
+            element={<CompanyIntegration />}
+          />
         </Route>
       </Routes>
     </Suspense>
