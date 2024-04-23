@@ -930,7 +930,7 @@ function DefaultTable({
         nestedRows
         bindRowsWithHeaders
         className="hot-table"
-        readOnly={!!parentId || isTableLocked}
+        readOnly={!!parentId || isTableLocked || isPublic}
         ref={hotRef}
         colHeaders={colHeaders}
         columns={cols}
@@ -942,7 +942,7 @@ function DefaultTable({
         }}
         manualColumnResize
         manualColumnMove
-        rowHeaders={!parentId}
+        rowHeaders={!parentId && !isPublic}
         checkedTemplate
         rowHeights="52px"
         licenseKey="non-commercial-and-evaluation"
