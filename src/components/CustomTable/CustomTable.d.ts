@@ -42,6 +42,7 @@ interface ICol {
   className: string;
   type: string;
   required: boolean;
+  group: string;
   options: string[];
   order: string | number;
   hidden: boolean;

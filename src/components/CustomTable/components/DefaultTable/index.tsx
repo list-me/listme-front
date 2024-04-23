@@ -91,7 +91,7 @@ function DefaultTable({
   subItensMode,
   setSubItemsMode,
 }: IDefaultTable): JSX.Element {
-  const { handleRedirectAndGetProducts } = useProductContext();
+  const { handleRedirectAndGetProducts, setHidden } = useProductContext();
   const [parentHeaderSelectedIndex, setParentHeaderSelectedIndex] =
     useState<number>();
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
@@ -111,16 +111,26 @@ function DefaultTable({
   const [groups, setGroups] = useState<{ label: string; colspan: number }[]>(
     [],
   );
-
   useEffect(() => {
-    const toGroups = template?.fields?.groups.map((mItemGroup: any) => {
-      return { label: mItemGroup.label, colspan: mItemGroup.total };
-    });
+    if (template?.fields?.groups) {
+      const toGroups = template?.fields?.groups
+        .map((mItemGroup: any) => {
+          const countRealItems = cols.filter(
+            (item) => item.group === mItemGroup.label,
+          );
 
-    if (toGroups?.length > 0) {
-      setGroups(toGroups);
+          const colspan =
+            countRealItems.length === mItemGroup.total ? mItemGroup.total : 1;
+
+          return { label: mItemGroup.label, colspan };
+        })
+        .filter((fItemGroup: any) => fItemGroup.colspan > 0);
+
+      if (toGroups?.length > 0) {
+        setGroups(toGroups);
+      }
     }
-  }, [template?.fields?.groups]);
+  }, [cols, template?.fields?.groups]);
 
   useEffect(() => {
     if (hotRef.current) {
@@ -585,10 +595,6 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
-      if (typeof value === "string" && value?.length && value?.includes("["))
-        // eslint-disable-next-line no-param-reassign
-        value = JSON?.parse(value);
-
       td.innerHTML =
         value?.length > 0
           ? value?.map(
@@ -597,7 +603,7 @@ function DefaultTable({
             )
           : `<div class="tag-content">Nenhum item relacionado</div>`;
     },
-    [],
+    [cols],
   );
 
   const customRendererBoolean = useCallback(
@@ -779,18 +785,22 @@ function DefaultTable({
         setIdsColumnsSelecteds,
         handleRedirectAndGetProducts,
         groupReferenceEditMode,
-        handleHidden,
+        // handleHidden,
+        setHidden,
+        setGroups,
       );
     },
     [
       cols,
       editModeGroup,
       getIconByType,
+      groupReferenceEditMode,
       groups,
       handleRedirectAndGetProducts,
       headerTable,
       hotRef,
       idsColumnsSelecteds,
+      setHidden,
       svgArrowRightHeaderGroup,
       svgStringConfigHeaderGroup,
       template,
@@ -1018,19 +1028,6 @@ function DefaultTable({
     }
   };
 
-  const totalGroupedColumns = groups[0]?.label
-    ? groups.reduce((ttl, itemGroup) => ttl + itemGroup?.colspan, 0)
-    : 0;
-  const totalUngroupedColumns = cols?.length - 1 - totalGroupedColumns;
-
-  const ungroupeds =
-    totalUngroupedColumns > 0
-      ? new Array(totalUngroupedColumns).fill({
-          label: "+ Criar novo grupo",
-          colspan: 1,
-        })
-      : [];
-
   const [coordsLimitAlert, setCoordsLimitAlert] = useState({
     coordX: 0,
     coordY: 0,
@@ -1057,6 +1054,42 @@ function DefaultTable({
       });
     }
   };
+
+  const totalGroupedColumns = useMemo(() => {
+    if (groups && groups.length > 0 && groups[0]?.label) {
+      return groups.reduce(
+        (ttl, itemGroup) => ttl + (itemGroup?.colspan || 0),
+        0,
+      );
+    }
+    return 0;
+  }, [groups]);
+  const totalUngroupedColumns = useMemo(() => {
+    if (cols && cols.length > 0) {
+      return cols.length - 1 - totalGroupedColumns;
+    }
+    return 0;
+  }, [cols, totalGroupedColumns]);
+
+  const ungroupeds = useMemo(() => {
+    if (totalUngroupedColumns > 0) {
+      return new Array(totalUngroupedColumns).fill("+ Criar novo grupo");
+    }
+    return [];
+  }, [totalUngroupedColumns]);
+
+  const groupsToView = groups[0]?.label
+    ? [[...groups, ...ungroupeds], colHeaders]
+    : [ungroupeds, colHeaders];
+
+  const newHiddens = useMemo(() => {
+    return groups
+      .map((itemGroup: any) => {
+        return itemGroup?.newHiddens;
+      })
+      ?.filter(Boolean)
+      .flat();
+  }, [groups]);
 
   return (
     <>
@@ -1101,13 +1134,9 @@ function DefaultTable({
         </AlertTooltip>
       )}
       <HotTable
-        key={parentId + groups.join("-")}
+        key={parentId + newHiddens.join()}
         nestedRows
-        nestedHeaders={
-          groups[0]?.label
-            ? [[...groups, ...ungroupeds], colHeaders]
-            : [[...ungroupeds], colHeaders]
-        }
+        nestedHeaders={groupsToView}
         bindRowsWithHeaders
         className="hot-table"
         readOnly={
@@ -1121,7 +1150,7 @@ function DefaultTable({
         columns={cols}
         data={products}
         hiddenRows={{
-          rows: hiddenRows,
+          rows: [...hiddenRows, ...newHiddens],
           indicators: false,
         }}
         hiddenColumns={{ columns: hidden }}

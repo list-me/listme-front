@@ -675,13 +675,13 @@ export const ProductContextProvider = ({
   const buildCustomFields = (
     _fields: any,
     { order, show, width, frozen }: ICustom,
-    col: number,
+    cols: number[],
     newfields: any,
   ): ICustomField[] => {
     const toBuild = [...newfields];
 
     const builded = toBuild?.map((custom) => {
-      if (custom?.order === col) {
+      if (cols.includes(custom?.order)) {
         return {
           id: custom?.id,
           order: order ? order.toString() : custom?.order,
@@ -694,26 +694,43 @@ export const ProductContextProvider = ({
     });
     return builded;
   };
-
   const handleHidden = async (
-    col: number,
+    col: number[] | number,
     temp: any,
     able: boolean,
-  ): Promise<number[]> => {
-    console.log("veio");
+  ): Promise<any> => {
     const content = hidden;
+
+    const convertColl = typeof col === "number" ? [col] : col;
+
     let newValue;
+
     if (content.includes(col)) {
-      newValue = content.filter((element) => element !== col);
+      newValue = content.filter((element) => !convertColl.includes(element));
     } else {
-      newValue = [...content, col];
+      newValue = [...content, ...convertColl];
     }
 
     setHidden(newValue);
+
+    customFields.forEach((item: any) => {
+      // eslint-disable-next-line no-param-reassign
+      delete item.default;
+      // eslint-disable-next-line no-param-reassign
+      delete item.enforce_exact_length;
+    });
+
     const newfields = customFields.map((item) => {
-      if (item?.order === col.toString()) {
+      if (convertColl.includes(+item?.order)) {
+        const newItem = {
+          order: item.order,
+          hidden: item.hidden,
+          width: item.width,
+          frozen: item.frozen,
+          id: item.id,
+        };
         return {
-          ...item,
+          ...newItem,
           hidden: able,
         };
       }
@@ -726,7 +743,7 @@ export const ProductContextProvider = ({
     const custom = buildCustomFields(
       temp?.fields?.fields,
       { show: able },
-      col,
+      convertColl,
       newfields,
     );
 

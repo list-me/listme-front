@@ -83,7 +83,9 @@ function customStyledHeader(
   setIdsColumnsSelecteds: React.Dispatch<React.SetStateAction<string[]>>,
   handleRedirectAndGetProducts: (template: any) => Promise<any>,
   groupReferenceEditMode: string,
-  handleHidden: Function,
+  setHidden: any,
+  setGroups: any,
+  // handleHidden: Function,
 ): void {
   const spanContent = TH.querySelector("span")?.textContent;
 
@@ -178,6 +180,13 @@ function customStyledHeader(
           border-left: 1px solid rgba(0, 0, 0, 0.2);
           align-items: center;
         `;
+    const configSvg2 = `
+          padding: 0 10px;
+          height: 16px !important;
+          display: flex;
+          border-left: 1px solid rgba(0, 0, 0, 0.2);
+          align-items: center;
+        `;
     const divSvgs = `
          display: flex;
          height: 100%;
@@ -187,19 +196,40 @@ function customStyledHeader(
         `;
     TH.className = "style-th-group";
 
+    const currentCols = cols.filter((item) => item.group === spanContent);
+    const indexes = currentCols.map((item) => cols.indexOf(item));
+
     TH.innerHTML = `<div style="${containerGroupStyle}" class='groupHeader'>
         <div></div>
         <span>${spanContent}</span>
         <div style="${divSvgs}" class='buttonsGroupHeader'>
-          <div class="configSvgDiv" style="${configSvg}">${svgStringConfigHeaderGroup}</div>
-          <div class="collapseIconGroup" style="${configSvg}">${svgArrowRightHeaderGroup}</div>
+        <div class="configSvgDiv" style="${configSvg}">${svgStringConfigHeaderGroup}</div>
+        ${
+          currentCols.length > 1
+            ? `<div class="collapseIconGroup" style="${configSvg2}">
+            ${svgArrowRightHeaderGroup}
+          </div>`
+            : ""
+        }
         </div>
-      </div>`;
+        </div>`;
 
     const configSvgDiv = TH.querySelector(".configSvgDiv");
     configSvgDiv?.addEventListener("click", selectParentHeader);
     const collapseDiv = TH.querySelector(".collapseIconGroup");
-    collapseDiv?.addEventListener("click", () => console.log("oioioi"));
+    // collapseDiv?.addEventListener("click", () => handleHidden("oioioi"));
+    collapseDiv?.addEventListener("click", () => {
+      indexes.shift();
+
+      // handleHidden(indexes, fields, true);
+      const newGroups = groups.map((group) => {
+        if (group.label === spanContent) {
+          return { ...group, colspan: 1, newHiddens: indexes };
+        }
+        return group;
+      });
+      setGroups(newGroups);
+    });
   }
 }
 
