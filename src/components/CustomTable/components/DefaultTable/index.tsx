@@ -363,6 +363,10 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ) => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class="tag-content" id='blur'>valor censurado</div>`;
+        return;
+      }
       const div = document.createElement("div");
       div.innerHTML = value;
 
@@ -481,7 +485,10 @@ function DefaultTable({
         td.style.border = "2px solid #F1BC02";
       }
 
-      td.innerHTML = textValue;
+      td.innerHTML =
+        value === "valor censurado"
+          ? `<div id='blur'>valor censurado</div>`
+          : textValue;
     },
     [cols, svgStringDropDown],
   );
@@ -507,11 +514,17 @@ function DefaultTable({
 
       if (Number.isNaN(Number(numericValue))) {
         td.innerHTML =
-          previousValue !== null && previousValue !== undefined
+          // eslint-disable-next-line no-nested-ternary
+          value === "valor censurado"
+            ? `<div id='blur'>valor censurado</div>`
+            : previousValue !== null && previousValue !== undefined
             ? String(previousValue)
             : "";
       } else {
-        td.innerHTML = numericValue;
+        td.innerHTML =
+          value === "valor censurado"
+            ? `<div id='blur'>valor censurado</div>`
+            : numericValue;
       }
     },
     [svgStringDropDown],
@@ -550,7 +563,10 @@ function DefaultTable({
 
       const replacedValue = numericValue.replace(/[.,]/g, colDecimalPoint);
 
-      td.innerHTML = replacedValue;
+      td.innerHTML =
+        value === "valor censurado"
+          ? `<div id='blur'>valor censurado</div>`
+          : replacedValue;
     },
     [svgStringDropDown, cols],
   );
@@ -603,6 +619,11 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div  id='blur'>valor censurado</div>`;
+        return;
+      }
+
       const handleChange = (checked: boolean): void => {
         const newValue = [`${checked}`];
         instance.setDataAtCell(row, col, newValue);
