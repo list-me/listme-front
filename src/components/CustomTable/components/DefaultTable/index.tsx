@@ -763,7 +763,7 @@ function DefaultTable({
       const censoredProducts = products.map((product) => {
         const modifiedProduct = { ...product };
 
-        colsId.slice(1).forEach((colId) => {
+        colsId.slice(2).forEach((colId) => {
           modifiedProduct[colId] = "valor censurado";
         });
 
@@ -848,7 +848,13 @@ function DefaultTable({
 
       td.appendChild(checkboxContainer);
     },
-    [products, rowsSelectedPosition, parentId, toggleRowSelection],
+    [
+      rowsSelectedPosition,
+      products,
+      parentId,
+      subItensMode,
+      toggleRowSelection,
+    ],
   );
   const { handleRedirectAndGetProducts } = useProductContext();
 
@@ -1243,8 +1249,9 @@ function DefaultTable({
         setIsOpen={setIsOpen}
         handleFreeze={handleFreeze}
       />
-      {parentId && (
+      {(parentId || isPublic) && (
         <ModalSelectChildrens
+          isPublic
           amount={childsSelectedIds.length}
           clearSubItensMode={clearSubItensMode}
           onFinishProductChild={onFinishProductChild}

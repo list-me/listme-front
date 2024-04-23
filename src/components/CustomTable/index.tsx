@@ -369,12 +369,16 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
         </Content>
         <Container>
           <DefaultTable
-            cols={parentId ? [checkToCols, ...cols] : (cols as any)}
+            cols={parentId || isPublic ? [checkToCols, ...cols] : (cols as any)}
             colHeaders={
-              parentId ? [checkToColHeaders, ...colHeaders] : colHeaders
+              parentId || isPublic
+                ? [checkToColHeaders, ...colHeaders]
+                : colHeaders
             }
             headerTable={
-              parentId ? [checkToHeaderTable, ...headerTable] : headerTable
+              parentId || isPublic
+                ? [checkToHeaderTable, ...headerTable]
+                : headerTable
             }
             parentId={parentId}
             setParentId={setParentId}

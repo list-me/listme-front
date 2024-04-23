@@ -24,13 +24,13 @@ const Text = styled.p`
   display: flex;
   align-items: center;
 `;
-const ContainerButtons = styled.div`
+const ContainerButtons = styled.div<{ isPublic?: boolean }>`
   color: #495057;
   font-size: 16px;
   font-weight: 500;
   padding: 20px 24px;
   display: flex;
-  width: 300px;
+  width: ${(props) => (props.isPublic ? "400px" : "300px")};
   gap: 20px;
   button {
     height: 36px;
@@ -42,20 +42,29 @@ function ModalSelectChildrens({
   amount,
   clearSubItensMode,
   onFinishProductChild,
+  isPublic = false,
 }: {
   amount: number;
   clearSubItensMode: () => void;
   onFinishProductChild: () => Promise<void>;
+  // eslint-disable-next-line react/require-default-props
+  isPublic?: boolean;
 }): JSX.Element {
+  function stringToView(): string {
+    if (isPublic && !amount) {
+      return "Selecione os itens que deseja vincular";
+    }
+    return `${amount} itens selecionados`;
+  }
   return (
     <ContainerModalSelectChildrens>
-      <Text>{amount} itens selecionados</Text>
-      <ContainerButtons>
+      <Text>{stringToView()}</Text>
+      <ContainerButtons isPublic={isPublic}>
         <NavigationButton abort onClick={clearSubItensMode}>
           Cancelar
         </NavigationButton>
-        <NavigationButton onClick={onFinishProductChild}>
-          Salvar
+        <NavigationButton disabled={!amount} onClick={onFinishProductChild}>
+          {isPublic ? "Vincular itens selecionados" : "Salvar"}
         </NavigationButton>
       </ContainerButtons>
     </ContainerModalSelectChildrens>
