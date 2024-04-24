@@ -1251,7 +1251,7 @@ function DefaultTable({
       />
       {(parentId || isPublic) && (
         <ModalSelectChildrens
-          isPublic
+          isPublic={isPublic}
           amount={childsSelectedIds.length}
           clearSubItensMode={clearSubItensMode}
           onFinishProductChild={onFinishProductChild}
