@@ -97,6 +97,7 @@ function TablePublicListList({
         dataProvider={currentList}
         size="large"
         disabledOnClick
+        isPublic
       />
     </ContainerTablePublicListList>
   );

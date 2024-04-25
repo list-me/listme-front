@@ -99,7 +99,7 @@ const getStyledContent = (
   isRequired: boolean,
   colData: any,
   changeAllRowsSelected: () => void,
-  allRowsSelected: boolean,
+  allRowsSelected?: boolean,
   isPublic?: boolean,
 ): string => {
   (window as any).changeAllRowsSelected = changeAllRowsSelected;

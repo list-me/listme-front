@@ -50,6 +50,10 @@ export interface IDefaultTable {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleFreeze: any;
   isPublic?: boolean;
+  allRowsSelected?: boolean;
+  setAllRowsSelected?: React.Dispatch<React.SetStateAction<boolean>>;
+  rowsSelected?: string[];
+  setRowsSelected?: React.Dispatch<React.SetStateAction<string[]>>;
   parentId: string | null;
   setParentId: React.Dispatch<React.SetStateAction<string | null>>;
   subItensMode: "add" | "remove";

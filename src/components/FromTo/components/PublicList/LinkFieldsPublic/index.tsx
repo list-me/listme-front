@@ -14,6 +14,8 @@ import { BoxButtons, NavigationButton } from "../../NavigationButton/styles";
 import { ReactComponent as PlusIcon } from "../../../../../assets/plus-fromto.svg";
 import isEmptyObject from "../../../../../utils/isEmptyObject";
 import fixedOptions from "../../LinkFields/utils/fixedOptions";
+import { templateRequests } from "../../../../../services/apis/requests/template";
+import { productRequests } from "../../../../../services/apis/requests/product";
 
 function LinkFieldsPublic(): JSX.Element {
   const {
@@ -21,14 +23,67 @@ function LinkFieldsPublic(): JSX.Element {
     selectedLinkFields,
     setSelectedLinkFields,
     setCurrentStep,
+    checkedList,
+    allRowsSelected,
+    selectedProductsId,
   } = useFromToContext();
-  const { headerTable, colHeaders, targetTemplatePublic } = useProductContext();
+  const { headerTable, colHeaders, targetTemplatePublic, template } =
+    useProductContext();
+
+  async function onFinish(): Promise<void> {
+    const originIds = headerTable.map((item, index) => {
+      return { data: item.data, isSync: checkedList[index] };
+    });
+
+    const fields = originIds
+      // eslint-disable-next-line array-callback-return
+      .map((item) => {
+        const field = {
+          origin: item.data,
+          target: selectedLinkFields[item.data]?.value,
+          is_sync: !!item.isSync,
+        };
+        if (field.target) return field;
+      })
+      .filter((item) => item);
+
+    if (targetTemplatePublic) {
+      const templateBody = {
+        name: targetTemplatePublic.name,
+        type: "sync",
+        fields: {
+          template_origin: template.id,
+          template_target: targetTemplatePublic.id,
+          fields,
+        },
+      };
+      const response = await templateRequests.postFromTo(templateBody as any);
+      if (response.id) {
+        const body = new FormData();
+        if (allRowsSelected) {
+          body.append("all", "true");
+        } else {
+          body.append("all", "false");
+          const idsCSV = selectedProductsId
+            .map((id) => {
+              return `${id}\n`;
+            })
+            .join("");
+          body.append("items", idsCSV);
+        }
+        body.append("template_id", response.id);
+        const responseLink = await productRequests.postLink(body);
+        console.log(
+          "🚀 ~ file: index.tsx:77 ~ onFinish ~ responseLink:",
+          responseLink,
+        );
+      }
+    }
+  }
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [optionsToVerify, setOptionsToVerify] = useState<string[]>([]);
   const [warnList, setWarnList] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [finisedContent, setFinisehdContent] = useState<boolean>(false);
 
   const handleSelectChange = (
     itemKey: string,
@@ -144,12 +199,7 @@ function LinkFieldsPublic(): JSX.Element {
           </NavigationButton>
           <NavigationButton
             disabled={isEmptyObject(selectedLinkFields) || verifyAllIgnore()}
-            onClick={async () => {
-              // setLoading(true);
-              // const result = await finishFromTo();
-              // setLoading(false);
-              // if (result) setFinisehdContent(true);
-            }}
+            onClick={() => onFinish()}
           >
             <PlusIcon />
             Importar

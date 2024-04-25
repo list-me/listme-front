@@ -43,7 +43,13 @@ import NotFound from "./components/NotFound";
 registerAllModules();
 registerAllEditors();
 
-const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
+const CustomTable: React.FC<CustomTableProps> = ({
+  isPublic,
+  allRowsSelected,
+  setAllRowsSelected,
+  rowsSelected,
+  setRowsSelected,
+}) => {
   const hotRef = useRef<HotTable>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
   const {
@@ -414,6 +420,10 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
             setIsOpen={setIsOpen}
             handleFreeze={handleFreeze}
             isPublic={isPublic}
+            allRowsSelected={allRowsSelected}
+            setAllRowsSelected={setAllRowsSelected}
+            rowsSelected={rowsSelected}
+            setRowsSelected={setRowsSelected}
             subItensMode={subItensMode}
             setSubItemsMode={setSubItemsMode}
           />

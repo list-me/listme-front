@@ -67,6 +67,23 @@ export function FromToContextProvider({
     return null;
   }, [data]);
 
+  const [checkedList, setCheckedList] = useState<boolean[]>(
+    () =>
+      colHeadersToPreviewTable?.map(() => {
+        return true;
+      }) || [false],
+  );
+  const [rowsSelected, setRowsSelected] = useState<string[]>([]);
+
+  const { products } = useProductContext();
+
+  const [allRowsSelected, setAllRowsSelected] = useState<boolean>(false);
+  const selectedProductsId = useMemo(() => {
+    return rowsSelected.map((item) => {
+      return products[+item].id;
+    });
+  }, [products, rowsSelected]);
+
   const [valuesImportConfiguration, setValuesImportConfiguration] =
     useState<IValuesImportConfiguration>(initialValuesImportConfiguration);
 
@@ -223,6 +240,13 @@ export function FromToContextProvider({
     setTemplates,
     currentLinkConfigurationValue,
     setCurrentLinkConfigurationValue,
+    checkedList,
+    setCheckedList,
+    rowsSelected,
+    setRowsSelected,
+    allRowsSelected,
+    setAllRowsSelected,
+    selectedProductsId,
     valuesIntegrationsConfig,
     setValuesIntegrationsConfig,
     providersToIntegration,

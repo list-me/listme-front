@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { Checkbox } from "antd";
 import {
   ColumnTitleLinkFields,
   ContainerCheckBox,
@@ -14,7 +15,6 @@ import newColumnOptions from "../../../../../../utils/newColumnOptions";
 import { PersonalModal } from "../../../../../CustomModa";
 import { useProductContext } from "../../../../../../context/products";
 import { useFromToContext } from "../../../../../../context/FromToContext";
-import CheckboxCustom from "../../../../../Checkbox";
 
 function LinkFieldsComponent({
   colHeadersToPreviewTable,
@@ -62,8 +62,8 @@ function LinkFieldsComponent({
     setTargetColHeaders,
     isPublic,
   } = useProductContext();
-  const { currentLinkConfigurationValue } = useFromToContext();
-
+  const { currentLinkConfigurationValue, checkedList, setCheckedList } =
+    useFromToContext();
   const currentHeaderTable = isPublic ? targetHeaderTable : headerTable;
 
   const example = (item: string): string | number | undefined => {
@@ -102,6 +102,13 @@ function LinkFieldsComponent({
     }
     handleNewColumn(newColumn, templateUpdated);
   }
+
+  function checkChange(index: number): void {
+    const copyList = [...checkedList];
+    copyList[index] = !checkedList[index];
+    setCheckedList(copyList);
+  }
+
   return (
     <>
       <HeaderLinkFields>
@@ -155,7 +162,10 @@ function LinkFieldsComponent({
             </ContainerSelectText>
             {currentLinkConfigurationValue.value === "keepProductsLinked" && (
               <ContainerCheckBox>
-                <CheckboxCustom onChange={() => ""} label="" />
+                <Checkbox
+                  onChange={() => checkChange(index)}
+                  checked={checkedList[index]}
+                />
               </ContainerCheckBox>
             )}
           </ContentRowLinkFields>
