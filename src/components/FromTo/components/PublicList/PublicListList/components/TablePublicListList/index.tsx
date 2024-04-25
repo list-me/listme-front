@@ -16,26 +16,8 @@ function TablePublicListList({
       title: "Nome",
       key: "name",
       dataIndex: "name",
-      sorter: (a: any, b: any) => a.name.localeCompare(b.name),
-      sortDirections: ["ascend", "descend"],
       render: (_: any, record: any) => {
         return <span className="defaultText">{record.name}</span>;
-      },
-    },
-    {
-      title: "Valor",
-      key: "value",
-      dataIndex: "value",
-      render: (_: any, record: any) => {
-        const amount = record.amount?.split(",").join("");
-        const amountLocale = (+amount).toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        });
-        if (record.amount)
-          return <span className="blueText">{amountLocale}</span>;
-
-        return <></>;
       },
     },
     {

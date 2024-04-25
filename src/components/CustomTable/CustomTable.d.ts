@@ -23,6 +23,7 @@ interface CustomTableProps {
   setEnable?: () => void;
   addProducts?: () => void;
   children?: any;
+  publicLink?: boolean;
 }
 
 interface ICustomColumns {

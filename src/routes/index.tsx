@@ -6,6 +6,7 @@ import PrivateRoutes from "./PrivateRoutes";
 import Login from "../pages/login";
 import { PublicRoute } from "./PublicRoute";
 import { Products } from "../pages/products";
+import { PublicLink } from "../pages/publicLink";
 import Integration from "../pages/integration";
 import CompanyIntegration from "../pages/companyIntegration";
 
@@ -19,6 +20,7 @@ export function Router(): JSX.Element {
         <Route path="/" element={<PrivateRoutes />}>
           <Route path="/templates" element={<Template />} />
           <Route path="/products/:id" element={<Products />} />
+          <Route path="/products/public-link/:id" element={<PublicLink />} />
           <Route path="/integration/" element={<Integration />} />
           <Route
             path="/integration/:path/:id"
