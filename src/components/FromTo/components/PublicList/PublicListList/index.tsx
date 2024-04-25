@@ -15,6 +15,7 @@ import { templateRequests } from "../../../../../services/apis/requests/template
 import formatDate from "../../../utils/formatDate";
 import PaginationTablePublicListListComponent from "./components/PaginationTablePublicListList";
 import useDebounce from "../../../../../hooks/useDebounce/useDebounce";
+import { ReactComponent as LinkIcon } from "../../../../../assets/linkPublicList.svg";
 
 const PublicListList: React.FC = () => {
   const columns = [
@@ -80,6 +81,15 @@ const PublicListList: React.FC = () => {
       title: "Vincular",
       key: "link",
       dataIndex: "link",
+      render: (_: any, _record: any) => {
+        return (
+          <div className="containerLinkIcon">
+            <button type="button" className="boxLinkIcon">
+              <LinkIcon />
+            </button>
+          </div>
+        );
+      },
     },
   ];
 
@@ -147,6 +157,7 @@ const PublicListList: React.FC = () => {
             columns={columns}
             dataProvider={currentList[currentPage - 1]}
             size="large"
+            disabledOnClick
           />
         </ContainerTablePublicListList>
         <PaginationTablePublicListListComponent
