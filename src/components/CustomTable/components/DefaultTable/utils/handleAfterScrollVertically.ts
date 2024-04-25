@@ -30,6 +30,7 @@ const handleAfterScrollVertically = async (
   currentKeyword: string,
   conditions: IConditions[],
   operator: IOperator,
+  isPublic?: boolean,
 ): Promise<void> => {
   const { hotInstance } = hotRef.current!;
   if (hotInstance && !isFetchingNextPage) {
@@ -56,7 +57,7 @@ const handleAfterScrollVertically = async (
             : undefined;
           const response = await productRequests.list(
             { keyword: currentKeyword, page, limit: 100 },
-            window.location.pathname.substring(10),
+            window.location.pathname.substring(isPublic ? 17 : 10),
             tratedConditions,
             operator.value,
           );
