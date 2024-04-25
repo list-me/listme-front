@@ -22,17 +22,8 @@ function PublicListList(): JSX.Element {
   const [currentCategoryId, setCurrentCategoryId] = useState("");
 
   const [searchText, setSearchText] = useState("");
+  const [currentTotalItems, setCurrentTotalItems] = useState(0);
 
-  function splitIntoSublists<T>(list: T[], sublistSize: number): T[][] {
-    const sublists: T[][] = [];
-    for (let i = 0; i < list.length; i += sublistSize) {
-      const sublist = list.slice(i, i + sublistSize);
-      sublists.push(sublist);
-    }
-    return sublists;
-  }
-
-  const currentList = templates?.length ? splitIntoSublists(templates, 7) : [];
   const debouncedInputValue = useDebounce(searchText, 250);
 
   const handleGetTemplates = useCallback(
@@ -45,7 +36,7 @@ function PublicListList(): JSX.Element {
       category_id,
     }: IPaginationTemplate) => {
       try {
-        const response = await templateRequests.listPublicList({
+        const { data, total } = await templateRequests.listPublicList({
           limit,
           page,
           is_public,
@@ -53,7 +44,8 @@ function PublicListList(): JSX.Element {
           name,
           category_id,
         });
-        setTemplates(response);
+        setCurrentTotalItems(total);
+        setTemplates(data);
       } catch (error) {
         toast.error("Ocorreu um erro ao listar os catálogos");
         console.error(error);
@@ -63,16 +55,16 @@ function PublicListList(): JSX.Element {
   );
 
   useEffect(() => {
-    setCurrentPage(1);
     handleGetTemplates({
-      page: 0,
-      limit: 1000,
+      page: currentPage - 1,
+      limit: 7,
       is_public: true,
       sort: selectFilter.value,
       name: debouncedInputValue,
     });
   }, [
     currentCategoryId,
+    currentPage,
     debouncedInputValue,
     handleGetTemplates,
     selectFilter.value,
@@ -92,14 +84,11 @@ function PublicListList(): JSX.Element {
           searchText={searchText}
           setSearchText={setSearchText}
         />
-        <TablePublicListList
-          currentList={currentList}
-          currentPage={currentPage}
-        />
+        <TablePublicListList currentList={templates} />
         <PaginationTablePublicListListComponent
-          currentList={currentList}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
+          totalPages={Math.ceil(currentTotalItems / 7)}
         />
       </ContentPublicListList>
     </ContainerPublicListList>

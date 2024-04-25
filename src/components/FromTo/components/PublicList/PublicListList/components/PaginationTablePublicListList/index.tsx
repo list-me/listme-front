@@ -10,15 +10,15 @@ import { ReactComponent as ArrowRightPagination } from "../../../../../../../ass
 import { ReactComponent as EllipsisPagination } from "../../../../../../../assets/ellipsisPagination.svg";
 
 function PaginationTablePublicListListComponent({
-  currentList,
   currentPage,
   setCurrentPage,
+  totalPages,
 }: {
-  currentList: never[][];
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  totalPages: number;
 }): JSX.Element {
-  const totalPages = currentList.length;
+  const buttons = Array(totalPages).fill("");
 
   return (
     <PaginationTablePublicListList>
@@ -36,7 +36,7 @@ function PaginationTablePublicListListComponent({
       >
         <ArrowLeftPagination />
       </ButtonPaginationPublicListList>
-      {currentList.map((_item, index: number) => (
+      {buttons.map((_item, index: number) => (
         <ButtonPaginationPublicListList
           isActive={index + 1 === currentPage}
           type="button"
