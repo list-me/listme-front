@@ -38,13 +38,14 @@ export const BoxFromTo = styled.div<{ large?: boolean }>`
   }
 `;
 
-export const HeaderModal = styled.div`
+export const HeaderModal = styled.div<{ borderDisabled?: boolean }>`
   margin-bottom: 16px;
   padding-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #eee;
+  border-bottom: ${(props) =>
+    props.borderDisabled ? "none" : "1px solid #eee"};
 `;
 export const TitleModal = styled.h4`
   color: ${({ theme }) => theme.colors.fourth};

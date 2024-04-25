@@ -8,6 +8,7 @@ import ImportOptions from "../ImportOptions";
 import LinkFields from "../LinkFields";
 import IntegrationSettings from "../IntegrationSettings";
 import PublicListList from "../PublicList/PublicListList";
+import LinkConfiguration from "../PublicList/LinkConfiguration";
 
 function StepContent(): JSX.Element {
   const { currentStep, stepType } = useFromToContext();
@@ -20,7 +21,7 @@ function StepContent(): JSX.Element {
       {currentStep === 2 && stepType === "fromTo" ? (
         <ImportConfiguration />
       ) : (
-        <></>
+        <LinkConfiguration />
       )}
       {currentStep === 3 && stepType === "fromTo" ? <ImportOptions /> : <></>}
       {currentStep === 4 && stepType === "fromTo" ? <LinkFields /> : <></>}

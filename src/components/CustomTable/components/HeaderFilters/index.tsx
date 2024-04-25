@@ -52,7 +52,7 @@ function HeaderFilters({
   });
 
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
-  const { setFromToIsOpened } = useFromToContext();
+  const { setFromToIsOpened, setCurrentStep, setStepType } = useFromToContext();
 
   const { setErrors, errors, setSidebarErrorOpened, offset, limit } =
     useIntegration();
@@ -101,6 +101,11 @@ function HeaderFilters({
               height="52px"
               width="331px"
               className="secondButton linkButton"
+              onClick={() => {
+                setStepType("publicList");
+                setCurrentStep(2);
+                setFromToIsOpened(true);
+              }}
             >
               Vincular lista completa ({totalPrice})
               <LinkIcon />

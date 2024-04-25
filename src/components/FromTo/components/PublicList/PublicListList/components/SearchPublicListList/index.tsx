@@ -12,7 +12,7 @@ function SearchPublicListListComponent({
   return (
     <ContainerSearchPublicListList>
       <SearchPublicListList
-        placeholder="Pesquisar listas públicas"
+        placeholder="Pesquisar Lists públicas"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
       />
