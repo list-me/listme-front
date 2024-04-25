@@ -23,10 +23,11 @@ function StepContent(): JSX.Element {
         <></>
       )}
       {currentStep === 3 && stepType === "fromTo" ? <ImportOptions /> : <></>}
-      {currentStep === 4 && stepType === "fromTo" ? (
-        <LinkFields />
-      ) : (
+      {currentStep === 4 && stepType === "fromTo" ? <LinkFields /> : <></>}
+      {currentStep === 4 && stepType !== "fromTo" ? (
         <IntegrationSettings />
+      ) : (
+        <></>
       )}
       {currentStep === 5 && <LinkFields />}
     </StepContentContainer>
