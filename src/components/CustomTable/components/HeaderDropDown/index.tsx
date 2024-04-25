@@ -19,7 +19,6 @@ function HeaderDropDown({
   colHeaders,
   setColHeaders,
   handleNewColumn,
-  hotRef,
   handleHidden,
   headerTable,
   setCurrentCell,
@@ -34,7 +33,6 @@ function HeaderDropDown({
   colHeaders: string[];
   setColHeaders: React.Dispatch<React.SetStateAction<string[]>>;
   handleNewColumn: Function;
-  hotRef: React.RefObject<HotTable>;
   handleHidden: Function;
   headerTable: IHeaderTable[];
   setCurrentCell: React.Dispatch<any>;

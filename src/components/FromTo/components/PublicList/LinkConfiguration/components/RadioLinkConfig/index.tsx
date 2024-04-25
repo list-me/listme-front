@@ -1,7 +1,6 @@
 /* eslint-disable */
 
-import { Radio, RadioChangeEvent, Space } from "antd";
-import { useState } from "react";
+import { Radio, Space } from "antd";
 import { Container, ContainerOption, Description } from "./styles";
 
 interface IProps {

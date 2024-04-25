@@ -62,6 +62,12 @@ export const PersonalModal = ({
   template,
   onUpdate,
 }: PropsModal) => {
+  const url = window.location.href;
+  const isPublic = url.includes("public");
+
+  const { targetTemplatePublic } = useProductContext();
+
+  const currentTemplate = isPublic ? targetTemplatePublic : template;
   const [title, setTitle] = useState<string>(data?.title ?? "");
   const [limitStatus, setLimitStatus] = useState<boolean>(
     data?.limitStatus ?? false,
@@ -217,7 +223,7 @@ export const PersonalModal = ({
     let newField: any;
     if (!title.trim()) return;
     if (isUpdate) {
-      templateUpdated = template.fields.fields.map((item: any) => {
+      templateUpdated = currentTemplate.fields.fields.map((item: any) => {
         if (item.id === data.id) {
           data.options = type !== "decimal" ? option || [""] : [decimalPoint];
           data.type = type;
@@ -232,7 +238,7 @@ export const PersonalModal = ({
         return item;
       });
     } else {
-      templateUpdated.push(...template.fields.fields);
+      templateUpdated.push(...currentTemplate.fields.fields);
       newField = {
         id: Math.floor(100000 + Math.random() * 900000).toString(),
         type,
@@ -267,7 +273,7 @@ export const PersonalModal = ({
     const newTemplates = { fields: newFields };
 
     try {
-      await templateRequests.update(template?.id, newTemplates);
+      await templateRequests.update(currentTemplate?.id, newTemplates);
       toast.success("Template atualizado com sucesso");
       return templateUpdated;
     } catch (error) {
@@ -293,8 +299,6 @@ export const PersonalModal = ({
       setEnable(true);
     }
   }, [options]);
-
-  const { handleRedirectAndGetProducts } = useProductContext();
 
   return (
     <>
@@ -387,12 +391,6 @@ export const PersonalModal = ({
                     };
                     onClickModal();
                     onUpdate(newColumn, response);
-                    const id = window.location.pathname.substring(10);
-                    if (id) {
-                      setTimeout(() => {
-                        handleRedirectAndGetProducts(id).then(() => {});
-                      }, 0);
-                    }
                   }
                 });
               }}
@@ -524,7 +522,7 @@ export const PersonalModal = ({
                   ) : data?.type == "relation" ? (
                     <RelationForm
                       value={data}
-                      currentFields={template.fields.fields}
+                      currentFields={currentTemplate.fields.fields}
                       handleChangeOptions={handleChangeOptions}
                     />
                   ) : (

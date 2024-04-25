@@ -1257,7 +1257,6 @@ function DefaultTable({
         colHeaders={colHeaders}
         setColHeaders={setColHeaders}
         handleNewColumn={handleNewColumn}
-        hotRef={hotRef}
         handleHidden={handleHidden}
         headerTable={headerTable}
         setCurrentCell={setCurrentCell}

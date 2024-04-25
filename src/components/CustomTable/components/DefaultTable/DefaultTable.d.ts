@@ -25,10 +25,10 @@ export interface IDefaultTable {
   total: number;
   setTotal: React.Dispatch<React.SetStateAction<number>>;
   template: any;
-  renderHeaderComponent: (
-    column: number,
-    TH: HTMLTableHeaderCellElement,
-  ) => void;
+  // renderHeaderComponent: (
+  //   column: number,
+  //   TH: HTMLTableHeaderCellElement,
+  // ) => void;
   hidden: number[];
   handleResize: Function;
   columns: IHeader[];

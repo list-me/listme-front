@@ -1,45 +1,23 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  ColumnTitleLinkFields,
-  ContainerLinkFields,
-  ContainerSelectText,
-  ContentLinkFields,
-  ContentRowLinkFields,
-  HeaderLinkFields,
-  WarnAlert,
-} from "./styles";
-import Origin from "./components/Origin";
-import SelectComponent from "../../../Select";
+import { useEffect, useMemo, useState } from "react";
+import { ContainerLinkFields, WarnAlert } from "./styles";
 import { BoxButtons, NavigationButton } from "../../../NavigationButton/styles";
 import { useFromToContext } from "../../../../context/FromToContext";
 import { useProductContext } from "../../../../context/products";
-import { DropdownMenu } from "../../../DropdownMenu";
-import newColumnOptions from "../../../../utils/newColumnOptions";
-import { PersonalModal } from "../../../CustomModa";
 import fixedOptions from "./utils/fixedOptions";
 import FinishedStep from "../FinishedStep";
 import LoadingSpinner from "../LoadingSpinner";
 import isEmptyObject from "../../../../utils/isEmptyObject";
 import { ReactComponent as PlusIcon } from "../../../../assets/plus-fromto.svg";
-import LinkFieldsComponents from "./components/LinkFieldsComponents";
+import LinkFieldsComponent from "./components/LinkFieldsComponent";
 
 function LinkFields(): JSX.Element {
-  const iconRef = useRef(null);
-  const [isOpenDropDown, setIsOpenDropDown] = useState<boolean>(false);
-  const [dataToModal, setDataToModal] = useState({});
   const [warnList, setWarnList] = useState<string[]>([]);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
   const [finisedContent, setFinisehdContent] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const {
-    template,
-    headerTable,
-    setHeaderTable,
-    setColHeaders,
-    handleNewColumn,
-  } = useProductContext();
+  const { template, headerTable } = useProductContext();
   const {
     finishFromTo,
     selectedLinkFields,
@@ -49,30 +27,6 @@ function LinkFields(): JSX.Element {
   } = useFromToContext();
 
   const { setCurrentStep, colHeadersToPreviewTable, data } = useFromToContext();
-
-  function setNewColumn(newColumn: any, templateUpdated: any): void {
-    // eslint-disable-next-line no-param-reassign
-    newColumn = {
-      ...newColumn,
-      className: "htLeft htMiddle",
-      frozen: false,
-      hidden: false,
-      order: String(headerTable.length + 1),
-      width: "300",
-    };
-
-    const newPosition = [...headerTable, newColumn];
-    newPosition.splice(newPosition.length - 2, 1);
-    newPosition.push({});
-    setHeaderTable(newPosition);
-
-    const contentHeaders = headerTable.map((item) => item?.title);
-    contentHeaders.splice(headerTable.length - 1, 1);
-    contentHeaders.push(newColumn?.title);
-    contentHeaders.push(" ");
-    setColHeaders(contentHeaders);
-    handleNewColumn(newColumn, templateUpdated);
-  }
 
   const [optionsToVerify, setOptionsToVerify] = useState<string[]>([]);
 
@@ -206,20 +160,15 @@ function LinkFields(): JSX.Element {
       ) : (
         <></>
       )}
-      <LinkFieldsComponents
+      <LinkFieldsComponent
         colHeadersToPreviewTable={colHeadersToPreviewTable}
         data={data}
         selectedLinkFields={selectedLinkFields}
         handleSelectChange={handleSelectChange}
         options={options}
         fixedOptions={fixedOptions}
-        iconRef={iconRef}
-        setIsOpenDropDown={setIsOpenDropDown}
-        isOpenDropDown={isOpenDropDown}
         setIsOpenModal={setIsOpenModal}
         isOpenModal={isOpenModal}
-        setDataToModal={setDataToModal}
-        newColumnOptions={newColumnOptions}
       />
       <BoxButtons>
         <NavigationButton
@@ -245,16 +194,6 @@ function LinkFields(): JSX.Element {
           Importar
         </NavigationButton>
       </BoxButtons>
-
-      <PersonalModal
-        isOpen={isOpenModal}
-        onClickModal={() => setIsOpenModal(false)}
-        data={dataToModal}
-        template={template}
-        onUpdate={(e: any, fields: any) => {
-          return setNewColumn(e, fields);
-        }}
-      />
     </ContainerLinkFields>
   );
 }

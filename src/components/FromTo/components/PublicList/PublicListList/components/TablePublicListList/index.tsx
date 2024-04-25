@@ -6,6 +6,7 @@ import { ContainerTablePublicListList } from "./styles";
 import CustomTable from "../../../../../../Table";
 import { ROUTES } from "../../../../../../../constants/routes";
 import { useFromToContext } from "../../../../../../../context/FromToContext";
+import { useProductContext } from "../../../../../../../context/products";
 
 function TablePublicListList({
   currentList,
@@ -14,6 +15,14 @@ function TablePublicListList({
 }): JSX.Element {
   const navigate = useNavigate();
   const { setFromToIsOpened } = useFromToContext();
+  const {
+    template,
+    setTargetTemplatePublic,
+    colHeaders,
+    setTargetColHeaders,
+    headerTable,
+    setTargetHeaderTable,
+  } = useProductContext();
   const columns = [
     {
       title: "Nome",
@@ -67,6 +76,9 @@ function TablePublicListList({
               className="boxLinkIcon"
               onClick={() => {
                 setFromToIsOpened(false);
+                setTargetTemplatePublic(template);
+                setTargetColHeaders(colHeaders);
+                setTargetHeaderTable(headerTable);
                 navigate(`${ROUTES.PRODUCTSPUBLIC}/${record.id}`);
               }}
             >
