@@ -21,6 +21,7 @@ import FinishedStep from "../FinishedStep";
 import LoadingSpinner from "../LoadingSpinner";
 import isEmptyObject from "../../../../utils/isEmptyObject";
 import { ReactComponent as PlusIcon } from "../../../../assets/plus-fromto.svg";
+import LinkFieldsComponents from "./components/LinkFieldsComponents";
 
 function LinkFields(): JSX.Element {
   const iconRef = useRef(null);
@@ -205,46 +206,21 @@ function LinkFields(): JSX.Element {
       ) : (
         <></>
       )}
-      <HeaderLinkFields>
-        <ColumnTitleLinkFields>Origem</ColumnTitleLinkFields>
-        <ColumnTitleLinkFields>Destino</ColumnTitleLinkFields>
-      </HeaderLinkFields>
-      <ContentLinkFields>
-        {colHeadersToPreviewTable?.map(
-          (item) =>
-            item !== "sent_to_integrations" &&
-            item !== "third_party_id" &&
-            item !== "parent_third_party_id" && (
-              <ContentRowLinkFields key={item}>
-                <Origin title={item} example={data[0][item]} />
-                <ContainerSelectText>
-                  <SelectComponent
-                    select={selectedLinkFields[item] || null}
-                    onChange={(value) => handleSelectChange(item, value)}
-                    options={options}
-                    placeHolder="Selecione"
-                    small
-                    isSearchable
-                    fixedOptions={fixedOptions}
-                    DropDownComponent={() => (
-                      <DropdownMenu
-                        isOpen
-                        icoRef={iconRef}
-                        openModal={(e) => {
-                          setIsOpenDropDown(!isOpenDropDown);
-                          setIsOpenModal(!isOpenModal);
-                          setDataToModal({ type: e?.type });
-                        }}
-                        options={newColumnOptions}
-                        setIsOpen={() => setIsOpenDropDown(false)}
-                      />
-                    )}
-                  />
-                </ContainerSelectText>
-              </ContentRowLinkFields>
-            ),
-        )}
-      </ContentLinkFields>
+      <LinkFieldsComponents
+        colHeadersToPreviewTable={colHeadersToPreviewTable}
+        data={data}
+        selectedLinkFields={selectedLinkFields}
+        handleSelectChange={handleSelectChange}
+        options={options}
+        fixedOptions={fixedOptions}
+        iconRef={iconRef}
+        setIsOpenDropDown={setIsOpenDropDown}
+        isOpenDropDown={isOpenDropDown}
+        setIsOpenModal={setIsOpenModal}
+        isOpenModal={isOpenModal}
+        setDataToModal={setDataToModal}
+        newColumnOptions={newColumnOptions}
+      />
       <BoxButtons>
         <NavigationButton
           abort
