@@ -56,6 +56,10 @@ export interface FromToContextType {
   setStepType: React.Dispatch<React.SetStateAction<"fromTo" | "publicList">>;
   templates: never[];
   setTemplates: React.Dispatch<React.SetStateAction<never[]>>;
+  currentLinkConfigurationValue: ILinkConfigurationValue;
+  setCurrentLinkConfigurationValue: React.Dispatch<
+    React.SetStateAction<ILinkConfigurationValue>
+  >;
   valuesIntegrationsConfig: IValuesIntegrationsConfig[];
   setValuesIntegrationsConfig: React.Dispatch<
     React.SetStateAction<IValuesIntegrationsConfig[]>
@@ -64,6 +68,12 @@ export interface FromToContextType {
   setProdvidersToIntegration: React.Dispatch<React.SetStateAction<string[]>>;
   allProductsToIntegration: boolean;
   setAllProductsToIntegration: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface ILinkConfigurationValue {
+  label: string;
+  description: string;
+  value: string;
 }
 
 export interface CSVRow {

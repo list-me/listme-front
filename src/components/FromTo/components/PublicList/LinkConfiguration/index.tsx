@@ -13,18 +13,12 @@ import { BoxButtons, NavigationButton } from "../../NavigationButton/styles";
 import { ReactComponent as PlusIcon } from "../../../../../assets/plus-fromto.svg";
 
 function LinkConfiguration(): JSX.Element {
-  const { setFromToIsOpened, setCurrentStep } = useFromToContext();
-
-  const [currentValue, setCurrentValue] = useState<{
-    label: string;
-    description: string;
-    value: string;
-  }>({
-    value: "",
-    label: "",
-    description: "",
-  });
-
+  const {
+    setFromToIsOpened,
+    setCurrentStep,
+    currentLinkConfigurationValue,
+    setCurrentLinkConfigurationValue,
+  } = useFromToContext();
   const options = [
     {
       value: "keepProductsLinked",
@@ -44,7 +38,7 @@ function LinkConfiguration(): JSX.Element {
     description: string;
     value: string;
   }): void => {
-    setCurrentValue(value);
+    setCurrentLinkConfigurationValue(value);
   };
 
   return (
@@ -58,19 +52,19 @@ function LinkConfiguration(): JSX.Element {
         </HeaderModal>
         <RadioLinkConfig
           options={options}
-          value={currentValue}
+          value={currentLinkConfigurationValue}
           handleGetNewValue={handleChange}
         />
         <ContainerButtons>
           <BoxButtons>
             <NavigationButton
-              disabled={!currentValue.value}
+              disabled={!currentLinkConfigurationValue.value}
               onClick={() => setCurrentStep(3)}
             >
               <PlusIcon />
               Voltar
             </NavigationButton>
-            <NavigationButton disabled={!currentValue.value}>
+            <NavigationButton disabled={!currentLinkConfigurationValue.value}>
               <PlusIcon />
               Avançar
             </NavigationButton>
