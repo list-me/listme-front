@@ -641,27 +641,6 @@ function DefaultTable({
     },
     [ICON_HEADER],
   );
-  const styledHeader = useCallback(
-    (column: number, TH: HTMLTableHeaderCellElement): void => {
-      const colData = template?.fields?.fields.find(
-        (item: any) => item.id === headerTable[column]?.data,
-      );
-      const { required: isRequired } = colData || {};
-      const columnHeaderValue =
-        hotRef.current?.hotInstance?.getColHeader(column);
-      const valueToVisible =
-        columnHeaderValue !== " " ? columnHeaderValue : "+";
-      const iconType = getIconByType(colData?.type);
-
-      TH.innerHTML = getStyledContent(
-        iconType,
-        valueToVisible,
-        isRequired,
-        colData,
-      );
-    },
-    [getIconByType, headerTable, hotRef, template?.fields?.fields],
-  );
 
   const [hiddenRows, setHiddenRows] = useState<number[]>([]);
   const [isOpenedParentIds, setIsOpenedParentIds] = useState<string[]>([]);
@@ -773,7 +752,7 @@ function DefaultTable({
       const stringRow = String(row);
 
       const isChecked = isPublic
-        ? allRowsSelected || rowsSelected.includes(stringRow)
+        ? rowsSelected.includes(stringRow)
         : rowsSelectedPosition?.includes(stringRow);
 
       const checkboxContainer = document.createElement("div");
@@ -812,7 +791,6 @@ function DefaultTable({
     },
     [
       isPublic,
-      allRowsSelected,
       rowsSelected,
       rowsSelectedPosition,
       products,
@@ -821,6 +799,52 @@ function DefaultTable({
       toggleRowSelection,
     ],
   );
+
+  function changeAllRowsSelected(): void {
+    const newState = !allRowsSelected;
+    setAllRowsSelected(newState);
+    if (newState) {
+      const newRowsSelected: string[] = [];
+      products.forEach((_item, index) => {
+        newRowsSelected.push(String(index));
+      });
+      setRowsSelected(newRowsSelected);
+    } else {
+      setRowsSelected([]);
+    }
+  }
+
+  const styledHeader = useCallback(
+    (column: number, TH: HTMLTableHeaderCellElement): void => {
+      const colData = template?.fields?.fields.find(
+        (item: any) => item.id === headerTable[column]?.data,
+      );
+      const { required: isRequired } = colData || {};
+      const columnHeaderValue =
+        hotRef.current?.hotInstance?.getColHeader(column);
+      const valueToVisible =
+        columnHeaderValue !== " " ? columnHeaderValue : "+";
+      const iconType = getIconByType(colData?.type);
+      TH.innerHTML = getStyledContent(
+        iconType,
+        valueToVisible,
+        isRequired,
+        colData,
+        changeAllRowsSelected,
+        allRowsSelected,
+        isPublic,
+      );
+    },
+    [
+      allRowsSelected,
+      getIconByType,
+      headerTable,
+      hotRef,
+      isPublic,
+      template?.fields?.fields,
+    ],
+  );
+
   const { handleRedirectAndGetProducts } = useProductContext();
 
   const [contentTooltipIntegration, setContentTooltipIntegration] = useState([

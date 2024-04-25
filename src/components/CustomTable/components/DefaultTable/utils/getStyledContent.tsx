@@ -98,10 +98,16 @@ const getStyledContent = (
   valueToVisible: string | number | undefined,
   isRequired: boolean,
   colData: any,
+  changeAllRowsSelected: () => void,
+  allRowsSelected: boolean,
   isPublic?: boolean,
 ): string => {
+  (window as any).changeAllRowsSelected = changeAllRowsSelected;
+
   if (valueToVisible === "checkPublic") {
-    return `<input type='checkbox' style='${CHECKBOX_STYLE}' />`;
+    return `<input type='checkbox' style='${CHECKBOX_STYLE}' onclick="window.changeAllRowsSelected()" ${
+      allRowsSelected ? "checked" : ""
+    }/>`;
   }
   const integrationsList = colData?.integrations;
   const moreNumber = integrationsList - 1;
