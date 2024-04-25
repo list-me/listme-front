@@ -32,14 +32,6 @@ function HeaderPublicListListComponent({
           options={[
             { label: "Mais recente", value: "created_at" },
             { label: "Ordem alfabética", value: "name" },
-            {
-              label: "Preço: Maior para Menor",
-              value: "amount_desc",
-            },
-            {
-              label: "Preço: Menor para Maior",
-              value: "amount_asc",
-            },
           ]}
           placeHolder=""
         />

@@ -8,7 +8,7 @@ export const Contents = styled.div`
   }
 `;
 
-export const Item = styled.span`
+export const Item = styled.span<{ isDisabled?: boolean }>`
   font-family: ${({ theme }) => theme.fonts.family.bold};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
   font-style: normal;
@@ -34,6 +34,8 @@ export const Item = styled.span`
   &:hover {
     cursor: pointer;
   }
+  pointer-events: ${(props) => (props.isDisabled ? "none" : "initial")};
+  opacity: ${(props) => (props.isDisabled ? "0.5" : "initial")};
 `;
 
 export const ButtonCustom = styled.button<{ width: string; height: string }>`
