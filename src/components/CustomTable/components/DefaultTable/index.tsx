@@ -44,10 +44,10 @@ import customRendererDropdownComponent from "./components/customRendererDropdown
 import { useFilterContext } from "../../../../context/FilterContext";
 import { useProductContext } from "../../../../context/products";
 import customRendererCheckedComponent from "./components/customRendererCheckedComponent";
+import { IProductToTable } from "../../../../context/products/product.context";
 import DefaultLimits from "../../../../utils/DefaultLimits";
 import ModalSelectChildrens from "../ModalSelectChildrens";
 import { productRequests } from "../../../../services/apis/requests/product";
-import { IProductToTable } from "../../../../context/products/product.context";
 import getStyleRowHeader from "./utils/getStyleRowHeader";
 import DocumentIcon from "../../../../assets/icons/document-icon.svg";
 
@@ -80,6 +80,7 @@ function DefaultTable({
   setIsOpen,
   hidden,
   handleFreeze,
+  isPublic,
   parentId,
   setParentId,
   subItensMode,
@@ -292,6 +293,24 @@ function DefaultTable({
       setColumns,
     );
   };
+
+  const customRendererDefault = useCallback(
+    (
+      instance: Handsontable,
+      td: HTMLTableCellElement,
+      row: number,
+      col: number,
+      prop: string | number,
+      value: any,
+    ): void => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+      } else {
+        td.innerHTML = value;
+      }
+    },
+    [],
+  );
 
   const customRendererRadio = useCallback(
     (
@@ -821,6 +840,27 @@ function DefaultTable({
       }
     }
   };
+
+  const [productsToView, setproductsToView] = useState<IProductToTable[]>([]);
+  useEffect(() => {
+    if (isPublic) {
+      if (!headerTable.length || !products.length) return;
+
+      const colsId = headerTable.map((item) => item.data);
+      const censoredProducts = products.map((product) => {
+        const modifiedProduct = { ...product };
+
+        colsId.slice(1).forEach((colId) => {
+          modifiedProduct[colId] = "valor censurado";
+        });
+
+        return modifiedProduct;
+      });
+
+      setproductsToView(censoredProducts as IProductToTable[]);
+    } else setproductsToView(products);
+  }, [headerTable, isPublic, products]);
+
   return (
     <>
       {openAlertTooltip && (
@@ -863,7 +903,7 @@ function DefaultTable({
         ref={hotRef}
         colHeaders={colHeaders}
         columns={cols}
-        data={products}
+        data={productsToView}
         hiddenRows={{
           rows: hiddenRows,
           indicators: false,
@@ -872,6 +912,7 @@ function DefaultTable({
         manualColumnResize
         manualColumnMove
         rowHeaders={!parentId}
+        checkedTemplate
         rowHeights="52px"
         licenseKey="non-commercial-and-evaluation"
         fixedColumnsLeft={getMaxOrderForFrozen(cols) + 1}
@@ -1149,6 +1190,7 @@ function DefaultTable({
               _columnIndex={+col.order}
               data={col.data}
               key={col.order + col.data}
+              renderer={customRendererDefault}
             />
           );
         })}

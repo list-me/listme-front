@@ -405,6 +405,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
             setCurrentCell={setCurrentCell}
             setIsOpen={setIsOpen}
             handleFreeze={handleFreeze}
+            isPublic={isPublic}
             subItensMode={subItensMode}
             setSubItemsMode={setSubItemsMode}
           />

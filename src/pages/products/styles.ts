@@ -455,6 +455,15 @@ export const Container = styled.div`
         }
       }
     }
+    #blur {
+      filter: blur(4px);
+    }
+    .blurCenter {
+      display: flex;
+      height: 100%;
+      align-items: center;
+      padding-left: 5px;
+    }
     .dropdown-item-warn {
       display: flex;
       align-items: center;
