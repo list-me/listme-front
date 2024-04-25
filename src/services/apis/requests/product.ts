@@ -43,9 +43,9 @@ export const productRequests = {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
 
     const response = await api.get(
-      `/products/public?${templateId && `&templateId=${templateId}`}${
+      `/products/public?${templateId && `template_id=${templateId}`}${
         limit && `&limit=${limit}`
-      }${page && `&offset=${page}`}`,
+      }&offset=${page}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
