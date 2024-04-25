@@ -89,13 +89,20 @@ const REQUIRED_INTEGRATION_BUTTON = `
   background: none;
   padding: 0;
 `;
+const CHECKBOX_STYLE = `
+ height: 100%;
+`;
 
 const getStyledContent = (
   iconType: any,
   valueToVisible: string | number | undefined,
   isRequired: boolean,
   colData: any,
+  isPublic?: boolean,
 ): string => {
+  if (valueToVisible === "checkPublic") {
+    return `<input type='checkbox' style='${CHECKBOX_STYLE}' />`;
+  }
   const integrationsList = colData?.integrations;
   const moreNumber = integrationsList - 1;
 
@@ -104,7 +111,7 @@ const getStyledContent = (
       <div style="${FLEX_GAP_STYLE}">
         ${renderToString(iconType)}
         <p style="${
-          valueToVisible !== "+" ? TEXT_STYLE : PLUS_STYLE
+          !isPublic && valueToVisible !== "+" ? TEXT_STYLE : PLUS_STYLE
         }">${valueToVisible}</p>
       </div>
       <div style="${FLEX_GAP_STYLE}">

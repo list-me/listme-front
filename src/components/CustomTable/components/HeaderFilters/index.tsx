@@ -36,14 +36,20 @@ function HeaderFilters({
   handleGetProductFiltered,
   handleAddProductClick,
   isPublic,
+  total,
 }: {
   template: any;
   headerTable: IHeaderTable[];
   handleGetProductFiltered: (keyword: string) => void;
   handleAddProductClick: () => void;
   isPublic?: boolean;
+  total: number;
 }): JSX.Element {
   const navigate = useNavigate();
+  const totalPrice = (total * 3).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
 
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
   const { setFromToIsOpened } = useFromToContext();
@@ -96,7 +102,7 @@ function HeaderFilters({
               width="331px"
               className="secondButton linkButton"
             >
-              Vincular List completa (R$ 400)
+              Vincular lista completa ({totalPrice})
               <LinkIcon />
             </Button>
           )}

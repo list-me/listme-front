@@ -316,7 +316,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
     title: "Check",
     data: "000000",
     className: "htLeft htMiddle",
-    type: "checkSubItem",
+    type: isPublic ? "checkPublic" : "checkSubItem",
     required: false,
     options: [""],
     order: "-1",
@@ -325,13 +325,13 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
     frozen: false,
   };
 
-  const checkToColHeaders = "checkSubItem";
+  const checkToColHeaders = isPublic ? "checkPublic" : "checkSubItem";
 
   const checkToCols = {
     title: "Check",
     data: "000000",
     className: "htLeft htMiddle",
-    type: "checkSubItem",
+    type: isPublic ? "checkPublic" : "checkSubItem",
     required: false,
     options: [""],
     order: "-1",
@@ -361,6 +361,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
           <HeaderFilters
             isPublic={isPublic}
             template={template}
+            total={total}
             // @ts-ignore
             headerTable={headerTable}
             handleGetProductFiltered={handleGetProductFiltered}
@@ -369,12 +370,16 @@ const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
         </Content>
         <Container>
           <DefaultTable
-            cols={parentId ? [checkToCols, ...cols] : (cols as any)}
+            cols={parentId || isPublic ? [checkToCols, ...cols] : (cols as any)}
             colHeaders={
-              parentId ? [checkToColHeaders, ...colHeaders] : colHeaders
+              parentId || isPublic
+                ? [checkToColHeaders, ...colHeaders]
+                : colHeaders
             }
             headerTable={
-              parentId ? [checkToHeaderTable, ...headerTable] : headerTable
+              parentId || isPublic
+                ? [checkToHeaderTable, ...headerTable]
+                : headerTable
             }
             parentId={parentId}
             setParentId={setParentId}

@@ -45,6 +45,7 @@ import { useFilterContext } from "../../../../context/FilterContext";
 import { useProductContext } from "../../../../context/products";
 import customRendererCheckedComponent from "./components/customRendererCheckedComponent";
 import { IProductToTable } from "../../../../context/products/product.context";
+import Cart from "./components/Cart";
 import DefaultLimits from "../../../../utils/DefaultLimits";
 import ModalSelectChildrens from "../ModalSelectChildrens";
 import { productRequests } from "../../../../services/apis/requests/product";
@@ -732,19 +733,30 @@ function DefaultTable({
     setRowsSelectedPosition([]);
     setParentId(null);
   };
-
+  const [rowsSelected, setRowsSelected] = useState<string[]>([]);
+  const [allRowsSelected, setAllRowsSelected] = useState<boolean>(false);
   const toggleRowSelection = useCallback(
     (row: string) => {
-      const isSelected = rowsSelectedPosition.includes(row);
-      const updatedSelection = isSelected
-        ? rowsSelectedPosition.filter((selectedRow) => selectedRow !== row)
-        : rowsSelectedPosition.concat(row);
+      if (isPublic) {
+        setAllRowsSelected(false);
+        const isSelected = rowsSelected.includes(row);
+        const updatedSelection = isSelected
+          ? rowsSelected.filter((selectedRow) => selectedRow !== row)
+          : rowsSelected.concat(row);
 
-      setRowsSelectedPosition(updatedSelection);
-      const idsSelecteds = updatedSelection.map((updatedItem: any) => {
-        return products[+updatedItem].id;
-      });
-      setChildsSelectedIds(idsSelecteds);
+        setRowsSelected(updatedSelection);
+      } else {
+        const isSelected = rowsSelectedPosition.includes(row);
+        const updatedSelection = isSelected
+          ? rowsSelectedPosition.filter((selectedRow) => selectedRow !== row)
+          : rowsSelectedPosition.concat(row);
+
+        setRowsSelectedPosition(updatedSelection);
+        const idsSelecteds = updatedSelection.map((updatedItem: any) => {
+          return products[+updatedItem].id;
+        });
+        setChildsSelectedIds(idsSelecteds);
+      }
     },
     [products, rowsSelectedPosition],
   );
@@ -760,7 +772,9 @@ function DefaultTable({
     ) => {
       const stringRow = String(row);
 
-      const isChecked = rowsSelectedPosition?.includes(stringRow);
+      const isChecked = isPublic
+        ? allRowsSelected || rowsSelected.includes(stringRow)
+        : rowsSelectedPosition?.includes(stringRow);
 
       const checkboxContainer = document.createElement("div");
       checkboxContainer.style.width = "100%";
@@ -796,7 +810,16 @@ function DefaultTable({
 
       td.appendChild(checkboxContainer);
     },
-    [products, rowsSelectedPosition, parentId, toggleRowSelection],
+    [
+      isPublic,
+      allRowsSelected,
+      rowsSelected,
+      rowsSelectedPosition,
+      products,
+      parentId,
+      subItensMode,
+      toggleRowSelection,
+    ],
   );
   const { handleRedirectAndGetProducts } = useProductContext();
 
@@ -850,7 +873,7 @@ function DefaultTable({
       const censoredProducts = products.map((product) => {
         const modifiedProduct = { ...product };
 
-        colsId.slice(1).forEach((colId) => {
+        colsId.slice(2).forEach((colId) => {
           modifiedProduct[colId] = "valor censurado";
         });
 
@@ -899,7 +922,7 @@ function DefaultTable({
         nestedRows
         bindRowsWithHeaders
         className="hot-table"
-        readOnly={!!parentId || isTableLocked}
+        readOnly={!!parentId || isPublic || isTableLocked}
         ref={hotRef}
         colHeaders={colHeaders}
         columns={cols}
@@ -911,7 +934,7 @@ function DefaultTable({
         hiddenColumns={{ columns: hidden }}
         manualColumnResize
         manualColumnMove
-        rowHeaders={!parentId}
+        rowHeaders={!parentId || !isPublic}
         checkedTemplate
         rowHeights="52px"
         licenseKey="non-commercial-and-evaluation"
@@ -926,7 +949,8 @@ function DefaultTable({
         afterGetColHeader={styledHeader}
         afterGetRowHeader={styledRow}
         afterColumnResize={async (newSize: number, column: number) => {
-          if (!parentId) await handleResize(column, newSize, template);
+          if (!parentId || !isPublic)
+            await handleResize(column, newSize, template);
         }}
         // afterOnCellMouseDown={(event: any) => {
         //   const clickedElementClassList = event.target.classList;
@@ -948,7 +972,7 @@ function DefaultTable({
             setAlertTooltipIntegration(true);
           }
 
-          if (!parentId && colHeaders.length - 1 === coords.col) {
+          if (!parentId && !isPublic && colHeaders.length - 1 === coords.col) {
             setTimeout(() => {
               setDropDownStatus({
                 type: "new",
@@ -1035,6 +1059,9 @@ function DefaultTable({
         afterChange={afterChangeCallback}
       >
         {cols.map((col, _index: number) => {
+          if (col.type === "checkPublic") {
+            return <HotColumn width={50} renderer={customCheckboxRenderer} />;
+          }
           if (col.type === "checkSubItem") {
             return <HotColumn width={50} renderer={customCheckboxRenderer} />;
           }
@@ -1195,7 +1222,7 @@ function DefaultTable({
           );
         })}
       </HotTable>
-
+      {isPublic && <Cart itemsTotal={rowsSelected.length} />}
       <HeaderDropDown
         dropDownStatus={dropDownStatus}
         setDropDownStatus={setDropDownStatus}
