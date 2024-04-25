@@ -13,6 +13,7 @@ import { ReactComponent as PenAndRulerIcon } from "../../../../../../../assets/i
 import { ReactComponent as SofaIcon } from "../../../../../../../assets/icons/publicList/sofa.svg";
 import { ReactComponent as TvIcon } from "../../../../../../../assets/icons/publicList/tv.svg";
 import { categoriesRequest } from "../../../../../../../services/apis/requests/categories";
+import { useFromToContext } from "../../../../../../../context/FromToContext";
 
 interface ICategory {
   created_at: string;
@@ -30,6 +31,7 @@ function SidebarPublicListListComponent({
   setCurrentCategoryId: React.Dispatch<React.SetStateAction<string>>;
 }): JSX.Element {
   const [categories, setCategories] = useState<ICategory[]>([]);
+  const { templates } = useFromToContext();
 
   const items = [
     { name: "Ver tudo", icon: <SofaIcon /> },
@@ -44,7 +46,15 @@ function SidebarPublicListListComponent({
     await categoriesRequest
       .list()
       .then((response) => {
-        setCategories(response);
+        const categoryIdsTemplates = templates.map((item: any) => {
+          return item.id;
+        });
+
+        const categoriesFiltered = response.filter((item: any) => {
+          return categoryIdsTemplates.includes(item.id);
+        });
+
+        setCategories(categoriesFiltered);
       })
       .catch((error) => {
         toast.error("Ocorreu um erro ao listar as categorias");

@@ -1,8 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { ReactComponent as LinkIcon } from "../../../../../../../assets/linkPublicList.svg";
 import formatDate from "../../../../../utils/formatDate";
 import { ContainerTablePublicListList } from "./styles";
 import CustomTable from "../../../../../../Table";
+import { ROUTES } from "../../../../../../../constants/routes";
+import { useFromToContext } from "../../../../../../../context/FromToContext";
 
 function TablePublicListList({
   currentList,
@@ -11,6 +14,8 @@ function TablePublicListList({
   currentList: never[][];
   currentPage: number;
 }): JSX.Element {
+  const navigate = useNavigate();
+  const { setFromToIsOpened } = useFromToContext();
   const columns = [
     {
       title: "Nome",
@@ -56,10 +61,17 @@ function TablePublicListList({
       title: "Vincular",
       key: "link",
       dataIndex: "link",
-      render: (_: any, _record: any) => {
+      render: (_: any, record: any) => {
         return (
           <div className="containerLinkIcon">
-            <button type="button" className="boxLinkIcon">
+            <button
+              type="button"
+              className="boxLinkIcon"
+              onClick={() => {
+                setFromToIsOpened(false);
+                navigate(`${ROUTES.PRODUCTSPUBLIC}/${record.id}`);
+              }}
+            >
               <LinkIcon />
             </button>
           </div>

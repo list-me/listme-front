@@ -27,16 +27,13 @@ import { useFromToContext } from "../../../../context/FromToContext";
 import ButtonError from "../../../Integration/Error/ButtonError";
 import { integrationsRequest } from "../../../../services/apis/requests/integration";
 import { useIntegration } from "../../../../context/IntegrationContext";
-import { ReactComponent as LinkIcon } from "../../../../assets/linkPublicList.svg";
 
 function HeaderFilters({
-  publicLink,
   template,
   headerTable,
   handleGetProductFiltered,
   handleAddProductClick,
 }: {
-  publicLink?: boolean;
   template: any;
   headerTable: IHeaderTable[];
   handleGetProductFiltered: (keyword: string) => void;
@@ -89,47 +86,29 @@ function HeaderFilters({
           <EditIcon onClick={() => setIsEditingTitle(true)} />
         </LeftContent>
         <RightContent>
-          {publicLink && (
-            <Button
-              height="52px"
-              width="331px"
-              className="secondButton linkButton"
-            >
-              Vincular List completa (R$ 400)
-              <LinkIcon />
-            </Button>
-          )}
-          {errors?.data?.length > 0 && (
-            <ButtonError
-              errors={errors}
-              setSidebarErrorOpened={setSidebarErrorOpened}
-            />
-          )}
           <MoreOptions>
             <EllipsisIcon />
           </MoreOptions>
-          {!publicLink && (
-            <>
-              <Button
-                height="52px"
-                width="227px"
-                isSecondary
-                onClick={() => setFromToIsOpened(true)}
-              >
-                <DownloadIcon />
-                Importar produtos
-              </Button>
-              <Button
-                height="52px"
-                width="226px"
-                className="secondButton"
-                onClick={handleAddProductClick}
-              >
-                Adicionar produto
-                <PlusIcon />
-              </Button>
-            </>
-          )}
+          <>
+            <Button
+              height="52px"
+              width="227px"
+              isSecondary
+              onClick={() => setFromToIsOpened(true)}
+            >
+              <DownloadIcon />
+              Importar produtos
+            </Button>
+            <Button
+              height="52px"
+              width="226px"
+              className="secondButton"
+              onClick={handleAddProductClick}
+            >
+              Adicionar produto
+              <PlusIcon />
+            </Button>
+          </>
         </RightContent>
       </Header>
       <Filters>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ContainerPublicListList, ContentPublicListList } from "./styles";
 
@@ -10,9 +10,10 @@ import { templateRequests } from "../../../../../services/apis/requests/template
 import PaginationTablePublicListListComponent from "./components/PaginationTablePublicListList";
 import useDebounce from "../../../../../hooks/useDebounce/useDebounce";
 import TablePublicListList from "./components/TablePublicListList";
+import { useFromToContext } from "../../../../../context/FromToContext";
 
-const PublicListList: React.FC = () => {
-  const [templates, setTemplates] = useState([]);
+function PublicListList(): JSX.Element {
+  const { templates, setTemplates } = useFromToContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectFilter, setSelectFilter] = useState({
     label: "Mais recente",
@@ -21,8 +22,6 @@ const PublicListList: React.FC = () => {
   const [currentCategoryId, setCurrentCategoryId] = useState("");
 
   const [searchText, setSearchText] = useState("");
-  const currentList = templates?.length ? splitIntoSublists(templates, 7) : [];
-  const debouncedInputValue = useDebounce(searchText, 250);
 
   function splitIntoSublists<T>(list: T[], sublistSize: number): T[][] {
     const sublists: T[][] = [];
@@ -33,24 +32,35 @@ const PublicListList: React.FC = () => {
     return sublists;
   }
 
-  const handleGetTemplates = async ({
-    page,
-    limit,
-    is_public,
-    sort,
-    name,
-    category_id,
-  }: IPaginationTemplate): Promise<void> => {
-    await templateRequests
-      .listPublicList({ limit, page, is_public, sort, name, category_id })
-      .then((response) => {
+  const currentList = templates?.length ? splitIntoSublists(templates, 7) : [];
+  const debouncedInputValue = useDebounce(searchText, 250);
+
+  const handleGetTemplates = useCallback(
+    async ({
+      page,
+      limit,
+      is_public,
+      sort,
+      name,
+      category_id,
+    }: IPaginationTemplate) => {
+      try {
+        const response = await templateRequests.listPublicList({
+          limit,
+          page,
+          is_public,
+          sort,
+          name,
+          category_id,
+        });
         setTemplates(response);
-      })
-      .catch((error) => {
+      } catch (error) {
         toast.error("Ocorreu um erro ao listar os catálogos");
         console.error(error);
-      });
-  };
+      }
+    },
+    [setTemplates],
+  );
 
   useEffect(() => {
     setCurrentPage(1);
@@ -61,7 +71,12 @@ const PublicListList: React.FC = () => {
       sort: selectFilter.value,
       name: debouncedInputValue,
     });
-  }, [currentCategoryId, debouncedInputValue, selectFilter.value]);
+  }, [
+    currentCategoryId,
+    debouncedInputValue,
+    handleGetTemplates,
+    selectFilter.value,
+  ]);
 
   return (
     <ContainerPublicListList>
@@ -89,6 +104,6 @@ const PublicListList: React.FC = () => {
       </ContentPublicListList>
     </ContainerPublicListList>
   );
-};
+}
 
 export default PublicListList;
