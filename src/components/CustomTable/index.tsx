@@ -43,7 +43,7 @@ import NotFound from "./components/NotFound";
 registerAllModules();
 registerAllEditors();
 
-const CustomTable: React.FC<CustomTableProps> = () => {
+const CustomTable: React.FC<CustomTableProps> = ({ isPublic }) => {
   const hotRef = useRef<HotTable>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
   const {
@@ -359,6 +359,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
       <>
         <Content>
           <HeaderFilters
+            isPublic={isPublic}
             template={template}
             // @ts-ignore
             headerTable={headerTable}

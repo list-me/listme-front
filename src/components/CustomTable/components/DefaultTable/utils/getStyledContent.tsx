@@ -92,10 +92,10 @@ const REQUIRED_INTEGRATION_BUTTON = `
 
 const getStyledContent = (
   iconType: any,
-  valueToVisible: string,
+  valueToVisible: string | number | undefined,
   isRequired: boolean,
   colData: any,
-) => {
+): string => {
   const integrationsList = colData?.integrations;
   const moreNumber = integrationsList - 1;
 
