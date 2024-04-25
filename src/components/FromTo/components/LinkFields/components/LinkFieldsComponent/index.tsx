@@ -60,11 +60,9 @@ function LinkFieldsComponent({
     targetHeaderTable,
     setTargetHeaderTable,
     setTargetColHeaders,
+    isPublic,
   } = useProductContext();
   const { currentLinkConfigurationValue } = useFromToContext();
-
-  const url = window.location.href;
-  const isPublic = url.includes("public");
 
   const currentHeaderTable = isPublic ? targetHeaderTable : headerTable;
 
@@ -114,7 +112,7 @@ function LinkFieldsComponent({
         )}
       </HeaderLinkFields>
       <ContentLinkFields>
-        {colHeadersToPreviewTable?.map((item) => (
+        {colHeadersToPreviewTable?.map((item, index) => (
           <ContentRowLinkFields
             key={item}
             checkColumn={
@@ -124,8 +122,17 @@ function LinkFieldsComponent({
             <Origin title={item} example={example(item) || undefined} />
             <ContainerSelectText>
               <SelectComponent
-                select={selectedLinkFields[item] || null}
-                onChange={(value) => handleSelectChange(item, value)}
+                select={
+                  selectedLinkFields[
+                    isPublic ? headerTable[index].data : item
+                  ] || null
+                }
+                onChange={(value) =>
+                  handleSelectChange(
+                    isPublic ? headerTable[index].data : item,
+                    value,
+                  )
+                }
                 options={options}
                 placeHolder="Selecione"
                 small
