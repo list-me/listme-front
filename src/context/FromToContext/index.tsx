@@ -42,6 +42,7 @@ export function FromToContextProvider({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
+  const [stepType, setStepType] = useState<"fromTo" | "publicList">("fromTo");
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<CSVRow[]>([]);
   const [currentFile, setCurrentFile] = useState<File>();
@@ -207,6 +208,8 @@ export function FromToContextProvider({
     setSelectedLinkFields,
     csvResponse,
     toClean,
+    stepType,
+    setStepType,
     valuesIntegrationsConfig,
     setValuesIntegrationsConfig,
     providersToIntegration,

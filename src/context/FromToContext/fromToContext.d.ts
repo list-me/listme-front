@@ -52,6 +52,8 @@ export interface FromToContextType {
   >;
   csvResponse: ICSVResponse;
   toClean: () => void;
+  stepType: "fromTo" | "publicList";
+  setStepType: React.Dispatch<React.SetStateAction<"fromTo" | "publicList">>;
   valuesIntegrationsConfig: IValuesIntegrationsConfig[];
   setValuesIntegrationsConfig: React.Dispatch<
     React.SetStateAction<IValuesIntegrationsConfig[]>
