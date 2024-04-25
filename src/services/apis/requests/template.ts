@@ -9,6 +9,7 @@ interface IPagination {
   is_public?: boolean;
   sort?: string;
   name?: string;
+  category_id?: string;
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -48,12 +49,15 @@ export const templateRequests = {
     is_public = false,
     sort = "",
     name = "",
+    category_id = "",
   }: IPagination): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.get(
       `/templates?offset=${page}&limit=${limit}${
         is_public && `&is_public=true`
-      }${sort && `&sort=${sort}`}${name && `&name=${name}`}`,
+      }${sort && `&sort=${sort}`}${name && `&name=${name}`}${
+        category_id && `&category_id=${category_id}`
+      }`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

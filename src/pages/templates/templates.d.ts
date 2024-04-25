@@ -4,4 +4,5 @@ export interface IPaginationTemplate {
   is_public?: boolean;
   sort?: string;
   name?: string;
+  category_id?: string;
 }
