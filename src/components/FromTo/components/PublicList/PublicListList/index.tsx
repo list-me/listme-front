@@ -131,6 +131,7 @@ const PublicListList: React.FC = () => {
   };
 
   useEffect(() => {
+    setCurrentPage(1);
     handleGetTemplates({
       page: 0,
       limit: 1000,
