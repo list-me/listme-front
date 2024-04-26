@@ -100,11 +100,9 @@ function DefaultFormLine({
     }
   }, [valueColLeft?.value?.id]);
 
+  console.log("🚀 ~ optionsToView ~ fieldsToOptions:", fieldsToOptions);
   const optionsToView = fieldsToOptions.filter((fItem) => {
-    return (
-      item.types.includes(fItem?.value?.type) &&
-      (item.required ? fItem.value.required : true)
-    );
+    return item.types.includes(fItem?.value?.type);
   });
 
   const subtopic = !!item?.key?.includes(".");
@@ -119,10 +117,11 @@ function DefaultFormLine({
           const currentItem = currentPayloads?.find((fItem, fIndex) => {
             return +fIndex === +index;
           });
+
           if (currentItem && !secondValueSelected) {
-            const secondValueSelectedToEdit = optionsToView?.find(
-              (opt) => opt.value.id === currentItem.value.fieldId,
-            );
+            const secondValueSelectedToEdit = optionsToView?.find((opt) => {
+              return opt.value.id === currentItem.value.fieldId;
+            });
 
             changePayloadToFinish(
               valueColLeft,
@@ -167,7 +166,6 @@ function DefaultFormLine({
     secondValueSelected,
     valueColLeft,
   ]);
-
   return (
     <ContainerDefaultFormLine key={index}>
       <KeyText>
