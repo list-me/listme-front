@@ -62,8 +62,9 @@ function LinkFieldsComponent({
     targetHeaderTable,
     setTargetHeaderTable,
     setTargetColHeaders,
-    isPublic,
   } = useProductContext();
+  const url = window.location.href;
+  const isPublic = url.includes("public");
   const { currentLinkConfigurationValue, checkedList, setCheckedList } =
     useFromToContext();
   const currentHeaderTable = isPublic ? targetHeaderTable : headerTable;

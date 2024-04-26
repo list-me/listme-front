@@ -56,7 +56,7 @@ function LinkFieldsPublic(): JSX.Element {
 
       if (targetTemplatePublic) {
         const templateBody = {
-          name: targetTemplatePublic.name,
+          name: `${targetTemplatePublic.name} (Linked)`,
           type: "sync",
           fields: {
             template_origin: template.id,

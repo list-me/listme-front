@@ -103,7 +103,6 @@ interface ITypeProductContext {
   setTargetHeaderTable: React.Dispatch<React.SetStateAction<IHeader[]>>;
   targetColHeaders: string[];
   setTargetColHeaders: React.Dispatch<React.SetStateAction<string[]>>;
-  isPublic: boolean;
 }
 
 interface SignedUrlResponse {
@@ -121,8 +120,6 @@ export const ProductContextProvider = ({
 }: {
   children: React.ReactNode;
 }): JSX.Element => {
-  const url = window.location.href;
-  const isPublic = url.includes("public");
   const [products, setProducts] = useState<IProductToTable[]>([]);
   const [template, setTemplate] = useState<ITemplate>();
   const [headerTable, setHeaderTable] = useState<IHeader[]>([]);
@@ -269,6 +266,8 @@ export const ProductContextProvider = ({
       conditions: IConditions[] | undefined = undefined,
       operator?: string,
     ) => {
+      const url = window.location.href;
+      const isPublic = url.includes("public");
       const requestFunction = isPublic
         ? productRequests.listPublic
         : productRequests.list;
@@ -810,6 +809,8 @@ export const ProductContextProvider = ({
   };
 
   const handleNewColumn = (col: any, fields: any[]) => {
+    const url = window.location.href;
+    const isPublic = url.includes("public");
     const newTemplate = isPublic ? targetTemplatePublic : template;
     // @ts-ignore
     newTemplate.fields.fields = fields;
