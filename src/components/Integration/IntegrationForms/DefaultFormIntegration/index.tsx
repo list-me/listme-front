@@ -383,18 +383,15 @@ function DefaultFormIntegration(): JSX.Element {
 
             if (existingItem) {
               if (curr.multiple) {
-                // Adiciona o valor ao array existente
                 existingItem.value.push(value);
               }
             } else if (curr.multiple) {
-              // Se é múltiplo, cria um novo item com um array contendo o valor
               acc.push({
                 ...rest,
                 templateConfigPayloadId,
                 value: [value],
               });
             } else {
-              // Se não é múltiplo, adiciona normalmente
               acc.push(curr);
             }
 
