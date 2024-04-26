@@ -54,7 +54,7 @@ export const templateRequests = {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.get(
       `/templates?offset=${page}&limit=${limit}${
-        is_public && `&is_public=true`
+        is_public && `&is_public=true&type=list`
       }${sort && `&sort=${sort}`}${name && `&name=${name}`}${
         category_id && `&category_id=${category_id}`
       }`,

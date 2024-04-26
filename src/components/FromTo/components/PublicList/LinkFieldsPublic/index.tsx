@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import { ContainerLinkFields, WarnAlert } from "../../LinkFields/styles";
 import {
   BoxFromTo,
@@ -16,6 +18,7 @@ import isEmptyObject from "../../../../../utils/isEmptyObject";
 import fixedOptions from "../../LinkFields/utils/fixedOptions";
 import { templateRequests } from "../../../../../services/apis/requests/template";
 import { productRequests } from "../../../../../services/apis/requests/product";
+import { ROUTES } from "../../../../../constants/routes";
 
 function LinkFieldsPublic(): JSX.Element {
   const {
@@ -27,54 +30,73 @@ function LinkFieldsPublic(): JSX.Element {
     allRowsSelected,
     selectedProductsId,
   } = useFromToContext();
+  const navigate = useNavigate();
+
   const { headerTable, colHeaders, targetTemplatePublic, template } =
     useProductContext();
 
+  function downloadCSV(blob: any, filename: any): any {
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+  }
+
   async function onFinish(): Promise<void> {
-    const originIds = headerTable.map((item, index) => {
-      return { data: item.data, isSync: checkedList[index] };
-    });
+    try {
+      const originIds = headerTable.map((item, index) => {
+        return { data: item.data, isSync: checkedList[index] };
+      });
 
-    const fields = originIds
-      // eslint-disable-next-line array-callback-return
-      .map((item) => {
-        const field = {
-          origin: item.data,
-          target: selectedLinkFields[item.data]?.value,
-          is_sync: !!item.isSync,
+      const fields = originIds
+        // eslint-disable-next-line array-callback-return
+        .map((item) => {
+          const field = {
+            origin: item.data,
+            target: selectedLinkFields[item.data]?.value,
+            is_sync: !!item.isSync,
+          };
+          if (field.target) return field;
+        })
+        .filter((item) => item);
+
+      if (targetTemplatePublic) {
+        const templateBody = {
+          name: targetTemplatePublic.name,
+          type: "sync",
+          fields: {
+            template_origin: template.id,
+            template_target: targetTemplatePublic.id,
+            fields,
+          },
         };
-        if (field.target) return field;
-      })
-      .filter((item) => item);
-
-    if (targetTemplatePublic) {
-      const templateBody = {
-        name: targetTemplatePublic.name,
-        type: "sync",
-        fields: {
-          template_origin: template.id,
-          template_target: targetTemplatePublic.id,
-          fields,
-        },
-      };
-      const response = await templateRequests.postFromTo(templateBody as any);
-      if (response.id) {
-        const body = new FormData();
-        if (allRowsSelected) {
-          body.append("all", "true");
-        } else {
-          body.append("all", "false");
-          const idsCSV = selectedProductsId.map((id) => `${id}\n`).join("");
-          const blobCSV = new Blob([idsCSV], { type: "text/csv" });
-          body.append("items", blobCSV);
+        const response = await templateRequests.postFromTo(templateBody as any);
+        if (response.id) {
+          const body = new FormData();
+          if (allRowsSelected) {
+            const emptyCSV = new Blob([""], { type: "text/csv" });
+            body.append("items", emptyCSV);
+            body.append("all", "true");
+          } else {
+            body.append("all", "false");
+            const idsCSV = selectedProductsId.map((id) => `${id}\n`).join("");
+            const blobCSV = new Blob([idsCSV], { type: "text/csv" });
+            body.append("items", blobCSV);
+          }
+          body.append("template_id", response.id);
+          await productRequests.postLink(body);
+          toast.success("Vínculo realizado com sucesso");
+          navigate(`${ROUTES.PRODUCTS}/${response.id}`);
         }
-        body.append("template_id", response.id);
-        const responseLink = await productRequests.postLink(body);
-        console.log(
-          "🚀 ~ file: index.tsx:77 ~ onFinish ~ responseLink:",
-          responseLink,
-        );
       }
+    } catch (error) {
+      console.error(error);
+      toast.error("Não foi possível efetuar o vínculo, tente novamente");
     }
   }
 
@@ -106,7 +128,7 @@ function LinkFieldsPublic(): JSX.Element {
     copyArray.pop();
 
     const allIgnore = copyArray.every((item) => {
-      return valuesToVerify.includes(item.data.toString());
+      return valuesToVerify.includes(item.data?.toString());
     });
     if (allIgnore) {
       colHeaders!.forEach((itemcolHeadersToPreviewTable) => {
