@@ -956,7 +956,6 @@ export const ProductContextProvider = ({
     setTargetHeaderTable,
     targetColHeaders,
     setTargetColHeaders,
-    isPublic,
   };
 
   return (
