@@ -100,7 +100,6 @@ function DefaultFormLine({
     }
   }, [valueColLeft?.value?.id]);
 
-  console.log("🚀 ~ optionsToView ~ fieldsToOptions:", fieldsToOptions);
   const optionsToView = fieldsToOptions.filter((fItem) => {
     return item.types.includes(fItem?.value?.type);
   });
@@ -120,7 +119,7 @@ function DefaultFormLine({
 
           if (currentItem && !secondValueSelected) {
             const secondValueSelectedToEdit = optionsToView?.find((opt) => {
-              return opt.value.id === currentItem.value.fieldId;
+              return opt.value.id === currentItem.value?.fieldId;
             });
 
             changePayloadToFinish(

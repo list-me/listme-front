@@ -333,13 +333,34 @@ function DefaultFormIntegration(): JSX.Element {
 
       if (response && response.length > 0 && response[0].fields) {
         const payloadsToFilter = response[0].fields.entity.payloads;
+        const templateConfigPayloadIdRepetidos = payloadsToFilter
+          .map((mItem) => mItem.templateConfigPayloadId)
+          .filter((item, index, array) => {
+            return (
+              array.indexOf(item) !== index && array.lastIndexOf(item) === index
+            );
+          });
 
         const payloadsDefault = currentField?.payload
           .map((currentPayItem) => {
-            const item = payloadsToFilter.find((findItem) => {
-              return findItem.templateConfigPayloadId === currentPayItem.id;
-            });
-            if (item) return item;
+            const items = payloadsToFilter
+              .filter((filterItem) => {
+                return filterItem.templateConfigPayloadId === currentPayItem.id;
+              })
+              .map((mItem) => {
+                if (
+                  templateConfigPayloadIdRepetidos.includes(
+                    mItem.templateConfigPayloadId,
+                  )
+                ) {
+                  return {
+                    ...mItem,
+                    multiple: true,
+                  };
+                }
+                return { ...mItem, multiple: false };
+              });
+            if (items) return items;
             return {
               templateConfigPayloadId: "",
               type: "",
@@ -350,41 +371,56 @@ function DefaultFormIntegration(): JSX.Element {
               },
             };
           })
-          .map((pItem) => {
-            if (pItem.multiple)
-              return {
-                ...pItem,
-                // @ts-ignore
-                value: pItem.value[0],
-              };
+          .flat();
 
-            return pItem;
-          });
+        const groupedByTemplateId = payloadsDefault?.reduce(
+          (acc: any[], curr: any) => {
+            const { templateConfigPayloadId, value, ...rest } = curr;
+            const existingItem = acc.find(
+              (item: any) =>
+                item.templateConfigPayloadId === templateConfigPayloadId,
+            );
 
+            if (existingItem) {
+              if (curr.multiple) {
+                // Adiciona o valor ao array existente
+                existingItem.value.push(value);
+              }
+            } else if (curr.multiple) {
+              // Se é múltiplo, cria um novo item com um array contendo o valor
+              acc.push({
+                ...rest,
+                templateConfigPayloadId,
+                value: [value],
+              });
+            } else {
+              // Se não é múltiplo, adiciona normalmente
+              acc.push(curr);
+            }
+
+            return acc;
+          },
+          [],
+        );
         const newPayloadsMultiple: any[] = [];
-        const payloadsMultiple = payloadsToFilter.find((pItem) => {
+        const payloadsMultiple = groupedByTemplateId?.find((pItem) => {
           return pItem.multiple;
         });
 
-        (payloadsMultiple?.value as unknown as [])?.forEach(
-          (multiValue, index) => {
-            if (index > 0) {
-              newPayloadsMultiple.push({
-                type: payloadsMultiple?.type,
-                value: multiValue,
-                multiple: payloadsMultiple?.multiple,
-                templateConfigPayloadId:
-                  payloadsMultiple?.templateConfigPayloadId,
-              });
-            }
-          },
-        );
+        (payloadsMultiple?.value as unknown as [])?.forEach((multiValue) => {
+          newPayloadsMultiple.push({
+            type: payloadsMultiple?.type,
+            value: multiValue,
+            multiple: payloadsMultiple?.multiple,
+            templateConfigPayloadId: payloadsMultiple?.templateConfigPayloadId,
+          });
+        });
 
         if (currentField) {
           // eslint-disable-next-line no-plusplus
           for (let i = 0; i < newPayloadsMultiple.length; i++) {
             const variants = currentField?.payload.filter((pItem) => {
-              return pItem.key.includes("feature_id");
+              return pItem.key.includes("variant_id");
             });
             currentField.payload = [...currentField.payload, variants[0]];
           }
@@ -395,7 +431,12 @@ function DefaultFormIntegration(): JSX.Element {
           fields: {
             templateConfigId: response[0].fields.templateConfigId,
             entity: {
-              payloads: [...payloadsDefault!, ...newPayloadsMultiple],
+              payloads: [
+                ...payloadsDefault?.filter(
+                  (fItem) => fItem.multiple === false,
+                )!,
+                ...newPayloadsMultiple,
+              ],
               name: response[0].fields.entity.name,
               templateConfigEntityId:
                 response[0].fields.entity.templateConfigEntityId,
@@ -437,7 +478,6 @@ function DefaultFormIntegration(): JSX.Element {
                 mode={mode}
                 setMode={setMode}
               />
-
               <HeaderSelect
                 headerSelectValue={headerSelectValue}
                 setHeaderSelectValue={(e: any) => {
@@ -449,7 +489,6 @@ function DefaultFormIntegration(): JSX.Element {
                 required
                 done={mode === "registration" && done === "done"}
               />
-
               {currentField?.id && (
                 <DefaultForm
                   characteristic={false}
