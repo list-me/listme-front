@@ -13,28 +13,24 @@ import LinkFieldsPublic from "../PublicList/LinkFieldsPublic";
 
 function StepContent(): JSX.Element {
   const { currentStep, stepType } = useFromToContext();
+  console.log("🚀 ~ StepContent ~ currentStep:", currentStep);
 
   return (
     <StepContentContainer>
       {currentStep === 0 && <InitialStep />}
       {currentStep === 1 &&
         (stepType === "fromTo" ? <ImportFile /> : <PublicListList />)}
-      {currentStep === 2 && stepType === "fromTo" ? (
-        <ImportConfiguration />
-      ) : (
-        <LinkConfiguration />
-      )}
-      {currentStep === 3 && stepType === "fromTo" ? (
-        <ImportOptions />
-      ) : (
-        <LinkFieldsPublic />
-      )}
-      {currentStep === 4 && stepType === "fromTo" ? <LinkFields /> : <></>}
-      {currentStep === 4 && stepType !== "fromTo" ? (
-        <IntegrationSettings />
-      ) : (
-        <></>
-      )}
+      {currentStep === 2 &&
+        (stepType === "fromTo" ? (
+          <ImportConfiguration />
+        ) : (
+          <LinkConfiguration />
+        ))}
+      {currentStep === 3 &&
+        (stepType === "fromTo" ? <ImportOptions /> : <LinkFieldsPublic />)}
+      {currentStep === 4 && (stepType === "fromTo" ? <LinkFields /> : <></>)}
+      {currentStep === 4 &&
+        (stepType !== "fromTo" ? <IntegrationSettings /> : <></>)}
       {currentStep === 5 && <LinkFields />}
     </StepContentContainer>
   );

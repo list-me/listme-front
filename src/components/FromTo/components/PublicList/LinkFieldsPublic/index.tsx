@@ -132,7 +132,7 @@ function LinkFieldsPublic(): JSX.Element {
   ]);
 
   const options: IOption[] =
-    targetTemplatePublic!.fields?.fields
+    targetTemplatePublic?.fields?.fields
       ?.map((item: any) => {
         const newItem = {
           value: item.id,
@@ -142,7 +142,7 @@ function LinkFieldsPublic(): JSX.Element {
         };
         return newItem;
       })
-      .filter((itemOption: IOption) => {
+      ?.filter((itemOption: IOption) => {
         return !optionsToVerify.includes(itemOption.value);
       }) || [];
 
