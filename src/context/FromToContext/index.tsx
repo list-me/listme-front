@@ -209,6 +209,15 @@ export function FromToContextProvider({
     setValuesImportOptions(initialValuesImportOptions);
     setStepType("fromTo");
     setTemplates([]);
+    setFromToIsOpened(false);
+    setCurrentLinkConfigurationValue({
+      value: "",
+      label: "",
+      description: "",
+    });
+    setCheckedList([false]);
+    setRowsSelected([]);
+    setAllRowsSelected(false);
   }
 
   useEffect(() => {

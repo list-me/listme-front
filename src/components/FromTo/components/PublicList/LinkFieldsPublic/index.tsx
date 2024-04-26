@@ -29,23 +29,12 @@ function LinkFieldsPublic(): JSX.Element {
     checkedList,
     allRowsSelected,
     selectedProductsId,
+    toClean,
   } = useFromToContext();
   const navigate = useNavigate();
 
   const { headerTable, colHeaders, targetTemplatePublic, template } =
     useProductContext();
-
-  function downloadCSV(blob: any, filename: any): any {
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    document.body.removeChild(link);
-  }
 
   async function onFinish(): Promise<void> {
     try {
@@ -91,6 +80,7 @@ function LinkFieldsPublic(): JSX.Element {
           body.append("template_id", response.id);
           await productRequests.postLink(body);
           toast.success("Vínculo realizado com sucesso");
+          toClean();
           navigate(`${ROUTES.PRODUCTS}/${response.id}`);
         }
       }
