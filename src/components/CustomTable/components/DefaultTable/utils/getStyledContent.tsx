@@ -117,7 +117,7 @@ const getStyledContent = (
       <div style="${FLEX_GAP_STYLE}">
         ${renderToString(iconType)}
         <p style="${
-          !isPublic && valueToVisible !== "+" ? TEXT_STYLE : PLUS_STYLE
+          valueToVisible !== "+" ? TEXT_STYLE : PLUS_STYLE
         }">${valueToVisible}</p>
       </div>
       <div style="${FLEX_GAP_STYLE}">
