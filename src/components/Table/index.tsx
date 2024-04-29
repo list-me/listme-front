@@ -39,7 +39,7 @@ function CustomTable(props: any): JSX.Element {
       title: 101,
       headerTable: 56,
       paddingNavigation: 62,
-      rowHeight: 83,
+      rowHeight: 62,
       marginError: 1, // Considerando o menos 1 para não vazar o sidebar
     };
 
