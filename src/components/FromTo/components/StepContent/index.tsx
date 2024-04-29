@@ -13,7 +13,6 @@ import LinkFieldsPublic from "../PublicList/LinkFieldsPublic";
 
 function StepContent(): JSX.Element {
   const { currentStep, stepType } = useFromToContext();
-  console.log("🚀 ~ StepContent ~ currentStep:", currentStep);
 
   return (
     <StepContentContainer>

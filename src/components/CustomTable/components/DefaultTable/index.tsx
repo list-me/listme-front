@@ -328,14 +328,19 @@ function DefaultTable({
       value: string | string[],
     ): void => {
       if (cols) {
-        // eslint-disable-next-line no-param-reassign
-        td.innerHTML = customRendererRadioComponent({
-          columns,
-          col,
-          value,
-          svgStringDropDown,
-          setAlertTooltip,
-        });
+        if (value === "valor censurado") {
+          // eslint-disable-next-line no-param-reassign
+          td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          td.innerHTML = customRendererRadioComponent({
+            columns,
+            col,
+            value,
+            svgStringDropDown,
+            setAlertTooltip,
+          });
+        }
       }
     },
     [columns, svgStringDropDown],
@@ -349,7 +354,9 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
-      if (cols) {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+      } else if (cols) {
         // eslint-disable-next-line no-param-reassign
         td.innerHTML = customRendererCheckedComponent({
           columns,
@@ -380,6 +387,11 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ) => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+        return;
+      }
+
       const div = document.createElement("div");
       div.innerHTML = value;
 
@@ -399,7 +411,7 @@ function DefaultTable({
       let newValue;
       const regex = /https:\/\/[^/]+\//;
 
-      if (value) {
+      if (value && !Array.isArray(value)) {
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
             const lastDotIndex: number = itemValue.lastIndexOf(".");
@@ -468,14 +480,18 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+      } else {
+        td.innerHTML = customRendererDropdownComponent({
+          cols,
+          col,
+          value,
+          svgStringDropDown,
+          setAlertTooltip,
+        });
+      }
       // eslint-disable-next-line no-param-reassign
-      td.innerHTML = customRendererDropdownComponent({
-        cols,
-        col,
-        value,
-        svgStringDropDown,
-        setAlertTooltip,
-      });
     },
     [cols, svgStringDropDown],
   );
@@ -497,8 +513,11 @@ function DefaultTable({
       if (textValue?.length > maxLength) {
         td.style.border = "2px solid #F1BC02";
       }
-
-      td.innerHTML = textValue;
+      if (textValue === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+      } else {
+        td.innerHTML = textValue;
+      }
     },
     [cols, svgStringDropDown],
   );
@@ -512,6 +531,10 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+        return;
+      }
       const numericValue = value as string;
       const previousValue = _instance.getDataAtCell(_row, col);
       const colType = columns[col]?.type;
@@ -543,6 +566,10 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+        return;
+      }
       const colDecimalPoint =
         (cols[col]?.options && cols[col]?.options[0]) || ".";
 
@@ -581,6 +608,10 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+        return;
+      }
       if (typeof value === "string" && value?.length && value?.includes("["))
         // eslint-disable-next-line no-param-reassign
         value = JSON?.parse(value);
@@ -600,6 +631,10 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+        return;
+      }
       const handleChange = (checked: boolean): void => {
         const newValue = [`${checked}`];
         instance.setDataAtCell(row, col, newValue);
@@ -973,7 +1008,7 @@ function DefaultTable({
         hiddenColumns={{ columns: hidden }}
         manualColumnResize
         manualColumnMove
-        rowHeaders={!parentId || !isPublic}
+        rowHeaders={!parentId && !isPublic}
         checkedTemplate
         rowHeights="52px"
         licenseKey="non-commercial-and-evaluation"

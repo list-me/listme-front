@@ -59,12 +59,15 @@ function LinkConfiguration(): JSX.Element {
           <BoxButtons>
             <NavigationButton
               disabled={!currentLinkConfigurationValue.value}
-              onClick={() => setCurrentStep(3)}
+              onClick={() => setFromToIsOpened(false)}
             >
               <PlusIcon />
               Voltar
             </NavigationButton>
-            <NavigationButton disabled={!currentLinkConfigurationValue.value}>
+            <NavigationButton
+              disabled={!currentLinkConfigurationValue.value}
+              onClick={() => setCurrentStep(3)}
+            >
               <PlusIcon />
               Avançar
             </NavigationButton>

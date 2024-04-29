@@ -56,7 +56,7 @@ function CustomTable(props: any): JSX.Element {
 
     const newPageSize = props.isPublic
       ? // ? props.dataProvider.le
-        4
+        7
       : Math.max(3, countRows);
 
     setPageSize(newPageSize);
