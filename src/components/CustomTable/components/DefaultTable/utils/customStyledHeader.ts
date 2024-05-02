@@ -217,18 +217,22 @@ function customStyledHeader(
     const configSvgDiv = TH.querySelector(".configSvgDiv");
     configSvgDiv?.addEventListener("click", selectParentHeader);
     const collapseDiv = TH.querySelector(".collapseIconGroup");
-    // collapseDiv?.addEventListener("click", () => handleHidden("oioioi"));
     collapseDiv?.addEventListener("click", () => {
       indexes.shift();
 
-      // handleHidden(indexes, fields, true);
       const newGroups = groups.map((group) => {
         if (group.label === spanContent) {
-          return { ...group, colspan: 1, newHiddens: indexes };
+          return [
+            { ...group, colspan: 1, newHiddens: indexes },
+            ...Array.from({ length: group.colspan - 1 }, () => ({
+              label: group.label,
+              colspan: 1,
+            })),
+          ];
         }
         return group;
       });
-      setGroups(newGroups);
+      setGroups(() => [...newGroups.flat()]);
     });
   }
 }

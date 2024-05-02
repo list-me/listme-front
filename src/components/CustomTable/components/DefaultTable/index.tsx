@@ -766,6 +766,43 @@ function DefaultTable({
     }
   };
 
+  const totalGroupedColumns = useMemo(() => {
+    if (groups && groups.length > 0 && groups[0]?.label) {
+      return groups.reduce(
+        (ttl, itemGroup) => ttl + (itemGroup?.colspan || 0),
+        0,
+      );
+    }
+    return 0;
+  }, [groups]);
+  const totalUngroupedColumns = useMemo(() => {
+    if (cols && cols.length > 0) {
+      return cols.length - 1 - totalGroupedColumns;
+    }
+    return 0;
+  }, [cols, totalGroupedColumns]);
+
+  const ungroupeds = useMemo(() => {
+    if (totalUngroupedColumns > 0) {
+      return new Array(totalUngroupedColumns).fill("+ Criar novo grupo");
+    }
+    return [];
+  }, [totalUngroupedColumns]);
+
+  const groupsToView = groups[0]?.label
+    ? [[...groups, ...ungroupeds], colHeaders]
+    : [ungroupeds, colHeaders];
+  console.log("🚀 ~ groupsToView:", groupsToView);
+
+  const newHiddens = useMemo(() => {
+    return groups
+      .map((itemGroup: any) => {
+        return itemGroup?.newHiddens;
+      })
+      ?.filter(Boolean)
+      .flat();
+  }, [groups]);
+
   const styledHeader = useCallback(
     (column: number, TH: HTMLTableHeaderCellElement): void => {
       customStyledHeader(
@@ -1054,43 +1091,7 @@ function DefaultTable({
       });
     }
   };
-
-  const totalGroupedColumns = useMemo(() => {
-    if (groups && groups.length > 0 && groups[0]?.label) {
-      return groups.reduce(
-        (ttl, itemGroup) => ttl + (itemGroup?.colspan || 0),
-        0,
-      );
-    }
-    return 0;
-  }, [groups]);
-  const totalUngroupedColumns = useMemo(() => {
-    if (cols && cols.length > 0) {
-      return cols.length - 1 - totalGroupedColumns;
-    }
-    return 0;
-  }, [cols, totalGroupedColumns]);
-
-  const ungroupeds = useMemo(() => {
-    if (totalUngroupedColumns > 0) {
-      return new Array(totalUngroupedColumns).fill("+ Criar novo grupo");
-    }
-    return [];
-  }, [totalUngroupedColumns]);
-
-  const groupsToView = groups[0]?.label
-    ? [[...groups, ...ungroupeds], colHeaders]
-    : [ungroupeds, colHeaders];
-
-  const newHiddens = useMemo(() => {
-    return groups
-      .map((itemGroup: any) => {
-        return itemGroup?.newHiddens;
-      })
-      ?.filter(Boolean)
-      .flat();
-  }, [groups]);
-
+  const hiddensToView = [...newHiddens, ...hidden];
   return (
     <>
       {!!coordsLimitAlert.coordX &&
@@ -1134,7 +1135,7 @@ function DefaultTable({
         </AlertTooltip>
       )}
       <HotTable
-        key={parentId + newHiddens.join()}
+        key={parentId + newHiddens.join() + groups.join()}
         nestedRows
         nestedHeaders={groupsToView}
         bindRowsWithHeaders
@@ -1150,10 +1151,10 @@ function DefaultTable({
         columns={cols}
         data={products}
         hiddenRows={{
-          rows: [...hiddenRows, ...newHiddens],
+          rows: hiddenRows,
           indicators: false,
         }}
-        hiddenColumns={{ columns: hidden }}
+        hiddenColumns={{ columns: hiddensToView }}
         manualColumnResize
         manualColumnMove
         rowHeaders={!parentId}
