@@ -20,7 +20,7 @@ export const SuspenseMenu = styled.div`
   z-index: 9999;
 
   height: auto;
-  width: 220px;
+  width: 265px;
 
   border-radius: 8px;
   box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.07);

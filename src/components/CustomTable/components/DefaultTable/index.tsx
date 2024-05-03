@@ -35,7 +35,6 @@ import customRendererFile from "./utils/customRendererFile";
 import HeaderDropDown from "../HeaderDropDown";
 import { IDropDownStatus } from "../HeaderDropDown/HeaderDropDown";
 import { IconType } from "../HeaderDropDown/components/Cell/Cell.d";
-import getStyledContent from "./utils/getStyledContent";
 import { ICol } from "../../CustomTable";
 import disableMultiSelectionWithControl from "./utils/disableMultiSelectionWithControl";
 import customRendererRadioComponent from "./components/customRendererRadioComponent";
@@ -51,6 +50,13 @@ import ModalSelectChildrens from "../ModalSelectChildrens";
 import { productRequests } from "../../../../services/apis/requests/product";
 import getStyleRowHeader from "./utils/getStyleRowHeader";
 import DocumentIcon from "../../../../assets/icons/document-icon.svg";
+import { ReactComponent as ConfigGroupHeaderSVG } from "../../../../assets/configGroupHeader.svg";
+import { ReactComponent as ArrowRightHeaderGroup } from "../../../../assets/arrow-right-header-group.svg";
+import ParentHeaderEdit from "./components/ParentHeaderEdit";
+import customStyledHeader from "./utils/customStyledHeader";
+import { templateRequests } from "../../../../services/apis/requests/template";
+import ModalSelectColumns from "../ModalSelectColumns";
+import LimitAlert from "./components/LimitAlert";
 
 function DefaultTable({
   hotRef,
@@ -91,13 +97,46 @@ function DefaultTable({
   subItensMode,
   setSubItemsMode,
 }: IDefaultTable): JSX.Element {
+  const { handleRedirectAndGetProducts, setHidden } = useProductContext();
+  const [parentHeaderSelectedIndex, setParentHeaderSelectedIndex] =
+    useState<number>();
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
+  const svgStringConfigHeaderGroup: string = renderToString(
+    <ConfigGroupHeaderSVG />,
+  );
+  const svgArrowRightHeaderGroup: string = renderToString(
+    <ArrowRightHeaderGroup />,
+  );
   const [openAlertTooltip, setAlertTooltip] = useState(false);
   const [openAlertTooltipIntegration, setAlertTooltipIntegration] =
     useState(false);
 
   const { operator } = useFilterContext();
   const { conditionsFilter } = useProductContext();
+
+  const [groups, setGroups] = useState<
+    { label: string; colspan: number; newHiddens: number[] }[]
+  >([]);
+  useEffect(() => {
+    if (template?.fields?.groups) {
+      const toGroups = template?.fields?.groups
+        .map((mItemGroup: any) => {
+          const countRealItems = cols.filter(
+            (item) => item.group === mItemGroup.label,
+          );
+
+          const colspan =
+            countRealItems.length === mItemGroup.total ? mItemGroup.total : 1;
+
+          return { label: mItemGroup.label, colspan };
+        })
+        .filter((fItemGroup: any) => fItemGroup.colspan > 0);
+
+      if (toGroups?.length > 0) {
+        setGroups(toGroups);
+      }
+    }
+  }, [cols, template?.fields?.groups]);
 
   useEffect(() => {
     if (hotRef.current) {
@@ -616,10 +655,15 @@ function DefaultTable({
         // eslint-disable-next-line no-param-reassign
         value = JSON?.parse(value);
 
-      const totalItems = value ? value?.length : 0;
-      td.innerHTML = `<div class="tag-content">${totalItems} Items relacionados</div>`;
+      td.innerHTML =
+        value?.length > 0
+          ? value?.map(
+              (mValue: any) =>
+                `<div class="tag-content">${mValue?.field}</div>`,
+            )
+          : `<div class="tag-content">Nenhum item relacionado</div>`;
     },
-    [],
+    [cols],
   );
 
   const customRendererBoolean = useCallback(
@@ -680,6 +724,191 @@ function DefaultTable({
       return ICON_HEADER[type];
     },
     [ICON_HEADER],
+  );
+
+  const [editModeGroup, setEditModeGroup] = useState<"group" | "ungroup" | "">(
+    "",
+  );
+  const [groupReferenceEditMode, setGroupReferenceEditMode] = useState("");
+
+  const [idsColumnsSelecteds, setIdsColumnsSelecteds] = useState<string[]>([]);
+
+  const createHeaderGroup = async (newGroup: string): Promise<void> => {
+    try {
+      const newGroups = [...[...groups].map((group) => group.label), newGroup];
+
+      const newFields = template.fields.fields.map((field: any) => {
+        if (idsColumnsSelecteds.includes(field.id)) {
+          const newField = { ...field, group: newGroup };
+          delete newField.order;
+          delete newField.width;
+          delete newField.frozen;
+          delete newField.hidden;
+          delete newField.integrations;
+          return newField;
+        }
+        const newField = { ...field };
+        delete newField.order;
+        delete newField.width;
+        delete newField.frozen;
+        delete newField.hidden;
+        delete newField.integrations;
+        return newField;
+      });
+
+      const newTemplates = {
+        fields: newFields,
+        groups: newGroups,
+      };
+      await templateRequests.update(template.id, newTemplates);
+      toast.success("Grupo criado com sucesso");
+      const id = window.location.pathname.substring(10);
+      if (id) {
+        setTimeout(() => {
+          handleRedirectAndGetProducts(id).then(() => {});
+        }, 0);
+      }
+      setIdsColumnsSelecteds([]);
+      setEditModeGroup("");
+    } catch (error) {
+      toast.error("Ocorreu um erro durante a criação do novo grupo");
+      console.log(error);
+      throw error;
+    }
+  };
+
+  const removeHeaderGroup = async (referenceGroup: string): Promise<void> => {
+    try {
+      const newFields = template.fields.fields.map((field: any) => {
+        if (idsColumnsSelecteds.includes(field.id)) {
+          const newField = { ...field, group: "" };
+          delete newField.order;
+          delete newField.width;
+          delete newField.frozen;
+          delete newField.hidden;
+          delete newField.integrations;
+          delete newField.group;
+          return newField;
+        }
+        const newField = { ...field };
+        delete newField.order;
+        delete newField.width;
+        delete newField.frozen;
+        delete newField.hidden;
+        delete newField.integrations;
+        return newField;
+      });
+
+      const fieldsFiltered = newFields.filter((fItem: any) => {
+        return fItem.group === referenceGroup;
+      });
+
+      if (fieldsFiltered.length === 0) {
+        const indexGroup = groups.findIndex(
+          (obj) => obj.label === referenceGroup,
+        );
+        groups.splice(indexGroup, 1);
+      }
+      const newTemplates = {
+        fields: newFields,
+        groups: groups.map((mGroup) => mGroup.label),
+      };
+      await templateRequests.update(template.id, newTemplates);
+      toast.success("Grupo criado com sucesso");
+      const id = window.location.pathname.substring(10);
+      if (id) {
+        setTimeout(() => {
+          handleRedirectAndGetProducts(id).then(() => {});
+        }, 0);
+      }
+      setIdsColumnsSelecteds([]);
+      setEditModeGroup("");
+    } catch (error) {
+      toast.error("Ocorreu um erro tentar remover coluna de grupo");
+      console.log(error);
+      throw error;
+    }
+  };
+
+  const totalGroupedColumns = useMemo(() => {
+    if (groups && groups.length > 0 && groups[0]?.label) {
+      return groups.reduce(
+        (ttl, itemGroup) => ttl + (itemGroup?.colspan || 0),
+        0,
+      );
+    }
+    return 0;
+  }, [groups]);
+  const totalUngroupedColumns = useMemo(() => {
+    if (cols && cols.length > 0) {
+      return cols.length - 1 - totalGroupedColumns;
+    }
+    return 0;
+  }, [cols, totalGroupedColumns]);
+
+  const ungroupeds = useMemo(() => {
+    if (totalUngroupedColumns > 0) {
+      return new Array(totalUngroupedColumns).fill("+ Criar novo grupo");
+    }
+    return [];
+  }, [totalUngroupedColumns]);
+
+  const groupsToView = groups[0]?.label
+    ? [[...groups, ...ungroupeds], colHeaders]
+    : [ungroupeds, colHeaders];
+
+  const newHiddens = useMemo(() => {
+    return groups
+      .map((itemGroup: any) => {
+        return itemGroup?.newHiddens;
+      })
+      ?.filter(Boolean)
+      .flat();
+  }, [groups]);
+
+  const styledHeader = useCallback(
+    (column: number, TH: HTMLTableHeaderCellElement): void => {
+      customStyledHeader(
+        TH,
+        groups,
+        setParentHeaderSelectedIndex,
+        template,
+        headerTable,
+        column,
+        hotRef,
+        getIconByType,
+        cols,
+        svgStringConfigHeaderGroup,
+        svgArrowRightHeaderGroup,
+        editModeGroup,
+        idsColumnsSelecteds,
+        setIdsColumnsSelecteds,
+        handleRedirectAndGetProducts,
+        groupReferenceEditMode,
+        // handleHidden,
+        setHidden,
+        setGroups,
+        changeAllRowsSelected,
+        allRowsSelected,
+      );
+    },
+    [
+      allRowsSelected,
+      changeAllRowsSelected,
+      cols,
+      editModeGroup,
+      getIconByType,
+      groupReferenceEditMode,
+      groups,
+      handleRedirectAndGetProducts,
+      headerTable,
+      hotRef,
+      idsColumnsSelecteds,
+      setHidden,
+      svgArrowRightHeaderGroup,
+      svgStringConfigHeaderGroup,
+      template,
+    ],
   );
 
   const [hiddenRows, setHiddenRows] = useState<number[]>([]);
@@ -864,39 +1093,6 @@ function DefaultTable({
     }
   }
 
-  const styledHeader = useCallback(
-    (column: number, TH: HTMLTableHeaderCellElement): void => {
-      const colData = template?.fields?.fields.find(
-        (item: any) => item.id === headerTable[column]?.data,
-      );
-      const { required: isRequired } = colData || {};
-      const columnHeaderValue =
-        hotRef.current?.hotInstance?.getColHeader(column);
-      const valueToVisible =
-        columnHeaderValue !== " " ? columnHeaderValue : "+";
-      const iconType = getIconByType(colData?.type);
-      TH.innerHTML = getStyledContent(
-        iconType,
-        valueToVisible,
-        isRequired,
-        colData,
-        changeAllRowsSelected,
-        allRowsSelected,
-        isPublic,
-      );
-    },
-    [
-      allRowsSelected,
-      getIconByType,
-      headerTable,
-      hotRef,
-      isPublic,
-      template?.fields?.fields,
-    ],
-  );
-
-  const { handleRedirectAndGetProducts } = useProductContext();
-
   const [contentTooltipIntegration, setContentTooltipIntegration] = useState([
     {
       provider: "",
@@ -958,8 +1154,88 @@ function DefaultTable({
     } else setproductsToView(products);
   }, [headerTable, isPublic, products]);
 
+  const changeHeaderGroup = async (
+    value: string,
+    index: number,
+  ): Promise<void> => {
+    try {
+      const newGroups = [...groups].map((group) => group.label);
+      newGroups[index] = value;
+
+      const newFields = template.fields.fields.map((field: any) => {
+        if (field.group && !newGroups.includes(field.group)) {
+          const newField = { ...field, group: value };
+          delete newField.order;
+          delete newField.width;
+          delete newField.frozen;
+          delete newField.hidden;
+          delete newField.integrations;
+          return newField;
+        }
+        const newField = { ...field };
+        delete newField.order;
+        delete newField.width;
+        delete newField.frozen;
+        delete newField.hidden;
+        delete newField.integrations;
+
+        return newField;
+      });
+      const newTemplates = {
+        fields: newFields,
+        groups: newGroups,
+      };
+      await templateRequests.update(template.id, newTemplates);
+      toast.success("Grupo editado com sucesso");
+      const newGroupsToState = [...groups];
+      newGroupsToState[index] = { ...groups[index], label: value };
+      setGroups(newGroupsToState);
+    } catch (error) {
+      toast.error("Ocorreu um erro durante a edição do novo grupo:");
+      console.log(error);
+      throw error;
+    }
+  };
+
+  const [coordsLimitAlert, setCoordsLimitAlert] = useState({
+    coordX: 0,
+    coordY: 0,
+    text: "",
+  });
+
+  const afterSelectionHandler = (event: any, coords: any) => {
+    const cellX = coords.col;
+    const cellY = coords.row;
+    const currentCol = cols[cellX];
+    if (cellX >= 0 && cellY >= 0 && !currentCol.enforce_exact_length) {
+      const mouseX = event.clientX;
+      const mouseY = event.clientY;
+      setCoordsLimitAlert({
+        coordX: mouseX,
+        coordY: mouseY,
+        text: `Este campo deve ter ${currentCol.limit} caracteres`,
+      });
+    } else {
+      setCoordsLimitAlert({
+        coordX: 0,
+        coordY: 0,
+        text: "",
+      });
+    }
+  };
+  const hiddensToView = [...newHiddens, ...hidden];
   return (
     <>
+      {!!coordsLimitAlert.coordX &&
+        !!coordsLimitAlert.coordY &&
+        !!coordsLimitAlert.text && (
+          <LimitAlert
+            coordX={coordsLimitAlert.coordX}
+            coordY={coordsLimitAlert.coordY}
+            text={coordsLimitAlert.text}
+            setCoordsLimitAlert={setCoordsLimitAlert}
+          />
+        )}
       {openAlertTooltip && (
         <AlertTooltip setAlertTooltip={setAlertTooltip}>
           <p className="error-title">Inválido:</p>
@@ -990,13 +1266,19 @@ function DefaultTable({
           </p>
         </AlertTooltip>
       )}
-
       <HotTable
-        key={parentId}
+        key={parentId + newHiddens.join() + groups.join()}
         nestedRows
+        nestedHeaders={groupsToView}
         bindRowsWithHeaders
         className="hot-table"
-        readOnly={!!parentId || isPublic || isTableLocked}
+        readOnly={
+          !!parentId ||
+          isPublic ||
+          isTableLocked ||
+          !!parentHeaderSelectedIndex ||
+          editModeGroup !== ""
+        }
         ref={hotRef}
         colHeaders={colHeaders}
         columns={cols}
@@ -1005,7 +1287,7 @@ function DefaultTable({
           rows: hiddenRows,
           indicators: false,
         }}
-        hiddenColumns={{ columns: hidden }}
+        hiddenColumns={{ columns: hiddensToView }}
         manualColumnResize
         manualColumnMove
         rowHeaders={!parentId && !isPublic}
@@ -1018,6 +1300,7 @@ function DefaultTable({
         beforeOnCellMouseDown={(event) => {
           disableMultiSelectionWithControl(event, hotRef);
         }}
+        collapsibleColumns
         afterPaste={afterPasteCallback}
         afterColumnMove={afterColumnMoveCallback}
         afterGetColHeader={styledHeader}
@@ -1030,6 +1313,9 @@ function DefaultTable({
         //   const clickedElementClassList = event.target.classList;
         // }}
         afterOnCellMouseUp={(event: any, coords, _TD) => {
+          if (coords.row >= 0) {
+            afterSelectionHandler(event, coords);
+          }
           const limitWidth = window.innerWidth - 350;
           setContentTooltipIntegration(cols[coords?.col]?.integrations);
 
@@ -1080,56 +1366,58 @@ function DefaultTable({
             TD.style.background = "#F1F3F5";
           }
         }}
-        contextMenu={{
-          items: {
-            remove_row: {
-              name: "Excluir produto",
-              async callback(key: string, selection: any[]) {
-                const { hotInstance } = hotRef.current!;
-                if (hasAtLeastOneProduct(products)) {
-                  if (hotInstance) {
-                    handleRemoveRow(
-                      hotInstance,
-                      selection,
-                      handleDelete,
-                      products,
-                    );
+        contextMenu={
+          !editModeGroup && {
+            items: {
+              remove_row: {
+                name: "Excluir produto",
+                async callback(key: string, selection: any[]) {
+                  const { hotInstance } = hotRef.current!;
+                  if (hasAtLeastOneProduct(products)) {
+                    if (hotInstance) {
+                      handleRemoveRow(
+                        hotInstance,
+                        selection,
+                        handleDelete,
+                        products,
+                      );
+                    }
+                  } else {
+                    toast.warn("O catálogo deve conter ao menos um produto");
                   }
-                } else {
-                  toast.warn("O catálogo deve conter ao menos um produto");
-                }
+                },
+              },
+              subItems_row: {
+                name: "Vincular variações",
+                callback(key, selection) {
+                  const selectedRow = selection[0].start.row;
+                  const selectedProduct = products[selectedRow];
+                  if (selectedProduct && !selectedProduct.parent_id) {
+                    clearSubItensMode();
+                    setSubItemsMode("add");
+                    setParentId(selectedProduct.id as any);
+                  } else {
+                    toast.warn("Este produto não pode ter subitens");
+                  }
+                },
+              },
+              subItems_row_remove: {
+                name: "Desvincular variação",
+                callback(key, selection) {
+                  const selectedRow = selection[0].start.row;
+                  const selectedProduct = products[selectedRow];
+                  if (selectedProduct && selectedProduct.parent_id) {
+                    clearSubItensMode();
+                    setSubItemsMode("remove");
+                    setParentId(selectedProduct.parent_id as any);
+                  } else {
+                    toast.warn("Este produto não é um subitem");
+                  }
+                },
               },
             },
-            subItems_row: {
-              name: "Vincular variações",
-              callback(key, selection) {
-                const selectedRow = selection[0].start.row;
-                const selectedProduct = products[selectedRow];
-                if (selectedProduct && !selectedProduct.parent_id) {
-                  clearSubItensMode();
-                  setSubItemsMode("add");
-                  setParentId(selectedProduct.id as any);
-                } else {
-                  toast.warn("Este produto não pode ter subitens");
-                }
-              },
-            },
-            subItems_row_remove: {
-              name: "Desvincular variação",
-              callback(key, selection) {
-                const selectedRow = selection[0].start.row;
-                const selectedProduct = products[selectedRow];
-                if (selectedProduct && selectedProduct.parent_id) {
-                  clearSubItensMode();
-                  setSubItemsMode("remove");
-                  setParentId(selectedProduct.parent_id as any);
-                } else {
-                  toast.warn("Este produto não é um subitem");
-                }
-              },
-            },
-          },
-        }}
+          }
+        }
         afterChange={afterChangeCallback}
       >
         {cols.map((col, _index: number) => {
@@ -1311,12 +1599,36 @@ function DefaultTable({
         setCurrentCell={setCurrentCell}
         setIsOpen={setIsOpen}
         handleFreeze={handleFreeze}
+        setEditModeGroup={setEditModeGroup}
+        setGroupReferenceEditMode={setGroupReferenceEditMode}
       />
       {parentId && (
         <ModalSelectChildrens
           amount={childsSelectedIds.length}
           clearSubItensMode={clearSubItensMode}
           onFinishProductChild={onFinishProductChild}
+        />
+      )}
+      {editModeGroup && (
+        <ModalSelectColumns
+          ids={idsColumnsSelecteds}
+          editModeGroup={editModeGroup}
+          clearSubItensMode={() => {
+            setIdsColumnsSelecteds([]);
+            setEditModeGroup("");
+          }}
+          onFinishProductChild={
+            editModeGroup === "group" ? createHeaderGroup : removeHeaderGroup
+          }
+          groupReferenceEditMode={groupReferenceEditMode}
+        />
+      )}
+      {parentHeaderSelectedIndex && (
+        <ParentHeaderEdit
+          value={groups[parentHeaderSelectedIndex].label}
+          onClose={() => setParentHeaderSelectedIndex(undefined)}
+          onChange={changeHeaderGroup}
+          index={parentHeaderSelectedIndex}
         />
       )}
     </>

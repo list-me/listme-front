@@ -171,21 +171,23 @@ function Template(): JSX.Element {
   ];
 
   return (
-    <TemplateDefault
-      handleGetTemplates={handleGetTemplates}
-      templates={templates}
-    >
-      <Content>
-        <TitlePage> Templates </TitlePage>
-        <CustomTable
-          columns={columns}
-          dataProvider={templates}
-          size="large"
-          rowSelection={rowSelection}
-          onLoadMore={handleTakeNewPages}
-        />
-      </Content>
-    </TemplateDefault>
+    <>
+      <TemplateDefault
+        handleGetTemplates={handleGetTemplates}
+        templates={templates}
+      >
+        <Content>
+          <TitlePage> Templates </TitlePage>
+          <CustomTable
+            columns={columns}
+            dataProvider={templates}
+            size="large"
+            rowSelection={rowSelection}
+            onLoadMore={handleTakeNewPages}
+          />
+        </Content>
+      </TemplateDefault>
+    </>
   );
 }
 

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { HotTable } from "@handsontable/react";
+import { toast } from "react-toastify";
 import { IDropDownStatus } from "./HeaderDropDown";
 import { BoxDropDown, ContainerHeaderDropDown } from "./styles";
 import {
@@ -24,6 +25,8 @@ function HeaderDropDown({
   setCurrentCell,
   setIsOpen,
   handleFreeze,
+  setEditModeGroup,
+  setGroupReferenceEditMode,
 }: {
   dropDownStatus: IDropDownStatus;
   setDropDownStatus: React.Dispatch<React.SetStateAction<IDropDownStatus>>;
@@ -38,6 +41,10 @@ function HeaderDropDown({
   setCurrentCell: React.Dispatch<any>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleFreeze: any;
+  setEditModeGroup: React.Dispatch<
+    React.SetStateAction<"group" | "ungroup" | "">
+  >;
+  setGroupReferenceEditMode: React.Dispatch<React.SetStateAction<string>>;
 }): JSX.Element | null {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -112,6 +119,14 @@ function HeaderDropDown({
               col!.order = +dropDownStatus.col.toString();
               setCurrentCell(() => col);
               setIsOpen((prev) => !prev);
+            }}
+            handleGroupEdit={() => {
+              if (col?.group) {
+                setGroupReferenceEditMode(col.group);
+                setEditModeGroup("ungroup");
+              } else {
+                setEditModeGroup("group");
+              }
             }}
           />
         </BoxDropDown>

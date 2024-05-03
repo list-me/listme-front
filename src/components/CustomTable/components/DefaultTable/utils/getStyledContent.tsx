@@ -98,9 +98,11 @@ const getStyledContent = (
   valueToVisible: string | number | undefined,
   isRequired: boolean,
   colData: any,
+  editModeGroup: "group" | "ungroup" | "",
+  idsColumnsSelecteds: string[],
+  groupReferenceEditMode: string,
   changeAllRowsSelected: () => void,
   allRowsSelected?: boolean,
-  isPublic?: boolean,
 ): string => {
   (window as any).changeAllRowsSelected = changeAllRowsSelected;
 
@@ -111,9 +113,22 @@ const getStyledContent = (
   }
   const integrationsList = colData?.integrations;
   const moreNumber = integrationsList - 1;
-
+  const colSelected = idsColumnsSelecteds.includes(colData?.id);
   return `
     <div style="${valueToVisible !== "+" ? BASE_STYLES : PLUS_BASE_STYLES}">
+     ${
+       valueToVisible !== "+" &&
+       editModeGroup &&
+       valueToVisible &&
+       ((!colData.group && editModeGroup === "group") ||
+         (colData.group &&
+           editModeGroup === "ungroup" &&
+           colData.group === groupReferenceEditMode))
+         ? `<input class='checkGroup' type="checkbox" ${
+             colSelected ? "checked" : ""
+           } />`
+         : ""
+     }
       <div style="${FLEX_GAP_STYLE}">
         ${renderToString(iconType)}
         <p style="${

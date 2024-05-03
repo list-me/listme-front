@@ -73,6 +73,28 @@ export const templateRequests = {
       total: response?.data?.total,
     };
   },
+  listDefault: async (): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.get(`/templates/?default=true`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response?.data?.templates
+      ?.sort((lastItem: any, nextItem: any) => {
+        if (nextItem.created_at < lastItem.created_at) {
+          return 1;
+        }
+
+        if (nextItem.created_at > lastItem.created_at) {
+          return -1;
+        }
+
+        return 0;
+      })
+      .map((item: any, index: number) => ({ order: index + 1, ...item }));
+  },
   get: async (id: string): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.get(`/template/${id}`, {
@@ -88,6 +110,20 @@ export const templateRequests = {
     const response = await api.post(
       `/template`,
       { type },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  },
+  postDefault: async (type: string, templateId: string): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(
+      `/template`,
+      { type, templateId },
       {
         headers: {
           Authorization: `Bearer ${token}`,

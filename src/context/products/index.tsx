@@ -383,6 +383,7 @@ export const ProductContextProvider = ({
             className: "htLeft htMiddle",
             type: item.type,
             required: item.required,
+            group: item.group,
             options: item.options,
             order: item.order !== undefined ? item.order : index.toString(),
             hidden: item.hidden ? item.hidden : false,
@@ -391,13 +392,19 @@ export const ProductContextProvider = ({
             bucket: response?.bucket,
             limit: item.limit,
             integrations: item.integrations,
+            enforce_exact_length: item.enforce_exact_length,
+            default: item.default,
           };
         },
       );
+      const groupeds = headers.filter((fItem) => fItem.group);
+      const ungroupeds = headers.filter((fItem) => !fItem.group);
 
-      const sortedHeaders: IHeader[] = headers.sort((a, b) => {
+      const sortedUngroupeds: IHeader[] = ungroupeds.sort((a, b) => {
         return Number(a.order) - Number(b.order);
       });
+
+      const sortedHeaders: IHeader[] = [...groupeds, ...sortedUngroupeds];
 
       const headerTitles = sortedHeaders.map((item: any) => {
         return item?.title;
@@ -423,6 +430,8 @@ export const ProductContextProvider = ({
             width: result.width,
             frozen: result.frozen,
             id: result.data,
+            default: result.default,
+            enforce_exact_length: result.enforce_exact_length,
           };
         });
       setCustomFields(toCustomFields);
@@ -675,13 +684,13 @@ export const ProductContextProvider = ({
   const buildCustomFields = (
     _fields: any,
     { order, show, width, frozen }: ICustom,
-    col: number,
+    cols: number[],
     newfields: any,
   ): ICustomField[] => {
     const toBuild = [...newfields];
 
     const builded = toBuild?.map((custom) => {
-      if (custom?.order === col) {
+      if (cols.includes(custom?.order)) {
         return {
           id: custom?.id,
           order: order ? order.toString() : custom?.order,
@@ -694,25 +703,43 @@ export const ProductContextProvider = ({
     });
     return builded;
   };
-
   const handleHidden = async (
-    col: number,
+    col: number[] | number,
     temp: any,
     able: boolean,
-  ): Promise<number[]> => {
+  ): Promise<any> => {
     const content = hidden;
+
+    const convertColl = typeof col === "number" ? [col] : col;
+
     let newValue;
+
     if (content.includes(col)) {
-      newValue = content.filter((element) => element !== col);
+      newValue = content.filter((element) => !convertColl.includes(element));
     } else {
-      newValue = [...content, col];
+      newValue = [...content, ...convertColl];
     }
 
     setHidden(newValue);
+
+    customFields.forEach((item: any) => {
+      // eslint-disable-next-line no-param-reassign
+      delete item.default;
+      // eslint-disable-next-line no-param-reassign
+      delete item.enforce_exact_length;
+    });
+
     const newfields = customFields.map((item) => {
-      if (item?.order === col.toString()) {
+      if (convertColl.includes(+item?.order)) {
+        const newItem = {
+          order: item.order,
+          hidden: item.hidden,
+          width: item.width,
+          frozen: item.frozen,
+          id: item.id,
+        };
         return {
-          ...item,
+          ...newItem,
           hidden: able,
         };
       }
@@ -725,7 +752,7 @@ export const ProductContextProvider = ({
     const custom = buildCustomFields(
       temp?.fields?.fields,
       { show: able },
-      col,
+      convertColl,
       newfields,
     );
 

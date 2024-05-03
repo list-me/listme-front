@@ -148,105 +148,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
     }
   };
 
-  // const renderHeaderComponent = useCallback(
-  //   (column: number, TH: HTMLTableHeaderCellElement) => {
-  //     if (TH.querySelector(".customHeader") && column === -1) {
-  //       TH.replaceChildren("");
-  //       return;
-  //     }
-
-  //     const existent = TH.querySelector(".customHeader");
-  //     if (existent) {
-  //       unmountComponentAtNode(existent);
-  //       const myComponent = document.createElement("div");
-  //       myComponent.className = "customHeader";
-
-  //       const col = template?.fields?.fields.find((item: any) => {
-  //         if (item.id === headerTable[column]?.data) {
-  //           return item;
-  //         }
-  //       });
-
-  //       if (colHeaders[column] === " ") {
-  //         ReactDOM.createRoot(myComponent).render(
-  //           <NewColumn
-  //             template={template}
-  //             setNewColumn={(newColumn: any, templateUpdated: any) => {
-  //               newColumn = {
-  //                 ...newColumn,
-  //                 className: "htLeft htMiddle",
-  //                 frozen: false,
-  //                 hidden: false,
-  //                 order: String(headerTable.length + 1),
-  //                 width: "300",
-  //               };
-
-  //               const newPosition = [...headerTable, newColumn];
-  //               newPosition.splice(newPosition.length - 2, 1);
-  //               newPosition.push({});
-  //               setHeaderTable(newPosition);
-
-  //               const contentHeaders = headerTable.map((item) => item?.title);
-  //               contentHeaders.splice(headerTable.length - 1, 1);
-  //               contentHeaders.push(newColumn?.title);
-  //               contentHeaders.push(" ");
-  //               setColHeaders(contentHeaders);
-  //               handleNewColumn(newColumn, templateUpdated);
-  //             }}
-  //           />,
-  //         );
-  //       } else {
-  //         ReactDOM.createRoot(myComponent).render(
-  //           <Cell
-  //             label={colHeaders[column]}
-  //             column={col}
-  //             template={template}
-  //             handleHidden={() => {
-  //               return handleHidden(column, template, true);
-  //             }}
-  //             handleFrozen={() => {
-  //               const freezePlugins =
-  //                 hotRef.current!.hotInstance?.getPlugin("manualColumnFreeze");
-
-  //               if (freezePlugins) {
-  //                 freezePlugins?.freezeColumn(1);
-  //                 hotRef.current!.hotInstance?.render();
-  //               }
-  //               return true;
-  //             }}
-  //             // @ts-ignore
-  //             freeze={!!headerTable[column]?.frozen}
-  //             handleSort={() => {}}
-  //             handleDeleteColumn={() => {
-  //               col.order = column.toString();
-  //               setCurrentCell(col);
-  //               setIsOpen(!isOpen);
-  //             }}
-  //           />,
-  //         );
-  //       }
-
-  //       TH.replaceChildren(myComponent);
-  //       return;
-  //     }
-
-  //     const myComponent = document.createElement("div");
-  //     myComponent.className = "customHeader";
-
-  //     TH.replaceChildren(myComponent);
-  //   },
-  //   [
-  //     headerTable,
-  //     colHeaders,
-  //     handleHidden,
-  //     handleNewColumn,
-  //     headerTable,
-  //     isOpen,
-  //     setColHeaders,
-  //     template,
-  //   ],
-  // );
-
   const [currentKeyword, setCurrentKeyword] = useState("");
   const handleGetProductFiltered = (keyword: string): void => {
     loadingRef.current!.style.display = "block";
@@ -404,7 +305,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
             total={total}
             setTotal={setTotal}
             template={template}
-            // renderHeaderComponent={renderHeaderComponent}
             hidden={hidden}
             handleResize={handleResize}
             columns={headerTable}
