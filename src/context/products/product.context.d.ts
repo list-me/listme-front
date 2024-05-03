@@ -55,7 +55,10 @@ interface ITemplate {
   name: string;
   templateId: string;
   updated_at: string | null;
-  fields: { fields: IField[]; groups: { label: string; colspan: number }[] };
+  fields: {
+    fields: IField[];
+    groups: { label: string; colspan: number; newHiddens: number[] }[];
+  };
 }
 
 interface IHeader {

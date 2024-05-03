@@ -108,9 +108,9 @@ function DefaultTable({
   const { operator } = useFilterContext();
   const { conditionsFilter } = useProductContext();
 
-  const [groups, setGroups] = useState<{ label: string; colspan: number }[]>(
-    [],
-  );
+  const [groups, setGroups] = useState<
+    { label: string; colspan: number; newHiddens: number[] }[]
+  >([]);
   useEffect(() => {
     if (template?.fields?.groups) {
       const toGroups = template?.fields?.groups

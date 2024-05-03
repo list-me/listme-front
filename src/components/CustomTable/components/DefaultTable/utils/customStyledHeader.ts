@@ -66,6 +66,7 @@ function customStyledHeader(
   groups: {
     label: string;
     colspan: number;
+    newHiddens: number[];
   }[],
   setParentHeaderSelectedIndex: React.Dispatch<
     React.SetStateAction<number | undefined>
@@ -220,19 +221,33 @@ function customStyledHeader(
     collapseDiv?.addEventListener("click", () => {
       indexes.shift();
 
-      const newGroups = groups.map((group) => {
-        if (group.label === spanContent) {
-          return [
-            { ...group, colspan: 1, newHiddens: indexes },
-            ...Array.from({ length: group.colspan - 1 }, () => ({
-              label: group.label,
-              colspan: 1,
-            })),
-          ];
-        }
-        return group;
-      });
-      setGroups(() => [...newGroups.flat()]);
+      let countHiddens = 0;
+      const newGroups = groups
+        .map((group) => {
+          if (!group.newHiddens) {
+            if (group.label === spanContent) {
+              return [
+                { ...group, colspan: 1, newHiddens: indexes },
+                ...Array.from({ length: group.colspan - 1 }, () => ({
+                  label: group.label,
+                  colspan: 1,
+                })),
+              ];
+            }
+            return group;
+          }
+          if (group.label === spanContent && group.newHiddens) {
+            countHiddens = group.newHiddens.length + 1;
+            return null;
+          }
+          return group;
+        })
+        .filter(Boolean);
+      setGroups(() =>
+        countHiddens > 0
+          ? [...newGroups, { label: spanContent, colspan: countHiddens }].flat()
+          : [...newGroups.flat()],
+      );
     });
   }
 }
