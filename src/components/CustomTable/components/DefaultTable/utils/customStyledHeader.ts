@@ -219,35 +219,45 @@ function customStyledHeader(
     configSvgDiv?.addEventListener("click", selectParentHeader);
     const collapseDiv = TH.querySelector(".collapseIconGroup");
     collapseDiv?.addEventListener("click", () => {
-      indexes.shift();
-
-      let countHiddens = 0;
-      const newGroups = groups
-        .map((group) => {
-          if (!group.newHiddens) {
-            if (group.label === spanContent) {
-              return [
-                { ...group, colspan: 1, newHiddens: indexes },
-                ...Array.from({ length: group.colspan - 1 }, () => ({
-                  label: group.label,
-                  colspan: 1,
-                })),
-              ];
-            }
-            return group;
-          }
-          if (group.label === spanContent && group.newHiddens) {
-            countHiddens = group.newHiddens.length + 1;
-            return null;
+      const index = groups.findIndex(
+        (group) => group.label === spanContent && group?.newHiddens?.length > 0,
+      );
+      const currentObjectWithHiddens = groups[index];
+      if (currentObjectWithHiddens?.label) {
+        const filtered = groups.filter(
+          (group) => group.label !== currentObjectWithHiddens.label,
+        );
+        // @ts-ignore
+        filtered.splice(index, 0, {
+          label: currentObjectWithHiddens.label,
+          colspan: currentObjectWithHiddens.newHiddens.length + 1,
+        });
+        setGroups(filtered);
+      }
+      if (!currentObjectWithHiddens?.label) {
+        indexes.shift();
+        const countHiddens = 0;
+        const newGroups = groups.map((group) => {
+          if (group.label === spanContent) {
+            return [
+              { ...group, colspan: 1, newHiddens: indexes },
+              ...Array.from({ length: group.colspan - 1 }, () => ({
+                label: group.label,
+                colspan: 1,
+              })),
+            ];
           }
           return group;
-        })
-        .filter(Boolean);
-      setGroups(() =>
-        countHiddens > 0
-          ? [...newGroups, { label: spanContent, colspan: countHiddens }].flat()
-          : [...newGroups.flat()],
-      );
+        });
+        setGroups(() =>
+          countHiddens > 0
+            ? [
+                ...newGroups,
+                { label: spanContent, colspan: countHiddens },
+              ].flat()
+            : [...newGroups.flat()],
+        );
+      }
     });
   }
 }

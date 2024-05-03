@@ -792,7 +792,6 @@ function DefaultTable({
   const groupsToView = groups[0]?.label
     ? [[...groups, ...ungroupeds], colHeaders]
     : [ungroupeds, colHeaders];
-  console.log("🚀 ~ groupsToView:", groupsToView);
 
   const newHiddens = useMemo(() => {
     return groups
