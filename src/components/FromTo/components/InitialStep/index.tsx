@@ -40,8 +40,8 @@ function InitialStep(): JSX.Element {
           <img src={guitar} alt="Vincular lista pública" />
           <ButtonAction
             onClick={() => {
-              setCurrentStep((prev) => prev + 1);
-              setStepType("publicList");
+              // setCurrentStep((prev) => prev + 1);
+              // setStepType("publicList");
             }}
           >
             Vincular lista pública

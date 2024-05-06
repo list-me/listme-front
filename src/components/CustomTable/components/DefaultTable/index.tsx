@@ -1163,7 +1163,7 @@ function DefaultTable({
     try {
       const newGroups = [...groups].map((group) => group.label);
       newGroups[index] = value;
-
+      template.fields.fields.sort((a: any, b: any) => +a.order - +b.order);
       const newFields = template.fields.fields.map((field: any) => {
         if (field.group && !newGroups.includes(field.group)) {
           const newField = { ...field, group: value };
