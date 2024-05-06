@@ -87,8 +87,8 @@ function customStyledHeader(
   setHidden: any,
   setGroups: any,
   changeAllRowsSelected: () => void,
-  allRowsSelected?: boolean,
-  // handleHidden: Function,
+  allRowsSelected: boolean | undefined,
+  isPublic: boolean | undefined,
 ): void {
   const spanContent = TH.querySelector("span")?.textContent;
 
@@ -103,10 +103,12 @@ function customStyledHeader(
   }
 
   if (spanContent === "+ Criar novo grupo") {
-    TH.innerHTML = `
+    TH.innerHTML = !isPublic
+      ? `
         <div class='newGroupHeader'>
           <span>${spanContent}</span>
-        </div>`;
+        </div>`
+      : "";
 
     const configSvgDiv = TH.querySelector(".newGroupHeader");
     configSvgDiv?.addEventListener("click", () =>

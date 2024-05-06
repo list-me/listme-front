@@ -185,6 +185,7 @@ export const Container = styled.div`
       height: 24px !important;
       padding: 0;
     }
+    border: none;
   }
 
   .style-th-group {
