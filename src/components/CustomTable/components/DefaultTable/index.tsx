@@ -658,11 +658,12 @@ function DefaultTable({
 
       td.innerHTML =
         value?.length > 0
-          ? value?.map(
-              (mValue: any) =>
-                `<div class="tag-content">${mValue?.field}</div>`,
+          ? value?.map((mValue: any) =>
+              mValue?.value
+                ? `<div class="tag-content">${mValue?.value}</div>`
+                : `<div class="tag-content">+</div>`,
             )
-          : `<div class="tag-content">Nenhum item relacionado</div>`;
+          : `<div class="tag-content">+</div>`;
     },
     [cols],
   );
