@@ -9,7 +9,7 @@ const AuthProvider: React.FC<any> = ({ children }) => {
   const [token, setToken] = useState<string>(itemStorage as string);
 
   const value: AuthContextValues = {
-    isAuthenticated: !token,
+    isAuthenticated: token,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
