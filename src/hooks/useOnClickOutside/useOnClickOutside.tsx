@@ -18,7 +18,7 @@ const useOutsideClick = (
   useEffect(() => {
     setTimeout(() => {
       document.addEventListener("click", handleClick);
-    }, 0);
+    }, 1);
 
     return () => {
       document.removeEventListener("click", handleClick);

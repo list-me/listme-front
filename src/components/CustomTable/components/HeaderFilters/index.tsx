@@ -24,6 +24,8 @@ import { IHeaderTable } from "../../../../context/products/product.context";
 import EditableText from "../../../EditableText";
 import FromTo from "../../../FromTo";
 import { useFromToContext } from "../../../../context/FromToContext";
+import { ReactComponent as LinkIcon } from "../../../../assets/linkPublicList.svg";
+
 import ButtonError from "../../../Integration/Error/ButtonError";
 import { integrationsRequest } from "../../../../services/apis/requests/integration";
 import { useIntegration } from "../../../../context/IntegrationContext";
@@ -33,16 +35,25 @@ function HeaderFilters({
   headerTable,
   handleGetProductFiltered,
   handleAddProductClick,
+  isPublic,
+  total,
 }: {
   template: any;
   headerTable: IHeaderTable[];
   handleGetProductFiltered: (keyword: string) => void;
   handleAddProductClick: () => void;
+  isPublic?: boolean;
+  total: number;
 }): JSX.Element {
   const navigate = useNavigate();
+  const totalPrice = (total * 3).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
 
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
-  const { setFromToIsOpened } = useFromToContext();
+  const { setFromToIsOpened, setCurrentStep, setStepType, setAllRowsSelected } =
+    useFromToContext();
 
   const { setErrors, errors, setSidebarErrorOpened, offset, limit } =
     useIntegration();
@@ -86,37 +97,55 @@ function HeaderFilters({
           <EditIcon onClick={() => setIsEditingTitle(true)} />
         </LeftContent>
         <RightContent>
-          {errors?.data?.length > 0 && (
-            <ButtonError
-              errors={errors}
-              setSidebarErrorOpened={setSidebarErrorOpened}
-            />
+          {isPublic && (
+            <Button
+              height="52px"
+              width="331px"
+              className="secondButton linkButton"
+              onClick={() => {
+                setStepType("publicList");
+                setCurrentStep(2);
+                setFromToIsOpened(true);
+                setAllRowsSelected(true);
+              }}
+            >
+              Vincular lista completa ({totalPrice})
+              <LinkIcon />
+            </Button>
           )}
           <MoreOptions>
             <EllipsisIcon />
           </MoreOptions>
-          <Button
-            height="52px"
-            width="227px"
-            isSecondary
-            onClick={() => setFromToIsOpened(true)}
-          >
-            <DownloadIcon />
-            Importar produtos
-          </Button>
-          <Button
-            height="52px"
-            width="226px"
-            className="secondButton"
-            onClick={handleAddProductClick}
-          >
-            Adicionar produto
-            <PlusIcon />
-          </Button>
+          {!isPublic && (
+            <>
+              <Button
+                height="52px"
+                width="227px"
+                isSecondary
+                onClick={() => setFromToIsOpened(true)}
+              >
+                <DownloadIcon />
+                Importar produtos
+              </Button>
+              <Button
+                height="52px"
+                width="226px"
+                className="secondButton"
+                onClick={handleAddProductClick}
+              >
+                Adicionar produto
+                <PlusIcon />
+              </Button>
+            </>
+          )}
         </RightContent>
       </Header>
       <Filters>
-        <Temp options={headerTable} handleSearch={handleGetProductFiltered} />
+        <Temp
+          options={headerTable}
+          handleSearch={handleGetProductFiltered}
+          isPublic={isPublic}
+        />
         <Contents>
           <Item>
             <HelpIcon />

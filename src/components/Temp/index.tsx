@@ -27,11 +27,13 @@ import { useIntegration } from "../../context/IntegrationContext";
 interface IProps {
   options?: any[];
   handleSearch: Function;
+  isPublic?: boolean;
 }
 
 export const Temp: React.FC<IProps> = ({
   options,
   handleSearch = () => {},
+  isPublic,
 }) => {
   const { setOpenedFilter, filterStatus } = useFilterContext();
   const { conditionsFilter } = useProductContext();
@@ -80,16 +82,21 @@ export const Temp: React.FC<IProps> = ({
         isOpen={isOpen}
         colHeaders={options ?? []}
       />
-      <Item>
+      <Item isDisabled={isPublic}>
         <MenuIcon />
         Visualização
       </Item>
-      <Item ref={iconRef} onClick={() => setIsOpen(!isOpen)}>
+      <Item
+        isDisabled={isPublic}
+        ref={iconRef}
+        onClick={() => setIsOpen(!isOpen)}
+      >
         <EyeOffIcon />
         Colunas Ocultas
         <ChevronDownIcon ref={iconRef} />
       </Item>
       <ButtonFilter
+        isDisabled={isPublic}
         filterActive={filterStatus && !!conditionsFilter[0]?.action}
         onClick={() => setOpenedFilter(true)}
       >
@@ -124,7 +131,10 @@ export const Temp: React.FC<IProps> = ({
                 handleCustomChange={setFilter}
                 background
                 onPressEnter={() =>
-                  handleSearch(filter, window.location.pathname.substring(10))
+                  handleSearch(
+                    filter,
+                    window.location.pathname.substring(isPublic ? 17 : 10),
+                  )
                 }
                 height="39px"
                 disabledValidade
@@ -133,7 +143,10 @@ export const Temp: React.FC<IProps> = ({
                 height="37px"
                 width="85px"
                 onClick={() =>
-                  handleSearch(filter, window.location.pathname.substring(10))
+                  handleSearch(
+                    filter,
+                    window.location.pathname.substring(isPublic ? 17 : 10),
+                  )
                 }
               >
                 Buscar

@@ -57,6 +57,17 @@ export const RightContent = styled.div`
       margin: 0 0 0 10px;
     }
   }
+  .linkButton {
+    margin-right: 9px;
+    svg {
+      width: 20px;
+      height: 20px;
+      margin: 0 0 0 10px;
+    }
+    path {
+      stroke: white;
+    }
+  }
 `;
 
 export const Header = styled.header`
@@ -160,13 +171,31 @@ export const Container = styled.div`
 
     height: 50%;
   }
+  thead {
+    * {
+      border-top: none;
+    }
+  }
+
+  .handsontable table.htCore thead tr:first-child th {
+    height: 24px !important;
+    padding: 0;
+    margin: 0;
+    * {
+      height: 24px !important;
+      padding: 0;
+    }
+    border: none;
+  }
+
+  .style-th-group {
+    border: none !important;
+  }
 
   thead {
     th {
       .customHeader {
-        height: 51px;
         background: #f1f3f5;
-
         z-index: 9999;
       }
 
@@ -216,6 +245,16 @@ export const Container = styled.div`
     background-color: ${({ theme }) => theme.colors.grayscale.ninth};
   }
 
+  thead tr:first-child th {
+    background-color: white;
+    border: none;
+  }
+
+  .style-th-group {
+    border: none;
+    height: 22px;
+  }
+
   tbody tr th {
     background-color: ${({ theme }) => theme.colors.grayscale.ninth};
     font-family: ${({ theme }) => theme.fonts.family.default} !important;
@@ -262,13 +301,12 @@ export const Container = styled.div`
       .tag-content {
         background-color: #dee2e6 !important;
 
-        width: 140px !important;
         height: 27px !important;
-
-        display: flex;
+        width: auto;
+        display: inline-flex;
         align-items: center;
 
-        padding-left: 8px;
+        padding: 0 8px;
         border-radius: 7px;
 
         margin: 16px 0 0 8px;
@@ -444,6 +482,15 @@ export const Container = styled.div`
         }
       }
     }
+    #blur {
+      filter: blur(4px);
+    }
+    .blurCenter {
+      display: flex;
+      height: 100%;
+      align-items: center;
+      padding-left: 5px;
+    }
     .dropdown-item-warn {
       display: flex;
       align-items: center;
@@ -477,6 +524,45 @@ export const Container = styled.div`
       content: "Solte aqui";
     }
   }
+
+  .groupHeader {
+    position: relative;
+    .buttonsGroupHeader {
+      position: absolute;
+      right: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease-in-out;
+    }
+    :hover {
+      .buttonsGroupHeader {
+        display: initial;
+        pointer-events: initial;
+        opacity: 1;
+      }
+    }
+  }
+  .newGroupHeader {
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    height: 20px;
+    border-radius: 5px 5px 0px 0px;
+    transition: all 0.1s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: transparent;
+    background: transparent;
+    :hover {
+      color: #3818d9;
+      background: #e2e0ff;
+    }
+  }
 `;
 
 export const Filters = styled.div`
@@ -488,6 +574,7 @@ export const Filters = styled.div`
   padding: 16px;
   background: white;
   border: 1px solid #e9ecef;
+  border-bottom: none;
 `;
 
 export const Line = styled.div`

@@ -108,7 +108,8 @@ function FilterComponent(): JSX.Element {
         }
       } else {
         setConditionsFilter([{}] as IConditions[]);
-        const id = window.location.pathname.substring(10);
+        const isPublic = window.location.pathname.includes("public");
+        const id = window.location.pathname.substring(isPublic ? 17 : 10);
         if (id) {
           setTimeout(() => {
             handleRedirectAndGetProducts(id).then(() => {});

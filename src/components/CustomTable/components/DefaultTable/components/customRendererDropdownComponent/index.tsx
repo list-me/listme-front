@@ -17,11 +17,18 @@ function customRendererDropdownComponent({
 }): string {
   const svgStringInfo: string = renderToString(<InfoIcon />);
 
-  const itemCorrect = value ? cols[col]?.options?.includes(value?.[0]) : true;
+  const itemCorrect = (): boolean => {
+    if (value === "valor censurado") return true;
+    return value ? cols[col]?.options?.includes(value?.[0]) : true;
+  };
 
-  const radioClass = itemCorrect ? "dropdown-item" : "dropdown-item-warn";
+  const radioClass = itemCorrect() ? "dropdown-item" : "dropdown-item-warn";
 
-  const element = `<div class=${radioClass}>
+  const isPublic = value === "valor censurado";
+
+  const currentId = isPublic ? "blur" : "";
+
+  const element = `<div class=${radioClass} id=${currentId}>
   ${
     value && !itemCorrect
       ? `<div class="hover-container-info" onclick="window.yourSetAlertTooltip((prev) => !prev)" >

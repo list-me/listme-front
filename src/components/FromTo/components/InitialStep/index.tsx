@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   ButtonAction,
   CardAction,
@@ -12,7 +13,11 @@ import cloud from "../../../../assets/images/cloud.png";
 import { useFromToContext } from "../../../../context/FromToContext";
 
 function InitialStep(): JSX.Element {
-  const { setCurrentStep } = useFromToContext();
+  const { setCurrentStep, setStepType } = useFromToContext();
+
+  useEffect(() => {
+    setStepType("fromTo");
+  }, [setStepType]);
 
   return (
     <ContainerInitialStep>
@@ -32,12 +37,24 @@ function InitialStep(): JSX.Element {
       </ul>
       <ContainerActions>
         <CardAction>
-          <img src={guitar} alt="Vincular List pública" />
-          <ButtonAction>Vincular List pública</ButtonAction>
+          <img src={guitar} alt="Vincular lista pública" />
+          <ButtonAction
+            onClick={() => {
+              // setCurrentStep((prev) => prev + 1);
+              // setStepType("publicList");
+            }}
+          >
+            Vincular lista pública
+          </ButtonAction>
         </CardAction>
         <CardAction>
           <img src={cloud} alt="Importar arquivo" />
-          <ButtonAction onClick={() => setCurrentStep((prev) => prev + 1)}>
+          <ButtonAction
+            onClick={() => {
+              setCurrentStep((prev) => prev + 1);
+              setStepType("fromTo");
+            }}
+          >
             Importar arquivo
           </ButtonAction>
         </CardAction>
