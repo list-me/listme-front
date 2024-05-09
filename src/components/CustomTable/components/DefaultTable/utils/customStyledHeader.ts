@@ -68,9 +68,7 @@ function customStyledHeader(
     colspan: number;
     newHiddens: number[];
   }[],
-  setParentHeaderSelectedIndex: React.Dispatch<
-    React.SetStateAction<number | undefined>
-  >,
+  setParentHeaderSelectedIndex: React.Dispatch<React.SetStateAction<number>>,
   template: any,
   headerTable: IHeaderTable[],
   column: number,
@@ -97,7 +95,7 @@ function customStyledHeader(
   function selectParentHeader(): void {
     groupsName.forEach((itemGname, index) => {
       if (itemGname === spanContent) {
-        setParentHeaderSelectedIndex(index);
+        setParentHeaderSelectedIndex(index + 1);
       }
     });
   }

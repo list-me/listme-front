@@ -100,7 +100,7 @@ function DefaultTable({
 }: IDefaultTable): JSX.Element {
   const { handleRedirectAndGetProducts, setHidden } = useProductContext();
   const [parentHeaderSelectedIndex, setParentHeaderSelectedIndex] =
-    useState<number>();
+    useState<number>(0);
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
   const svgStringConfigHeaderGroup: string = renderToString(
     <ConfigGroupHeaderSVG />,
@@ -659,8 +659,10 @@ function DefaultTable({
       td.innerHTML =
         value?.length > 0
           ? value?.map((mValue: any) =>
-              mValue?.value
-                ? `<div class="tag-content">${mValue?.value}</div>`
+              mValue?.field
+                ? `<div class="tag-content">${
+                    mValue?.value || "Indisponível"
+                  }</div>`
                 : `<div class="tag-content">+</div>`,
             )
           : `<div class="tag-content">+</div>`;
@@ -1634,10 +1636,10 @@ function DefaultTable({
       )}
       {parentHeaderSelectedIndex && (
         <ParentHeaderEdit
-          value={groups[parentHeaderSelectedIndex].label}
-          onClose={() => setParentHeaderSelectedIndex(undefined)}
+          value={groups[parentHeaderSelectedIndex - 1].label}
+          onClose={() => setParentHeaderSelectedIndex(0)}
           onChange={changeHeaderGroup}
-          index={parentHeaderSelectedIndex}
+          index={parentHeaderSelectedIndex - 1}
         />
       )}
     </>
