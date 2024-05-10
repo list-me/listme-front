@@ -336,7 +336,6 @@ function DefaultTable({
       orderChanged,
       columns,
       handleMove,
-      setColumns,
     );
   };
 
@@ -857,9 +856,11 @@ function DefaultTable({
     return [];
   }, [totalUngroupedColumns]);
 
-  const groupsToView = groups[0]?.label
-    ? [[...groups, ...ungroupeds], colHeaders]
-    : [ungroupeds, colHeaders];
+  const groupsToView = useMemo(() => {
+    return groups[0]?.label
+      ? [[...groups, ...ungroupeds], colHeaders]
+      : [ungroupeds, colHeaders];
+  }, [groups, ungroupeds, colHeaders]);
 
   const newHiddens = useMemo(() => {
     return groups
@@ -1273,7 +1274,7 @@ function DefaultTable({
       )}
       <ContainerHotTable isPublic={isPublic}>
         <HotTable
-          key={parentId + newHiddens.join() + groups.join()}
+          key={parentId + newHiddens.join() + groups.join() + cols.join()}
           nestedRows
           nestedHeaders={groupsToView}
           bindRowsWithHeaders

@@ -60,7 +60,6 @@ async function createNewGroup(
     throw error;
   }
 }
-
 function customStyledHeader(
   TH: HTMLTableHeaderCellElement,
   groups: {

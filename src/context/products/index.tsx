@@ -815,11 +815,13 @@ export const ProductContextProvider = ({
   };
 
   const handleMove = (col: any[]) => {
+    const titles: any[] = [];
     const fields = col
       .filter((item) => {
         if (Object.keys(item).length > 0) return item;
       })
       .map((element) => {
+        titles.push(element.title);
         return {
           order: element?.order,
           hidden: element?.hidden,
@@ -830,6 +832,9 @@ export const ProductContextProvider = ({
       });
     templateRequests
       .customView(window.location.pathname.substring(10), { fields })
+      .then(() => {
+        setColHeaders(titles);
+      })
       .catch((_error) =>
         toast.error("Ocorreu um erro ao alterar a posição da coluna"),
       );
