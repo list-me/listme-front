@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Contents,
   Filters,
@@ -45,6 +45,9 @@ function HeaderFilters({
   isPublic?: boolean;
   total: number;
 }): JSX.Element {
+  const location = useLocation();
+  const isOutsidePage = location.pathname.includes("outside");
+
   const navigate = useNavigate();
   const totalPrice = (total * 3).toLocaleString("pt-BR", {
     style: "currency",
@@ -61,13 +64,14 @@ function HeaderFilters({
   const getErrors = useCallback(async () => {
     try {
       const id = window.location.pathname.split("/")[2];
-      const response = await integrationsRequest.listIntegrationsErrors({
-        limit,
-        offset,
-        id,
-      });
-
-      setErrors(response);
+      if (!id.includes("public")) {
+        const response = await integrationsRequest.listIntegrationsErrors({
+          limit,
+          offset,
+          id,
+        });
+        setErrors(response);
+      }
     } catch (error) {
       // Handle errors here
       console.error("Error fetching errors:", error);
@@ -103,7 +107,7 @@ function HeaderFilters({
               width="331px"
               className="secondButton linkButton"
               onClick={() => {
-                setStepType("publicList");
+                setStepType(isOutsidePage ? "publicListOutside" : "publicList");
                 setCurrentStep(2);
                 setFromToIsOpened(true);
                 setAllRowsSelected(true);

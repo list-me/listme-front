@@ -10,6 +10,7 @@ import IntegrationSettings from "../IntegrationSettings";
 import PublicListList from "../PublicList/PublicListList";
 import LinkConfiguration from "../PublicList/LinkConfiguration";
 import LinkFieldsPublic from "../PublicList/LinkFieldsPublic";
+import LinkMethod from "../PublicListOutside/LinkMethod";
 
 function StepContent(): JSX.Element {
   const { currentStep, stepType } = useFromToContext();
@@ -30,6 +31,17 @@ function StepContent(): JSX.Element {
         {currentStep === 0 && <InitialStep />}
         {currentStep === 1 && <PublicListList />}
         {currentStep === 2 && <LinkConfiguration />}
+        {currentStep === 3 && <LinkFieldsPublic />}
+        {currentStep === 4 && <IntegrationSettings />}
+        {currentStep === 5 && <LinkFields />}
+      </StepContentContainer>
+    );
+  if (stepType === "publicListOutside")
+    return (
+      <StepContentContainer>
+        {currentStep === 0 && <InitialStep />}
+        {currentStep === 1 && <PublicListList />}
+        {currentStep === 2 && <LinkMethod />}
         {currentStep === 3 && <LinkFieldsPublic />}
         {currentStep === 4 && <IntegrationSettings />}
         {currentStep === 5 && <LinkFields />}

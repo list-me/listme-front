@@ -77,6 +77,10 @@ export interface FromToContextType {
   setProdvidersToIntegration: React.Dispatch<React.SetStateAction<string[]>>;
   allProductsToIntegration: boolean;
   setAllProductsToIntegration: React.Dispatch<React.SetStateAction<boolean>>;
+  currentLinkMethodValue: ILinkMethodValue;
+  setCurrentLinkMethodValue: React.Dispatch<
+    React.SetStateAction<ILinkMethodValue>
+  >;
 }
 
 export interface ILinkConfigurationValue {
@@ -84,6 +88,8 @@ export interface ILinkConfigurationValue {
   description: string;
   value: string;
 }
+
+export type ILinkMethodValue = "add" | "copy" | "";
 
 export interface CSVRow {
   [key: string]: string | number;

@@ -13,6 +13,7 @@ import {
   FromToContextType,
   ICSVResponse,
   ILinkConfigurationValue,
+  ILinkMethodValue,
   IValuesImportConfiguration,
   IValuesImportOptions,
   IValuesIntegrationsConfig,
@@ -66,6 +67,8 @@ export function FromToContextProvider({
       label: "",
       description: "",
     });
+  const [currentLinkMethodValue, setCurrentLinkMethodValue] =
+    useState<ILinkMethodValue>("");
   const colHeadersToPreviewTable = useMemo((): string[] | null => {
     if (data[0]) return Object.keys(data[0]);
     return null;
@@ -220,6 +223,7 @@ export function FromToContextProvider({
     setCheckedList([false]);
     setRowsSelected([]);
     setAllRowsSelected(false);
+    setCurrentLinkMethodValue("");
   }
 
   useEffect(() => {
@@ -271,6 +275,8 @@ export function FromToContextProvider({
     setProdvidersToIntegration,
     allProductsToIntegration,
     setAllProductsToIntegration,
+    currentLinkMethodValue,
+    setCurrentLinkMethodValue,
   };
 
   return (

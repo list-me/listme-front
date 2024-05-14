@@ -5,6 +5,6 @@ export const ROUTES = {
   INTEGRATION: "/integration",
   PRODUCTS: "/products",
   PRODUCTSPUBLIC: "/products/public",
-  PRODUCTSPUBLICOUTSIDE: "/products/public-outside/",
+  PRODUCTSPUBLICOUTSIDE: "/products/public-outside",
   LOGIN: "/login",
 };
