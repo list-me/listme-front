@@ -21,11 +21,6 @@ function ImportConfiguration(): JSX.Element {
     setValuesImportConfiguration,
     colHeadersToPreviewTable,
   } = useFromToContext();
-  console.log("🚀 ~ ImportConfiguration ~ data:", data);
-  console.log(
-    "🚀 ~ ImportConfiguration ~ colHeadersToPreviewTable:",
-    colHeadersToPreviewTable,
-  );
 
   const types = [
     "separator",
@@ -40,7 +35,6 @@ function ImportConfiguration(): JSX.Element {
   useEffect(() => {
     const updateHeight = (): void => {
       const element = document.querySelector(".BoxFromTo");
-      console.log("🚀 ~ updateHeight ~ element:", element);
       if (element) {
         const newHeight = element.clientHeight;
         if (newHeight !== height) {
