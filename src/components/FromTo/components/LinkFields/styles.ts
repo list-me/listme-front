@@ -106,11 +106,22 @@ export const ContentRowLinkFields = styled.div<{ checkColumn?: boolean }>`
     props.checkColumn ? "33% 33% 33%" : "50% 50%"};
 `;
 
+export const ContentRowLinkFieldsOutside = styled.div`
+  display: flex;
+  width: 100%;
+  margin-bottom: 24px;
+`;
+
 export const ContainerSelectText = styled.div`
   width: 100%;
 `;
 
 export const ContainerCheckBox = styled.div`
+  width: 100%;
+  justify-content: center;
+  display: flex;
+`;
+export const ContainerCheckBoxOutside = styled.div`
   width: 100%;
   justify-content: center;
   display: flex;

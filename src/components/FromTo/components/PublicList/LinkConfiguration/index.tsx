@@ -18,7 +18,9 @@ function LinkConfiguration(): JSX.Element {
     setCurrentStep,
     currentLinkConfigurationValue,
     setCurrentLinkConfigurationValue,
+    stepType,
   } = useFromToContext();
+
   const options = [
     {
       value: "keepProductsLinked",
@@ -41,6 +43,18 @@ function LinkConfiguration(): JSX.Element {
     setCurrentLinkConfigurationValue(value);
   };
 
+  function handleNextButton(): void {
+    if (stepType !== "publicListOutside") {
+      setCurrentStep(3);
+    } else if (
+      currentLinkConfigurationValue.value === "importDetachedProducts"
+    ) {
+      console.log("FAZER FINISH");
+    } else if (currentLinkConfigurationValue.value === "keepProductsLinked") {
+      setCurrentStep(4);
+    }
+  }
+
   return (
     <ContainerLinkConfiguration>
       <BoxFromTo>
@@ -58,18 +72,23 @@ function LinkConfiguration(): JSX.Element {
         <ContainerButtons>
           <BoxButtons>
             <NavigationButton
-              disabled={!currentLinkConfigurationValue.value}
-              onClick={() => setFromToIsOpened(false)}
+              onClick={() =>
+                stepType !== "publicListOutside"
+                  ? setCurrentStep(2)
+                  : setFromToIsOpened(false)
+              }
             >
               <PlusIcon />
               Voltar
             </NavigationButton>
             <NavigationButton
               disabled={!currentLinkConfigurationValue.value}
-              onClick={() => setCurrentStep(3)}
+              onClick={() => handleNextButton()}
             >
               <PlusIcon />
-              Avançar
+              {currentLinkConfigurationValue.value === "importDetachedProducts"
+                ? "Concluir"
+                : "Avançar"}
             </NavigationButton>
           </BoxButtons>
         </ContainerButtons>

@@ -19,6 +19,7 @@ import fixedOptions from "../../LinkFields/utils/fixedOptions";
 import { templateRequests } from "../../../../../services/apis/requests/template";
 import { productRequests } from "../../../../../services/apis/requests/product";
 import { ROUTES } from "../../../../../constants/routes";
+import LinkFieldsOutsideComponent from "../../LinkFields/components/LinkFieldsOutsideComponent";
 
 function LinkFieldsPublic(): JSX.Element {
   const {
@@ -30,6 +31,7 @@ function LinkFieldsPublic(): JSX.Element {
     allRowsSelected,
     selectedProductsId,
     toClean,
+    stepType,
   } = useFromToContext();
   const navigate = useNavigate();
 
@@ -185,16 +187,29 @@ function LinkFieldsPublic(): JSX.Element {
         ) : (
           <></>
         )}
-        <LinkFieldsComponent
-          colHeadersToPreviewTable={colHeadersToPreviewTable}
-          data={[]}
-          selectedLinkFields={selectedLinkFields}
-          handleSelectChange={handleSelectChange}
-          options={options}
-          fixedOptions={fixedOptions}
-          setIsOpenModal={setIsOpenModal}
-          isOpenModal={isOpenModal}
-        />
+        {stepType !== "publicListOutside" ? (
+          <LinkFieldsComponent
+            colHeadersToPreviewTable={colHeadersToPreviewTable}
+            data={[]}
+            selectedLinkFields={selectedLinkFields}
+            handleSelectChange={handleSelectChange}
+            options={options}
+            fixedOptions={fixedOptions}
+            setIsOpenModal={setIsOpenModal}
+            isOpenModal={isOpenModal}
+          />
+        ) : (
+          <LinkFieldsOutsideComponent
+            colHeadersToPreviewTable={colHeadersToPreviewTable}
+            data={[]}
+            selectedLinkFields={selectedLinkFields}
+            handleSelectChange={handleSelectChange}
+            options={options}
+            fixedOptions={fixedOptions}
+            setIsOpenModal={setIsOpenModal}
+            isOpenModal={isOpenModal}
+          />
+        )}
         <BoxButtons>
           <NavigationButton
             abort
@@ -207,7 +222,11 @@ function LinkFieldsPublic(): JSX.Element {
             Voltar
           </NavigationButton>
           <NavigationButton
-            disabled={isEmptyObject(selectedLinkFields) || verifyAllIgnore()}
+            disabled={
+              stepType !== "publicListOutside"
+                ? isEmptyObject(selectedLinkFields) || verifyAllIgnore()
+                : false
+            }
             onClick={() => onFinish()}
           >
             <PlusIcon />

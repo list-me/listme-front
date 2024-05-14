@@ -19,8 +19,9 @@ import {
 } from "./styles";
 import { BoxButtons, NavigationButton } from "../../NavigationButton/styles";
 import { ReactComponent as PlusIcon } from "../../../../../assets/plus-fromto.svg";
+import SelectComponent from "../../../../Select";
 
-function LinkMethod(): JSX.Element {
+function SelectList(): JSX.Element {
   const {
     setFromToIsOpened,
     setCurrentStep,
@@ -57,27 +58,28 @@ function LinkMethod(): JSX.Element {
     <ContainerLinkMethod>
       <BoxFromTo>
         <HeaderModal borderDisabled>
-          <TitleModal>Como deseja vincular essa List</TitleModal>
+          <TitleModal>Selecionar List existente</TitleModal>
           <CloseButton onClick={() => setFromToIsOpened(false)}>
             <CloseIcon />
           </CloseButton>
         </HeaderModal>
-        <ContentLinkMethod>
-          <ContentTitleLinkMethod>Selecione</ContentTitleLinkMethod>
-          <ContainerItemLinkMethod>
-            {options.map((item) => (
-              <ItemLinkMethod
-                active={item.value === currentLinkMethodValue}
-                onClick={() => handleChange(item)}
-              >
-                {item.icon}
-                <p>{item.label}</p>
-              </ItemLinkMethod>
-            ))}
-          </ContainerItemLinkMethod>
-        </ContentLinkMethod>
+        <SelectComponent
+          select={undefined}
+          onChange={() => ""}
+          options={undefined}
+          placeHolder=""
+        />
         <ContainerButtons>
           <BoxButtons>
+            <NavigationButton
+              abort
+              prev
+              onClick={() => {
+                setCurrentStep((prev) => prev - 1);
+              }}
+            >
+              Voltar
+            </NavigationButton>
             <NavigationButton
               disabled={!currentLinkMethodValue}
               onClick={() => setCurrentStep(3)}
@@ -92,4 +94,4 @@ function LinkMethod(): JSX.Element {
   );
 }
 
-export default LinkMethod;
+export default SelectList;
