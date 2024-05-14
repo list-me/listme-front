@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
   ButtonAction,
   CardAction,
@@ -13,7 +14,9 @@ import cloud from "../../../../assets/images/cloud.png";
 import { useFromToContext } from "../../../../context/FromToContext";
 
 function InitialStep(): JSX.Element {
+  const location = useLocation();
   const { setCurrentStep, setStepType } = useFromToContext();
+  const isTemplatesPage = location.pathname.includes("templates");
 
   useEffect(() => {
     setStepType("fromTo");
@@ -40,8 +43,8 @@ function InitialStep(): JSX.Element {
           <img src={guitar} alt="Vincular lista pública" />
           <ButtonAction
             onClick={() => {
-              // setCurrentStep((prev) => prev + 1);
-              // setStepType("publicList");
+              setCurrentStep((prev) => prev + 1);
+              setStepType("publicList");
             }}
           >
             Vincular lista pública
@@ -51,8 +54,10 @@ function InitialStep(): JSX.Element {
           <img src={cloud} alt="Importar arquivo" />
           <ButtonAction
             onClick={() => {
-              setCurrentStep((prev) => prev + 1);
-              setStepType("fromTo");
+              if (!isTemplatesPage) {
+                setCurrentStep((prev) => prev + 1);
+                setStepType("fromTo");
+              }
             }}
           >
             Importar arquivo

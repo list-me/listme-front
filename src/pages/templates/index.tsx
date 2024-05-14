@@ -2,20 +2,25 @@ import React, { useEffect, useState } from "react";
 import { Space, Tag } from "antd";
 import { TableRowSelection } from "antd/es/table/interface";
 import { toast } from "react-toastify";
-import { TitlePage, Content } from "./styles";
+import { TitlePage, Content, HeaderTemplates, ImportButton } from "./styles";
 import { ReactComponent as EditIcon } from "../../assets/edit-icon.svg";
 import { ReactComponent as CopyIcon } from "../../assets/copy-icon.svg";
 import { ReactComponent as TrashIcon } from "../../assets/trash-icon.svg";
+import { ReactComponent as ImportIcon } from "../../assets/import-icon.svg";
 import CustomTable from "../../components/Table/index";
 import { templateRequests } from "../../services/apis/requests/template";
 import TemplateDefault from "../../components/TemplateDefault";
 import { IPaginationTemplate } from "./templates";
 import { useFilterContext } from "../../context/FilterContext";
 import formatDate from "../../components/FromTo/utils/formatDate";
+import { useFromToContext } from "../../context/FromToContext";
+import FromTo from "../../components/FromTo";
 
 function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+  const { setFromToIsOpened } = useFromToContext();
 
   const { setFilters, defaultFilter, setFilterStatus, setConditions } =
     useFilterContext();
@@ -177,7 +182,17 @@ function Template(): JSX.Element {
         templates={templates}
       >
         <Content>
-          <TitlePage> Templates </TitlePage>
+          <HeaderTemplates>
+            <TitlePage>Templates</TitlePage>
+            <ImportButton
+              onClick={() => {
+                setFromToIsOpened(true);
+              }}
+            >
+              <ImportIcon />
+              Importar produtos
+            </ImportButton>
+          </HeaderTemplates>
           <CustomTable
             columns={columns}
             dataProvider={templates}
@@ -187,6 +202,7 @@ function Template(): JSX.Element {
           />
         </Content>
       </TemplateDefault>
+      <FromTo />
     </>
   );
 }

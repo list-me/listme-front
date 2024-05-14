@@ -21,6 +21,11 @@ function ImportConfiguration(): JSX.Element {
     setValuesImportConfiguration,
     colHeadersToPreviewTable,
   } = useFromToContext();
+  console.log("🚀 ~ ImportConfiguration ~ data:", data);
+  console.log(
+    "🚀 ~ ImportConfiguration ~ colHeadersToPreviewTable:",
+    colHeadersToPreviewTable,
+  );
 
   const types = [
     "separator",
@@ -83,21 +88,19 @@ function ImportConfiguration(): JSX.Element {
         ))}
       </BoxSelects>
       <BoxHotTable>
-        {data && colHeadersToPreviewTable && (
-          <HotTable
-            data={data}
-            colHeaders={colHeadersToPreviewTable}
-            readOnly
-            licenseKey="non-commercial-and-evaluation"
-            manualColumnResize
-            rowHeights={56}
-            viewportColumnRenderingOffset={Object.keys(data[0]).length + 1}
-            viewportRowRenderingOffset={11}
-            height={height - 451}
-            width={943}
-            autoColumnSize
-          />
-        )}
+        <HotTable
+          data={data}
+          colHeaders={colHeadersToPreviewTable!}
+          readOnly
+          licenseKey="non-commercial-and-evaluation"
+          manualColumnResize
+          rowHeights={56}
+          viewportColumnRenderingOffset={Object.keys(data[0]).length + 1}
+          viewportRowRenderingOffset={11}
+          height={height - 451}
+          width={943}
+          autoColumnSize
+        />
       </BoxHotTable>
       <AlertText>
         Mostrando os 10 primeiros itens encontrados neste arquivo
