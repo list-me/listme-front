@@ -1,5 +1,6 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import { ReactComponent as LinkIcon } from "../../../../../../../assets/linkPublicList.svg";
 import formatDate from "../../../../../utils/formatDate";
 import { ContainerTablePublicListList } from "./styles";
@@ -13,6 +14,9 @@ function TablePublicListList({
 }: {
   currentList: never[];
 }): JSX.Element {
+  const location = useLocation();
+  const isTemplatesPage = location.pathname.includes("templates");
+
   const navigate = useNavigate();
   const { setFromToIsOpened } = useFromToContext();
   const {
@@ -23,6 +27,7 @@ function TablePublicListList({
     headerTable,
     setTargetHeaderTable,
   } = useProductContext();
+
   const columns = [
     {
       title: "Nome",
@@ -79,7 +84,13 @@ function TablePublicListList({
                 setTargetTemplatePublic(template);
                 setTargetColHeaders(colHeaders);
                 setTargetHeaderTable(headerTable);
-                navigate(`${ROUTES.PRODUCTSPUBLIC}/${record.id}`);
+                navigate(
+                  `${
+                    isTemplatesPage
+                      ? ROUTES.PRODUCTSPUBLICOUTSIDE
+                      : ROUTES.PRODUCTSPUBLIC
+                  }/${record.id}`,
+                );
               }}
             >
               <LinkIcon />

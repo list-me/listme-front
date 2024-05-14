@@ -21,6 +21,10 @@ export function Router(): JSX.Element {
           <Route path="/templates" element={<Template />} />
           <Route path="/products/:id" element={<Products />} />
           <Route path="/products/public/:id" element={<ProductsPublic />} />
+          <Route
+            path="/products/public-outside/:id"
+            element={<ProductsPublic />}
+          />
           <Route path="/integration/" element={<Integration />} />
           <Route
             path="/integration/:path/:id"
