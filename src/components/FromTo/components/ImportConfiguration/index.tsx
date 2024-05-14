@@ -40,6 +40,7 @@ function ImportConfiguration(): JSX.Element {
   useEffect(() => {
     const updateHeight = (): void => {
       const element = document.querySelector(".BoxFromTo");
+      console.log("🚀 ~ updateHeight ~ element:", element);
       if (element) {
         const newHeight = element.clientHeight;
         if (newHeight !== height) {
