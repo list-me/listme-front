@@ -46,7 +46,9 @@ export function FromToContextProvider({
   const { products, colHeaders } = useProductContext();
 
   const [templates, setTemplates] = useState([]);
-  const [stepType, setStepType] = useState<"fromTo" | "publicList">("fromTo");
+  const [stepType, setStepType] = useState<
+    "fromTo" | "publicList" | "publicListOutside"
+  >("fromTo");
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<CSVRow[]>([]);
   const [currentFile, setCurrentFile] = useState<File>();

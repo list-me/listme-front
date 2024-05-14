@@ -44,7 +44,7 @@ function InitialStep(): JSX.Element {
           <ButtonAction
             onClick={() => {
               setCurrentStep((prev) => prev + 1);
-              setStepType("publicList");
+              setStepType(isTemplatesPage ? "publicListOutside" : "publicList");
             }}
           >
             Vincular lista pública
