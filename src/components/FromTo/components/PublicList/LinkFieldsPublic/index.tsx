@@ -72,9 +72,9 @@ function LinkFieldsPublic(): JSX.Element {
           if (allRowsSelected) {
             const emptyCSV = new Blob([""], { type: "text/csv" });
             body.append("items", emptyCSV);
-            body.append("all", "true");
+            body.append("is_all", "true");
           } else {
-            body.append("all", "false");
+            body.append("is_all", "false");
             const idsCSV = selectedProductsId.map((id) => `${id}\n`).join("");
             const blobCSV = new Blob([idsCSV], { type: "text/csv" });
             body.append("items", blobCSV);

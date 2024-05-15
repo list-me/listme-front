@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import {
   BoxFromTo,
   CloseButton,
@@ -20,39 +21,47 @@ import {
 import { BoxButtons, NavigationButton } from "../../NavigationButton/styles";
 import { ReactComponent as PlusIcon } from "../../../../../assets/plus-fromto.svg";
 import SelectComponent from "../../../../Select";
+import { templateRequests } from "../../../../../services/apis/requests/template";
+import { IPaginationTemplate } from "../../../../../pages/templates/templates";
+import { useProductContext } from "../../../../../context/products";
 
 function SelectList(): JSX.Element {
-  const {
-    setFromToIsOpened,
-    setCurrentStep,
-    currentLinkMethodValue,
-    setCurrentLinkMethodValue,
-  } = useFromToContext();
-
-  const options: {
+  const [selectedTemplate, setSelectedTemplate] = useState<{
+    value: string;
     label: string;
-    value: "add" | "copy";
-    icon: JSX.Element;
-  }[] = [
-    {
-      value: "copy",
-      label: "Criar uma cópia",
-      icon: <CopyIcon />,
-    },
-    {
-      value: "add",
-      label: "Adic. a uma List existente",
-      icon: <AddIcon />,
-    },
-  ];
+  }>({} as any);
+  const [templates, setTemplates] = useState([]);
 
-  const handleChange = (item: {
-    label: string;
-    value: "add" | "copy";
-    icon: JSX.Element;
-  }): void => {
-    setCurrentLinkMethodValue(item.value);
+  const toOptions = templates.map((item: any) => {
+    return { label: item.name, value: item.id };
+  });
+  const { setFromToIsOpened, setCurrentStep, currentLinkMethodValue } =
+    useFromToContext();
+  const { setTemplate } = useProductContext();
+
+  const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
+    templateRequests
+      .list({ limit, page, list: true })
+      .then((response) => {
+        setTemplates(response);
+      })
+      .catch((error) => {
+        toast.error("Ocorreu um erro ao listar os catálogos");
+        console.error(error);
+      });
   };
+
+  useEffect(() => {
+    handleGetTemplates({ page: 0, limit: 100 });
+  }, []);
+
+  function onContinue(): void {
+    const templateFinded = (templates as any).find((item: any) => {
+      return item.id === selectedTemplate.value;
+    });
+    setTemplate(templateFinded);
+    setCurrentStep(4);
+  }
 
   return (
     <ContainerLinkMethod>
@@ -64,10 +73,10 @@ function SelectList(): JSX.Element {
           </CloseButton>
         </HeaderModal>
         <SelectComponent
-          select={undefined}
-          onChange={() => ""}
-          options={undefined}
-          placeHolder=""
+          select={selectedTemplate}
+          onChange={(e) => setSelectedTemplate(e)}
+          options={toOptions}
+          placeHolder="Selecionar"
         />
         <ContainerButtons>
           <BoxButtons>
@@ -82,7 +91,9 @@ function SelectList(): JSX.Element {
             </NavigationButton>
             <NavigationButton
               disabled={!currentLinkMethodValue}
-              onClick={() => setCurrentStep(3)}
+              onClick={() => {
+                onContinue();
+              }}
             >
               <PlusIcon />
               Continuar

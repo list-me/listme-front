@@ -49,6 +49,8 @@ function StepContent(): JSX.Element {
           (currentLinkMethodValue === "add" ? <SelectList /> : <></>)}
         {currentStep === 4 &&
           (currentLinkMethodValue === "copy" ? <LinkFieldsPublic /> : <></>)}
+        {currentStep === 4 &&
+          (currentLinkMethodValue === "add" ? <SelectList /> : <></>)}
         {currentStep === 5 && <></>}
       </StepContentContainer>
     );
