@@ -1,7 +1,6 @@
 import InitialStep from "../InitialStep";
 import ImportFile from "../ImportFile";
 import { StepContentContainer } from "./styles";
-// import LoadingSpinner from "../LoadingSpinner";
 import ImportConfiguration from "../ImportConfiguration";
 import { useFromToContext } from "../../../../context/FromToContext";
 import ImportOptions from "../ImportOptions";
@@ -10,11 +9,10 @@ import IntegrationSettings from "../IntegrationSettings";
 import PublicListList from "../PublicList/PublicListList";
 import LinkConfiguration from "../PublicList/LinkConfiguration";
 import LinkFieldsPublic from "../PublicList/LinkFieldsPublic";
-import LinkMethod from "../PublicListOutside/LinkMethod";
-import SelectList from "../PublicListOutside/SelectList";
+import StepContentOutside from "./StepContentOutside";
 
 function StepContent(): JSX.Element {
-  const { currentStep, stepType, currentLinkMethodValue } = useFromToContext();
+  const { currentStep, stepType } = useFromToContext();
 
   if (stepType === "fromTo")
     return (
@@ -37,23 +35,7 @@ function StepContent(): JSX.Element {
         {currentStep === 5 && <LinkFields />}
       </StepContentContainer>
     );
-  if (stepType === "publicListOutside")
-    return (
-      <StepContentContainer>
-        {currentStep === 0 && <InitialStep />}
-        {currentStep === 1 && <PublicListList />}
-        {currentStep === 2 && <LinkMethod />}
-        {currentStep === 3 &&
-          (currentLinkMethodValue === "copy" ? <LinkConfiguration /> : <></>)}
-        {currentStep === 3 &&
-          (currentLinkMethodValue === "add" ? <SelectList /> : <></>)}
-        {currentStep === 4 &&
-          (currentLinkMethodValue === "copy" ? <LinkFieldsPublic /> : <></>)}
-        {currentStep === 4 &&
-          (currentLinkMethodValue === "add" ? <SelectList /> : <></>)}
-        {currentStep === 5 && <></>}
-      </StepContentContainer>
-    );
+  if (stepType === "publicListOutside") return <StepContentOutside />;
 
   return <></>;
 }

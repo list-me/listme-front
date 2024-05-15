@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
   BoxFromTo,
@@ -8,22 +8,14 @@ import {
 } from "../../../styles";
 import { useFromToContext } from "../../../../../context/FromToContext";
 import { ReactComponent as CloseIcon } from "../../../../../assets/close-gray.svg";
-import { ReactComponent as CopyIcon } from "../../../../../assets/copy-outside.svg";
-import { ReactComponent as AddIcon } from "../../../../../assets/add-outside.svg";
-import {
-  ContainerButtons,
-  ContainerItemLinkMethod,
-  ContainerLinkMethod,
-  ItemLinkMethod,
-  ContentLinkMethod,
-  ContentTitleLinkMethod,
-} from "./styles";
+import { ContainerButtons, ContainerLinkMethod } from "./styles";
 import { BoxButtons, NavigationButton } from "../../NavigationButton/styles";
 import { ReactComponent as PlusIcon } from "../../../../../assets/plus-fromto.svg";
 import SelectComponent from "../../../../Select";
 import { templateRequests } from "../../../../../services/apis/requests/template";
 import { IPaginationTemplate } from "../../../../../pages/templates/templates";
 import { useProductContext } from "../../../../../context/products";
+import { ITemplate } from "../../../../../context/products/product.context";
 
 function SelectList(): JSX.Element {
   const [selectedTemplate, setSelectedTemplate] = useState<{
@@ -37,7 +29,7 @@ function SelectList(): JSX.Element {
   });
   const { setFromToIsOpened, setCurrentStep, currentLinkMethodValue } =
     useFromToContext();
-  const { setTemplate } = useProductContext();
+  const { setTargetTemplatePublic } = useProductContext();
 
   const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
     templateRequests
@@ -55,11 +47,14 @@ function SelectList(): JSX.Element {
     handleGetTemplates({ page: 0, limit: 100 });
   }, []);
 
-  function onContinue(): void {
+  async function onContinue(): Promise<void> {
     const templateFinded = (templates as any).find((item: any) => {
       return item.id === selectedTemplate.value;
     });
-    setTemplate(templateFinded);
+
+    const response: ITemplate = await templateRequests.get(templateFinded.id);
+
+    setTargetTemplatePublic(response as any);
     setCurrentStep(4);
   }
 

@@ -32,6 +32,7 @@ function LinkFieldsPublic(): JSX.Element {
     selectedProductsId,
     toClean,
     stepType,
+    currentLinkMethodValue,
   } = useFromToContext();
   const navigate = useNavigate();
 
@@ -168,6 +169,14 @@ function LinkFieldsPublic(): JSX.Element {
   const colHeadersToPreviewTable = [...colHeaders];
   colHeadersToPreviewTable.pop();
 
+  const RenderedComponent =
+    // eslint-disable-next-line no-nested-ternary
+    stepType !== "publicListOutside"
+      ? LinkFieldsComponent
+      : currentLinkMethodValue === "copy"
+      ? LinkFieldsOutsideComponent
+      : LinkFieldsComponent;
+
   return (
     <BoxFromTo>
       <HeaderModal borderDisabled>
@@ -187,29 +196,16 @@ function LinkFieldsPublic(): JSX.Element {
         ) : (
           <></>
         )}
-        {stepType !== "publicListOutside" ? (
-          <LinkFieldsComponent
-            colHeadersToPreviewTable={colHeadersToPreviewTable}
-            data={[]}
-            selectedLinkFields={selectedLinkFields}
-            handleSelectChange={handleSelectChange}
-            options={options}
-            fixedOptions={fixedOptions}
-            setIsOpenModal={setIsOpenModal}
-            isOpenModal={isOpenModal}
-          />
-        ) : (
-          <LinkFieldsOutsideComponent
-            colHeadersToPreviewTable={colHeadersToPreviewTable}
-            data={[]}
-            selectedLinkFields={selectedLinkFields}
-            handleSelectChange={handleSelectChange}
-            options={options}
-            fixedOptions={fixedOptions}
-            setIsOpenModal={setIsOpenModal}
-            isOpenModal={isOpenModal}
-          />
-        )}
+        <RenderedComponent
+          colHeadersToPreviewTable={colHeadersToPreviewTable}
+          data={[]}
+          selectedLinkFields={selectedLinkFields}
+          handleSelectChange={handleSelectChange}
+          options={options}
+          fixedOptions={fixedOptions}
+          setIsOpenModal={setIsOpenModal}
+          isOpenModal={isOpenModal}
+        />
         <BoxButtons>
           <NavigationButton
             abort

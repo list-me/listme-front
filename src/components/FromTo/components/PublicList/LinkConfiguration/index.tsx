@@ -19,6 +19,7 @@ function LinkConfiguration(): JSX.Element {
     currentLinkConfigurationValue,
     setCurrentLinkConfigurationValue,
     stepType,
+    currentLinkMethodValue,
   } = useFromToContext();
 
   const options = [
@@ -49,9 +50,15 @@ function LinkConfiguration(): JSX.Element {
     } else if (
       currentLinkConfigurationValue.value === "importDetachedProducts"
     ) {
-      console.log("FAZER FINISH");
+      if (currentLinkMethodValue === "copy") {
+        console.log("FAZER FINISH");
+      }
     } else if (currentLinkConfigurationValue.value === "keepProductsLinked") {
-      setCurrentStep(4);
+      if (currentLinkMethodValue === "add") {
+        setCurrentStep(5);
+      } else {
+        setCurrentStep(4);
+      }
     }
   }
 
