@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useState } from "react";
 import {
   BoxFromTo,
@@ -52,6 +53,8 @@ function LinkConfiguration(): JSX.Element {
     ) {
       if (currentLinkMethodValue === "copy") {
         console.log("FAZER FINISH");
+      } else if (currentLinkMethodValue === "add") {
+        setCurrentStep(5);
       }
     } else if (currentLinkConfigurationValue.value === "keepProductsLinked") {
       if (currentLinkMethodValue === "add") {
@@ -60,6 +63,12 @@ function LinkConfiguration(): JSX.Element {
         setCurrentStep(4);
       }
     }
+  }
+
+  function handlePrevButton(): void {
+    if (stepType !== "publicListOutside") {
+      setFromToIsOpened(false);
+    } else setCurrentStep(2);
   }
 
   return (
@@ -78,13 +87,7 @@ function LinkConfiguration(): JSX.Element {
         />
         <ContainerButtons>
           <BoxButtons>
-            <NavigationButton
-              onClick={() =>
-                stepType !== "publicListOutside"
-                  ? setCurrentStep(2)
-                  : setFromToIsOpened(false)
-              }
-            >
+            <NavigationButton onClick={() => handlePrevButton()} abort>
               <PlusIcon />
               Voltar
             </NavigationButton>
@@ -94,7 +97,9 @@ function LinkConfiguration(): JSX.Element {
             >
               <PlusIcon />
               {currentLinkConfigurationValue.value === "importDetachedProducts"
-                ? "Concluir"
+                ? currentLinkMethodValue === "copy"
+                  ? "Concluir"
+                  : "Avançar"
                 : "Avançar"}
             </NavigationButton>
           </BoxButtons>
