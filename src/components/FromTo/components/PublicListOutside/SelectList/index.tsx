@@ -21,7 +21,7 @@ function SelectList(): JSX.Element {
   const [selectedTemplate, setSelectedTemplate] = useState<{
     value: string;
     label: string;
-  }>({} as any);
+  } | null>(null);
   const [templates, setTemplates] = useState([]);
 
   const toOptions = templates.map((item: any) => {
@@ -49,7 +49,7 @@ function SelectList(): JSX.Element {
 
   async function onContinue(): Promise<void> {
     const templateFinded = (templates as any).find((item: any) => {
-      return item.id === selectedTemplate.value;
+      return item.id === selectedTemplate?.value;
     });
 
     const response: ITemplate = await templateRequests.get(templateFinded.id);
@@ -85,7 +85,7 @@ function SelectList(): JSX.Element {
               Voltar
             </NavigationButton>
             <NavigationButton
-              disabled={!currentLinkMethodValue}
+              disabled={!selectedTemplate}
               onClick={() => {
                 onContinue();
               }}

@@ -12,13 +12,7 @@ import LinkFieldsPublic from "../PublicList/LinkFieldsPublic";
 import StepContentOutside from "./StepContentOutside";
 
 function StepContent(): JSX.Element {
-  const { currentStep, stepType, currentLinkMethodValue } = useFromToContext();
-  console.log(
-    "🚀 ~ StepContent ~ currentLinkMethodValue:",
-    currentLinkMethodValue,
-  );
-  console.log("🚀 ~ StepContent ~ stepType:", stepType);
-  console.log("🚀 ~ StepContent ~ currentStep:", currentStep);
+  const { currentStep, stepType } = useFromToContext();
 
   if (stepType === "fromTo")
     return (

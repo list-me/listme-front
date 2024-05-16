@@ -24,20 +24,17 @@ export const ProductsPublic: React.FC = () => {
     if (!isOutsidePage && !targetTemplatePublic) {
       navigate(`${ROUTES.TEMPLATES}`);
     }
-    setIsLoading(true);
+  }, [isOutsidePage, navigate, targetTemplatePublic]);
 
+  useEffect(() => {
+    setIsLoading(true);
     const id = window.location.pathname.split("/").pop();
     if (id) {
       handleRedirectAndGetProducts(id).then(() => {
         setIsLoading(false);
       });
     }
-  }, [
-    handleRedirectAndGetProducts,
-    isOutsidePage,
-    navigate,
-    targetTemplatePublic,
-  ]);
+  }, [handleRedirectAndGetProducts]);
 
   return (
     <>
