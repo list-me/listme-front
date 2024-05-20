@@ -4,16 +4,11 @@ import {
   AlertLinkFields,
   ColumnTitleLinkFields,
   ContainerCheckBox,
-  ContainerSelectText,
   ContentLinkFields,
-  ContentRowLinkFields,
   ContentRowLinkFieldsOutside,
   HeaderLinkFields,
 } from "../../styles";
 import Origin from "../Origin";
-import SelectComponent from "../../../../../Select";
-import { DropdownMenu } from "../../../../../DropdownMenu";
-import newColumnOptions from "../../../../../../utils/newColumnOptions";
 import { PersonalModal } from "../../../../../CustomModa";
 import { useProductContext } from "../../../../../../context/products";
 import { useFromToContext } from "../../../../../../context/FromToContext";
@@ -22,38 +17,15 @@ import { ReactComponent as InfoIcon } from "../../../../../../assets/info.svg";
 function LinkFieldsOutsideComponent({
   colHeadersToPreviewTable,
   data,
-  selectedLinkFields,
-  handleSelectChange,
-  options,
-  fixedOptions,
   setIsOpenModal,
   isOpenModal,
 }: {
   colHeadersToPreviewTable: string[] | null;
   data: any[];
-  selectedLinkFields: {
-    [key: string]: IOption;
-  };
-  handleSelectChange: (itemKey: string, selectedValue: IOption) => void;
-  options: IOption[];
-  fixedOptions: (
-    | {
-        value: string;
-        label: string;
-        openDropdown: boolean;
-      }
-    | {
-        value: string;
-        label: string;
-        openDropdown?: undefined;
-      }
-  )[];
   setIsOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   isOpenModal: boolean;
 }): JSX.Element {
-  const iconRef = useRef(null);
-  const [isOpenDropDown, setIsOpenDropDown] = useState<boolean>(false);
-  const [dataToModal, setDataToModal] = useState({});
+  const [dataToModal] = useState({});
   const {
     template,
     headerTable,

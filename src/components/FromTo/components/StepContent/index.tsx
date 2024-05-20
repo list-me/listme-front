@@ -10,6 +10,7 @@ import PublicListList from "../PublicList/PublicListList";
 import LinkConfiguration from "../PublicList/LinkConfiguration";
 import LinkFieldsPublic from "../PublicList/LinkFieldsPublic";
 import StepContentOutside from "./StepContentOutside";
+import StepManageLinkedLists from "./StepManageLinkedLists";
 
 function StepContent(): JSX.Element {
   const { currentStep, stepType } = useFromToContext();
@@ -36,6 +37,8 @@ function StepContent(): JSX.Element {
       </StepContentContainer>
     );
   if (stepType === "publicListOutside") return <StepContentOutside />;
+
+  if (stepType === "manageLinkedLists") return <StepManageLinkedLists />;
 
   return <></>;
 }

@@ -52,9 +52,11 @@ export interface FromToContextType {
   >;
   csvResponse: ICSVResponse;
   toClean: () => void;
-  stepType: "fromTo" | "publicList" | "publicListOutside";
+  stepType: "fromTo" | "publicList" | "publicListOutside" | "manageLinkedLists";
   setStepType: React.Dispatch<
-    React.SetStateAction<"fromTo" | "publicList" | "publicListOutside">
+    React.SetStateAction<
+      "fromTo" | "publicList" | "publicListOutside" | "manageLinkedLists"
+    >
   >;
   templates: never[];
   setTemplates: React.Dispatch<React.SetStateAction<never[]>>;

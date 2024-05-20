@@ -126,6 +126,19 @@ function HeaderFilters({
                 height="52px"
                 width="227px"
                 isSecondary
+                onClick={() => {
+                  setFromToIsOpened(true);
+                  setStepType("manageLinkedLists");
+                }}
+              >
+                <DownloadIcon />
+                Gerenciar vínculos
+              </Button>
+              <Button
+                height="52px"
+                width="227px"
+                isSecondary
+                className="secondButton"
                 onClick={() => setFromToIsOpened(true)}
               >
                 <DownloadIcon />
