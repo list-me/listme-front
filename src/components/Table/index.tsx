@@ -39,7 +39,7 @@ function CustomTable(props: any): JSX.Element {
       title: 101,
       headerTable: 56,
       paddingNavigation: 62,
-      rowHeight: 83,
+      rowHeight: 62,
       marginError: 1, // Considerando o menos 1 para não vazar o sidebar
     };
 
@@ -54,7 +54,10 @@ function CustomTable(props: any): JSX.Element {
       Math.round(tableContainerContent / constants.rowHeight) -
       constants.marginError;
 
-    const newPageSize = Math.max(3, countRows);
+    const newPageSize = props.isPublic
+      ? // ? props.dataProvider.le
+        7
+      : Math.max(3, countRows);
 
     setPageSize(newPageSize);
     return newPageSize;
@@ -90,7 +93,12 @@ function CustomTable(props: any): JSX.Element {
         rowSelection={props.rowSelection}
         onRow={(record, _rowIndex) => {
           return {
-            onClick: () => navigate(`${ROUTES.PRODUCTS}/${record.id}`),
+            onClick: () => {
+              // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+              props.disabledOnClick
+                ? ""
+                : navigate(`${ROUTES.PRODUCTS}/${record.id}`);
+            },
           };
         }}
       />

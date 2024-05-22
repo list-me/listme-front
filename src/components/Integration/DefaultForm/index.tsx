@@ -112,7 +112,6 @@ function DefaultForm({
 
     return null;
   };
-
   return (
     <ContainerDefaultForm>
       <ContainerTitlesDefaultForm>
@@ -150,7 +149,7 @@ function DefaultForm({
             isDisabled={done}
             onClick={() => {
               const variants = payload.filter((pItem) => {
-                return pItem.key.includes("feature_id");
+                return pItem.key.includes("variant_id");
               });
               setCurrentPayload([...currentPayload, variants[0]]);
             }}

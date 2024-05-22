@@ -9,6 +9,8 @@ import { ReactComponent as FrozenIcon } from "../../../../../../assets/frozen.sv
 import { ReactComponent as AscIcon } from "../../../../../../assets/sort-asc.svg";
 import { ReactComponent as DescIcon } from "../../../../../../assets/sort-desc.svg";
 import { ReactComponent as TrashIcon } from "../../../../../../assets/trash-red.svg";
+import { ReactComponent as GroupIcon } from "../../../../../../assets/group-icon.svg";
+
 import { DropdownMenu } from "../../../../../DropdownMenu";
 import { PersonalModal } from "../../../../../CustomModa";
 
@@ -21,6 +23,7 @@ export const HeaderCell: React.FC<ICellProps> = ({
   handleHidden = () => {},
   freeze,
   handleDeleteColumn,
+  handleGroupEdit,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
@@ -40,6 +43,13 @@ export const HeaderCell: React.FC<ICellProps> = ({
         label: "Duplicar Campo",
         icon: <CopyIcon />,
         action: "duplicate",
+      },
+      {
+        label: column?.group
+          ? "Desagrupar coluna(s)"
+          : "Agrupar com outra(s) coluna(s)",
+        icon: <GroupIcon />,
+        action: "group",
       },
       {
         label: "Ocultar Coluna",
@@ -76,6 +86,11 @@ export const HeaderCell: React.FC<ICellProps> = ({
         isOpen
         icoRef={iconRef}
         openModal={(option): void => {
+          if (option.action === "group") {
+            handleGroupEdit();
+            setIsOpen(!isOpen);
+            return;
+          }
           if (option.action === "delete") {
             handleDeleteColumn();
             setIsOpen(!isOpen);

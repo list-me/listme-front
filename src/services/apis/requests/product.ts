@@ -36,6 +36,25 @@ export const productRequests = {
 
     return response;
   },
+  listPublic: async (
+    { page = 0, limit = 200 }: IPagination,
+    templateId?: string,
+  ): Promise<AxiosResponse> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+
+    const response = await api.get(
+      `/products/public?${templateId && `template_id=${templateId}`}${
+        limit && `&limit=${limit}`
+      }&offset=${page}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response;
+  },
   save: async (product: any): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.post(`/product`, product, {
@@ -91,6 +110,18 @@ export const productRequests = {
 
     return response.data;
   },
+  postLink: async (formData: FormData): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(`/products/link`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data;
+  },
+
   validateCSV: async (formData: FormData): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.post(`/products/validate/csv`, formData, {

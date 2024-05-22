@@ -9,6 +9,7 @@ interface ICellProps {
   handleHidden: Function;
   handleDeleteColumn: () => void;
   freeze: boolean;
+  handleGroupEdit: () => void;
 }
 
 interface IOption {

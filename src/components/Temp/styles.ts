@@ -8,7 +8,7 @@ export const Contents = styled.div`
   }
 `;
 
-export const Item = styled.span`
+export const Item = styled.span<{ isDisabled?: boolean }>`
   font-family: ${({ theme }) => theme.fonts.family.bold};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
   font-style: normal;
@@ -34,6 +34,8 @@ export const Item = styled.span`
   &:hover {
     cursor: pointer;
   }
+  pointer-events: ${(props) => (props.isDisabled ? "none" : "initial")};
+  opacity: ${(props) => (props.isDisabled ? "0.5" : "initial")};
 `;
 
 export const ButtonCustom = styled.button<{ width: string; height: string }>`
@@ -87,6 +89,7 @@ export const ButtonCustom = styled.button<{ width: string; height: string }>`
 
 export const ButtonFilter = styled.div<{
   filterActive: boolean;
+  isDisabled?: boolean;
 }>`
   display: flex;
   border: ${(props) => props.filterActive && "1px solid  #3818D9"};
@@ -95,6 +98,8 @@ export const ButtonFilter = styled.div<{
   border-radius: 4px;
   position: relative;
   cursor: pointer;
+  pointer-events: ${(props) => (props.isDisabled ? "none" : "initial")};
+  opacity: ${(props) => (props.isDisabled ? "0.5" : "initial")};
 `;
 export const CountFilter = styled.div`
   width: 20px;

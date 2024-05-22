@@ -12,6 +12,8 @@ const theme: ITheme = {
     tertiary: "#868E96",
     fourth: "#000000",
 
+    focus: { primary: "#e2e0ff" },
+
     error: "",
     warning: "",
     success: "",
