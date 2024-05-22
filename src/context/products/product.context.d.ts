@@ -84,6 +84,7 @@ interface IHeader {
 }
 
 interface ICustomField {
+  enforce_exact_length: any;
   order: string | number;
   hidden: boolean;
   width: string;
