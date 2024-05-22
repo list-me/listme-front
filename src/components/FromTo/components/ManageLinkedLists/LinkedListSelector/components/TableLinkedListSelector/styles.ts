@@ -89,3 +89,26 @@ export const ContainerActionsButtons = styled.div`
     }
   }
 `;
+export const DeleteDropDown = styled.div`
+  padding: 12px 16px;
+  position: fixed;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #ff6b6b;
+  background: ${({ theme }) => theme.colors.secondary};
+  box-shadow: 0px 10px 40px 0px #00000012;
+  border-radius: 8px;
+  font-family: ${({ theme }) => theme.fonts.family.default};
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
+  font-weight: ${({ theme }) => theme.fonts.weights.regular};
+  cursor: pointer;
+  :hover {
+    p {
+      text-decoration: underline;
+    }
+  }
+  p {
+    margin: 0;
+  }
+`;

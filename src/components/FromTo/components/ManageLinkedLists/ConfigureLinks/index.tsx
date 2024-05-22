@@ -30,7 +30,8 @@ import Origin from "../../LinkFields/components/Origin";
 import { BoxButtons, NavigationButton } from "../../NavigationButton/styles";
 
 function ConfigureLinks(): JSX.Element {
-  const { setFromToIsOpened, checkedList, setCheckedList } = useFromToContext();
+  const { setFromToIsOpened, checkedList, setCheckedList, setCurrentStep } =
+    useFromToContext();
 
   const colHeadersToPreviewTable = ["item 1", "item2"];
 
@@ -103,11 +104,11 @@ function ConfigureLinks(): JSX.Element {
             ))}
           </ContentLinkFields>
           <BoxButtons>
-            <NavigationButton onClick={() => ""} abort>
+            <NavigationButton onClick={() => setCurrentStep(0)} abort>
               <PlusIcon />
               Voltar
             </NavigationButton>
-            <NavigationButton onClick={() => ""}>
+            <NavigationButton onClick={() => setCurrentStep(2)}>
               <PlusIcon />
               Continuar
             </NavigationButton>

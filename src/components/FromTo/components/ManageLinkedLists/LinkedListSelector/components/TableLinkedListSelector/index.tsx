@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { ReactComponent as RefreshIcon } from "../../../../../../../assets/refresh.svg";
 import { ReactComponent as EllipsisIcon } from "../../../../../../../assets/verticalEllipsis.svg";
+import { ReactComponent as TrashIcon } from "../../../../../../../assets/trash-red.svg";
 import formatDate from "../../../../../utils/formatDate";
 import {
   ContainerActionsButtons,
   ContainerTableLinkedListSelector,
+  DeleteDropDown,
 } from "./styles";
 import CustomTable from "../../../../../../Table";
 import { useFromToContext } from "../../../../../../../context/FromToContext";
@@ -17,6 +19,20 @@ function TableLinkedListSelector({
   currentList: never[];
 }): JSX.Element {
   const { setCurrentStep } = useFromToContext();
+  const [openedDropDown, setOpenedDropDown] = useState(true);
+  const [dropDownPosition, setDropDownPosition] = useState({ top: 0, left: 0 });
+
+  const handleDropDownOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const buttonCoordinates = e.currentTarget.getBoundingClientRect();
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+
+    setDropDownPosition({
+      top: mouseY - buttonCoordinates.height,
+      left: mouseX - buttonCoordinates.width / 2,
+    });
+    setOpenedDropDown(true);
+  };
 
   const columns = [
     {
@@ -64,14 +80,16 @@ function TableLinkedListSelector({
       dataIndex: "action",
       render: (_: any, record: any) => {
         return (
-          <ContainerActionsButtons>
-            <button type="button">
-              <RefreshIcon />
-            </button>
-            <button type="button">
-              <EllipsisIcon />
-            </button>
-          </ContainerActionsButtons>
+          <div>
+            <ContainerActionsButtons>
+              <button type="button">
+                <RefreshIcon />
+              </button>
+              <button type="button" onClick={handleDropDownOpen}>
+                <EllipsisIcon />
+              </button>
+            </ContainerActionsButtons>
+          </div>
         );
       },
     },
@@ -86,6 +104,17 @@ function TableLinkedListSelector({
         disabledOnClick
         isPublic
       />
+      {openedDropDown && (
+        <DeleteDropDown
+          style={{
+            top: dropDownPosition.top + 45,
+            left: dropDownPosition.left - 120,
+          }}
+        >
+          <TrashIcon />
+          <p>Excluir vínculo</p>
+        </DeleteDropDown>
+      )}
     </ContainerTableLinkedListSelector>
   );
 }
