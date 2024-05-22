@@ -45,7 +45,7 @@ export const HeaderCell: React.FC<ICellProps> = ({
         action: "duplicate",
       },
       {
-        label: column.group
+        label: column?.group
           ? "Desagrupar coluna(s)"
           : "Agrupar com outra(s) coluna(s)",
         icon: <GroupIcon />,

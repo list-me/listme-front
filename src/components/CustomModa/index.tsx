@@ -250,6 +250,7 @@ export const PersonalModal = ({
         is_public: false,
         help_text: "This fiedl will help you to make a new product register",
         description: "Completly random description",
+        enforce_exact_length: false,
       };
       templateUpdated.push(newField);
     }
