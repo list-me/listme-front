@@ -77,6 +77,7 @@ export const PersonalModal = ({
   );
   const [type, setType] = useState<string>(data?.type);
   const [required, setRequired] = useState<boolean>(data?.required ?? false);
+  const [isUnique, setIsUnique] = useState<boolean>(data?.is_unique ?? false);
   // @ts-ignore
   const initialLimit =
     data?.limit || DefaultLimits[data?.type]?.default || null;
@@ -230,6 +231,7 @@ export const PersonalModal = ({
           data.name = name;
           data.title = title;
           data.required = required;
+          data.is_unique = isUnique;
           data.limit = type === "relation" ? 20 : characterLimit;
           item = data;
           return item;
@@ -247,9 +249,11 @@ export const PersonalModal = ({
         limit: type === "relation" ? 20 : characterLimit,
         options: type !== "decimal" ? option || [""] : [decimalPoint],
         required,
+        isUnique: false,
         is_public: false,
         help_text: "This fiedl will help you to make a new product register",
         description: "Completly random description",
+        enforce_exact_length: false,
       };
       templateUpdated.push(newField);
     }
@@ -270,7 +274,10 @@ export const PersonalModal = ({
       return newObj;
     });
 
-    const newTemplates = { fields: newFields };
+    const newTemplates = {
+      fields: newFields,
+      groups: template.fields.groups.map((mGroup: any) => mGroup.label),
+    };
 
     try {
       await templateRequests.update(currentTemplate?.id, newTemplates);
@@ -320,6 +327,7 @@ export const PersonalModal = ({
               form={form}
               initialValues={{
                 required,
+                is_unique: isUnique,
                 title,
                 name: data?.name,
                 type: data?.type,
@@ -646,6 +654,17 @@ export const PersonalModal = ({
                     size="small"
                     onChange={() => setRequired(!required)}
                     checked={required}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="is_unique"
+                  label="Campo único"
+                  style={{ marginBottom: "2px" }}
+                >
+                  <Switch
+                    size="small"
+                    onChange={() => setIsUnique(!isUnique)}
+                    checked={isUnique}
                   />
                 </Form.Item>
               </Footer>

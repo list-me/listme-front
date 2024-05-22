@@ -132,7 +132,7 @@ export function FromToContextProvider({
 
   const { template } = useProductContext();
 
-  function finishFromTo(): Promise<any> {
+  async function finishFromTo(): Promise<any> {
     const keys = Object.keys(selectedLinkFields);
     const validKeys = keys.filter((key) => {
       return selectedLinkFields[key].value !== "Ignorar";
@@ -168,39 +168,48 @@ export function FromToContextProvider({
     let templateId = "";
     const result = templateRequests
       .postFromTo(dataFromTo as unknown as ITemplate)
-      .then((templateResponse) => {
+      .then(async (templateResponse) => {
         templateId = templateResponse.id;
 
         const formData = new FormData();
         formData.append("file", currentFile as Blob);
+        formData.append("templateId", templateId);
 
-        formData.append("templateId", templateId);
-        return productRequests.validateCSV(formData);
-      })
-      .then((productResponse) => {
-        const formData = new FormData();
-        formData.append("file", currentFile as Blob);
-        formData.append("templateId", templateId);
-        const withErrors = productResponse.errors.length > 0;
-        if (!withErrors) {
-          productRequests.postFromToCSV(formData);
+        try {
+          const productResponse = await productRequests.validateCSV(formData);
+          const withErrors = productResponse.errors.length > 0;
+
+          if (!withErrors) {
+            await productRequests.postFromToCSV(formData);
+          }
+
+          setCsvResponse(productResponse);
+
+          return productResponse;
+        } catch (error: any) {
+          if (error.response) {
+            const message =
+              typeof error.response.data.message === "string"
+                ? error.response.data.message
+                : error.response.data.message[0];
+            toast.error(message);
+          } else {
+            console.error("Erro na requisição:", error.message);
+            toast.error(error.message);
+          }
+          throw error;
         }
-        setCsvResponse(productResponse);
-        templateRequests.deleteTemplateImport(templateId);
-        return productResponse;
       })
       .catch((error) => {
-        if (error.response) {
-          const message =
-            typeof error.response.data.message === "string"
-              ? error.response.data.message
-              : error.response.data.message[0];
-          toast.error(message);
-        } else {
-          console.error("Erro na requisição:", error.message);
-          toast.error(error.message);
+        console.error("Erro na requisição:", error.message);
+        toast.error("Ocorreu um erro ao processar a solicitação.");
+      })
+      .finally(async () => {
+        if (templateId) {
+          await templateRequests.deleteTemplateImport(templateId);
         }
       });
+
     return result;
   }
 

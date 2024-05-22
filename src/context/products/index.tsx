@@ -183,6 +183,11 @@ export const ProductContextProvider = ({
       try {
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {
+          const numberOfDots = file.name.split(".");
+          if (numberOfDots.length > 2) {
+            // eslint-disable-next-line @typescript-eslint/no-throw-literal
+            throw "O nome do arquivo não pode conter ponto(.)";
+          }
           const [fileName, fileType] = file.name.split(".");
 
           let signedUrl: SignedUrlResponse;
@@ -688,16 +693,16 @@ export const ProductContextProvider = ({
     newfields: any,
   ): ICustomField[] => {
     const toBuild = [...newfields];
-
     const builded = toBuild?.map((custom) => {
       if (cols.includes(custom?.order)) {
-        return {
+        const newItem = {
           id: custom?.id,
           order: order ? order.toString() : custom?.order,
           hidden: show !== undefined ? show : custom?.hidden,
           width: width || custom?.width,
           frozen: frozen || custom?.frozen,
         };
+        return newItem;
       }
       return custom;
     });
@@ -747,7 +752,7 @@ export const ProductContextProvider = ({
       return item;
     });
 
-    setCustomFields(newfields);
+    setCustomFields(newfields as ICustomField[]);
 
     const custom = buildCustomFields(
       temp?.fields?.fields,
@@ -806,6 +811,7 @@ export const ProductContextProvider = ({
         };
       });
     });
+
     templateRequests
       .customView(template!.id, { fields: newCustomFields })
       .catch((_error) =>
@@ -849,7 +855,7 @@ export const ProductContextProvider = ({
     if (isPublic) {
       setTargetTemplatePublic(newTemplate);
     } else setTemplate(newTemplate);
-
+    // @ts-ignore
     setCustomFields((prev) => [
       ...prev,
       {
@@ -915,6 +921,8 @@ export const ProductContextProvider = ({
         if (keys.includes(item?.id)) return item;
       })
       .map((element, index) => {
+        const newItem = element;
+        delete newItem.enforce_exact_length;
         return {
           ...element,
           order: index.toString(),
