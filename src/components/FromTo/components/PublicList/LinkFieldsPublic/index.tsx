@@ -77,8 +77,10 @@ function LinkFieldsPublic(): JSX.Element {
             body.append("is_all", "true");
           } else {
             body.append("is_all", "false");
-            const idsCSV = selectedProductsId.map((id) => `${id}\n`).join("");
-            const blobCSV = new Blob([idsCSV], { type: "text/csv" });
+            const csvContent = `ids\n${selectedProductsId
+              .map((id) => id)
+              .join("\n")}`;
+            const blobCSV = new Blob([csvContent], { type: "text/csv" });
             body.append("items", blobCSV);
           }
           body.append("template_id", response.id);
