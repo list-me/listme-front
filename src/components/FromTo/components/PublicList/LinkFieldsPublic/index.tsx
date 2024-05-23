@@ -67,6 +67,7 @@ function LinkFieldsPublic(): JSX.Element {
             fields,
           },
         };
+
         const response = await templateRequests.postFromTo(templateBody as any);
         if (response.id) {
           const body = new FormData();
@@ -84,7 +85,7 @@ function LinkFieldsPublic(): JSX.Element {
           await productRequests.postLink(body);
           toast.success("Vínculo realizado com sucesso");
           toClean();
-          navigate(`${ROUTES.PRODUCTS}/${response.id}`);
+          navigate(`${ROUTES.PRODUCTS}/${targetTemplatePublic.id}`);
         }
       }
     } catch (error) {
