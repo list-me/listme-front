@@ -68,7 +68,7 @@ export function FromToContextProvider({
       description: "",
     });
   const [currentLinkMethodValue, setCurrentLinkMethodValue] =
-    useState<ILinkMethodValue>("");
+    useState<ILinkMethodValue>("add");
   const colHeadersToPreviewTable = useMemo((): string[] | null => {
     if (data[0]) return Object.keys(data[0]);
     return null;

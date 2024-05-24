@@ -54,7 +54,8 @@ function LinkConfiguration(): JSX.Element {
       if (currentLinkMethodValue === "copy") {
         console.log("FAZER FINISH");
       } else if (currentLinkMethodValue === "add") {
-        setCurrentStep(5);
+        setCurrentStep(4);
+        // setCurrentStep(5);
       }
     } else if (currentLinkConfigurationValue.value === "keepProductsLinked") {
       if (currentLinkMethodValue === "add") {

@@ -55,7 +55,8 @@ function SelectList(): JSX.Element {
     const response: ITemplate = await templateRequests.get(templateFinded.id);
 
     setTargetTemplatePublic(response as any);
-    setCurrentStep(4);
+    // setCurrentStep(4);
+    setCurrentStep(3);
   }
 
   return (
