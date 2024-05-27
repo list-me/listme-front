@@ -48,7 +48,11 @@ export function FromToContextProvider({
 
   const [templates, setTemplates] = useState([]);
   const [stepType, setStepType] = useState<
-    "fromTo" | "publicList" | "publicListOutside" | "manageLinkedLists"
+    | "fromTo"
+    | "fromToOutside"
+    | "publicList"
+    | "publicListOutside"
+    | "manageLinkedLists"
   >("fromTo");
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<CSVRow[]>([]);

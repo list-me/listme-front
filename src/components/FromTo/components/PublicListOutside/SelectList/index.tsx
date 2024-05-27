@@ -27,8 +27,7 @@ function SelectList(): JSX.Element {
   const toOptions = templates.map((item: any) => {
     return { label: item.name, value: item.id };
   });
-  const { setFromToIsOpened, setCurrentStep, currentLinkMethodValue } =
-    useFromToContext();
+  const { setFromToIsOpened, setCurrentStep } = useFromToContext();
   const { setTargetTemplatePublic } = useProductContext();
 
   const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {

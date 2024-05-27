@@ -57,6 +57,9 @@ function InitialStep(): JSX.Element {
               if (!isTemplatesPage) {
                 setCurrentStep((prev) => prev + 1);
                 setStepType("fromTo");
+              } else {
+                setCurrentStep((prev) => prev + 1);
+                setStepType("fromToOutside");
               }
             }}
           >
