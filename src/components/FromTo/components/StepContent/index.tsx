@@ -11,8 +11,7 @@ import LinkConfiguration from "../PublicList/LinkConfiguration";
 import LinkFieldsPublic from "../PublicList/LinkFieldsPublic";
 import StepContentOutside from "./StepContentOutside";
 import StepManageLinkedLists from "./StepManageLinkedLists";
-import SelectList from "../PublicListOutside/SelectList";
-import { BoxFromTo } from "../../styles";
+import StepFromToOutside from "./StepFromToOutside";
 
 function StepContent(): JSX.Element {
   const { currentStep, stepType } = useFromToContext();
@@ -23,17 +22,6 @@ function StepContent(): JSX.Element {
         {currentStep === 0 && <InitialStep />}
         {currentStep === 1 && <ImportFile />}
         {currentStep === 2 && <ImportConfiguration />}
-        {currentStep === 3 && <ImportOptions />}
-        {currentStep === 4 && <LinkFields />}
-      </StepContentContainer>
-    );
-
-  if (stepType === "fromToOutside")
-    return (
-      <StepContentContainer>
-        {currentStep === 0 && <InitialStep />}
-        {currentStep === 1 && <SelectList />}
-        {currentStep === 2 && <ImportFile />}
         {currentStep === 3 && <ImportOptions />}
         {currentStep === 4 && <LinkFields />}
       </StepContentContainer>
@@ -50,6 +38,9 @@ function StepContent(): JSX.Element {
         {currentStep === 5 && <LinkFields />}
       </StepContentContainer>
     );
+
+  if (stepType === "fromToOutside") return <StepFromToOutside />;
+
   if (stepType === "publicListOutside") return <StepContentOutside />;
 
   if (stepType === "manageLinkedLists") return <StepManageLinkedLists />;

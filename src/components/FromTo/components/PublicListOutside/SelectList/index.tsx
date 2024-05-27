@@ -27,8 +27,8 @@ function SelectList(): JSX.Element {
   const toOptions = templates.map((item: any) => {
     return { label: item.name, value: item.id };
   });
-  const { setFromToIsOpened, setCurrentStep } = useFromToContext();
-  const { setTargetTemplatePublic } = useProductContext();
+  const { setFromToIsOpened, setCurrentStep, stepType } = useFromToContext();
+  const { setTargetTemplatePublic, setTemplate } = useProductContext();
 
   const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
     templateRequests
@@ -52,10 +52,13 @@ function SelectList(): JSX.Element {
     });
 
     const response: ITemplate = await templateRequests.get(templateFinded.id);
+    if (stepType === "fromToOutside") {
+      setTemplate(response);
+    } else {
+      setTargetTemplatePublic(response as any);
+    }
 
-    setTargetTemplatePublic(response as any);
-    // setCurrentStep(4);
-    setCurrentStep(3);
+    setCurrentStep(stepType === "fromToOutside" ? 2 : 3);
   }
 
   return (
