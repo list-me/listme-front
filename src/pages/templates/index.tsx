@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Space, Tag } from "antd";
-import { TableRowSelection } from "antd/es/table/interface";
 import { toast } from "react-toastify";
-import { TitlePage, Content, HeaderTemplates, ImportButton } from "./styles";
-import { ReactComponent as EditIcon } from "../../assets/edit-icon.svg";
-import { ReactComponent as CopyIcon } from "../../assets/copy-icon.svg";
-import { ReactComponent as TrashIcon } from "../../assets/trash-icon.svg";
+import {
+  TitlePage,
+  Content,
+  HeaderTemplates,
+  ImportButton,
+  ContainerModal,
+} from "./styles";
+import { ReactComponent as RefreshIcon } from "../../assets/refresh.svg";
 import { ReactComponent as ImportIcon } from "../../assets/import-icon.svg";
+import { ReactComponent as EllipsisIcon } from "../../assets/verticalEllipsis.svg";
 import CustomTable from "../../components/Table/index";
 import { templateRequests } from "../../services/apis/requests/template";
 import TemplateDefault from "../../components/TemplateDefault";
@@ -15,10 +19,12 @@ import { useFilterContext } from "../../context/FilterContext";
 import formatDate from "../../components/FromTo/utils/formatDate";
 import { useFromToContext } from "../../context/FromToContext";
 import FromTo from "../../components/FromTo";
+import UpdateProducts from "../../components/FromTo/components/ManageLinkedLists/UpdateProducts";
 
 function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [updateModalOpened, setUpdateModalOpened] = useState(false);
+  // const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const { setFromToIsOpened } = useFromToContext();
 
@@ -31,9 +37,9 @@ function Template(): JSX.Element {
     setFilterStatus(false);
   }, []);
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]): void => {
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
+  // const onSelectChange = (newSelectedRowKeys: React.Key[]): void => {
+  //   setSelectedRowKeys(newSelectedRowKeys);
+  // };
 
   const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
     templateRequests
@@ -47,10 +53,10 @@ function Template(): JSX.Element {
       });
   };
 
-  const rowSelection: TableRowSelection<any> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
+  // const rowSelection: TableRowSelection<any> = {
+  //   selectedRowKeys,
+  //   onChange: onSelectChange,
+  // };
 
   const handleTakeNewPages = async ({
     limit,
@@ -90,14 +96,39 @@ function Template(): JSX.Element {
       title: "Produtos",
       key: "total",
       dataIndex: "total",
-      width: "5%",
+      width: "10%",
       align: "center",
       render: (_: any, record: any) => {
         const total =
           record.total >= 1000
             ? Number(record.total / 1000).toFixed(3)
             : record.total;
-        return <span style={{ color: "#3818D9" }}> {total} </span>;
+        return (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ color: "#3818D9" }}> {total} </span>
+            {record.total === "30" ? (
+              <button
+                type="button"
+                style={{
+                  background: "#F15757",
+                  color: "#fff",
+                  fontSize: "12px",
+                  height: "17px",
+                  padding: "0 4px",
+                  borderRadius: "99px",
+                  border: "none",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                +100 Novos
+              </button>
+            ) : (
+              <></>
+            )}
+          </div>
+        );
       },
     },
     {
@@ -161,15 +192,25 @@ function Template(): JSX.Element {
       align: "center",
       render: () => (
         <Space size="large">
-          <span className="actionButtons">
-            <EditIcon />
-          </span>
-          <span className="actionButtons">
-            <CopyIcon />
-          </span>
-          <span className="actionButtons">
-            <TrashIcon />
-          </span>
+          <button
+            type="button"
+            className="actionButtons"
+            onClick={(e) => {
+              e.stopPropagation();
+              setUpdateModalOpened(true);
+            }}
+          >
+            <RefreshIcon />
+          </button>
+          <button
+            type="button"
+            className="actionButtons"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <EllipsisIcon />
+          </button>
         </Space>
       ),
     },
@@ -197,12 +238,17 @@ function Template(): JSX.Element {
             columns={columns}
             dataProvider={templates}
             size="large"
-            rowSelection={rowSelection}
+            // rowSelection={rowSelection}
             onLoadMore={handleTakeNewPages}
           />
         </Content>
       </TemplateDefault>
       <FromTo />
+      {updateModalOpened && (
+        <ContainerModal>
+          <UpdateProducts setIsOpened={setUpdateModalOpened} />
+        </ContainerModal>
+      )}
     </>
   );
 }

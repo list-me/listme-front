@@ -7,8 +7,22 @@ export const Container = styled.div`
   color: ${({ theme }) => theme.colors.tertiary};
 
   .actionButtons {
+    border: none;
+    background: none;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
     :hover {
       cursor: pointer;
+      path {
+        stroke: ${({ theme }) => theme.colors.primary};
+      }
+      :first-child {
+        transform: rotate(-360deg);
+      }
+      :last-child {
+        transform: rotate(180deg);
+      }
     }
   }
 
