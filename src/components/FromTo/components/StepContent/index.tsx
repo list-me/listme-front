@@ -39,7 +39,8 @@ function StepContent(): JSX.Element {
       </StepContentContainer>
     );
 
-  if (stepType === "fromToOutside") return <StepFromToOutside />;
+  if (stepType === "fromToOutside")
+    return <StepFromToOutside currentStep={currentStep} />;
 
   if (stepType === "publicListOutside") return <StepContentOutside />;
 

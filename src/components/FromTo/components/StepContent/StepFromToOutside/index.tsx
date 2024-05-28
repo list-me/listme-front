@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { StepContentContainer } from "../styles";
 import InitialStep from "../../InitialStep";
 import SelectList from "../../PublicListOutside/SelectList";
@@ -22,18 +22,27 @@ import ImportConfiguration from "../../ImportConfiguration";
 
 const INITIAL_STEP = 0;
 
-function StepFromToOutside(): JSX.Element {
-  const { currentStep, setFromToIsOpened } = useFromToContext();
+function StepFromToOutside({
+  currentStep,
+}: {
+  currentStep: number;
+}): JSX.Element {
+  const { setFromToIsOpened } = useFromToContext();
 
-  const stepsArray = [
-    { title: "Importar arquivo de produtos", stepTitle: "Importar arquivo" },
-    { title: "Importar arquivo de produtos", stepTitle: "Config. de import." },
-    { title: "Importar arquivo de produtos", stepTitle: "Opç. de import." },
-    { title: "Importar arquivo de produtos", stepTitle: "Vincular campos" },
-  ];
+  const stepsArray = useMemo(() => {
+    return [
+      { title: "Importar arquivo de produtos", stepTitle: "Importar arquivo" },
+      {
+        title: "Importar arquivo de produtos",
+        stepTitle: "Config. de import.",
+      },
+      { title: "Importar arquivo de produtos", stepTitle: "Opç. de import." },
+      { title: "Importar arquivo de produtos", stepTitle: "Vincular campos" },
+    ];
+  }, []);
 
-  function Wrapper({ children }: { children: React.ReactNode }): JSX.Element {
-    return (
+  const Wrapper = useMemo(() => {
+    return ({ children }: { children: React.ReactNode }): JSX.Element => (
       <>
         <ContainerFromTo>
           <BoxFromTo className="BoxFromTo" large={currentStep === 3}>
@@ -50,7 +59,7 @@ function StepFromToOutside(): JSX.Element {
             {currentStep !== INITIAL_STEP && (
               <StepsContainer>
                 {stepsArray.map((item, index) => (
-                  <StepItem>
+                  <StepItem key={index}>
                     <StepNumber
                       active={index + 2 <= currentStep}
                       className={
@@ -72,29 +81,29 @@ function StepFromToOutside(): JSX.Element {
         </ContainerFromTo>
       </>
     );
-  }
+  }, [currentStep, setFromToIsOpened, stepsArray]);
 
   return (
     <StepContentContainer>
       {currentStep === 0 && <InitialStep />}
       {currentStep === 1 && <SelectList />}
       {currentStep === 2 && (
-        <Wrapper>
+        <Wrapper key={currentStep}>
           <ImportFile />
         </Wrapper>
       )}
       {currentStep === 3 && (
-        <Wrapper>
+        <Wrapper key={currentStep}>
           <ImportConfiguration />
         </Wrapper>
       )}
       {currentStep === 4 && (
-        <Wrapper>
+        <Wrapper key={currentStep}>
           <ImportOptions />
         </Wrapper>
       )}
       {currentStep === 5 && (
-        <Wrapper>
+        <Wrapper key={currentStep}>
           <LinkFields />
         </Wrapper>
       )}
