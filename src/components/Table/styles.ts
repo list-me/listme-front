@@ -17,15 +17,15 @@ export const Container = styled.div`
       path {
         stroke: ${({ theme }) => theme.colors.primary};
       }
-      :first-child {
-        transform: rotate(-360deg);
-      }
-      :last-child {
-        transform: rotate(180deg);
-      }
     }
   }
 
+  .refresh:hover {
+    transform: rotate(-360deg);
+  }
+  .ellipsis:hover {
+    transform: rotate(180deg);
+  }
   .ant-table-row {
     font-family: ${({ theme }) => theme.fonts.family.default};
     font-size: ${({ theme }) => theme.fonts.sizes.small};

@@ -1,50 +1,31 @@
-import {
-  BoxFromTo,
-  CloseButton,
-  HeaderModal,
-  TitleModal,
-} from "../../../styles";
-import { ReactComponent as CloseIcon } from "../../../../../assets/close-gray.svg";
-import { ReactComponent as PlusIcon } from "../../../../../assets/plus-fromto.svg";
-import {
-  AlertDeleteLinks,
-  ContainerDeleteLinks,
-  ContentDeleteLinks,
-} from "./styles";
-import { Button, ButtonCotainer } from "../../../../Confirmation/styles";
-import { ReactComponent as TrashIcon } from "../../../../../assets/trash-white.svg";
-import { BoxButtons, NavigationButton } from "../../NavigationButton/styles";
+import { useState } from "react";
+import StepConfirmation from "./StepConfirmation";
+import StepLoading from "./StepLoading";
+import StepFinish from "./StepFinish";
 
 function UpdateProducts({
   setIsOpened,
 }: {
   setIsOpened: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
+  const [currentStep, setCurrentStep] = useState(0);
+
   return (
-    <ContainerDeleteLinks>
-      <BoxFromTo style={{ width: "100%" }}>
-        <HeaderModal borderDisabled>
-          <TitleModal>Atualizar List</TitleModal>
-          <CloseButton onClick={() => setIsOpened(false)}>
-            <CloseIcon />
-          </CloseButton>
-        </HeaderModal>
-        <ContentDeleteLinks>
-          <AlertDeleteLinks>
-            <span>Atenção!</span> Você tem certeza que deseja atualizar List?
-          </AlertDeleteLinks>
-        </ContentDeleteLinks>
-        <BoxButtons>
-          <NavigationButton onClick={() => setIsOpened(false)} abort>
-            Cancelar
-          </NavigationButton>
-          <NavigationButton onClick={() => ""}>
-            <PlusIcon />
-            Atualizar List
-          </NavigationButton>
-        </BoxButtons>
-      </BoxFromTo>
-    </ContainerDeleteLinks>
+    <>
+      {currentStep === 0 && (
+        <StepConfirmation
+          setIsOpened={setIsOpened}
+          onClick={() => setCurrentStep(1)}
+        />
+      )}
+      {currentStep === 1 && (
+        <StepLoading
+          setIsOpened={setIsOpened}
+          setNext={() => setCurrentStep(2)}
+        />
+      )}
+      {currentStep === 2 && <StepFinish setIsOpened={setIsOpened} />}
+    </>
   );
 }
 

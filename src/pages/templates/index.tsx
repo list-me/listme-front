@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Space, Tag } from "antd";
 import { toast } from "react-toastify";
-import {
-  TitlePage,
-  Content,
-  HeaderTemplates,
-  ImportButton,
-  ContainerModal,
-} from "./styles";
+import { TitlePage, Content, HeaderTemplates, ImportButton } from "./styles";
 import { ReactComponent as RefreshIcon } from "../../assets/refresh.svg";
 import { ReactComponent as ImportIcon } from "../../assets/import-icon.svg";
 import { ReactComponent as EllipsisIcon } from "../../assets/verticalEllipsis.svg";
@@ -190,21 +184,23 @@ function Template(): JSX.Element {
       key: "action",
       width: "15%",
       align: "center",
-      render: () => (
+      render: (_: any, record: any) => (
         <Space size="large">
+          {record.total === "30" && (
+            <button
+              type="button"
+              className="actionButtons refresh"
+              onClick={(e) => {
+                e.stopPropagation();
+                setUpdateModalOpened(true);
+              }}
+            >
+              <RefreshIcon />
+            </button>
+          )}
           <button
             type="button"
-            className="actionButtons"
-            onClick={(e) => {
-              e.stopPropagation();
-              setUpdateModalOpened(true);
-            }}
-          >
-            <RefreshIcon />
-          </button>
-          <button
-            type="button"
-            className="actionButtons"
+            className="actionButtons ellipsis"
             onClick={(e) => {
               e.stopPropagation();
             }}
@@ -245,9 +241,7 @@ function Template(): JSX.Element {
       </TemplateDefault>
       <FromTo />
       {updateModalOpened && (
-        <ContainerModal>
-          <UpdateProducts setIsOpened={setUpdateModalOpened} />
-        </ContainerModal>
+        <UpdateProducts setIsOpened={setUpdateModalOpened} />
       )}
     </>
   );
