@@ -1,4 +1,5 @@
 import { Checkbox } from "antd";
+import { useEffect, useMemo, useState } from "react";
 import {
   BoxFromTo,
   CloseButton,
@@ -26,18 +27,67 @@ import {
 } from "../../LinkFields/styles";
 import Origin from "../../LinkFields/components/Origin";
 import { BoxButtons, NavigationButton } from "../../NavigationButton/styles";
+import { templateRequests } from "../../../../../services/apis/requests/template";
 
-function ConfigureLinks({ template }: { template: any }): JSX.Element {
-  const { setFromToIsOpened, checkedList, setCheckedList, setCurrentStep } =
-    useFromToContext();
+function ConfigureLinks({
+  template,
+  targetTemplate,
+}: {
+  template: any;
+  targetTemplate: any;
+}): JSX.Element {
+  // console.log("🚀 ~ targetTemplate:", targetTemplate);
+  const [dataTemplate, setDataTemplate] = useState<any>();
+  const { setFromToIsOpened, setCurrentStep } = useFromToContext();
+  const [items, setItems] = useState<any>();
+  console.log("🚀 ~ items:", items);
 
-  const colHeadersToPreviewTable = ["item 1", "item2"];
+  useEffect(() => {
+    const targetsIds = dataTemplate?.fields.map(
+      (item: { target: string; is_sync: boolean }) => item.target,
+    );
 
-  function checkChange(index: number): void {
-    const copyList = [...checkedList];
-    copyList[index] = !checkedList[index];
-    setCheckedList(copyList);
+    const result = dataTemplate?.fields.map(
+      (item: { target: string; origin: string; is_sync: boolean }) => {
+        return {
+          target: item.target,
+          is_sync: item.is_sync,
+          origin: item.origin,
+        };
+      },
+    );
+
+    const targetsData = targetTemplate.fields.fields.filter((item: any) => {
+      return targetsIds?.includes(item.id);
+    });
+
+    const itemsToReturn = result?.map((item: any, index: number) => {
+      const objt = {
+        ...item,
+        name: targetsData[index].name,
+      };
+      return objt;
+    });
+
+    setItems(itemsToReturn);
+  }, [dataTemplate?.fields, targetTemplate.fields.fields]);
+
+  function checkChange(index: number, list: any): void {
+    const copyList = [...list];
+    copyList[index].is_sync = !copyList[index].is_sync;
+    setItems(copyList);
   }
+
+  async function getTemplate(id: string): Promise<void> {
+    const data = await templateRequests.get(id);
+    setDataTemplate(data.fields);
+  }
+
+  useEffect(() => {
+    if (template.id) {
+      getTemplate(template.id);
+    }
+  }, [template.id]);
 
   return (
     <ContainerConfigureLinks>
@@ -55,8 +105,8 @@ function ConfigureLinks({ template }: { template: any }): JSX.Element {
               <p>Produtos</p>
             </HeaderListSelected>
             <ContentListSelected>
-              <p>Foscarini</p>
-              <span>18</span>
+              <p>{template.name}</p>
+              <span>{template.new_products_amount}</span>
             </ContentListSelected>
           </WrapperListSelected>
 
@@ -75,10 +125,10 @@ function ConfigureLinks({ template }: { template: any }): JSX.Element {
             </ColumnTitleLinkFields>
           </HeaderColumns>
           <ContentLinkFields>
-            {colHeadersToPreviewTable?.map((item, index) => (
+            {items?.map((item: any, index: number) => (
               <ContentRowLinkFieldsOutside key={item}>
                 <Origin
-                  title={item}
+                  title={item.name}
                   example={
                     // example(item) ||
                     undefined
@@ -87,8 +137,8 @@ function ConfigureLinks({ template }: { template: any }): JSX.Element {
 
                 <WrapperCheckBox>
                   <Checkbox
-                    onChange={() => checkChange(index)}
-                    checked={checkedList[index]}
+                    onChange={() => checkChange(index, items)}
+                    checked={item?.is_sync}
                   />
                 </WrapperCheckBox>
               </ContentRowLinkFieldsOutside>

@@ -55,7 +55,6 @@ export const templateRequests = {
         },
       },
     );
-    console.log("🚀 ~ listSync: ~ response:", response);
 
     return response.data.templates;
   },

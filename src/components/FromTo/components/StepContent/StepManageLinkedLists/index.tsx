@@ -4,9 +4,11 @@ import { StepContentContainer } from "../styles";
 import LinkedListSelector from "../../ManageLinkedLists/LinkedListSelector";
 import ConfigureLinks from "../../ManageLinkedLists/ConfigureLinks";
 import DeleteLinks from "../../ManageLinkedLists/DeleteLinks";
+import { useProductContext } from "../../../../../context/products";
 
 function StepManageLinkedLists(): JSX.Element {
   const { currentStep, templates, setTemplates } = useFromToContext();
+  const { template: targetTemplate } = useProductContext();
   const [templateSelected, setTemplateSelected] = useState();
 
   return (
@@ -18,7 +20,12 @@ function StepManageLinkedLists(): JSX.Element {
           setTemplateSelected={setTemplateSelected}
         />
       )}
-      {currentStep === 1 && <ConfigureLinks template={templateSelected} />}
+      {currentStep === 1 && (
+        <ConfigureLinks
+          template={templateSelected}
+          targetTemplate={targetTemplate}
+        />
+      )}
       {currentStep === 2 && <DeleteLinks />}
     </StepContentContainer>
   );

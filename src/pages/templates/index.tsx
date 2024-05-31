@@ -17,7 +17,6 @@ import UpdateProducts from "../../components/FromTo/components/ManageLinkedLists
 
 function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
-  console.log("🚀 ~ Template ~ templates:", templates);
   const [updateModalOpened, setUpdateModalOpened] = useState(false);
 
   const { setFromToIsOpened } = useFromToContext();
@@ -88,6 +87,12 @@ function Template(): JSX.Element {
           record.total >= 1000
             ? Number(record.total / 1000).toFixed(3)
             : record.total;
+
+        const totalNewProducts = record?.templates_sync_ids?.reduce(
+          (sum: number, item: any) => sum + item.new_products_amount,
+          0,
+        );
+
         return (
           <div
             style={{
@@ -115,7 +120,7 @@ function Template(): JSX.Element {
                   e.stopPropagation();
                 }}
               >
-                +100 Novos
+                +{totalNewProducts} Novos
               </button>
             ) : (
               <></>
@@ -185,7 +190,7 @@ function Template(): JSX.Element {
       align: "center",
       render: (_: any, record: any) => (
         <Space size="large">
-          {record.total === "30" && (
+          {record.templates_sync_ids && (
             <button
               type="button"
               className="actionButtons refresh"
