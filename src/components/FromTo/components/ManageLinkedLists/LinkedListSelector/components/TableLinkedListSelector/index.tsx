@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { ReactComponent as RefreshIcon } from "../../../../../../../assets/refresh.svg";
@@ -19,7 +19,7 @@ function TableLinkedListSelector({
   currentList: never[];
 }): JSX.Element {
   const { setCurrentStep } = useFromToContext();
-  const [openedDropDown, setOpenedDropDown] = useState(true);
+  const [openedDropDown, setOpenedDropDown] = useState(false);
   const [dropDownPosition, setDropDownPosition] = useState({ top: 0, left: 0 });
 
   const handleDropDownOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -95,6 +95,27 @@ function TableLinkedListSelector({
     },
   ];
 
+  const dropDownRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent): void => {
+      if (
+        dropDownRef.current &&
+        !dropDownRef.current.contains(e.target as Node)
+      ) {
+        setOpenedDropDown(false);
+      }
+    };
+
+    if (openedDropDown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openedDropDown]);
   return (
     <ContainerTableLinkedListSelector>
       <CustomTable
@@ -106,6 +127,7 @@ function TableLinkedListSelector({
       />
       {openedDropDown && (
         <DeleteDropDown
+          ref={dropDownRef}
           style={{
             top: dropDownPosition.top + 45,
             left: dropDownPosition.left - 120,
