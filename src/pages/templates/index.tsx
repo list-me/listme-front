@@ -18,7 +18,6 @@ import UpdateProducts from "../../components/FromTo/components/ManageLinkedLists
 function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
   const [updateModalOpened, setUpdateModalOpened] = useState(false);
-  // const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const { setFromToIsOpened } = useFromToContext();
 
@@ -31,10 +30,6 @@ function Template(): JSX.Element {
     setFilterStatus(false);
   }, []);
 
-  // const onSelectChange = (newSelectedRowKeys: React.Key[]): void => {
-  //   setSelectedRowKeys(newSelectedRowKeys);
-  // };
-
   const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
     templateRequests
       .list({ limit, page, list: true })
@@ -46,11 +41,6 @@ function Template(): JSX.Element {
         console.error(error);
       });
   };
-
-  // const rowSelection: TableRowSelection<any> = {
-  //   selectedRowKeys,
-  //   onChange: onSelectChange,
-  // };
 
   const handleTakeNewPages = async ({
     limit,
@@ -90,7 +80,7 @@ function Template(): JSX.Element {
       title: "Produtos",
       key: "total",
       dataIndex: "total",
-      width: "10%",
+      width: "20%",
       align: "center",
       render: (_: any, record: any) => {
         const total =
@@ -98,7 +88,14 @@ function Template(): JSX.Element {
             ? Number(record.total / 1000).toFixed(3)
             : record.total;
         return (
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              justifyContent: "center",
+            }}
+          >
             <span style={{ color: "#3818D9" }}> {total} </span>
             {record.total === "30" ? (
               <button
@@ -234,7 +231,6 @@ function Template(): JSX.Element {
             columns={columns}
             dataProvider={templates}
             size="large"
-            // rowSelection={rowSelection}
             onLoadMore={handleTakeNewPages}
           />
         </Content>

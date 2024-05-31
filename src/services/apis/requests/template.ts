@@ -43,6 +43,22 @@ export const templateRequests = {
       })
       .map((item: any, index: number) => ({ order: index + 1, ...item }));
   },
+  // /template/:id/sync
+
+  listSync: async ({ id = "", page = 0, limit = 20 }): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.get(
+      `/template/${id}/sync/?offset=${page}&limit=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    console.log("🚀 ~ listSync: ~ response:", response);
+
+    return response.data.templates;
+  },
   listPublicList: async ({
     page = 0,
     limit = 20,

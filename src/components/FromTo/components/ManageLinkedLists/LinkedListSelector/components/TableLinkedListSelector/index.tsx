@@ -56,10 +56,7 @@ function TableLinkedListSelector({
       key: "products",
       dataIndex: "products",
       render: (_: any, record: any) => {
-        const total =
-          record.total >= 1000
-            ? Number(record.total / 1000).toFixed(3)
-            : record.total;
+        const total = record.product_amount;
         return <span className="blueText">{total}</span>;
       },
     },
@@ -70,7 +67,7 @@ function TableLinkedListSelector({
       dataIndex: "updated_at",
       render: (_: any, record: any) => {
         return (
-          <span className="grayText">{formatDate(record.updated_at)}</span>
+          <span className="grayText">{formatDate(record.created_at)}</span>
         );
       },
     },
