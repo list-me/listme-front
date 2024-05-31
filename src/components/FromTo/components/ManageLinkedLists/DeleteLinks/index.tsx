@@ -17,7 +17,7 @@ import { Button, ButtonCotainer } from "../../../../Confirmation/styles";
 import { ReactComponent as TrashIcon } from "../../../../../assets/trash-white.svg";
 
 function DeleteLinks(): JSX.Element {
-  const { setFromToIsOpened } = useFromToContext();
+  const { setFromToIsOpened, setCurrentStep } = useFromToContext();
 
   const [value, setValue] = useState("");
 
@@ -63,7 +63,7 @@ function DeleteLinks(): JSX.Element {
             backgroundColor="#FA5252"
             color="#FFFF"
             disabled={value !== "excluir"}
-            onClick={() => ""}
+            onClick={() => setCurrentStep(3)}
           >
             <TrashIcon />
             Excluir

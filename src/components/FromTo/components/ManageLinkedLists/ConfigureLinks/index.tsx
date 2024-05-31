@@ -32,15 +32,18 @@ import { templateRequests } from "../../../../../services/apis/requests/template
 function ConfigureLinks({
   template,
   targetTemplate,
+  items,
+  setItems,
+  setInitialItems,
 }: {
   template: any;
   targetTemplate: any;
+  items: any;
+  setItems: any;
+  setInitialItems: any;
 }): JSX.Element {
-  // console.log("🚀 ~ targetTemplate:", targetTemplate);
   const [dataTemplate, setDataTemplate] = useState<any>();
   const { setFromToIsOpened, setCurrentStep } = useFromToContext();
-  const [items, setItems] = useState<any>();
-  console.log("🚀 ~ items:", items);
 
   useEffect(() => {
     const targetsIds = dataTemplate?.fields.map(
@@ -68,9 +71,15 @@ function ConfigureLinks({
       };
       return objt;
     });
-
+    if (!items?.length) setInitialItems(itemsToReturn);
     setItems(itemsToReturn);
-  }, [dataTemplate?.fields, targetTemplate.fields.fields]);
+  }, [
+    dataTemplate?.fields,
+    items?.length,
+    setInitialItems,
+    setItems,
+    targetTemplate.fields.fields,
+  ]);
 
   function checkChange(index: number, list: any): void {
     const copyList = [...list];
