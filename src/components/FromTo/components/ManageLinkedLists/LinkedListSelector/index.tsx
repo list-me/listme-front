@@ -15,8 +15,16 @@ import { templateRequests } from "../../../../../services/apis/requests/template
 import PaginationTablePublicListListComponent from "../../PublicList/PublicListList/components/PaginationTablePublicListList";
 import { useProductContext } from "../../../../../context/products";
 
-function LinkedListSelector(): JSX.Element {
-  const { templates, setTemplates, setFromToIsOpened } = useFromToContext();
+function LinkedListSelector({
+  templates,
+  setTemplates,
+  setTemplateSelected,
+}: {
+  templates: any;
+  setTemplates: React.Dispatch<React.SetStateAction<any>>;
+  setTemplateSelected: React.Dispatch<React.SetStateAction<any>>;
+}): JSX.Element {
+  const { setFromToIsOpened } = useFromToContext();
   const [currentTotalItems, setCurrentTotalItems] = useState(0);
   const { template } = useProductContext();
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,7 +64,10 @@ function LinkedListSelector(): JSX.Element {
           </CloseButton>
         </HeaderModal>
         <ContentLinkMethod>
-          <TableLinkedListSelector currentList={templates} />
+          <TableLinkedListSelector
+            currentList={templates}
+            setTemplateSelected={setTemplateSelected}
+          />
           <PaginationTablePublicListListComponent
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}

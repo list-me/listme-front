@@ -17,6 +17,7 @@ import UpdateProducts from "../../components/FromTo/components/ManageLinkedLists
 
 function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
+  console.log("🚀 ~ Template ~ templates:", templates);
   const [updateModalOpened, setUpdateModalOpened] = useState(false);
 
   const { setFromToIsOpened } = useFromToContext();
@@ -97,7 +98,7 @@ function Template(): JSX.Element {
             }}
           >
             <span style={{ color: "#3818D9" }}> {total} </span>
-            {record.total === "30" ? (
+            {record.templates_sync_ids ? (
               <button
                 type="button"
                 style={{
@@ -108,6 +109,7 @@ function Template(): JSX.Element {
                   padding: "0 4px",
                   borderRadius: "99px",
                   border: "none",
+                  flexShrink: 0,
                 }}
                 onClick={(e) => {
                   e.stopPropagation();

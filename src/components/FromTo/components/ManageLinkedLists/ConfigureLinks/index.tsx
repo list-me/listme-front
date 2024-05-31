@@ -21,26 +21,17 @@ import {
 import {
   AlertLinkFields,
   ColumnTitleLinkFields,
-  ContainerCheckBox,
   ContentLinkFields,
   ContentRowLinkFieldsOutside,
-  HeaderLinkFields,
 } from "../../LinkFields/styles";
 import Origin from "../../LinkFields/components/Origin";
 import { BoxButtons, NavigationButton } from "../../NavigationButton/styles";
 
-function ConfigureLinks(): JSX.Element {
+function ConfigureLinks({ template }: { template: any }): JSX.Element {
   const { setFromToIsOpened, checkedList, setCheckedList, setCurrentStep } =
     useFromToContext();
 
   const colHeadersToPreviewTable = ["item 1", "item2"];
-
-  // const example = (item: string): string | number | undefined => {
-  //   if (item && data.length) {
-  //     return data[0][item];
-  //   }
-  //   return undefined;
-  // };
 
   function checkChange(index: number): void {
     const copyList = [...checkedList];

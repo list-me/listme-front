@@ -15,8 +15,10 @@ import { useFromToContext } from "../../../../../../../context/FromToContext";
 
 function TableLinkedListSelector({
   currentList,
+  setTemplateSelected,
 }: {
   currentList: never[];
+  setTemplateSelected: React.Dispatch<React.SetStateAction<any>>;
 }): JSX.Element {
   const { setCurrentStep } = useFromToContext();
   const [openedDropDown, setOpenedDropDown] = useState(false);
@@ -43,7 +45,10 @@ function TableLinkedListSelector({
         return (
           <button
             type="button"
-            onClick={() => setCurrentStep(1)}
+            onClick={() => {
+              setTemplateSelected(record);
+              setCurrentStep(1);
+            }}
             style={{ border: "none", background: "none" }}
           >
             <span className="defaultText">{record.name}</span>

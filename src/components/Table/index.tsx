@@ -103,7 +103,7 @@ function CustomTable(props: any): JSX.Element {
           };
         }}
         rowClassName={(record, index) => {
-          if (record.total === "30") {
+          if (record.templates_sync_ids) {
             return "list-linked";
           }
           return "";
