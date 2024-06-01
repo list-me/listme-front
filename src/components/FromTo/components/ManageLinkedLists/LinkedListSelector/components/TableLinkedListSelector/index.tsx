@@ -11,20 +11,21 @@ import {
 } from "./styles";
 import CustomTable from "../../../../../../Table";
 import { useFromToContext } from "../../../../../../../context/FromToContext";
-import UpdateProducts from "../../../UpdateProducts";
 
 function TableLinkedListSelector({
   currentList,
   setTemplateSelected,
+  setTemplatesSyncIds,
+  setUpdateModalOpened,
 }: {
   currentList: never[];
   setTemplateSelected: React.Dispatch<React.SetStateAction<any>>;
+  setTemplatesSyncIds: React.Dispatch<React.SetStateAction<string[]>>;
+  setUpdateModalOpened: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
   const { setCurrentStep } = useFromToContext();
   const [openedDropDown, setOpenedDropDown] = useState(false);
   const [dropDownPosition, setDropDownPosition] = useState({ top: 0, left: 0 });
-  const [updateModalOpened, setUpdateModalOpened] = useState(false);
-  const [templatesSyncIds, setTemplatesSyncIds] = useState<string[]>([]);
 
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleDropDownOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -169,33 +170,29 @@ function TableLinkedListSelector({
     };
   }, [openedDropDown]);
   return (
-    <ContainerTableLinkedListSelector>
-      <CustomTable
-        columns={columns}
-        dataProvider={currentList}
-        size=""
-        disabledOnClick
-        isPublic
-      />
-      {openedDropDown && (
-        <DeleteDropDown
-          ref={dropDownRef}
-          style={{
-            top: dropDownPosition.top + 45,
-            left: dropDownPosition.left - 120,
-          }}
-        >
-          <TrashIcon />
-          <p>Excluir vínculo</p>
-        </DeleteDropDown>
-      )}
-      {updateModalOpened && (
-        <UpdateProducts
-          setIsOpened={setUpdateModalOpened}
-          ids={templatesSyncIds}
+    <>
+      <ContainerTableLinkedListSelector>
+        <CustomTable
+          columns={columns}
+          dataProvider={currentList}
+          size=""
+          disabledOnClick
+          isPublic
         />
-      )}
-    </ContainerTableLinkedListSelector>
+        {openedDropDown && (
+          <DeleteDropDown
+            ref={dropDownRef}
+            style={{
+              top: dropDownPosition.top + 45,
+              left: dropDownPosition.left - 120,
+            }}
+          >
+            <TrashIcon />
+            <p>Excluir vínculo</p>
+          </DeleteDropDown>
+        )}
+      </ContainerTableLinkedListSelector>
+    </>
   );
 }
 

@@ -14,6 +14,7 @@ import { IPaginationTemplate } from "../../../../../pages/templates/templates";
 import { templateRequests } from "../../../../../services/apis/requests/template";
 import PaginationTablePublicListListComponent from "../../PublicList/PublicListList/components/PaginationTablePublicListList";
 import { useProductContext } from "../../../../../context/products";
+import UpdateProducts from "../UpdateProducts";
 
 function LinkedListSelector({
   templates,
@@ -28,6 +29,8 @@ function LinkedListSelector({
   const [currentTotalItems, setCurrentTotalItems] = useState(0);
   const { template } = useProductContext();
   const [currentPage, setCurrentPage] = useState(1);
+  const [templatesSyncIds, setTemplatesSyncIds] = useState<string[]>([]);
+  const [updateModalOpened, setUpdateModalOpened] = useState(false);
 
   const handleGetTemplates = useCallback(
     async ({ page, limit }: IPaginationTemplate) => {
@@ -52,30 +55,42 @@ function LinkedListSelector({
       page: currentPage - 1,
       limit: 100,
     });
-  }, [currentPage, handleGetTemplates]);
+  }, [currentPage, handleGetTemplates, updateModalOpened]);
 
   return (
-    <ContainerLinkedListSelector>
-      <BoxFromTo style={{ width: "100%" }}>
-        <HeaderModal borderDisabled>
-          <TitleModal>Selecione a List vinculada para gerenciar</TitleModal>
-          <CloseButton onClick={() => setFromToIsOpened(false)}>
-            <CloseIcon />
-          </CloseButton>
-        </HeaderModal>
-        <ContentLinkMethod>
-          <TableLinkedListSelector
-            currentList={templates}
-            setTemplateSelected={setTemplateSelected}
-          />
-          <PaginationTablePublicListListComponent
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            totalPages={Math.ceil(currentTotalItems / 7)}
-          />
-        </ContentLinkMethod>
-      </BoxFromTo>
-    </ContainerLinkedListSelector>
+    <>
+      <ContainerLinkedListSelector
+        style={{ display: updateModalOpened ? "none" : "" }}
+      >
+        <BoxFromTo style={{ width: "100%" }}>
+          <HeaderModal borderDisabled>
+            <TitleModal>Selecione a List vinculada para gerenciar</TitleModal>
+            <CloseButton onClick={() => setFromToIsOpened(false)}>
+              <CloseIcon />
+            </CloseButton>
+          </HeaderModal>
+          <ContentLinkMethod>
+            <TableLinkedListSelector
+              currentList={templates}
+              setTemplateSelected={setTemplateSelected}
+              setTemplatesSyncIds={setTemplatesSyncIds}
+              setUpdateModalOpened={setUpdateModalOpened}
+            />
+            <PaginationTablePublicListListComponent
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPages={Math.ceil(currentTotalItems / 7)}
+            />
+          </ContentLinkMethod>
+        </BoxFromTo>
+      </ContainerLinkedListSelector>
+      {updateModalOpened && (
+        <UpdateProducts
+          setIsOpened={setUpdateModalOpened}
+          ids={templatesSyncIds}
+        />
+      )}
+    </>
   );
 }
 
