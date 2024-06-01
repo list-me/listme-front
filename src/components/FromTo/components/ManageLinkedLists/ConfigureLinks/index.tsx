@@ -1,5 +1,5 @@
 import { Checkbox } from "antd";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   BoxFromTo,
   CloseButton,
@@ -35,22 +35,25 @@ function ConfigureLinks({
   items,
   setItems,
   setInitialItems,
+  setDataTemplate,
+  dataTemplate,
 }: {
   template: any;
   targetTemplate: any;
   items: any;
   setItems: any;
   setInitialItems: any;
+  setDataTemplate: any;
+  dataTemplate: any;
 }): JSX.Element {
-  const [dataTemplate, setDataTemplate] = useState<any>();
   const { setFromToIsOpened, setCurrentStep } = useFromToContext();
 
   useEffect(() => {
-    const targetsIds = dataTemplate?.fields.map(
+    const targetsIds = dataTemplate?.fields?.fields.map(
       (item: { target: string; is_sync: boolean }) => item.target,
     );
 
-    const result = dataTemplate?.fields.map(
+    const result = dataTemplate?.fields.fields.map(
       (item: { target: string; origin: string; is_sync: boolean }) => {
         return {
           target: item.target,
@@ -74,7 +77,7 @@ function ConfigureLinks({
     if (!items?.length) setInitialItems(itemsToReturn);
     setItems(itemsToReturn);
   }, [
-    dataTemplate?.fields,
+    dataTemplate?.fields?.fields,
     items?.length,
     setInitialItems,
     setItems,
@@ -87,16 +90,19 @@ function ConfigureLinks({
     setItems(copyList);
   }
 
-  async function getTemplate(id: string): Promise<void> {
-    const data = await templateRequests.get(id);
-    setDataTemplate(data.fields);
-  }
+  const getTemplate = useCallback(
+    async (id: string): Promise<void> => {
+      const data = await templateRequests.get(id);
+      setDataTemplate(data);
+    },
+    [setDataTemplate],
+  );
 
   useEffect(() => {
     if (template.id) {
       getTemplate(template.id);
     }
-  }, [template.id]);
+  }, [getTemplate, template.id]);
 
   return (
     <ContainerConfigureLinks>

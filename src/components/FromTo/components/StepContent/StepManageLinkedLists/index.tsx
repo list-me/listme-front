@@ -18,7 +18,13 @@ function StepManageLinkedLists(): JSX.Element {
     setFromToIsOpened,
   } = useFromToContext();
   const { template: targetTemplate } = useProductContext();
-  const [templateSelected, setTemplateSelected] = useState();
+  const [templateSelected, setTemplateSelected] = useState<any>();
+  const [dataTemplateSelected, setDataTemplateSelected] = useState<any>();
+  console.log(
+    "🚀 ~ StepManageLinkedLists ~ dataTemplateSelected:",
+    dataTemplateSelected,
+  );
+
   const [initialItems, setInitialItems] = useState<any>();
   const [items, setItems] = useState<any>();
 
@@ -32,10 +38,41 @@ function StepManageLinkedLists(): JSX.Element {
     return items?.filter((item: any) => item.is_sync === false)?.length || 0;
   }, [items]);
 
-  const onFinish = useCallback(() => {
-    console.log(templateSelected);
-    // templateRequests.update();
-  }, [templateSelected]);
+  const onFinish = useCallback(async () => {
+    const removedNames = items.map((mItem: any) => {
+      return {
+        target: mItem.target,
+        is_sync: mItem.is_sync,
+        origin: mItem.origin,
+      };
+    });
+    const copyData = {
+      ...dataTemplateSelected,
+      fields: {
+        fields: removedNames,
+        template_origin: dataTemplateSelected.fields.template_origin,
+        template_target: dataTemplateSelected.fields.template_target,
+      },
+    };
+    delete copyData.id;
+    delete copyData.company_id;
+    delete copyData.template_id;
+    delete copyData.created_at;
+    delete copyData.updated_at;
+    delete copyData.deleted_at;
+    delete copyData.storage;
+    delete copyData.category_id;
+    delete copyData.integration_config_id;
+    delete copyData.status;
+    delete copyData.default;
+    delete copyData.bucket;
+    delete copyData.fields.fields.name;
+    const response = await templateRequests.update(
+      templateSelected.id,
+      copyData,
+    );
+    // fazer com que apos concluir ir pra tela de concluido e pronto
+  }, [dataTemplateSelected, items, templateSelected?.id]);
 
   return (
     <StepContentContainer>
@@ -53,6 +90,8 @@ function StepManageLinkedLists(): JSX.Element {
           items={items}
           setItems={setItems}
           setInitialItems={setInitialItems}
+          dataTemplate={dataTemplateSelected}
+          setDataTemplate={setDataTemplateSelected}
         />
       )}
       {currentStep === 2 &&
@@ -63,7 +102,7 @@ function StepManageLinkedLists(): JSX.Element {
             <StepLoading
               onFinish={onFinish}
               setIsOpened={setFromToIsOpened}
-              setNext={() => setCurrentStep(4)}
+              // setNext={() => setCurrentStep(4)}
             />
           </>
         ))}
@@ -71,7 +110,7 @@ function StepManageLinkedLists(): JSX.Element {
         <StepLoading
           onFinish={onFinish}
           setIsOpened={setFromToIsOpened}
-          setNext={() => setCurrentStep(4)}
+          // setNext={() => setCurrentStep(4)}
         />
       )}
       {currentStep === 4 && <StepFinish setIsOpened={setFromToIsOpened} />}

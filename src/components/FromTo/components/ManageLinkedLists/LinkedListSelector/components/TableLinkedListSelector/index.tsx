@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 
 import { ReactComponent as RefreshIcon } from "../../../../../../../assets/refresh.svg";
 import { ReactComponent as EllipsisIcon } from "../../../../../../../assets/verticalEllipsis.svg";
@@ -24,6 +23,7 @@ function TableLinkedListSelector({
   const [openedDropDown, setOpenedDropDown] = useState(false);
   const [dropDownPosition, setDropDownPosition] = useState({ top: 0, left: 0 });
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleDropDownOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
     const buttonCoordinates = e.currentTarget.getBoundingClientRect();
     const mouseX = e.clientX;
@@ -61,8 +61,47 @@ function TableLinkedListSelector({
       key: "products",
       dataIndex: "products",
       render: (_: any, record: any) => {
-        const total = record.product_amount;
-        return <span className="blueText">{total}</span>;
+        const total =
+          record.product_amount >= 1000
+            ? Number(record.product_amount / 1000).toFixed(3)
+            : record.product_amount;
+
+        const totalNewProducts = record?.new_products_amount;
+
+        return (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              justifyContent: "center",
+            }}
+          >
+            <span style={{ color: "#3818D9" }}> {total} </span>
+            {totalNewProducts > 0 ? (
+              <button
+                type="button"
+                style={{
+                  background: "#F15757",
+                  color: "#fff",
+                  fontSize: "12px",
+                  height: "17px",
+                  padding: "0 4px",
+                  borderRadius: "99px",
+                  border: "none",
+                  flexShrink: 0,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                +{totalNewProducts} Novos
+              </button>
+            ) : (
+              <></>
+            )}
+          </div>
+        );
       },
     },
 

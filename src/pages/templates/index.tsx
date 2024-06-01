@@ -18,6 +18,7 @@ import UpdateProducts from "../../components/FromTo/components/ManageLinkedLists
 function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
   const [updateModalOpened, setUpdateModalOpened] = useState(false);
+  const [templatesSyncIds, setTemplatesSyncIds] = useState<string[]>([]);
 
   const { setFromToIsOpened } = useFromToContext();
 
@@ -103,7 +104,7 @@ function Template(): JSX.Element {
             }}
           >
             <span style={{ color: "#3818D9" }}> {total} </span>
-            {record.templates_sync_ids ? (
+            {totalNewProducts > 0 ? (
               <button
                 type="button"
                 style={{
@@ -195,8 +196,13 @@ function Template(): JSX.Element {
               type="button"
               className="actionButtons refresh"
               onClick={(e) => {
-                e.stopPropagation();
+                const ids = record.templates_sync_ids
+                  .map((item: any) => item)
+                  .filter((fItem: any) => fItem.new_products_amount > 0)
+                  .map((mItem: any) => mItem.template_sync_id);
+                setTemplatesSyncIds(ids);
                 setUpdateModalOpened(true);
+                e.stopPropagation();
               }}
             >
               <RefreshIcon />
@@ -244,7 +250,10 @@ function Template(): JSX.Element {
       </TemplateDefault>
       <FromTo />
       {updateModalOpened && (
-        <UpdateProducts setIsOpened={setUpdateModalOpened} />
+        <UpdateProducts
+          setIsOpened={setUpdateModalOpened}
+          ids={templatesSyncIds}
+        />
       )}
     </>
   );
