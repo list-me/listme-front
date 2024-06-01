@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Contents,
@@ -26,7 +26,6 @@ import FromTo from "../../../FromTo";
 import { useFromToContext } from "../../../../context/FromToContext";
 import { ReactComponent as LinkIcon } from "../../../../assets/linkPublicList.svg";
 
-import ButtonError from "../../../Integration/Error/ButtonError";
 import { integrationsRequest } from "../../../../services/apis/requests/integration";
 import { useIntegration } from "../../../../context/IntegrationContext";
 
@@ -45,6 +44,7 @@ function HeaderFilters({
   isPublic?: boolean;
   total: number;
 }): JSX.Element {
+  console.log("🚀 ~ template:", template);
   const location = useLocation();
   const isOutsidePage = location.pathname.includes("outside");
 
