@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useFromToContext } from "../../../../../context/FromToContext";
 import { StepContentContainer } from "../styles";
 import LinkedListSelector from "../../ManageLinkedLists/LinkedListSelector";
@@ -7,6 +7,7 @@ import DeleteLinks from "../../ManageLinkedLists/DeleteLinks";
 import { useProductContext } from "../../../../../context/products";
 import StepLoading from "../../ManageLinkedLists/UpdateProducts/StepLoading";
 import StepFinish from "../../ManageLinkedLists/UpdateProducts/StepFinish";
+import { templateRequests } from "../../../../../services/apis/requests/template";
 
 function StepManageLinkedLists(): JSX.Element {
   const {
@@ -30,6 +31,11 @@ function StepManageLinkedLists(): JSX.Element {
   const falseSyncCountFinal = useMemo(() => {
     return items?.filter((item: any) => item.is_sync === false)?.length || 0;
   }, [items]);
+
+  const onFinish = useCallback(() => {
+    console.log(templateSelected);
+    // templateRequests.update();
+  }, [templateSelected]);
 
   return (
     <StepContentContainer>
@@ -55,6 +61,7 @@ function StepManageLinkedLists(): JSX.Element {
         ) : (
           <>
             <StepLoading
+              onFinish={onFinish}
               setIsOpened={setFromToIsOpened}
               setNext={() => setCurrentStep(4)}
             />
@@ -62,6 +69,7 @@ function StepManageLinkedLists(): JSX.Element {
         ))}
       {currentStep === 3 && (
         <StepLoading
+          onFinish={onFinish}
           setIsOpened={setFromToIsOpened}
           setNext={() => setCurrentStep(4)}
         />

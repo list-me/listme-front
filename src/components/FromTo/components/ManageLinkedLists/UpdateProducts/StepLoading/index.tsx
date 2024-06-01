@@ -17,18 +17,15 @@ import LoadingSpinner from "../../../LoadingSpinner";
 function StepLoading({
   setIsOpened,
   setNext,
+  onFinish,
 }: {
   setIsOpened: React.Dispatch<React.SetStateAction<boolean>>;
   setNext: () => void;
+  onFinish: () => void;
 }): JSX.Element {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setNext();
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [setNext]);
-
+    onFinish();
+  }, [onFinish]);
   return (
     <ContainerModal>
       <ContainerLoading>

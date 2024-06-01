@@ -22,6 +22,7 @@ function UpdateProducts({
         <StepLoading
           setIsOpened={setIsOpened}
           setNext={() => setCurrentStep(2)}
+          onFinish={() => ""}
         />
       )}
       {currentStep === 2 && <StepFinish setIsOpened={setIsOpened} />}
