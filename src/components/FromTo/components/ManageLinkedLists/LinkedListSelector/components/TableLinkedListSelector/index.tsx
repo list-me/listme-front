@@ -11,6 +11,7 @@ import {
 } from "./styles";
 import CustomTable from "../../../../../../Table";
 import { useFromToContext } from "../../../../../../../context/FromToContext";
+import UpdateProducts from "../../../UpdateProducts";
 
 function TableLinkedListSelector({
   currentList,
@@ -22,6 +23,8 @@ function TableLinkedListSelector({
   const { setCurrentStep } = useFromToContext();
   const [openedDropDown, setOpenedDropDown] = useState(false);
   const [dropDownPosition, setDropDownPosition] = useState({ top: 0, left: 0 });
+  const [updateModalOpened, setUpdateModalOpened] = useState(false);
+  const [templatesSyncIds, setTemplatesSyncIds] = useState<string[]>([]);
 
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleDropDownOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -123,7 +126,15 @@ function TableLinkedListSelector({
         return (
           <div>
             <ContainerActionsButtons>
-              <button type="button">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const { id } = record;
+                  setTemplatesSyncIds([id]);
+                  setUpdateModalOpened(true);
+                }}
+              >
                 <RefreshIcon />
               </button>
               <button type="button" onClick={handleDropDownOpen}>
@@ -177,6 +188,12 @@ function TableLinkedListSelector({
           <TrashIcon />
           <p>Excluir vínculo</p>
         </DeleteDropDown>
+      )}
+      {updateModalOpened && (
+        <UpdateProducts
+          setIsOpened={setUpdateModalOpened}
+          ids={templatesSyncIds}
+        />
       )}
     </ContainerTableLinkedListSelector>
   );
