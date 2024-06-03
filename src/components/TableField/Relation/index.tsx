@@ -163,10 +163,12 @@ const RelationComponent: React.FC<PropsRelation> = ({
         if (e?.id !== product?.id) return e;
       });
     });
+    product[field];
     const newProduct = {
       id: product.id,
       field: fieldTemplate,
       templateId: column.options[0].templateId,
+      value: product[field][0],
     };
     const products: any[] = [newProduct, ...currentProducts];
     setCurrentProducts(products);

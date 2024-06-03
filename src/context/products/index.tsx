@@ -507,6 +507,15 @@ export const ProductContextProvider = ({
     return obj;
   };
 
+  function adjustItems(items: any[]): any {
+    const newItems = items?.map((item: any) => {
+      const copyItem = { ...item };
+      delete copyItem.value;
+      return copyItem;
+    });
+    return newItems;
+  }
+
   const handleSave = async (
     value: any,
     isNew: boolean,
@@ -607,8 +616,12 @@ export const ProductContextProvider = ({
 
           return [newValue];
         };
+
         const response = await productRequests.patchProductValue({
-          value: newValueToPatch() as any,
+          value:
+            type !== "relation"
+              ? (newValueToPatch() as any)
+              : adjustItems(newValueToPatch()),
           productId,
           fieldId,
         });
