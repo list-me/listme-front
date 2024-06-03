@@ -61,6 +61,7 @@ export const ContainerTableLinkedListSelector = styled.div`
 
 export const ContainerActionsButtons = styled.div`
   display: flex;
+  justify-content: center;
   button {
     width: 36px;
     height: 32px;

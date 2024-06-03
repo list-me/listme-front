@@ -124,20 +124,24 @@ function TableLinkedListSelector({
       key: "action",
       dataIndex: "action",
       render: (_: any, record: any) => {
+        const totalNewProducts = record?.new_products_amount;
+
         return (
           <div>
             <ContainerActionsButtons>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const { id } = record;
-                  setTemplatesSyncIds([id]);
-                  setUpdateModalOpened(true);
-                }}
-              >
-                <RefreshIcon />
-              </button>
+              {totalNewProducts > 0 && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const { id } = record;
+                    setTemplatesSyncIds([id]);
+                    setUpdateModalOpened(true);
+                  }}
+                >
+                  <RefreshIcon />
+                </button>
+              )}
               <button type="button" onClick={handleDropDownOpen}>
                 <EllipsisIcon />
               </button>

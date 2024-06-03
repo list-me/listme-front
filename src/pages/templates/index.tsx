@@ -189,36 +189,42 @@ function Template(): JSX.Element {
       key: "action",
       width: "15%",
       align: "center",
-      render: (_: any, record: any) => (
-        <Space size="large">
-          {record.templates_sync_ids && (
+      render: (_: any, record: any) => {
+        const totalNewProducts = record?.templates_sync_ids?.reduce(
+          (sum: number, item: any) => sum + item.new_products_amount,
+          0,
+        );
+        return (
+          <Space size="large">
+            {record.templates_sync_ids && totalNewProducts > 0 && (
+              <button
+                type="button"
+                className="actionButtons refresh"
+                onClick={(e) => {
+                  const ids = record.templates_sync_ids
+                    .map((item: any) => item)
+                    .filter((fItem: any) => fItem.new_products_amount > 0)
+                    .map((mItem: any) => mItem.template_sync_id);
+                  setTemplatesSyncIds(ids);
+                  setUpdateModalOpened(true);
+                  e.stopPropagation();
+                }}
+              >
+                <RefreshIcon />
+              </button>
+            )}
             <button
               type="button"
-              className="actionButtons refresh"
+              className="actionButtons ellipsis"
               onClick={(e) => {
-                const ids = record.templates_sync_ids
-                  .map((item: any) => item)
-                  .filter((fItem: any) => fItem.new_products_amount > 0)
-                  .map((mItem: any) => mItem.template_sync_id);
-                setTemplatesSyncIds(ids);
-                setUpdateModalOpened(true);
                 e.stopPropagation();
               }}
             >
-              <RefreshIcon />
+              <EllipsisIcon />
             </button>
-          )}
-          <button
-            type="button"
-            className="actionButtons ellipsis"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <EllipsisIcon />
-          </button>
-        </Space>
-      ),
+          </Space>
+        );
+      },
     },
   ];
 
