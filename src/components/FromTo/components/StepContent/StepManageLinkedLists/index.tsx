@@ -1,4 +1,7 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable @typescript-eslint/naming-convention */
 import { useCallback, useMemo, useState } from "react";
+import { toast } from "react-toastify";
 import { useFromToContext } from "../../../../../context/FromToContext";
 import { StepContentContainer } from "../styles";
 import LinkedListSelector from "../../ManageLinkedLists/LinkedListSelector";
@@ -14,16 +17,13 @@ function StepManageLinkedLists(): JSX.Element {
     currentStep,
     templates,
     setTemplates,
-    setCurrentStep,
     setFromToIsOpened,
+    setCurrentStep,
   } = useFromToContext();
   const { template: targetTemplate } = useProductContext();
   const [templateSelected, setTemplateSelected] = useState<any>();
   const [dataTemplateSelected, setDataTemplateSelected] = useState<any>();
-  console.log(
-    "🚀 ~ StepManageLinkedLists ~ dataTemplateSelected:",
-    dataTemplateSelected,
-  );
+  const [deleteAll, setDeleteAll] = useState<boolean>(false);
 
   const [initialItems, setInitialItems] = useState<any>();
   const [items, setItems] = useState<any>();
@@ -39,40 +39,90 @@ function StepManageLinkedLists(): JSX.Element {
   }, [items]);
 
   const onFinish = useCallback(async () => {
-    const removedNames = items.map((mItem: any) => {
-      return {
+    try {
+      // Mapeia os itens removendo os nomes
+      const removedNames = items.map((mItem: any) => ({
         target: mItem.target,
         is_sync: mItem.is_sync,
         origin: mItem.origin,
+      }));
+
+      const {
+        id,
+        company_id,
+        template_id,
+        created_at,
+        updated_at,
+        deleted_at,
+        storage,
+        category_id,
+        integration_config_id,
+        status,
+        default: defaultStatus,
+        bucket,
+        fields: { fields: fieldsName, name, ...fieldsRest },
+        ...restTemplateData
+      } = dataTemplateSelected;
+
+      const copyData = {
+        ...restTemplateData,
+        fields: {
+          fields: removedNames,
+          ...fieldsRest,
+        },
       };
-    });
-    const copyData = {
-      ...dataTemplateSelected,
-      fields: {
-        fields: removedNames,
-        template_origin: dataTemplateSelected.fields.template_origin,
-        template_target: dataTemplateSelected.fields.template_target,
-      },
-    };
-    delete copyData.id;
-    delete copyData.company_id;
-    delete copyData.template_id;
-    delete copyData.created_at;
-    delete copyData.updated_at;
-    delete copyData.deleted_at;
-    delete copyData.storage;
-    delete copyData.category_id;
-    delete copyData.integration_config_id;
-    delete copyData.status;
-    delete copyData.default;
-    delete copyData.bucket;
-    delete copyData.fields.fields.name;
-    const response = await templateRequests.update(
-      templateSelected.id,
-      copyData,
-    );
-    // fazer com que apos concluir ir pra tela de concluido e pronto
-  }, [dataTemplateSelected, items, templateSelected?.id]);
+
+      await templateRequests.update(templateSelected.id, copyData);
+
+      setCurrentStep(4);
+    } catch (error) {
+      toast.error("Não foi possível atualizar o catálogo, tente novamente!");
+      setCurrentStep(0);
+    }
+  }, [dataTemplateSelected, items, setCurrentStep, templateSelected?.id]);
+
+  const onFinishDeleteAll = useCallback(async () => {
+    try {
+      // Mapeia os itens removendo os nomes
+      const removedNames = items.map((mItem: any) => ({
+        target: mItem.target,
+        is_sync: false,
+        origin: mItem.origin,
+      }));
+
+      const {
+        id,
+        company_id,
+        template_id,
+        created_at,
+        updated_at,
+        deleted_at,
+        storage,
+        category_id,
+        integration_config_id,
+        status,
+        default: defaultStatus,
+        bucket,
+        fields: { fields: fieldsName, name, ...fieldsRest },
+        ...restTemplateData
+      } = dataTemplateSelected;
+
+      const copyData = {
+        ...restTemplateData,
+        fields: {
+          fields: removedNames,
+          ...fieldsRest,
+        },
+      };
+
+      await templateRequests.update(templateSelected.id, copyData);
+
+      setCurrentStep(4);
+    } catch (error) {
+      toast.error("Não foi possível atualizar o catálogo, tente novamente!");
+      setCurrentStep(0);
+    }
+  }, [dataTemplateSelected, items, setCurrentStep, templateSelected?.id]);
 
   return (
     <StepContentContainer>
@@ -81,6 +131,7 @@ function StepManageLinkedLists(): JSX.Element {
           templates={templates}
           setTemplates={setTemplates}
           setTemplateSelected={setTemplateSelected}
+          setDeleteAll={setDeleteAll}
         />
       )}
       {currentStep === 1 && (
@@ -95,22 +146,33 @@ function StepManageLinkedLists(): JSX.Element {
         />
       )}
       {currentStep === 2 &&
-        (falseSyncCountFinal > falseSyncCountInitial ? (
-          <DeleteLinks />
+        (deleteAll ? (
+          <DeleteLinks
+            deleteAll={deleteAll}
+            template={templateSelected}
+            setDataTemplate={setDataTemplateSelected}
+            setItems={setItems}
+            targetTemplate={targetTemplate}
+            dataTemplate={dataTemplateSelected}
+          />
+        ) : falseSyncCountFinal > falseSyncCountInitial ? (
+          <DeleteLinks
+            deleteAll={deleteAll}
+            template={templateSelected}
+            setDataTemplate={setDataTemplateSelected}
+            setItems={setItems}
+            targetTemplate={targetTemplate}
+            dataTemplate={dataTemplateSelected}
+          />
         ) : (
           <>
-            <StepLoading
-              onFinish={onFinish}
-              setIsOpened={setFromToIsOpened}
-              // setNext={() => setCurrentStep(4)}
-            />
+            <StepLoading onFinish={onFinish} setIsOpened={setFromToIsOpened} />
           </>
         ))}
       {currentStep === 3 && (
         <StepLoading
-          onFinish={onFinish}
+          onFinish={deleteAll ? onFinishDeleteAll : onFinish}
           setIsOpened={setFromToIsOpened}
-          // setNext={() => setCurrentStep(4)}
         />
       )}
       {currentStep === 4 && <StepFinish setIsOpened={setFromToIsOpened} />}

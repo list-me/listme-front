@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   BoxFromTo,
   CloseButton,
@@ -15,9 +15,74 @@ import {
 } from "./styles";
 import { Button, ButtonCotainer } from "../../../../Confirmation/styles";
 import { ReactComponent as TrashIcon } from "../../../../../assets/trash-white.svg";
+import { templateRequests } from "../../../../../services/apis/requests/template";
 
-function DeleteLinks(): JSX.Element {
+function DeleteLinks({
+  setDataTemplate,
+  template,
+  setItems,
+  dataTemplate,
+  targetTemplate,
+  deleteAll,
+}: {
+  deleteAll: boolean;
+  template: any;
+  setDataTemplate: any;
+  setItems: any;
+  dataTemplate: any;
+  targetTemplate: any;
+}): JSX.Element {
   const { setFromToIsOpened, setCurrentStep } = useFromToContext();
+
+  const getTemplate = useCallback(
+    async (id: string): Promise<void> => {
+      const data = await templateRequests.get(id);
+      setDataTemplate(data);
+    },
+    [setDataTemplate],
+  );
+
+  useEffect(() => {
+    if (template.id && deleteAll) {
+      getTemplate(template.id);
+    }
+  }, [deleteAll, getTemplate, template.id]);
+
+  useEffect(() => {
+    if (deleteAll) {
+      const targetsIds = dataTemplate?.fields?.fields.map(
+        (item: { target: string; is_sync: boolean }) => item.target,
+      );
+
+      const result = dataTemplate?.fields.fields.map(
+        (item: { target: string; origin: string; is_sync: boolean }) => {
+          return {
+            target: item.target,
+            is_sync: item.is_sync,
+            origin: item.origin,
+          };
+        },
+      );
+
+      const targetsData = targetTemplate.fields.fields.filter((item: any) => {
+        return targetsIds?.includes(item.id);
+      });
+
+      const itemsToReturn = result?.map((item: any, index: number) => {
+        const objt = {
+          ...item,
+          name: targetsData[index].name,
+        };
+        return objt;
+      });
+      setItems(itemsToReturn);
+    }
+  }, [
+    dataTemplate?.fields.fields,
+    deleteAll,
+    setItems,
+    targetTemplate.fields.fields,
+  ]);
 
   const [value, setValue] = useState("");
 

@@ -20,10 +20,12 @@ function LinkedListSelector({
   templates,
   setTemplates,
   setTemplateSelected,
+  setDeleteAll,
 }: {
   templates: any;
   setTemplates: React.Dispatch<React.SetStateAction<any>>;
   setTemplateSelected: React.Dispatch<React.SetStateAction<any>>;
+  setDeleteAll: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
   const { setFromToIsOpened } = useFromToContext();
   const [currentTotalItems, setCurrentTotalItems] = useState(0);
@@ -71,6 +73,7 @@ function LinkedListSelector({
           </HeaderModal>
           <ContentLinkMethod>
             <TableLinkedListSelector
+              setDeleteAll={setDeleteAll}
               currentList={templates}
               setTemplateSelected={setTemplateSelected}
               setTemplatesSyncIds={setTemplatesSyncIds}

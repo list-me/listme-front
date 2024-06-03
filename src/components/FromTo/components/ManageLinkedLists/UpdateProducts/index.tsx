@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { toast } from "react-toastify";
 import StepConfirmation from "./StepConfirmation";
 import StepLoading from "./StepLoading";
 import StepFinish from "./StepFinish";
@@ -28,6 +29,8 @@ function UpdateProducts({
       setCurrentStep(2);
     } catch (error) {
       console.error("An error occurred:", error);
+      toast.error("Não foi possível atualizar o catálogo, tente novamente!");
+      setCurrentStep(0);
     }
   }, [ids]);
 

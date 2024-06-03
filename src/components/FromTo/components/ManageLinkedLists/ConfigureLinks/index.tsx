@@ -1,5 +1,5 @@
 import { Checkbox } from "antd";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect } from "react";
 import {
   BoxFromTo,
   CloseButton,

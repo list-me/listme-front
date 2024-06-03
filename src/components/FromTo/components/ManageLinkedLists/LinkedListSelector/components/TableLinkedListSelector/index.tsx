@@ -17,18 +17,23 @@ function TableLinkedListSelector({
   setTemplateSelected,
   setTemplatesSyncIds,
   setUpdateModalOpened,
+  setDeleteAll,
 }: {
   currentList: never[];
   setTemplateSelected: React.Dispatch<React.SetStateAction<any>>;
   setTemplatesSyncIds: React.Dispatch<React.SetStateAction<string[]>>;
   setUpdateModalOpened: React.Dispatch<React.SetStateAction<boolean>>;
+  setDeleteAll: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
   const { setCurrentStep } = useFromToContext();
   const [openedDropDown, setOpenedDropDown] = useState(false);
   const [dropDownPosition, setDropDownPosition] = useState({ top: 0, left: 0 });
 
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  const handleDropDownOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleDropDownOpen = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    item: any,
+  ) => {
     const buttonCoordinates = e.currentTarget.getBoundingClientRect();
     const mouseX = e.clientX;
     const mouseY = e.clientY;
@@ -38,6 +43,8 @@ function TableLinkedListSelector({
       left: mouseX - buttonCoordinates.width / 2,
     });
     setOpenedDropDown(true);
+    setTemplateSelected(item);
+    setDeleteAll(true);
   };
 
   const columns = [
@@ -142,7 +149,10 @@ function TableLinkedListSelector({
                   <RefreshIcon />
                 </button>
               )}
-              <button type="button" onClick={handleDropDownOpen}>
+              <button
+                type="button"
+                onClick={(e) => handleDropDownOpen(e, record)}
+              >
                 <EllipsisIcon />
               </button>
             </ContainerActionsButtons>
@@ -190,6 +200,7 @@ function TableLinkedListSelector({
               top: dropDownPosition.top + 45,
               left: dropDownPosition.left - 120,
             }}
+            onClick={() => setCurrentStep(2)}
           >
             <TrashIcon />
             <p>Excluir vínculo</p>

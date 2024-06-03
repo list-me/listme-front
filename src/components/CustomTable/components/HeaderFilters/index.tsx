@@ -44,7 +44,6 @@ function HeaderFilters({
   isPublic?: boolean;
   total: number;
 }): JSX.Element {
-  console.log("🚀 ~ template:", template);
   const location = useLocation();
   const isOutsidePage = location.pathname.includes("outside");
 
