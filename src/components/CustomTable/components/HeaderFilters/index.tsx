@@ -121,18 +121,20 @@ function HeaderFilters({
           </MoreOptions>
           {!isPublic && (
             <>
-              <Button
-                height="52px"
-                width="227px"
-                isSecondary
-                onClick={() => {
-                  setFromToIsOpened(true);
-                  setStepType("manageLinkedLists");
-                }}
-              >
-                <DownloadIcon />
-                Gerenciar vínculos
-              </Button>
+              {template?.templates_sync_ids && (
+                <Button
+                  height="52px"
+                  width="227px"
+                  isSecondary
+                  onClick={() => {
+                    setFromToIsOpened(true);
+                    setStepType("manageLinkedLists");
+                  }}
+                >
+                  <DownloadIcon />
+                  Gerenciar vínculos
+                </Button>
+              )}
               <Button
                 height="52px"
                 width="227px"
