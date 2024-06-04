@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Input } from "antd";
 import { toast } from "react-toastify";
@@ -22,12 +22,15 @@ import { authRequests } from "../../services/apis/requests/auth";
 import { ROUTES } from "../../constants/routes";
 import { STORAGE } from "../../constants/localStorage";
 import { Loading } from "../../components/Loading";
+import { useAuth } from "../../context/auth";
+import { LoadingFetch } from "../../components/CustomTable/LoadingFetch";
 
 function Login(): JSX.Element {
   const [keepLoggedIn, setKeepLoggedIn] = useState<boolean>(false);
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const { isAuthenticated } = useAuth();
 
   const navigate = useNavigate();
 
@@ -57,6 +60,14 @@ function Login(): JSX.Element {
       toast.error("Falha ao processar sua requisição, tente novamente");
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(ROUTES.TEMPLATES);
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (isAuthenticated) return <LoadingFetch />;
 
   return (
     <Background>

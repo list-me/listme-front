@@ -5,8 +5,10 @@ import { FilterContextProvider } from "./FilterContext";
 import { IntegrationProvider } from "./IntegrationContext";
 import { combineContexts } from "./combineContexts";
 import { ImageContextProvider } from "./images";
+import AuthProvider from "./auth";
 
 const providers = [
+  AuthProvider,
   ProductContextProvider,
   FromToContextProvider,
   FilterContextProvider,
