@@ -11,7 +11,7 @@ import { useIntegration } from "../../context/IntegrationContext";
 export const Products: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { handleRedirectAndGetProducts, products, colHeaders } =
+  const { handleRedirectAndGetProducts, products, colHeaders, template } =
     useContext(productContext);
 
   const {

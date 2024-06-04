@@ -13,6 +13,7 @@ import {
   FromToContextType,
   ICSVResponse,
   ILinkConfigurationValue,
+  ILinkMethodValue,
   IValuesImportConfiguration,
   IValuesImportOptions,
   IValuesIntegrationsConfig,
@@ -46,7 +47,13 @@ export function FromToContextProvider({
   const { products, colHeaders } = useProductContext();
 
   const [templates, setTemplates] = useState([]);
-  const [stepType, setStepType] = useState<"fromTo" | "publicList">("fromTo");
+  const [stepType, setStepType] = useState<
+    | "fromTo"
+    | "fromToOutside"
+    | "publicList"
+    | "publicListOutside"
+    | "manageLinkedLists"
+  >("fromTo");
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<CSVRow[]>([]);
   const [currentFile, setCurrentFile] = useState<File>();
@@ -64,6 +71,8 @@ export function FromToContextProvider({
       label: "",
       description: "",
     });
+  const [currentLinkMethodValue, setCurrentLinkMethodValue] =
+    useState<ILinkMethodValue>("add");
   const colHeadersToPreviewTable = useMemo((): string[] | null => {
     if (data[0]) return Object.keys(data[0]);
     return null;
@@ -227,6 +236,7 @@ export function FromToContextProvider({
     setCheckedList([false]);
     setRowsSelected([]);
     setAllRowsSelected(false);
+    setCurrentLinkMethodValue("");
   }
 
   useEffect(() => {
@@ -278,6 +288,8 @@ export function FromToContextProvider({
     setProdvidersToIntegration,
     allProductsToIntegration,
     setAllProductsToIntegration,
+    currentLinkMethodValue,
+    setCurrentLinkMethodValue,
   };
 
   return (

@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useState } from "react";
 import {
   BoxFromTo,
@@ -18,7 +19,10 @@ function LinkConfiguration(): JSX.Element {
     setCurrentStep,
     currentLinkConfigurationValue,
     setCurrentLinkConfigurationValue,
+    stepType,
+    currentLinkMethodValue,
   } = useFromToContext();
+
   const options = [
     {
       value: "keepProductsLinked",
@@ -41,6 +45,33 @@ function LinkConfiguration(): JSX.Element {
     setCurrentLinkConfigurationValue(value);
   };
 
+  function handleNextButton(): void {
+    if (stepType !== "publicListOutside") {
+      setCurrentStep(3);
+    } else if (
+      currentLinkConfigurationValue.value === "importDetachedProducts"
+    ) {
+      if (currentLinkMethodValue === "copy") {
+        console.log("FAZER FINISH");
+      } else if (currentLinkMethodValue === "add") {
+        setCurrentStep(4);
+        // setCurrentStep(5);
+      }
+    } else if (currentLinkConfigurationValue.value === "keepProductsLinked") {
+      if (currentLinkMethodValue === "add") {
+        setCurrentStep(5);
+      } else {
+        setCurrentStep(4);
+      }
+    }
+  }
+
+  function handlePrevButton(): void {
+    if (stepType !== "publicListOutside") {
+      setFromToIsOpened(false);
+    } else setCurrentStep(2);
+  }
+
   return (
     <ContainerLinkConfiguration>
       <BoxFromTo>
@@ -57,19 +88,20 @@ function LinkConfiguration(): JSX.Element {
         />
         <ContainerButtons>
           <BoxButtons>
-            <NavigationButton
-              disabled={!currentLinkConfigurationValue.value}
-              onClick={() => setFromToIsOpened(false)}
-            >
+            <NavigationButton onClick={() => handlePrevButton()} abort>
               <PlusIcon />
               Voltar
             </NavigationButton>
             <NavigationButton
               disabled={!currentLinkConfigurationValue.value}
-              onClick={() => setCurrentStep(3)}
+              onClick={() => handleNextButton()}
             >
               <PlusIcon />
-              Avançar
+              {currentLinkConfigurationValue.value === "importDetachedProducts"
+                ? currentLinkMethodValue === "copy"
+                  ? "Concluir"
+                  : "Avançar"
+                : "Avançar"}
             </NavigationButton>
           </BoxButtons>
         </ContainerButtons>

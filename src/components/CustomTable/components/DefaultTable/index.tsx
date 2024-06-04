@@ -100,7 +100,7 @@ function DefaultTable({
 }: IDefaultTable): JSX.Element {
   const { handleRedirectAndGetProducts, setHidden } = useProductContext();
   const [parentHeaderSelectedIndex, setParentHeaderSelectedIndex] =
-    useState<number>();
+    useState<number>(0);
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
   const svgStringConfigHeaderGroup: string = renderToString(
     <ConfigGroupHeaderSVG />,
@@ -340,7 +340,6 @@ function DefaultTable({
       orderChanged,
       columns,
       handleMove,
-      setColumns,
     );
   };
 
@@ -663,8 +662,10 @@ function DefaultTable({
       td.innerHTML =
         value?.length > 0
           ? value?.map((mValue: any) =>
-              mValue?.value
-                ? `<div class="tag-content">${mValue?.value}</div>`
+              mValue?.field
+                ? `<div class="tag-content">${
+                    mValue?.value || "Indisponível"
+                  }</div>`
                 : `<div class="tag-content">+</div>`,
             )
           : `<div class="tag-content">+</div>`;
@@ -859,9 +860,11 @@ function DefaultTable({
     return [];
   }, [totalUngroupedColumns]);
 
-  const groupsToView = groups[0]?.label
-    ? [[...groups, ...ungroupeds], colHeaders]
-    : [ungroupeds, colHeaders];
+  const groupsToView = useMemo(() => {
+    return groups[0]?.label
+      ? [[...groups, ...ungroupeds], colHeaders]
+      : [ungroupeds, colHeaders];
+  }, [groups, ungroupeds, colHeaders]);
 
   const newHiddens = useMemo(() => {
     return groups
@@ -1275,7 +1278,7 @@ function DefaultTable({
       )}
       <ContainerHotTable isPublic={isPublic}>
         <HotTable
-          key={parentId + newHiddens.join() + groups.join()}
+          key={parentId + newHiddens.join() + groups.join() + cols.join()}
           nestedRows
           nestedHeaders={groupsToView}
           bindRowsWithHeaders
@@ -1322,7 +1325,11 @@ function DefaultTable({
           // }}
           afterOnCellMouseUp={(event: any, coords, _TD) => {
             if (coords.row >= 0) {
-              afterSelectionHandler(event, coords);
+              const cellX = coords.col;
+              const currentCol = cols[cellX];
+              if (currentCol.limit && event.button === 0) {
+                afterSelectionHandler(event, coords);
+              }
             }
             const limitWidth = window.innerWidth - 350;
             setContentTooltipIntegration(cols[coords?.col]?.integrations);
@@ -1638,10 +1645,10 @@ function DefaultTable({
       )}
       {parentHeaderSelectedIndex && (
         <ParentHeaderEdit
-          value={groups[parentHeaderSelectedIndex].label}
-          onClose={() => setParentHeaderSelectedIndex(undefined)}
+          value={groups[parentHeaderSelectedIndex - 1].label}
+          onClose={() => setParentHeaderSelectedIndex(0)}
           onChange={changeHeaderGroup}
-          index={parentHeaderSelectedIndex}
+          index={parentHeaderSelectedIndex - 1}
         />
       )}
     </>

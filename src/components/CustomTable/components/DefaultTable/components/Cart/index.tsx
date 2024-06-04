@@ -1,4 +1,4 @@
-import React from "react";
+import { useLocation } from "react-router-dom";
 import {
   ContainerCart,
   CartCount,
@@ -13,6 +13,9 @@ function Cart({ itemsTotal }: { itemsTotal: number }): JSX.Element {
     style: "currency",
     currency: "BRL",
   });
+  const location = useLocation();
+
+  const isOutsidePage = location.pathname.includes("outside");
 
   const { setFromToIsOpened, setCurrentStep, setStepType, setAllRowsSelected } =
     useFromToContext();
@@ -30,7 +33,7 @@ function Cart({ itemsTotal }: { itemsTotal: number }): JSX.Element {
       <CartButton
         disabled={itemsTotal === 0}
         onClick={() => {
-          setStepType("publicList");
+          setStepType(isOutsidePage ? "publicListOutside" : "publicList");
           setCurrentStep(2);
           setFromToIsOpened(true);
           setAllRowsSelected(false);

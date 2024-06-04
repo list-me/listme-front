@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { ContainerLimitAlert } from "./styles";
 
 function LimitAlert({
@@ -18,6 +18,14 @@ function LimitAlert({
     }>
   >;
 }): JSX.Element {
+  setTimeout(() => {
+    setCoordsLimitAlert({
+      coordX: 0,
+      coordY: 0,
+      text: "",
+    });
+  }, 1000);
+
   return (
     <ContainerLimitAlert
       coordX={coordX}

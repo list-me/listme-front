@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Table, TablePaginationConfig } from "antd";
 import { Container } from "./styles";
 import { ROUTES } from "../../constants/routes";
+import "./styleRow.css";
 
 function CustomTable(props: any): JSX.Element {
   const navigate = useNavigate();
@@ -100,6 +101,12 @@ function CustomTable(props: any): JSX.Element {
                 : navigate(`${ROUTES.PRODUCTS}/${record.id}`);
             },
           };
+        }}
+        rowClassName={(record, index) => {
+          if (record.templates_sync_ids) {
+            return "list-linked";
+          }
+          return "";
         }}
       />
     </Container>

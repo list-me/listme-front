@@ -19,6 +19,7 @@ import fixedOptions from "../../LinkFields/utils/fixedOptions";
 import { templateRequests } from "../../../../../services/apis/requests/template";
 import { productRequests } from "../../../../../services/apis/requests/product";
 import { ROUTES } from "../../../../../constants/routes";
+import LinkFieldsOutsideComponent from "../../LinkFields/components/LinkFieldsOutsideComponent";
 
 function LinkFieldsPublic(): JSX.Element {
   const {
@@ -30,6 +31,8 @@ function LinkFieldsPublic(): JSX.Element {
     allRowsSelected,
     selectedProductsId,
     toClean,
+    stepType,
+    currentLinkMethodValue,
   } = useFromToContext();
   const navigate = useNavigate();
 
@@ -64,24 +67,27 @@ function LinkFieldsPublic(): JSX.Element {
             fields,
           },
         };
+
         const response = await templateRequests.postFromTo(templateBody as any);
         if (response.id) {
           const body = new FormData();
           if (allRowsSelected) {
             const emptyCSV = new Blob([""], { type: "text/csv" });
             body.append("items", emptyCSV);
-            body.append("all", "true");
+            body.append("is_all", "true");
           } else {
-            body.append("all", "false");
-            const idsCSV = selectedProductsId.map((id) => `${id}\n`).join("");
-            const blobCSV = new Blob([idsCSV], { type: "text/csv" });
+            body.append("is_all", "false");
+            const csvContent = `ids\n${selectedProductsId
+              .map((id) => id)
+              .join("\n")}`;
+            const blobCSV = new Blob([csvContent], { type: "text/csv" });
             body.append("items", blobCSV);
           }
           body.append("template_id", response.id);
           await productRequests.postLink(body);
           toast.success("Vínculo realizado com sucesso");
           toClean();
-          navigate(`${ROUTES.PRODUCTS}/${response.id}`);
+          navigate(`${ROUTES.PRODUCTS}/${targetTemplatePublic.id}`);
         }
       }
     } catch (error) {
@@ -166,6 +172,14 @@ function LinkFieldsPublic(): JSX.Element {
   const colHeadersToPreviewTable = [...colHeaders];
   colHeadersToPreviewTable.pop();
 
+  const RenderedComponent =
+    // eslint-disable-next-line no-nested-ternary
+    stepType !== "publicListOutside"
+      ? LinkFieldsComponent
+      : currentLinkMethodValue === "copy"
+      ? LinkFieldsOutsideComponent
+      : LinkFieldsComponent;
+
   return (
     <BoxFromTo>
       <HeaderModal borderDisabled>
@@ -185,7 +199,7 @@ function LinkFieldsPublic(): JSX.Element {
         ) : (
           <></>
         )}
-        <LinkFieldsComponent
+        <RenderedComponent
           colHeadersToPreviewTable={colHeadersToPreviewTable}
           data={[]}
           selectedLinkFields={selectedLinkFields}
@@ -207,7 +221,11 @@ function LinkFieldsPublic(): JSX.Element {
             Voltar
           </NavigationButton>
           <NavigationButton
-            disabled={isEmptyObject(selectedLinkFields) || verifyAllIgnore()}
+            disabled={
+              stepType !== "publicListOutside"
+                ? isEmptyObject(selectedLinkFields) || verifyAllIgnore()
+                : false
+            }
             onClick={() => onFinish()}
           >
             <PlusIcon />

@@ -52,8 +52,21 @@ export interface FromToContextType {
   >;
   csvResponse: ICSVResponse;
   toClean: () => void;
-  stepType: "fromTo" | "publicList";
-  setStepType: React.Dispatch<React.SetStateAction<"fromTo" | "publicList">>;
+  stepType:
+    | "fromTo"
+    | "fromToOutside"
+    | "publicList"
+    | "publicListOutside"
+    | "manageLinkedLists";
+  setStepType: React.Dispatch<
+    React.SetStateAction<
+      | "fromTo"
+      | "fromToOutside"
+      | "publicList"
+      | "publicListOutside"
+      | "manageLinkedLists"
+    >
+  >;
   templates: never[];
   setTemplates: React.Dispatch<React.SetStateAction<never[]>>;
   currentLinkConfigurationValue: ILinkConfigurationValue;
@@ -75,6 +88,10 @@ export interface FromToContextType {
   setProdvidersToIntegration: React.Dispatch<React.SetStateAction<string[]>>;
   allProductsToIntegration: boolean;
   setAllProductsToIntegration: React.Dispatch<React.SetStateAction<boolean>>;
+  currentLinkMethodValue: ILinkMethodValue;
+  setCurrentLinkMethodValue: React.Dispatch<
+    React.SetStateAction<ILinkMethodValue>
+  >;
 }
 
 export interface ILinkConfigurationValue {
@@ -82,6 +99,8 @@ export interface ILinkConfigurationValue {
   description: string;
   value: string;
 }
+
+export type ILinkMethodValue = "add" | "copy" | "";
 
 export interface CSVRow {
   [key: string]: string | number;

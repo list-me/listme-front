@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect } from "react";
 import {
   BoxFromTo,
@@ -45,7 +47,7 @@ function FromTo(): JSX.Element | null {
     <ContainerFromTo onClick={() => setFromToIsOpened(false)}>
       <div onClick={(e) => e.stopPropagation()}>
         {stepType === "fromTo" ? (
-          <BoxFromTo large={currentStep === 2}>
+          <BoxFromTo className="BoxFromTo" large={currentStep === 2}>
             <HeaderModal>
               <TitleModal>
                 {currentStep === 0

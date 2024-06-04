@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { Space, Tag } from "antd";
-import { TableRowSelection } from "antd/es/table/interface";
 import { toast } from "react-toastify";
-import { TitlePage, Content } from "./styles";
-import { ReactComponent as EditIcon } from "../../assets/edit-icon.svg";
-import { ReactComponent as CopyIcon } from "../../assets/copy-icon.svg";
-import { ReactComponent as TrashIcon } from "../../assets/trash-icon.svg";
+import { TitlePage, Content, HeaderTemplates, ImportButton } from "./styles";
+import { ReactComponent as RefreshIcon } from "../../assets/refresh.svg";
+import { ReactComponent as ImportIcon } from "../../assets/import-icon.svg";
+import { ReactComponent as EllipsisIcon } from "../../assets/verticalEllipsis.svg";
 import CustomTable from "../../components/Table/index";
 import { templateRequests } from "../../services/apis/requests/template";
 import TemplateDefault from "../../components/TemplateDefault";
 import { IPaginationTemplate } from "./templates";
 import { useFilterContext } from "../../context/FilterContext";
 import formatDate from "../../components/FromTo/utils/formatDate";
+import { useFromToContext } from "../../context/FromToContext";
+import FromTo from "../../components/FromTo";
+import UpdateProducts from "../../components/FromTo/components/ManageLinkedLists/UpdateProducts";
 
 function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [updateModalOpened, setUpdateModalOpened] = useState(false);
+  const [templatesSyncIds, setTemplatesSyncIds] = useState<string[]>([]);
+
+  const { setFromToIsOpened } = useFromToContext();
 
   const { setFilters, defaultFilter, setFilterStatus, setConditions } =
     useFilterContext();
@@ -25,10 +30,6 @@ function Template(): JSX.Element {
     setFilters([defaultFilter]);
     setFilterStatus(false);
   }, []);
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]): void => {
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
 
   const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
     templateRequests
@@ -40,11 +41,6 @@ function Template(): JSX.Element {
         toast.error("Ocorreu um erro ao listar os catálogos");
         console.error(error);
       });
-  };
-
-  const rowSelection: TableRowSelection<any> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
   };
 
   const handleTakeNewPages = async ({
@@ -85,14 +81,53 @@ function Template(): JSX.Element {
       title: "Produtos",
       key: "total",
       dataIndex: "total",
-      width: "5%",
+      width: "20%",
       align: "center",
       render: (_: any, record: any) => {
         const total =
           record.total >= 1000
             ? Number(record.total / 1000).toFixed(3)
             : record.total;
-        return <span style={{ color: "#3818D9" }}> {total} </span>;
+
+        const totalNewProducts = record?.templates_sync_ids?.reduce(
+          (sum: number, item: any) => sum + item.new_products_amount,
+          0,
+        );
+
+        return (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              justifyContent: "center",
+            }}
+          >
+            <span style={{ color: "#3818D9" }}> {total} </span>
+            {totalNewProducts > 0 ? (
+              <button
+                type="button"
+                style={{
+                  background: "#F15757",
+                  color: "#fff",
+                  fontSize: "12px",
+                  height: "17px",
+                  padding: "0 4px",
+                  borderRadius: "99px",
+                  border: "none",
+                  flexShrink: 0,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                +{totalNewProducts} Novos
+              </button>
+            ) : (
+              <></>
+            )}
+          </div>
+        );
       },
     },
     {
@@ -154,19 +189,42 @@ function Template(): JSX.Element {
       key: "action",
       width: "15%",
       align: "center",
-      render: () => (
-        <Space size="large">
-          <span className="actionButtons">
-            <EditIcon />
-          </span>
-          <span className="actionButtons">
-            <CopyIcon />
-          </span>
-          <span className="actionButtons">
-            <TrashIcon />
-          </span>
-        </Space>
-      ),
+      render: (_: any, record: any) => {
+        const totalNewProducts = record?.templates_sync_ids?.reduce(
+          (sum: number, item: any) => sum + item.new_products_amount,
+          0,
+        );
+        return (
+          <Space size="large">
+            {record.templates_sync_ids && totalNewProducts > 0 && (
+              <button
+                type="button"
+                className="actionButtons refresh"
+                onClick={(e) => {
+                  const ids = record.templates_sync_ids
+                    .map((item: any) => item)
+                    .filter((fItem: any) => fItem.new_products_amount > 0)
+                    .map((mItem: any) => mItem.template_sync_id);
+                  setTemplatesSyncIds(ids);
+                  setUpdateModalOpened(true);
+                  e.stopPropagation();
+                }}
+              >
+                <RefreshIcon />
+              </button>
+            )}
+            <button
+              type="button"
+              className="actionButtons ellipsis"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <EllipsisIcon />
+            </button>
+          </Space>
+        );
+      },
     },
   ];
 
@@ -177,16 +235,32 @@ function Template(): JSX.Element {
         templates={templates}
       >
         <Content>
-          <TitlePage> Templates </TitlePage>
+          <HeaderTemplates>
+            <TitlePage>Templates</TitlePage>
+            <ImportButton
+              onClick={() => {
+                setFromToIsOpened(true);
+              }}
+            >
+              <ImportIcon />
+              Importar produtos
+            </ImportButton>
+          </HeaderTemplates>
           <CustomTable
             columns={columns}
             dataProvider={templates}
             size="large"
-            rowSelection={rowSelection}
             onLoadMore={handleTakeNewPages}
           />
         </Content>
       </TemplateDefault>
+      <FromTo />
+      {updateModalOpened && (
+        <UpdateProducts
+          setIsOpened={setUpdateModalOpened}
+          ids={templatesSyncIds}
+        />
+      )}
     </>
   );
 }

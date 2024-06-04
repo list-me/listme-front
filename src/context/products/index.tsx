@@ -507,6 +507,15 @@ export const ProductContextProvider = ({
     return obj;
   };
 
+  function adjustItems(items: any[]): any {
+    const newItems = items?.map((item: any) => {
+      const copyItem = { ...item };
+      delete copyItem.value;
+      return copyItem;
+    });
+    return newItems;
+  }
+
   const handleSave = async (
     value: any,
     isNew: boolean,
@@ -607,8 +616,12 @@ export const ProductContextProvider = ({
 
           return [newValue];
         };
+
         const response = await productRequests.patchProductValue({
-          value: newValueToPatch() as any,
+          value:
+            type !== "relation"
+              ? (newValueToPatch() as any)
+              : adjustItems(newValueToPatch()),
           productId,
           fieldId,
         });
@@ -821,11 +834,13 @@ export const ProductContextProvider = ({
   };
 
   const handleMove = (col: any[]) => {
+    const titles: any[] = [];
     const fields = col
       .filter((item) => {
         if (Object.keys(item).length > 0) return item;
       })
       .map((element) => {
+        titles.push(element.title);
         return {
           order: element?.order,
           hidden: element?.hidden,
@@ -836,6 +851,9 @@ export const ProductContextProvider = ({
       });
     templateRequests
       .customView(window.location.pathname.substring(10), { fields })
+      .then(() => {
+        setColHeaders(titles);
+      })
       .catch((_error) =>
         toast.error("Ocorreu um erro ao alterar a posição da coluna"),
       );

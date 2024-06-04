@@ -13,6 +13,7 @@ export const ContainerLimitAlert = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
   p {
     pointer-events: none;
     background: ${({ theme }) => theme.colors.secondary};

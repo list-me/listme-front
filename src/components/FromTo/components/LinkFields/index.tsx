@@ -14,7 +14,7 @@ function LinkFields(): JSX.Element {
   const [warnList, setWarnList] = useState<string[]>([]);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
-  const [finisedContent, setFinisehdContent] = useState<boolean>(false);
+  const [finishedContent, setFinishedContent] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const { template, headerTable } = useProductContext();
@@ -141,11 +141,11 @@ function LinkFields(): JSX.Element {
   }, [csvResponse]);
 
   if (loading) return <LoadingSpinner text="Enviando arquivo..." subText="" />;
-  if (finisedContent)
+  if (finishedContent)
     return (
       <FinishedStep
         typeFinished={typeFinished}
-        setFinisehdContent={setFinisehdContent}
+        setFinisehdContent={setFinishedContent}
       />
     );
   return (
@@ -186,8 +186,13 @@ function LinkFields(): JSX.Element {
           onClick={async () => {
             setLoading(true);
             const result = await finishFromTo();
+            if (result) {
+              setFinishedContent(true);
+              console.log("FinisehdContent updated");
+            } else {
+              console.log("FinisehdContent not updated");
+            }
             setLoading(false);
-            if (result) setFinisehdContent(true);
           }}
         >
           <PlusIcon />

@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Contents,
   Filters,
@@ -26,7 +26,6 @@ import FromTo from "../../../FromTo";
 import { useFromToContext } from "../../../../context/FromToContext";
 import { ReactComponent as LinkIcon } from "../../../../assets/linkPublicList.svg";
 
-import ButtonError from "../../../Integration/Error/ButtonError";
 import { integrationsRequest } from "../../../../services/apis/requests/integration";
 import { useIntegration } from "../../../../context/IntegrationContext";
 
@@ -45,6 +44,9 @@ function HeaderFilters({
   isPublic?: boolean;
   total: number;
 }): JSX.Element {
+  const location = useLocation();
+  const isOutsidePage = location.pathname.includes("outside");
+
   const navigate = useNavigate();
   const totalPrice = (total * 3).toLocaleString("pt-BR", {
     style: "currency",
@@ -61,13 +63,14 @@ function HeaderFilters({
   const getErrors = useCallback(async () => {
     try {
       const id = window.location.pathname.split("/")[2];
-      const response = await integrationsRequest.listIntegrationsErrors({
-        limit,
-        offset,
-        id,
-      });
-
-      setErrors(response);
+      if (!id.includes("public")) {
+        const response = await integrationsRequest.listIntegrationsErrors({
+          limit,
+          offset,
+          id,
+        });
+        setErrors(response);
+      }
     } catch (error) {
       // Handle errors here
       console.error("Error fetching errors:", error);
@@ -103,7 +106,7 @@ function HeaderFilters({
               width="331px"
               className="secondButton linkButton"
               onClick={() => {
-                setStepType("publicList");
+                setStepType(isOutsidePage ? "publicListOutside" : "publicList");
                 setCurrentStep(2);
                 setFromToIsOpened(true);
                 setAllRowsSelected(true);
@@ -118,10 +121,25 @@ function HeaderFilters({
           </MoreOptions>
           {!isPublic && (
             <>
+              {template?.templates_sync_ids && (
+                <Button
+                  height="52px"
+                  width="227px"
+                  isSecondary
+                  onClick={() => {
+                    setFromToIsOpened(true);
+                    setStepType("manageLinkedLists");
+                  }}
+                >
+                  <DownloadIcon />
+                  Gerenciar vínculos
+                </Button>
+              )}
               <Button
                 height="52px"
                 width="227px"
                 isSecondary
+                className="secondButton"
                 onClick={() => setFromToIsOpened(true)}
               >
                 <DownloadIcon />

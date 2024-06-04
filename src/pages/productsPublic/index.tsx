@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import { useNavigate } from "react-router-dom";
 import { Loading } from "../../components/Loading";
 import ProductsPublicTable from "../../components/FromTo/components/PublicList/ProductsPublicTable";
 import { Container, Content } from "../products/styles";
@@ -9,6 +9,9 @@ import { useProductContext } from "../../context/products";
 import { ROUTES } from "../../constants/routes";
 
 export const ProductsPublic: React.FC = () => {
+  const location = useLocation();
+  const isOutsidePage = location.pathname.includes("outside");
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const {
     handleRedirectAndGetProducts,
@@ -18,17 +21,20 @@ export const ProductsPublic: React.FC = () => {
   } = useProductContext();
   const navigate = useNavigate();
   useEffect(() => {
-    if (!targetTemplatePublic) {
+    if (!isOutsidePage && !targetTemplatePublic) {
       navigate(`${ROUTES.TEMPLATES}`);
     }
+  }, [isOutsidePage, navigate, targetTemplatePublic]);
+
+  useEffect(() => {
     setIsLoading(true);
-    const id = window.location.pathname.substring(17);
+    const id = window.location.pathname.split("/").pop();
     if (id) {
       handleRedirectAndGetProducts(id).then(() => {
         setIsLoading(false);
       });
     }
-  }, [handleRedirectAndGetProducts, navigate, targetTemplatePublic]);
+  }, [handleRedirectAndGetProducts]);
 
   return (
     <>
