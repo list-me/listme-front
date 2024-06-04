@@ -6,6 +6,10 @@ interface IPagination {
   page?: number;
   limit?: number;
   list?: boolean;
+  is_public?: boolean;
+  sort?: string;
+  name?: string;
+  category_id?: string;
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -39,6 +43,73 @@ export const templateRequests = {
       })
       .map((item: any, index: number) => ({ order: index + 1, ...item }));
   },
+  // /template/:id/sync
+
+  listSync: async ({ id = "", page = 0, limit = 20 }): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.get(
+      `/template/${id}/sync/?offset=${page}&limit=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response.data.templates;
+  },
+  listPublicList: async ({
+    page = 0,
+    limit = 20,
+    is_public = false,
+    sort = "",
+    name = "",
+    category_id = "",
+  }: IPagination): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.get(
+      `/templates?offset=${page}&limit=${limit}${
+        is_public && `&is_public=true&type=list`
+      }${sort && `&sort=${sort}`}${name && `&name=${name}`}${
+        category_id && `&category_id=${category_id}`
+      }`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return {
+      data: response?.data?.templates?.map((item: any, index: number) => ({
+        order: index + 1,
+        ...item,
+      })),
+      total: response?.data?.total,
+    };
+  },
+  listDefault: async (): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.get(`/templates/?default=true`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response?.data?.templates
+      ?.sort((lastItem: any, nextItem: any) => {
+        if (nextItem.created_at < lastItem.created_at) {
+          return 1;
+        }
+
+        if (nextItem.created_at > lastItem.created_at) {
+          return -1;
+        }
+
+        return 0;
+      })
+      .map((item: any, index: number) => ({ order: index + 1, ...item }));
+  },
   get: async (id: string): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.get(`/template/${id}`, {
@@ -54,6 +125,20 @@ export const templateRequests = {
     const response = await api.post(
       `/template`,
       { type },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  },
+  postDefault: async (type: string, templateId: string): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(
+      `/template`,
+      { type, templateId },
       {
         headers: {
           Authorization: `Bearer ${token}`,

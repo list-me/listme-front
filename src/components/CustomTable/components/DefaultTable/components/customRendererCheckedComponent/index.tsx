@@ -17,14 +17,23 @@ function customRendererCheckedComponent({
 }): string {
   const svgStringInfo: string = renderToString(<InfoIcon />);
 
-  const itemCorrect = value
-    ? columns[col]?.options?.includes(value?.[0])
-    : true;
+  const itemCorrect = (): boolean => {
+    if (value === "valor censurado") return true;
+    return value ? columns[col]?.options?.includes(value?.[0]) : true;
+  };
 
-  const radioClass = itemCorrect ? "checked-item" : "checked-item-warn";
+  const radioClass = itemCorrect() ? "checked-item" : "checked-item-warn";
 
+  const isPublic = value === "valor censurado";
+
+  const currentId = isPublic ? "blur" : "";
+
+  const valueToView =
+    value && value !== "valor censurado" && typeof value !== "string"
+      ? value?.join(", ")
+      : value;
   const element = `
-  <div class=${radioClass} >
+  <div class=${radioClass} id=${currentId}>
     ${
       !itemCorrect
         ? `<div class="hover-container-info" onclick="window.yourSetAlertTooltip((prev) => !prev)">

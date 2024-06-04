@@ -7,11 +7,25 @@ export const Container = styled.div`
   color: ${({ theme }) => theme.colors.tertiary};
 
   .actionButtons {
+    border: none;
+    background: none;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
     :hover {
       cursor: pointer;
+      path {
+        stroke: ${({ theme }) => theme.colors.primary};
+      }
     }
   }
 
+  .refresh:hover {
+    transform: rotate(-360deg);
+  }
+  .ellipsis:hover {
+    transform: rotate(180deg);
+  }
   .ant-table-row {
     font-family: ${({ theme }) => theme.fonts.family.default};
     font-size: ${({ theme }) => theme.fonts.sizes.small};

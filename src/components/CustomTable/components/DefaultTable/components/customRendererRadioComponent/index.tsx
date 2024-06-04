@@ -17,14 +17,19 @@ function customRendererRadioComponent({
 }): string {
   const svgStringInfo: string = renderToString(<InfoIcon />);
 
-  const itemCorrect = value
-    ? columns[col]?.options?.includes(value?.[0])
-    : true;
+  const itemCorrect = (): boolean => {
+    if (value === "valor censurado") return true;
+    return value ? columns[col]?.options?.includes(value?.[0]) : true;
+  };
 
-  const radioClass = itemCorrect ? "radio-item" : "radio-item-warn";
+  const radioClass = itemCorrect() ? "radio-item" : "radio-item-warn";
+
+  const isPublic = value === "valor censurado";
+
+  const currentId = isPublic ? "blur" : "";
 
   const element = `
-  <div class=${radioClass} >
+  <div class=${radioClass} id=${currentId} >
     ${
       !itemCorrect
         ? `<div class="hover-container-info" onclick="window.yourSetAlertTooltip((prev) => !prev)">

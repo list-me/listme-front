@@ -24,7 +24,7 @@ function FinishedStep({
   typeFinished: "warn" | "error" | "success";
   setFinisehdContent: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
-  const { setFromToIsOpened, setCurrentStep, toClean, csvResponse } =
+  const { setFromToIsOpened, setCurrentStep, toClean, csvResponse, stepType } =
     useFromToContext();
   const { handleRedirectAndGetProducts } = useProductContext();
   const { setErrors } = useIntegration();
@@ -107,16 +107,18 @@ function FinishedStep({
 
   useEffect(() => {
     return () => {
-      const id = window.location.pathname.substring(10);
-      handleRedirectAndGetProducts(id).then(() => {});
+      if (stepType === "fromTo") {
+        const id = window.location.pathname.substring(10);
+        handleRedirectAndGetProducts(id).then(() => {});
+      }
       getErrors();
     };
-  }, [getErrors, handleRedirectAndGetProducts]);
+  }, [getErrors, handleRedirectAndGetProducts, stepType]);
 
   return (
     <ContainerFinishedStep>
       <ContentFinishedStep>
-        <img src={configView.icon[typeFinished]} alt="Vincular List pública" />
+        <img src={configView.icon[typeFinished]} alt="Vincular lista pública" />
         <TitleFinishedStep>{configView.title[typeFinished]}</TitleFinishedStep>
         <TextFinishedStep>{configView.text[typeFinished]}</TextFinishedStep>
       </ContentFinishedStep>

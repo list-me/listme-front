@@ -35,7 +35,6 @@ import customRendererFile from "./utils/customRendererFile";
 import HeaderDropDown from "../HeaderDropDown";
 import { IDropDownStatus } from "../HeaderDropDown/HeaderDropDown";
 import { IconType } from "../HeaderDropDown/components/Cell/Cell.d";
-import getStyledContent from "./utils/getStyledContent";
 import { ICol } from "../../CustomTable";
 import disableMultiSelectionWithControl from "./utils/disableMultiSelectionWithControl";
 import customRendererRadioComponent from "./components/customRendererRadioComponent";
@@ -44,12 +43,21 @@ import customRendererDropdownComponent from "./components/customRendererDropdown
 import { useFilterContext } from "../../../../context/FilterContext";
 import { useProductContext } from "../../../../context/products";
 import customRendererCheckedComponent from "./components/customRendererCheckedComponent";
+import { IProductToTable } from "../../../../context/products/product.context";
+import Cart from "./components/Cart";
 import DefaultLimits from "../../../../utils/DefaultLimits";
 import ModalSelectChildrens from "../ModalSelectChildrens";
 import { productRequests } from "../../../../services/apis/requests/product";
-import { IProductToTable } from "../../../../context/products/product.context";
 import getStyleRowHeader from "./utils/getStyleRowHeader";
 import DocumentIcon from "../../../../assets/icons/document-icon.svg";
+import { ReactComponent as ConfigGroupHeaderSVG } from "../../../../assets/configGroupHeader.svg";
+import { ReactComponent as ArrowRightHeaderGroup } from "../../../../assets/arrow-right-header-group.svg";
+import ParentHeaderEdit from "./components/ParentHeaderEdit";
+import customStyledHeader from "./utils/customStyledHeader";
+import { templateRequests } from "../../../../services/apis/requests/template";
+import ModalSelectColumns from "../ModalSelectColumns";
+import LimitAlert from "./components/LimitAlert";
+import { ContainerHotTable } from "./styles";
 
 function DefaultTable({
   hotRef,
@@ -80,18 +88,56 @@ function DefaultTable({
   setIsOpen,
   hidden,
   handleFreeze,
+  isPublic,
+  allRowsSelected,
+  setAllRowsSelected,
+  rowsSelected,
+  setRowsSelected,
   parentId,
   setParentId,
   subItensMode,
   setSubItemsMode,
 }: IDefaultTable): JSX.Element {
+  const { handleRedirectAndGetProducts, setHidden } = useProductContext();
+  const [parentHeaderSelectedIndex, setParentHeaderSelectedIndex] =
+    useState<number>(0);
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
+  const svgStringConfigHeaderGroup: string = renderToString(
+    <ConfigGroupHeaderSVG />,
+  );
+  const svgArrowRightHeaderGroup: string = renderToString(
+    <ArrowRightHeaderGroup />,
+  );
   const [openAlertTooltip, setAlertTooltip] = useState(false);
   const [openAlertTooltipIntegration, setAlertTooltipIntegration] =
     useState(false);
 
   const { operator } = useFilterContext();
   const { conditionsFilter } = useProductContext();
+
+  const [groups, setGroups] = useState<
+    { label: string; colspan: number; newHiddens: number[] }[]
+  >([]);
+  useEffect(() => {
+    if (template?.fields?.groups) {
+      const toGroups = template?.fields?.groups
+        .map((mItemGroup: any) => {
+          const countRealItems = cols.filter(
+            (item) => item.group === mItemGroup.label,
+          );
+
+          const colspan =
+            countRealItems.length === mItemGroup.total ? mItemGroup.total : 1;
+
+          return { label: mItemGroup.label, colspan };
+        })
+        .filter((fItemGroup: any) => fItemGroup.colspan > 0);
+
+      if (toGroups?.length > 0) {
+        setGroups(toGroups);
+      }
+    }
+  }, [cols, template?.fields?.groups]);
 
   useEffect(() => {
     if (hotRef.current) {
@@ -159,6 +205,11 @@ function DefaultTable({
         } catch (error) {
           newValueParsed = newValue;
         }
+        if (currentColumn?.type === "radio") {
+          if (changes[0][2] === undefined && changes[0][3][0] === "") {
+            return;
+          }
+        }
         if (
           currentColumn?.type !== "boolean" &&
           currentColumn?.type !== "radio" &&
@@ -209,7 +260,6 @@ function DefaultTable({
           }
         } else if (hotRef.current) {
           const { hotInstance } = hotRef.current;
-
           await handleCellChange(
             changes,
             hotInstance,
@@ -266,6 +316,7 @@ function DefaultTable({
       currentKeyword,
       conditionsFilter,
       operator,
+      isPublic,
     );
   };
 
@@ -289,9 +340,26 @@ function DefaultTable({
       orderChanged,
       columns,
       handleMove,
-      setColumns,
     );
   };
+
+  const customRendererDefault = useCallback(
+    (
+      instance: Handsontable,
+      td: HTMLTableCellElement,
+      row: number,
+      col: number,
+      prop: string | number,
+      value: any,
+    ): void => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+      } else {
+        td.innerHTML = value;
+      }
+    },
+    [],
+  );
 
   const customRendererRadio = useCallback(
     (
@@ -303,14 +371,19 @@ function DefaultTable({
       value: string | string[],
     ): void => {
       if (cols) {
-        // eslint-disable-next-line no-param-reassign
-        td.innerHTML = customRendererRadioComponent({
-          columns,
-          col,
-          value,
-          svgStringDropDown,
-          setAlertTooltip,
-        });
+        if (value === "valor censurado") {
+          // eslint-disable-next-line no-param-reassign
+          td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          td.innerHTML = customRendererRadioComponent({
+            columns,
+            col,
+            value,
+            svgStringDropDown,
+            setAlertTooltip,
+          });
+        }
       }
     },
     [columns, svgStringDropDown],
@@ -324,7 +397,9 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
-      if (cols) {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+      } else if (cols) {
         // eslint-disable-next-line no-param-reassign
         td.innerHTML = customRendererCheckedComponent({
           columns,
@@ -355,6 +430,11 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ) => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+        return;
+      }
+
       const div = document.createElement("div");
       div.innerHTML = value;
 
@@ -374,7 +454,7 @@ function DefaultTable({
       let newValue;
       const regex = /https:\/\/[^/]+\//;
 
-      if (value) {
+      if (value && !Array.isArray(value)) {
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
             const lastDotIndex: number = itemValue.lastIndexOf(".");
@@ -443,14 +523,18 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+      } else {
+        td.innerHTML = customRendererDropdownComponent({
+          cols,
+          col,
+          value,
+          svgStringDropDown,
+          setAlertTooltip,
+        });
+      }
       // eslint-disable-next-line no-param-reassign
-      td.innerHTML = customRendererDropdownComponent({
-        cols,
-        col,
-        value,
-        svgStringDropDown,
-        setAlertTooltip,
-      });
     },
     [cols, svgStringDropDown],
   );
@@ -472,8 +556,11 @@ function DefaultTable({
       if (textValue?.length > maxLength) {
         td.style.border = "2px solid #F1BC02";
       }
-
-      td.innerHTML = textValue;
+      if (textValue === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+      } else {
+        td.innerHTML = textValue;
+      }
     },
     [cols, svgStringDropDown],
   );
@@ -487,6 +574,10 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+        return;
+      }
       const numericValue = value as string;
       const previousValue = _instance.getDataAtCell(_row, col);
       const colType = columns[col]?.type;
@@ -518,6 +609,10 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+        return;
+      }
       const colDecimalPoint =
         (cols[col]?.options && cols[col]?.options[0]) || ".";
 
@@ -556,14 +651,26 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+        return;
+      }
       if (typeof value === "string" && value?.length && value?.includes("["))
         // eslint-disable-next-line no-param-reassign
         value = JSON?.parse(value);
 
-      const totalItems = value ? value?.length : 0;
-      td.innerHTML = `<div class="tag-content">${totalItems} Items relacionados</div>`;
+      td.innerHTML =
+        value?.length > 0
+          ? value?.map((mValue: any) =>
+              mValue?.field
+                ? `<div class="tag-content">${
+                    mValue?.value || "Indisponível"
+                  }</div>`
+                : `<div class="tag-content">+</div>`,
+            )
+          : `<div class="tag-content">+</div>`;
     },
-    [],
+    [cols],
   );
 
   const customRendererBoolean = useCallback(
@@ -575,6 +682,10 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
+      if (value === "valor censurado") {
+        td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
+        return;
+      }
       const handleChange = (checked: boolean): void => {
         const newValue = [`${checked}`];
         instance.setDataAtCell(row, col, newValue);
@@ -621,26 +732,193 @@ function DefaultTable({
     },
     [ICON_HEADER],
   );
+
+  const [editModeGroup, setEditModeGroup] = useState<"group" | "ungroup" | "">(
+    "",
+  );
+  const [groupReferenceEditMode, setGroupReferenceEditMode] = useState("");
+
+  const [idsColumnsSelecteds, setIdsColumnsSelecteds] = useState<string[]>([]);
+
+  const createHeaderGroup = async (newGroup: string): Promise<void> => {
+    try {
+      const newGroups = [...[...groups].map((group) => group.label), newGroup];
+
+      const newFields = template.fields.fields.map((field: any) => {
+        if (idsColumnsSelecteds.includes(field.id)) {
+          const newField = { ...field, group: newGroup };
+          delete newField.order;
+          delete newField.width;
+          delete newField.frozen;
+          delete newField.hidden;
+          delete newField.integrations;
+          return newField;
+        }
+        const newField = { ...field };
+        delete newField.order;
+        delete newField.width;
+        delete newField.frozen;
+        delete newField.hidden;
+        delete newField.integrations;
+        return newField;
+      });
+
+      const newTemplates = {
+        fields: newFields,
+        groups: newGroups,
+      };
+      await templateRequests.update(template.id, newTemplates);
+      toast.success("Grupo criado com sucesso");
+      const id = window.location.pathname.substring(10);
+      if (id) {
+        setTimeout(() => {
+          handleRedirectAndGetProducts(id).then(() => {});
+        }, 0);
+      }
+      setIdsColumnsSelecteds([]);
+      setEditModeGroup("");
+    } catch (error) {
+      toast.error("Ocorreu um erro durante a criação do novo grupo");
+      console.log(error);
+      throw error;
+    }
+  };
+
+  const removeHeaderGroup = async (referenceGroup: string): Promise<void> => {
+    try {
+      const newFields = template.fields.fields.map((field: any) => {
+        if (idsColumnsSelecteds.includes(field.id)) {
+          const newField = { ...field, group: "" };
+          delete newField.order;
+          delete newField.width;
+          delete newField.frozen;
+          delete newField.hidden;
+          delete newField.integrations;
+          delete newField.group;
+          return newField;
+        }
+        const newField = { ...field };
+        delete newField.order;
+        delete newField.width;
+        delete newField.frozen;
+        delete newField.hidden;
+        delete newField.integrations;
+        return newField;
+      });
+
+      const fieldsFiltered = newFields.filter((fItem: any) => {
+        return fItem.group === referenceGroup;
+      });
+
+      if (fieldsFiltered.length === 0) {
+        const indexGroup = groups.findIndex(
+          (obj) => obj.label === referenceGroup,
+        );
+        groups.splice(indexGroup, 1);
+      }
+      const newTemplates = {
+        fields: newFields,
+        groups: groups.map((mGroup) => mGroup.label),
+      };
+      await templateRequests.update(template.id, newTemplates);
+      toast.success("Grupo criado com sucesso");
+      const id = window.location.pathname.substring(10);
+      if (id) {
+        setTimeout(() => {
+          handleRedirectAndGetProducts(id).then(() => {});
+        }, 0);
+      }
+      setIdsColumnsSelecteds([]);
+      setEditModeGroup("");
+    } catch (error) {
+      toast.error("Ocorreu um erro tentar remover coluna de grupo");
+      console.log(error);
+      throw error;
+    }
+  };
+
+  const totalGroupedColumns = useMemo(() => {
+    if (groups && groups.length > 0 && groups[0]?.label) {
+      return groups.reduce(
+        (ttl, itemGroup) => ttl + (itemGroup?.colspan || 0),
+        0,
+      );
+    }
+    return 0;
+  }, [groups]);
+  const totalUngroupedColumns = useMemo(() => {
+    if (cols && cols.length > 0) {
+      return cols.length - 1 - totalGroupedColumns;
+    }
+    return 0;
+  }, [cols, totalGroupedColumns]);
+
+  const ungroupeds = useMemo(() => {
+    if (totalUngroupedColumns > 0) {
+      return new Array(totalUngroupedColumns).fill("+ Criar novo grupo");
+    }
+    return [];
+  }, [totalUngroupedColumns]);
+
+  const groupsToView = useMemo(() => {
+    return groups[0]?.label
+      ? [[...groups, ...ungroupeds], colHeaders]
+      : [ungroupeds, colHeaders];
+  }, [groups, ungroupeds, colHeaders]);
+
+  const newHiddens = useMemo(() => {
+    return groups
+      .map((itemGroup: any) => {
+        return itemGroup?.newHiddens;
+      })
+      ?.filter(Boolean)
+      .flat();
+  }, [groups]);
+
   const styledHeader = useCallback(
     (column: number, TH: HTMLTableHeaderCellElement): void => {
-      const colData = template?.fields?.fields.find(
-        (item: any) => item.id === headerTable[column]?.data,
-      );
-      const { required: isRequired } = colData || {};
-      const columnHeaderValue =
-        hotRef.current?.hotInstance?.getColHeader(column);
-      const valueToVisible =
-        columnHeaderValue !== " " ? columnHeaderValue : "+";
-      const iconType = getIconByType(colData?.type);
-
-      TH.innerHTML = getStyledContent(
-        iconType,
-        valueToVisible,
-        isRequired,
-        colData,
+      customStyledHeader(
+        TH,
+        groups,
+        setParentHeaderSelectedIndex,
+        template,
+        headerTable,
+        column,
+        hotRef,
+        getIconByType,
+        cols,
+        svgStringConfigHeaderGroup,
+        svgArrowRightHeaderGroup,
+        editModeGroup,
+        idsColumnsSelecteds,
+        setIdsColumnsSelecteds,
+        handleRedirectAndGetProducts,
+        groupReferenceEditMode,
+        setHidden,
+        setGroups,
+        changeAllRowsSelected,
+        allRowsSelected,
+        isPublic,
       );
     },
-    [getIconByType, headerTable, hotRef, template?.fields?.fields],
+    [
+      allRowsSelected,
+      changeAllRowsSelected,
+      cols,
+      editModeGroup,
+      getIconByType,
+      groupReferenceEditMode,
+      groups,
+      handleRedirectAndGetProducts,
+      headerTable,
+      hotRef,
+      idsColumnsSelecteds,
+      isPublic,
+      setHidden,
+      svgArrowRightHeaderGroup,
+      svgStringConfigHeaderGroup,
+      template,
+    ],
   );
 
   const [hiddenRows, setHiddenRows] = useState<number[]>([]);
@@ -716,18 +994,37 @@ function DefaultTable({
 
   const toggleRowSelection = useCallback(
     (row: string) => {
-      const isSelected = rowsSelectedPosition.includes(row);
-      const updatedSelection = isSelected
-        ? rowsSelectedPosition.filter((selectedRow) => selectedRow !== row)
-        : rowsSelectedPosition.concat(row);
+      if (isPublic) {
+        if (rowsSelected && setRowsSelected && setAllRowsSelected) {
+          setAllRowsSelected(false);
+          const isSelected = rowsSelected.includes(row);
+          const updatedSelection = isSelected
+            ? rowsSelected.filter((selectedRow) => selectedRow !== row)
+            : rowsSelected.concat(row);
 
-      setRowsSelectedPosition(updatedSelection);
-      const idsSelecteds = updatedSelection.map((updatedItem: any) => {
-        return products[+updatedItem].id;
-      });
-      setChildsSelectedIds(idsSelecteds);
+          setRowsSelected(updatedSelection);
+        }
+      } else {
+        const isSelected = rowsSelectedPosition.includes(row);
+        const updatedSelection = isSelected
+          ? rowsSelectedPosition.filter((selectedRow) => selectedRow !== row)
+          : rowsSelectedPosition.concat(row);
+
+        setRowsSelectedPosition(updatedSelection);
+        const idsSelecteds = updatedSelection.map((updatedItem: any) => {
+          return products[+updatedItem].id;
+        });
+        setChildsSelectedIds(idsSelecteds);
+      }
     },
-    [products, rowsSelectedPosition],
+    [
+      isPublic,
+      products,
+      rowsSelected,
+      rowsSelectedPosition,
+      setAllRowsSelected,
+      setRowsSelected,
+    ],
   );
 
   const customCheckboxRenderer = useCallback(
@@ -741,7 +1038,9 @@ function DefaultTable({
     ) => {
       const stringRow = String(row);
 
-      const isChecked = rowsSelectedPosition?.includes(stringRow);
+      const isChecked = isPublic
+        ? rowsSelected?.includes(stringRow)
+        : rowsSelectedPosition?.includes(stringRow);
 
       const checkboxContainer = document.createElement("div");
       checkboxContainer.style.width = "100%";
@@ -777,9 +1076,32 @@ function DefaultTable({
 
       td.appendChild(checkboxContainer);
     },
-    [products, rowsSelectedPosition, parentId, toggleRowSelection],
+    [
+      isPublic,
+      rowsSelected,
+      rowsSelectedPosition,
+      products,
+      parentId,
+      subItensMode,
+      toggleRowSelection,
+    ],
   );
-  const { handleRedirectAndGetProducts } = useProductContext();
+
+  function changeAllRowsSelected(): void {
+    if (setRowsSelected && setAllRowsSelected) {
+      const newState = !allRowsSelected;
+      setAllRowsSelected(newState);
+      if (newState) {
+        const newRowsSelected: string[] = [];
+        products.forEach((_item, index) => {
+          newRowsSelected.push(String(index));
+        });
+        setRowsSelected(newRowsSelected);
+      } else {
+        setRowsSelected([]);
+      }
+    }
+  }
 
   const [contentTooltipIntegration, setContentTooltipIntegration] = useState([
     {
@@ -821,8 +1143,109 @@ function DefaultTable({
       }
     }
   };
+
+  const [productsToView, setproductsToView] = useState<IProductToTable[]>([]);
+  useEffect(() => {
+    if (isPublic) {
+      if (!headerTable.length || !products.length) return;
+
+      const colsId = headerTable.map((item) => item.data);
+      const censoredProducts = products.map((product) => {
+        const modifiedProduct = { ...product };
+
+        colsId.slice(2).forEach((colId) => {
+          modifiedProduct[colId] = "valor censurado";
+        });
+
+        return modifiedProduct;
+      });
+
+      setproductsToView(censoredProducts as IProductToTable[]);
+    } else setproductsToView(products);
+  }, [headerTable, isPublic, products]);
+
+  const changeHeaderGroup = async (
+    value: string,
+    index: number,
+  ): Promise<void> => {
+    try {
+      const newGroups = [...groups].map((group) => group.label);
+      newGroups[index] = value;
+      template.fields.fields.sort((a: any, b: any) => +a.order - +b.order);
+      const newFields = template.fields.fields.map((field: any) => {
+        if (field.group && !newGroups.includes(field.group)) {
+          const newField = { ...field, group: value };
+          delete newField.order;
+          delete newField.width;
+          delete newField.frozen;
+          delete newField.hidden;
+          delete newField.integrations;
+          return newField;
+        }
+        const newField = { ...field };
+        delete newField.order;
+        delete newField.width;
+        delete newField.frozen;
+        delete newField.hidden;
+        delete newField.integrations;
+
+        return newField;
+      });
+      const newTemplates = {
+        fields: newFields,
+        groups: newGroups,
+      };
+      await templateRequests.update(template.id, newTemplates);
+      toast.success("Grupo editado com sucesso");
+      const newGroupsToState = [...groups];
+      newGroupsToState[index] = { ...groups[index], label: value };
+      setGroups(newGroupsToState);
+    } catch (error) {
+      toast.error("Ocorreu um erro durante a edição do novo grupo:");
+      console.log(error);
+      throw error;
+    }
+  };
+
+  const [coordsLimitAlert, setCoordsLimitAlert] = useState({
+    coordX: 0,
+    coordY: 0,
+    text: "",
+  });
+
+  const afterSelectionHandler = (event: any, coords: any) => {
+    const cellX = coords.col;
+    const cellY = coords.row;
+    const currentCol = cols[cellX];
+    if (cellX >= 0 && cellY >= 0 && !currentCol.enforce_exact_length) {
+      const mouseX = event.clientX;
+      const mouseY = event.clientY;
+      setCoordsLimitAlert({
+        coordX: mouseX,
+        coordY: mouseY,
+        text: `Este campo deve ter ${currentCol.limit} caracteres`,
+      });
+    } else {
+      setCoordsLimitAlert({
+        coordX: 0,
+        coordY: 0,
+        text: "",
+      });
+    }
+  };
+  const hiddensToView = [...newHiddens, ...hidden];
   return (
     <>
+      {!!coordsLimitAlert.coordX &&
+        !!coordsLimitAlert.coordY &&
+        !!coordsLimitAlert.text && (
+          <LimitAlert
+            coordX={coordsLimitAlert.coordX}
+            coordY={coordsLimitAlert.coordY}
+            text={coordsLimitAlert.text}
+            setCoordsLimitAlert={setCoordsLimitAlert}
+          />
+        )}
       {openAlertTooltip && (
         <AlertTooltip setAlertTooltip={setAlertTooltip}>
           <p className="error-title">Inválido:</p>
@@ -853,307 +1276,335 @@ function DefaultTable({
           </p>
         </AlertTooltip>
       )}
-
-      <HotTable
-        key={parentId}
-        nestedRows
-        bindRowsWithHeaders
-        className="hot-table"
-        readOnly={!!parentId || isTableLocked}
-        ref={hotRef}
-        colHeaders={colHeaders}
-        columns={cols}
-        data={products}
-        hiddenRows={{
-          rows: hiddenRows,
-          indicators: false,
-        }}
-        hiddenColumns={{ columns: hidden }}
-        manualColumnResize
-        manualColumnMove
-        rowHeaders={!parentId}
-        rowHeights="52px"
-        licenseKey="non-commercial-and-evaluation"
-        fixedColumnsLeft={getMaxOrderForFrozen(cols) + 1}
-        afterScrollVertically={afterScrollVerticallyCallback}
-        beforeCopy={beforeCopyCallback}
-        beforeOnCellMouseDown={(event) => {
-          disableMultiSelectionWithControl(event, hotRef);
-        }}
-        afterPaste={afterPasteCallback}
-        afterColumnMove={afterColumnMoveCallback}
-        afterGetColHeader={styledHeader}
-        afterGetRowHeader={styledRow}
-        afterColumnResize={async (newSize: number, column: number) => {
-          if (!parentId) await handleResize(column, newSize, template);
-        }}
-        // afterOnCellMouseDown={(event: any) => {
-        //   const clickedElementClassList = event.target.classList;
-        // }}
-        afterOnCellMouseUp={(event: any, coords, _TD) => {
-          const limitWidth = window.innerWidth - 350;
-          setContentTooltipIntegration(cols[coords?.col]?.integrations);
-
-          const invert = event.clientX > limitWidth;
-
-          const clickedElementClassList = event.target.classList;
-          const correctElement = clickedElementClassList.contains("dropDown");
-
-          const correctElementIntegration = clickedElementClassList.contains(
-            "REQUIRED_INTEGRATION_BUTTON",
-          );
-
-          if (correctElementIntegration) {
-            setAlertTooltipIntegration(true);
+      <ContainerHotTable isPublic={isPublic}>
+        <HotTable
+          key={parentId + newHiddens.join() + groups.join() + cols.join()}
+          nestedRows
+          nestedHeaders={groupsToView}
+          bindRowsWithHeaders
+          className="hot-table"
+          readOnly={
+            !!parentId ||
+            isPublic ||
+            isTableLocked ||
+            !!parentHeaderSelectedIndex ||
+            editModeGroup !== ""
           }
+          ref={hotRef}
+          colHeaders={colHeaders}
+          columns={cols}
+          data={productsToView}
+          hiddenRows={{
+            rows: hiddenRows,
+            indicators: false,
+          }}
+          hiddenColumns={{ columns: hiddensToView }}
+          manualColumnResize
+          manualColumnMove
+          rowHeaders={!parentId && !isPublic}
+          checkedTemplate
+          rowHeights="52px"
+          licenseKey="non-commercial-and-evaluation"
+          fixedColumnsLeft={getMaxOrderForFrozen(cols) + 1}
+          afterScrollVertically={afterScrollVerticallyCallback}
+          beforeCopy={beforeCopyCallback}
+          beforeOnCellMouseDown={(event) => {
+            disableMultiSelectionWithControl(event, hotRef);
+          }}
+          collapsibleColumns
+          afterPaste={afterPasteCallback}
+          afterColumnMove={afterColumnMoveCallback}
+          afterGetColHeader={styledHeader}
+          afterGetRowHeader={styledRow}
+          afterColumnResize={async (newSize: number, column: number) => {
+            if (!parentId || !isPublic)
+              await handleResize(column, newSize, template);
+          }}
+          // afterOnCellMouseDown={(event: any) => {
+          //   const clickedElementClassList = event.target.classList;
+          // }}
+          afterOnCellMouseUp={(event: any, coords, _TD) => {
+            if (coords.row >= 0) {
+              const cellX = coords.col;
+              const currentCol = cols[cellX];
+              if (currentCol.limit && event.button === 0) {
+                afterSelectionHandler(event, coords);
+              }
+            }
+            const limitWidth = window.innerWidth - 350;
+            setContentTooltipIntegration(cols[coords?.col]?.integrations);
 
-          if (!parentId && colHeaders.length - 1 === coords.col) {
-            setTimeout(() => {
-              setDropDownStatus({
-                type: "new",
-                coordX: event.clientX,
-                coordY: event.clientY,
-                col: coords.col,
-                invert,
+            const invert = event.clientX > limitWidth;
+
+            const clickedElementClassList = event.target.classList;
+            const correctElement = clickedElementClassList.contains("dropDown");
+
+            const correctElementIntegration = clickedElementClassList.contains(
+              "REQUIRED_INTEGRATION_BUTTON",
+            );
+
+            if (correctElementIntegration) {
+              setAlertTooltipIntegration(true);
+            }
+
+            if (
+              !parentId &&
+              !isPublic &&
+              colHeaders.length - 1 === coords.col
+            ) {
+              setTimeout(() => {
+                setDropDownStatus({
+                  type: "new",
+                  coordX: event.clientX,
+                  coordY: event.clientY,
+                  col: coords.col,
+                  invert,
+                });
               });
-            });
-            return null;
-          }
-          if (correctElement && coords.row === -1 && coords.col >= 0) {
-            setTimeout(() => {
-              setDropDownStatus({
-                type: "cell",
-                coordX: event.clientX,
-                coordY: event.clientY,
-                col: coords.col,
-                invert,
-              });
-            }, 0);
-            return null;
-          }
-        }}
-        afterRenderer={(TD, row, col) => {
-          if (col + 1 === colHeaders.length) {
-            // eslint-disable-next-line no-param-reassign
-            TD.style.display = "none";
-          }
-          if (products[row]?.parent_id) {
-            TD.style.background = "#F1F3F5";
-          }
-        }}
-        contextMenu={{
-          items: {
-            remove_row: {
-              name: "Excluir produto",
-              async callback(key: string, selection: any[]) {
-                const { hotInstance } = hotRef.current!;
-                if (hasAtLeastOneProduct(products)) {
-                  if (hotInstance) {
-                    handleRemoveRow(
-                      hotInstance,
-                      selection,
-                      handleDelete,
-                      products,
-                    );
-                  }
-                } else {
-                  toast.warn("O catálogo deve conter ao menos um produto");
-                }
+              return null;
+            }
+            if (correctElement && coords.row === -1 && coords.col >= 0) {
+              setTimeout(() => {
+                setDropDownStatus({
+                  type: "cell",
+                  coordX: event.clientX,
+                  coordY: event.clientY,
+                  col: coords.col,
+                  invert,
+                });
+              }, 0);
+              return null;
+            }
+          }}
+          afterRenderer={(TD, row, col) => {
+            if (col + 1 === colHeaders.length) {
+              // eslint-disable-next-line no-param-reassign
+              TD.style.display = "none";
+            }
+            if (products[row]?.parent_id) {
+              TD.style.background = "#F1F3F5";
+            }
+          }}
+          contextMenu={
+            !editModeGroup && {
+              items: {
+                remove_row: {
+                  name: "Excluir produto",
+                  async callback(key: string, selection: any[]) {
+                    const { hotInstance } = hotRef.current!;
+                    if (hasAtLeastOneProduct(products)) {
+                      if (hotInstance) {
+                        handleRemoveRow(
+                          hotInstance,
+                          selection,
+                          handleDelete,
+                          products,
+                        );
+                      }
+                    } else {
+                      toast.warn("O catálogo deve conter ao menos um produto");
+                    }
+                  },
+                },
+                subItems_row: {
+                  name: "Vincular variações",
+                  callback(key, selection) {
+                    const selectedRow = selection[0].start.row;
+                    const selectedProduct = products[selectedRow];
+                    if (selectedProduct && !selectedProduct.parent_id) {
+                      clearSubItensMode();
+                      setSubItemsMode("add");
+                      setParentId(selectedProduct.id as any);
+                    } else {
+                      toast.warn("Este produto não pode ter subitens");
+                    }
+                  },
+                },
+                subItems_row_remove: {
+                  name: "Desvincular variação",
+                  callback(key, selection) {
+                    const selectedRow = selection[0].start.row;
+                    const selectedProduct = products[selectedRow];
+                    if (selectedProduct && selectedProduct.parent_id) {
+                      clearSubItensMode();
+                      setSubItemsMode("remove");
+                      setParentId(selectedProduct.parent_id as any);
+                    } else {
+                      toast.warn("Este produto não é um subitem");
+                    }
+                  },
+                },
               },
-            },
-            subItems_row: {
-              name: "Vincular variações",
-              callback(key, selection) {
-                const selectedRow = selection[0].start.row;
-                const selectedProduct = products[selectedRow];
-                if (selectedProduct && !selectedProduct.parent_id) {
-                  clearSubItensMode();
-                  setSubItemsMode("add");
-                  setParentId(selectedProduct.id as any);
-                } else {
-                  toast.warn("Este produto não pode ter subitens");
-                }
-              },
-            },
-            subItems_row_remove: {
-              name: "Desvincular variação",
-              callback(key, selection) {
-                const selectedRow = selection[0].start.row;
-                const selectedProduct = products[selectedRow];
-                if (selectedProduct && selectedProduct.parent_id) {
-                  clearSubItensMode();
-                  setSubItemsMode("remove");
-                  setParentId(selectedProduct.parent_id as any);
-                } else {
-                  toast.warn("Este produto não é um subitem");
-                }
-              },
-            },
-          },
-        }}
-        afterChange={afterChangeCallback}
-      >
-        {cols.map((col, _index: number) => {
-          if (col.type === "checkSubItem") {
-            return <HotColumn width={50} renderer={customCheckboxRenderer} />;
+            }
           }
-          if (col?.type === "text" || col?.type === "paragraph") {
+          afterChange={afterChangeCallback}
+        >
+          {cols.map((col, _index: number) => {
+            if (col.type === "checkPublic") {
+              return <HotColumn width={50} renderer={customCheckboxRenderer} />;
+            }
+            if (col.type === "checkSubItem") {
+              return <HotColumn width={50} renderer={customCheckboxRenderer} />;
+            }
+            if (col?.type === "text" || col?.type === "paragraph") {
+              return (
+                <HotColumn
+                  width={col.width}
+                  _columnIndex={+col.order}
+                  data={col.data}
+                  key={col.order + col.data}
+                  renderer={customRendererText}
+                />
+              );
+            }
+            if (col.isCustom && col.type === "list") {
+              return (
+                <HotColumn
+                  width={col.width}
+                  _columnIndex={+col.order}
+                  data={col.data}
+                  key={col.order + col.data}
+                  renderer={customRendererDropdown}
+                >
+                  <DropdownEditor
+                    hot-editor
+                    options={[...col.options, ""]}
+                    editorColumnScope={0}
+                  />
+                </HotColumn>
+              );
+            }
+
+            if (col.isCustom && col.type === "radio") {
+              return (
+                <HotColumn
+                  width={col.width}
+                  _columnIndex={+col.order}
+                  data={col.data}
+                  key={col.order + col.data}
+                  renderer={customRendererRadio}
+                >
+                  <RadioEditor
+                    hot-editor
+                    options={[...col.options, ""]}
+                    editorColumnScope={0}
+                  />
+                </HotColumn>
+              );
+            }
+            if (col.isCustom && col.type === "checked") {
+              return (
+                <HotColumn
+                  width={col.width}
+                  _columnIndex={+col.order}
+                  data={col.data}
+                  key={col.order + col.data}
+                  renderer={customRendererChecked}
+                >
+                  <CheckBoxEditor
+                    hot-editor
+                    options={[...col.options]}
+                    editorColumnScope={0}
+                  />
+                </HotColumn>
+              );
+            }
+
+            if (col.isCustom && col.type === "file") {
+              return (
+                <HotColumn
+                  width={col.width}
+                  _columnIndex={+col.order}
+                  data={col.data}
+                  key={col.order + col.data}
+                  renderer={customRendererFileCallBack}
+                >
+                  <FileEditor
+                    hot-editor
+                    editorColumnScope={0}
+                    templateId={template.id}
+                    dataProvider={products}
+                    companyId={template.companyId}
+                    hotRef={hotRef}
+                    template={template}
+                  />
+                </HotColumn>
+              );
+            }
+
+            if (col.type === "relation") {
+              return (
+                <HotColumn
+                  _columnIndex={+col.order}
+                  data={col.data}
+                  width={col.width}
+                  key={col.order + col.data}
+                  // eslint-disable-next-line react/jsx-no-bind
+                  renderer={customRendererRelation}
+                >
+                  <RelationEditor
+                    hot-editor
+                    editorColumnScope={0}
+                    // @ts-ignore
+                    templateId={col.options[0].templateId}
+                    column={col}
+                    dataProvider={products}
+                    // @ts-ignore
+                    field={col.options[0].field}
+                  />
+                </HotColumn>
+              );
+            }
+            if (col.type === "boolean") {
+              return (
+                <HotColumn
+                  _columnIndex={+col.order}
+                  data={col.data}
+                  width={col.width}
+                  key={col.order + col.data}
+                  // eslint-disable-next-line react/jsx-no-bind
+                  renderer={customRendererBoolean}
+                  readOnly
+                />
+              );
+            }
+
+            if (col.type === "numeric") {
+              return (
+                <HotColumn
+                  width={col.width}
+                  _columnIndex={+col.order}
+                  data={col.data}
+                  key={col.order + col.data}
+                  renderer={customRendererNumeric}
+                />
+              );
+            }
+            if (col.type === "decimal") {
+              return (
+                <HotColumn
+                  width={col.width}
+                  _columnIndex={+col.order}
+                  data={col.data}
+                  key={col.order + col.data}
+                  renderer={customRendererDecimal}
+                />
+              );
+            }
+
             return (
               <HotColumn
                 width={col.width}
                 _columnIndex={+col.order}
                 data={col.data}
                 key={col.order + col.data}
-                renderer={customRendererText}
+                renderer={customRendererDefault}
               />
             );
-          }
-          if (col.isCustom && col.type === "list") {
-            return (
-              <HotColumn
-                width={col.width}
-                _columnIndex={+col.order}
-                data={col.data}
-                key={col.order + col.data}
-                renderer={customRendererDropdown}
-              >
-                <DropdownEditor
-                  hot-editor
-                  options={[...col.options, ""]}
-                  editorColumnScope={0}
-                />
-              </HotColumn>
-            );
-          }
-
-          if (col.isCustom && col.type === "radio") {
-            return (
-              <HotColumn
-                width={col.width}
-                _columnIndex={+col.order}
-                data={col.data}
-                key={col.order + col.data}
-                renderer={customRendererRadio}
-              >
-                <RadioEditor
-                  hot-editor
-                  options={[...col.options, ""]}
-                  editorColumnScope={0}
-                />
-              </HotColumn>
-            );
-          }
-          if (col.isCustom && col.type === "checked") {
-            return (
-              <HotColumn
-                width={col.width}
-                _columnIndex={+col.order}
-                data={col.data}
-                key={col.order + col.data}
-                renderer={customRendererChecked}
-              >
-                <CheckBoxEditor
-                  hot-editor
-                  options={[...col.options]}
-                  editorColumnScope={0}
-                />
-              </HotColumn>
-            );
-          }
-
-          if (col.isCustom && col.type === "file") {
-            return (
-              <HotColumn
-                width={col.width}
-                _columnIndex={+col.order}
-                data={col.data}
-                key={col.order + col.data}
-                renderer={customRendererFileCallBack}
-              >
-                <FileEditor
-                  hot-editor
-                  editorColumnScope={0}
-                  templateId={template.id}
-                  dataProvider={products}
-                  companyId={template.companyId}
-                  hotRef={hotRef}
-                  template={template}
-                />
-              </HotColumn>
-            );
-          }
-
-          if (col.type === "relation") {
-            return (
-              <HotColumn
-                _columnIndex={+col.order}
-                data={col.data}
-                width={col.width}
-                key={col.order + col.data}
-                // eslint-disable-next-line react/jsx-no-bind
-                renderer={customRendererRelation}
-              >
-                <RelationEditor
-                  hot-editor
-                  editorColumnScope={0}
-                  // @ts-ignore
-                  templateId={col.options[0].templateId}
-                  column={col}
-                  dataProvider={products}
-                  // @ts-ignore
-                  field={col.options[0].field}
-                />
-              </HotColumn>
-            );
-          }
-          if (col.type === "boolean") {
-            return (
-              <HotColumn
-                _columnIndex={+col.order}
-                data={col.data}
-                width={col.width}
-                key={col.order + col.data}
-                // eslint-disable-next-line react/jsx-no-bind
-                renderer={customRendererBoolean}
-                readOnly
-              />
-            );
-          }
-
-          if (col.type === "numeric") {
-            return (
-              <HotColumn
-                width={col.width}
-                _columnIndex={+col.order}
-                data={col.data}
-                key={col.order + col.data}
-                renderer={customRendererNumeric}
-              />
-            );
-          }
-          if (col.type === "decimal") {
-            return (
-              <HotColumn
-                width={col.width}
-                _columnIndex={+col.order}
-                data={col.data}
-                key={col.order + col.data}
-                renderer={customRendererDecimal}
-              />
-            );
-          }
-
-          return (
-            <HotColumn
-              width={col.width}
-              _columnIndex={+col.order}
-              data={col.data}
-              key={col.order + col.data}
-            />
-          );
-        })}
-      </HotTable>
-
+          })}
+        </HotTable>
+      </ContainerHotTable>
+      {isPublic && <Cart itemsTotal={rowsSelected?.length || 0} />}
       <HeaderDropDown
         dropDownStatus={dropDownStatus}
         setDropDownStatus={setDropDownStatus}
@@ -1163,18 +1614,41 @@ function DefaultTable({
         colHeaders={colHeaders}
         setColHeaders={setColHeaders}
         handleNewColumn={handleNewColumn}
-        hotRef={hotRef}
         handleHidden={handleHidden}
         headerTable={headerTable}
         setCurrentCell={setCurrentCell}
         setIsOpen={setIsOpen}
         handleFreeze={handleFreeze}
+        setEditModeGroup={setEditModeGroup}
+        setGroupReferenceEditMode={setGroupReferenceEditMode}
       />
       {parentId && (
         <ModalSelectChildrens
           amount={childsSelectedIds.length}
           clearSubItensMode={clearSubItensMode}
           onFinishProductChild={onFinishProductChild}
+        />
+      )}
+      {editModeGroup && (
+        <ModalSelectColumns
+          ids={idsColumnsSelecteds}
+          editModeGroup={editModeGroup}
+          clearSubItensMode={() => {
+            setIdsColumnsSelecteds([]);
+            setEditModeGroup("");
+          }}
+          onFinishProductChild={
+            editModeGroup === "group" ? createHeaderGroup : removeHeaderGroup
+          }
+          groupReferenceEditMode={groupReferenceEditMode}
+        />
+      )}
+      {parentHeaderSelectedIndex && (
+        <ParentHeaderEdit
+          value={groups[parentHeaderSelectedIndex - 1].label}
+          onClose={() => setParentHeaderSelectedIndex(0)}
+          onChange={changeHeaderGroup}
+          index={parentHeaderSelectedIndex - 1}
         />
       )}
     </>

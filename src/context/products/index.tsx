@@ -95,6 +95,14 @@ interface ITypeProductContext {
   customFields: ICustomField[];
   conditionsFilter: IConditions[];
   setConditionsFilter: React.Dispatch<React.SetStateAction<IConditions[]>>;
+  targetTemplatePublic: ITemplate | undefined;
+  setTargetTemplatePublic: React.Dispatch<
+    React.SetStateAction<ITemplate | undefined>
+  >;
+  targetHeaderTable: IHeader[];
+  setTargetHeaderTable: React.Dispatch<React.SetStateAction<IHeader[]>>;
+  targetColHeaders: string[];
+  setTargetColHeaders: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 interface SignedUrlResponse {
@@ -125,7 +133,9 @@ export const ProductContextProvider = ({
   const [conditionsFilter, setConditionsFilter] = useState<IConditions[]>([
     {},
   ] as IConditions[]);
-
+  const [targetTemplatePublic, setTargetTemplatePublic] = useState<ITemplate>();
+  const [targetHeaderTable, setTargetHeaderTable] = useState<IHeader[]>([]);
+  const [targetColHeaders, setTargetColHeaders] = useState<string[]>([]);
   const COMPONENT_CELL_PER_TYPE: ICustomCellType = useMemo(
     () => ({
       RADIO: "radio",
@@ -173,6 +183,11 @@ export const ProductContextProvider = ({
       try {
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {
+          const numberOfDots = file.name.split(".");
+          if (numberOfDots.length > 2) {
+            // eslint-disable-next-line @typescript-eslint/no-throw-literal
+            throw "O nome do arquivo não pode conter ponto(.)";
+          }
           const [fileName, fileType] = file.name.split(".");
 
           let signedUrl: SignedUrlResponse;
@@ -212,12 +227,6 @@ export const ProductContextProvider = ({
 
   const handleDelete = (product: any) => {
     try {
-      const currentProducts = filteredData.filter((itemProduct: any) => {
-        if (itemProduct.id !== product.id) {
-          return itemProduct;
-        }
-      });
-
       productRequests
         .delete(product.id)
         .then((_response: any) => {
@@ -262,7 +271,12 @@ export const ProductContextProvider = ({
       conditions: IConditions[] | undefined = undefined,
       operator?: string,
     ) => {
-      const { data }: { data: IProductsRequest } = await productRequests.list(
+      const url = window.location.href;
+      const isPublic = url.includes("public");
+      const requestFunction = isPublic
+        ? productRequests.listPublic
+        : productRequests.list;
+      const { data }: { data: IProductsRequest } = await requestFunction(
         { page, limit, keyword },
         templateId,
         conditions,
@@ -374,6 +388,7 @@ export const ProductContextProvider = ({
             className: "htLeft htMiddle",
             type: item.type,
             required: item.required,
+            group: item.group,
             options: item.options,
             order: item.order !== undefined ? item.order : index.toString(),
             hidden: item.hidden ? item.hidden : false,
@@ -382,13 +397,19 @@ export const ProductContextProvider = ({
             bucket: response?.bucket,
             limit: item.limit,
             integrations: item.integrations,
+            enforce_exact_length: item.enforce_exact_length,
+            default: item.default,
           };
         },
       );
+      const groupeds = headers.filter((fItem) => fItem.group);
+      const ungroupeds = headers.filter((fItem) => !fItem.group);
 
-      const sortedHeaders: IHeader[] = headers.sort((a, b) => {
+      const sortedUngroupeds: IHeader[] = ungroupeds.sort((a, b) => {
         return Number(a.order) - Number(b.order);
       });
+
+      const sortedHeaders: IHeader[] = [...groupeds, ...sortedUngroupeds];
 
       const headerTitles = sortedHeaders.map((item: any) => {
         return item?.title;
@@ -414,6 +435,8 @@ export const ProductContextProvider = ({
             width: result.width,
             frozen: result.frozen,
             id: result.data,
+            default: result.default,
+            enforce_exact_length: result.enforce_exact_length,
           };
         });
       setCustomFields(toCustomFields);
@@ -483,6 +506,15 @@ export const ProductContextProvider = ({
 
     return obj;
   };
+
+  function adjustItems(items: any[]): any {
+    const newItems = items?.map((item: any) => {
+      const copyItem = { ...item };
+      delete copyItem.value;
+      return copyItem;
+    });
+    return newItems;
+  }
 
   const handleSave = async (
     value: any,
@@ -584,8 +616,12 @@ export const ProductContextProvider = ({
 
           return [newValue];
         };
+
         const response = await productRequests.patchProductValue({
-          value: newValueToPatch() as any,
+          value:
+            type !== "relation"
+              ? (newValueToPatch() as any)
+              : adjustItems(newValueToPatch()),
           productId,
           fieldId,
         });
@@ -666,44 +702,62 @@ export const ProductContextProvider = ({
   const buildCustomFields = (
     _fields: any,
     { order, show, width, frozen }: ICustom,
-    col: number,
+    cols: number[],
     newfields: any,
   ): ICustomField[] => {
     const toBuild = [...newfields];
-
     const builded = toBuild?.map((custom) => {
-      if (custom?.order === col) {
-        return {
+      if (cols.includes(custom?.order)) {
+        const newItem = {
           id: custom?.id,
           order: order ? order.toString() : custom?.order,
           hidden: show !== undefined ? show : custom?.hidden,
           width: width || custom?.width,
           frozen: frozen || custom?.frozen,
         };
+        return newItem;
       }
       return custom;
     });
     return builded;
   };
-
   const handleHidden = async (
-    col: number,
+    col: number[] | number,
     temp: any,
     able: boolean,
-  ): Promise<number[]> => {
+  ): Promise<any> => {
     const content = hidden;
+
+    const convertColl = typeof col === "number" ? [col] : col;
+
     let newValue;
+
     if (content.includes(col)) {
-      newValue = content.filter((element) => element !== col);
+      newValue = content.filter((element) => !convertColl.includes(element));
     } else {
-      newValue = [...content, col];
+      newValue = [...content, ...convertColl];
     }
 
     setHidden(newValue);
+
+    customFields.forEach((item: any) => {
+      // eslint-disable-next-line no-param-reassign
+      delete item.default;
+      // eslint-disable-next-line no-param-reassign
+      delete item.enforce_exact_length;
+    });
+
     const newfields = customFields.map((item) => {
-      if (item?.order === col.toString()) {
+      if (convertColl.includes(+item?.order)) {
+        const newItem = {
+          order: item.order,
+          hidden: item.hidden,
+          width: item.width,
+          frozen: item.frozen,
+          id: item.id,
+        };
         return {
-          ...item,
+          ...newItem,
           hidden: able,
         };
       }
@@ -711,12 +765,12 @@ export const ProductContextProvider = ({
       return item;
     });
 
-    setCustomFields(newfields);
+    setCustomFields(newfields as ICustomField[]);
 
     const custom = buildCustomFields(
       temp?.fields?.fields,
       { show: able },
-      col,
+      convertColl,
       newfields,
     );
 
@@ -770,6 +824,7 @@ export const ProductContextProvider = ({
         };
       });
     });
+
     templateRequests
       .customView(template!.id, { fields: newCustomFields })
       .catch((_error) =>
@@ -779,11 +834,13 @@ export const ProductContextProvider = ({
   };
 
   const handleMove = (col: any[]) => {
+    const titles: any[] = [];
     const fields = col
       .filter((item) => {
         if (Object.keys(item).length > 0) return item;
       })
       .map((element) => {
+        titles.push(element.title);
         return {
           order: element?.order,
           hidden: element?.hidden,
@@ -794,17 +851,24 @@ export const ProductContextProvider = ({
       });
     templateRequests
       .customView(window.location.pathname.substring(10), { fields })
+      .then(() => {
+        setColHeaders(titles);
+      })
       .catch((_error) =>
         toast.error("Ocorreu um erro ao alterar a posição da coluna"),
       );
   };
 
   const handleNewColumn = (col: any, fields: any[]) => {
-    const newTemplate = template;
+    const url = window.location.href;
+    const isPublic = url.includes("public");
+    const newTemplate = isPublic ? targetTemplatePublic : template;
     // @ts-ignore
     newTemplate.fields.fields = fields;
-    setTemplate(newTemplate);
-
+    if (isPublic) {
+      setTargetTemplatePublic(newTemplate);
+    } else setTemplate(newTemplate);
+    // @ts-ignore
     setCustomFields((prev) => [
       ...prev,
       {
@@ -819,7 +883,9 @@ export const ProductContextProvider = ({
     const newPosition = [...headerTable, col];
     newPosition.splice(newPosition.length - 2, 1);
     newPosition.push({});
-    setHeaderTable(newPosition);
+    if (isPublic) {
+      setTargetHeaderTable(newPosition);
+    } else setHeaderTable(newPosition);
   };
 
   const handleFilter = (word: string): any[] => {
@@ -868,6 +934,8 @@ export const ProductContextProvider = ({
         if (keys.includes(item?.id)) return item;
       })
       .map((element, index) => {
+        const newItem = element;
+        delete newItem.enforce_exact_length;
         return {
           ...element,
           order: index.toString(),
@@ -935,6 +1003,12 @@ export const ProductContextProvider = ({
     customFields,
     conditionsFilter,
     setConditionsFilter,
+    targetTemplatePublic,
+    setTargetTemplatePublic,
+    targetHeaderTable,
+    setTargetHeaderTable,
+    targetColHeaders,
+    setTargetColHeaders,
   };
 
   return (

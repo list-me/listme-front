@@ -62,6 +62,12 @@ export const PersonalModal = ({
   template,
   onUpdate,
 }: PropsModal) => {
+  const url = window.location.href;
+  const isPublic = url.includes("public");
+
+  const { targetTemplatePublic } = useProductContext();
+
+  const currentTemplate = isPublic ? targetTemplatePublic : template;
   const [title, setTitle] = useState<string>(data?.title ?? "");
   const [limitStatus, setLimitStatus] = useState<boolean>(
     data?.limitStatus ?? false,
@@ -71,6 +77,7 @@ export const PersonalModal = ({
   );
   const [type, setType] = useState<string>(data?.type);
   const [required, setRequired] = useState<boolean>(data?.required ?? false);
+  const [isUnique, setIsUnique] = useState<boolean>(data?.is_unique ?? false);
   // @ts-ignore
   const initialLimit =
     data?.limit || DefaultLimits[data?.type]?.default || null;
@@ -217,13 +224,14 @@ export const PersonalModal = ({
     let newField: any;
     if (!title.trim()) return;
     if (isUpdate) {
-      templateUpdated = template.fields.fields.map((item: any) => {
+      templateUpdated = currentTemplate.fields.fields.map((item: any) => {
         if (item.id === data.id) {
           data.options = type !== "decimal" ? option || [""] : [decimalPoint];
           data.type = type;
           data.name = name;
           data.title = title;
           data.required = required;
+          data.is_unique = isUnique;
           data.limit = type === "relation" ? 20 : characterLimit;
           item = data;
           return item;
@@ -232,7 +240,7 @@ export const PersonalModal = ({
         return item;
       });
     } else {
-      templateUpdated.push(...template.fields.fields);
+      templateUpdated.push(...currentTemplate.fields.fields);
       newField = {
         id: Math.floor(100000 + Math.random() * 900000).toString(),
         type,
@@ -241,9 +249,11 @@ export const PersonalModal = ({
         limit: type === "relation" ? 20 : characterLimit,
         options: type !== "decimal" ? option || [""] : [decimalPoint],
         required,
+        isUnique: false,
         is_public: false,
         help_text: "This fiedl will help you to make a new product register",
         description: "Completly random description",
+        enforce_exact_length: false,
       };
       templateUpdated.push(newField);
     }
@@ -264,10 +274,13 @@ export const PersonalModal = ({
       return newObj;
     });
 
-    const newTemplates = { fields: newFields };
+    const newTemplates = {
+      fields: newFields,
+      groups: template.fields.groups.map((mGroup: any) => mGroup.label),
+    };
 
     try {
-      await templateRequests.update(template?.id, newTemplates);
+      await templateRequests.update(currentTemplate?.id, newTemplates);
       toast.success("Template atualizado com sucesso");
       return templateUpdated;
     } catch (error) {
@@ -294,8 +307,6 @@ export const PersonalModal = ({
     }
   }, [options]);
 
-  const { handleRedirectAndGetProducts } = useProductContext();
-
   return (
     <>
       <Modal
@@ -316,6 +327,7 @@ export const PersonalModal = ({
               form={form}
               initialValues={{
                 required,
+                is_unique: isUnique,
                 title,
                 name: data?.name,
                 type: data?.type,
@@ -387,12 +399,6 @@ export const PersonalModal = ({
                     };
                     onClickModal();
                     onUpdate(newColumn, response);
-                    const id = window.location.pathname.substring(10);
-                    if (id) {
-                      setTimeout(() => {
-                        handleRedirectAndGetProducts(id).then(() => {});
-                      }, 0);
-                    }
                   }
                 });
               }}
@@ -524,7 +530,7 @@ export const PersonalModal = ({
                   ) : data?.type == "relation" ? (
                     <RelationForm
                       value={data}
-                      currentFields={template.fields.fields}
+                      currentFields={currentTemplate.fields.fields}
                       handleChangeOptions={handleChangeOptions}
                     />
                   ) : (
@@ -648,6 +654,17 @@ export const PersonalModal = ({
                     size="small"
                     onChange={() => setRequired(!required)}
                     checked={required}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="is_unique"
+                  label="Campo único"
+                  style={{ marginBottom: "2px" }}
+                >
+                  <Switch
+                    size="small"
+                    onChange={() => setIsUnique(!isUnique)}
+                    checked={isUnique}
                   />
                 </Form.Item>
               </Footer>

@@ -15,6 +15,10 @@ export const HeaderLinkFields = styled.div`
 
 export const ColumnTitleLinkFields = styled.p`
   width: 50%;
+  display: flex;
+  margin: 0%;
+  gap: 4px;
+  align-items: center;
   color: ${({ theme }) => theme.colors.grayscale.primary};
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
@@ -25,6 +29,51 @@ export const ColumnTitleLinkFields = styled.p`
     border: 3px solid red !important;
   }
 `;
+
+export const AlertLinkFields = styled.div`
+  stroke: #868e96;
+  path {
+    stroke: #868e96;
+    :nth-child(2) {
+      stroke: none;
+      fill: #868e96;
+    }
+  }
+  display: flex;
+  position: relative;
+  > div {
+    display: none;
+    position: absolute;
+    width: 380px;
+    height: 112px;
+    background: rgba(0, 0, 0, 0.75);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #fff;
+    bottom: -122px;
+    border-radius: 6px;
+    z-index: 10;
+    padding: 8px 16px;
+    align-items: center;
+    justify-content: center;
+    left: -350px;
+    ::before {
+      content: "";
+      position: absolute;
+      top: -20px;
+      right: 12px;
+      border: 10px solid transparent;
+      border-bottom-color: rgba(0, 0, 0, 0.75);
+    }
+  }
+  :hover {
+    > div {
+      display: flex;
+    }
+  }
+`;
+
 export const ContentLinkFields = styled.div`
   max-height: 500px;
   padding-right: 10px;
@@ -50,13 +99,32 @@ export const ContentLinkFields = styled.div`
     background-color: ${({ theme }) => theme.colors.primary} !important;
   }
 `;
-export const ContentRowLinkFields = styled.div`
+export const ContentRowLinkFields = styled.div<{ checkColumn?: boolean }>`
+  display: grid;
+  width: 100%;
+  grid-template-columns: ${(props) =>
+    props.checkColumn ? "33% 33% 33%" : "50% 50%"};
+`;
+
+export const ContentRowLinkFieldsOutside = styled.div`
   display: flex;
   width: 100%;
+  margin-bottom: 24px;
 `;
 
 export const ContainerSelectText = styled.div`
   width: 100%;
+`;
+
+export const ContainerCheckBox = styled.div`
+  width: 100%;
+  justify-content: center;
+  display: flex;
+`;
+export const ContainerCheckBoxOutside = styled.div`
+  width: 100%;
+  justify-content: center;
+  display: flex;
 `;
 
 export const WarnAlert = styled.p`

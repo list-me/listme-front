@@ -42,6 +42,8 @@ interface IField {
     provider: string;
     entities: string[];
   }[];
+  enforce_exact_length: boolean;
+  default: boolean;
 }
 
 interface ITemplate {
@@ -53,7 +55,10 @@ interface ITemplate {
   name: string;
   templateId: string;
   updated_at: string | null;
-  fields: { fields: IField[]; groups: string[] };
+  fields: {
+    fields: IField[];
+    groups: { label: string; colspan: number; newHiddens: number[] }[];
+  };
 }
 
 interface IHeader {
@@ -63,6 +68,7 @@ interface IHeader {
   type: string;
   required: boolean;
   options: string[];
+  group: string;
   order: string | number;
   hidden: boolean;
   width: string;
@@ -73,9 +79,12 @@ interface IHeader {
     provider: string;
     entities: string[];
   }[];
+  enforce_exact_length: boolean;
+  default: boolean;
 }
 
 interface ICustomField {
+  enforce_exact_length: any;
   order: string | number;
   hidden: boolean;
   width: string;

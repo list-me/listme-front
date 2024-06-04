@@ -20,6 +20,7 @@ import { IPaginationTemplate } from "../../pages/templates/templates";
 import { ReactComponent as ArrowLeft } from "../../assets/arrow-left.svg";
 import { ReactComponent as Chevron } from "../../assets/chevron-down.svg";
 import { ROUTES } from "../../constants/routes";
+import ModalSelectDefaultTemplate from "../ModalSelectDefaultTemplate";
 
 export function Header({
   handleGetTemplates,
@@ -36,19 +37,8 @@ export function Header({
   const hasIntegrationAndId =
     id && window.location.pathname.includes("integration");
 
-  async function createTemplate(): Promise<void> {
-    try {
-      await templateRequests.post("list");
-      handleGetTemplates({ page: 0, limit: 100 });
-      toast.success("Template criado com sucesso");
-      const newTemplateId = templates[templates.length - 1].id;
-      if (newTemplateId) {
-        navigate(`${ROUTES.PRODUCTS}/${newTemplateId}`);
-      }
-    } catch (error) {
-      toast.error("Ocorreu um erro ao criar o template");
-    }
-  }
+  const [isOpenModalCreateTemplate, setIsOpenModalCreateTemplate] =
+    useState(false);
 
   return (
     <>
@@ -56,6 +46,13 @@ export function Header({
         isOpen={modalIsOpen}
         onClickModal={() => setModalIsOpen(!modalIsOpen)}
       />
+      <ModalSelectDefaultTemplate
+        isOpen={isOpenModalCreateTemplate}
+        setIsOpen={setIsOpenModalCreateTemplate}
+        handleGetTemplatesAll={handleGetTemplates}
+        templatesAll={templates}
+      />
+
       <Container>
         {hasIntegrationAndId && (
           <IntegrationBreadCrumb>
@@ -79,8 +76,8 @@ export function Header({
               isLoading={false}
               width="152px"
               height="45px"
-              // onClickModal={() => setModalIsOpen(!modalIsOpen)}
-              onClickModal={() => createTemplate()}
+              onClickModal={() => setIsOpenModalCreateTemplate(true)}
+              // onClickModal={() => createTemplate()}
             >
               <AddIcon />
               Criar template
