@@ -306,7 +306,7 @@ export const PersonalModal = ({
       setEnable(true);
     }
   }, [options]);
-
+  const { handleRedirectAndGetProducts } = useProductContext();
   return (
     <>
       <Modal
@@ -399,6 +399,12 @@ export const PersonalModal = ({
                     };
                     onClickModal();
                     onUpdate(newColumn, response);
+                    const id = window.location.pathname.substring(10);
+                    if (id) {
+                      setTimeout(() => {
+                        handleRedirectAndGetProducts(id).then(() => {});
+                      }, 0);
+                    }
                   }
                 });
               }}
