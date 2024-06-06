@@ -36,7 +36,6 @@ function EditableText({
     if (initial !== text) {
       try {
         setInitial(text);
-        console.log("iuiuiu");
         await templateRequests.update(template.id, { name: text });
         setIsEditing(false);
         toast.success("Template atualizado com sucesso");
