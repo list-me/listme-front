@@ -28,15 +28,22 @@ async function createNewGroup(
         delete field.hidden;
         delete field.integrations;
 
-        return field;
+        return {
+          ...field,
+          enforce_exact_length: field.enforce_exact_length || false,
+          limit: field.limit || 500,
+        };
       }
       delete field.order;
       delete field.width;
       delete field.frozen;
       delete field.hidden;
       delete field.integrations;
-
-      return field;
+      return {
+        ...field,
+        enforce_exact_length: field.enforce_exact_length || false,
+        limit: field.limit || 500,
+      };
     });
 
     const newTemplates = {

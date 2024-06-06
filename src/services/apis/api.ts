@@ -27,6 +27,7 @@ api.interceptors.response.use(
   },
   function (error) {
     if (error.response.status === 401) {
+      localStorage.clear();
       window.location.replace(ROUTES.BASE);
     }
     return Promise.reject(error);
