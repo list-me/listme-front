@@ -114,7 +114,6 @@ function StepManageLinkedLists(): JSX.Element {
           ...fieldsRest,
         },
       };
-
       await templateRequests.update(templateSelected.id, copyData);
 
       setCurrentStep(4);
