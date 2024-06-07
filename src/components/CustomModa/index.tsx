@@ -373,12 +373,12 @@ export const PersonalModal = ({
                 });
 
                 if (
-                  !customOptions.length &&
+                  !draggerOptions.length &&
                   ["text", "paragraph", "file"].includes(fields.type)
                 ) {
                   fields.option = [""];
                 } else if (["radio", "list", "checked"].includes(fields.type)) {
-                  fields.option = customOptions;
+                  fields.option = draggerOptions;
                 } else if (fields.type == "relation") {
                   fields.option = options;
                 }
@@ -389,7 +389,6 @@ export const PersonalModal = ({
                   );
                   return;
                 }
-
                 handleUpdateTemplate(fields).then((response) => {
                   if (response) {
                     const newColumn = {
