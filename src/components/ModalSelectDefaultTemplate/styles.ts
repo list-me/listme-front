@@ -7,35 +7,53 @@ export const ContentModalSelectDefaultTemplate = styled.div`
     font-weight: 700;
     line-height: 36px;
     text-align: left;
+    margin: 0;
+  }
+  p {
+    font-family: ${({ theme }) => theme.fonts.family.default};
+    font-size: ${({ theme }) => theme.fonts.sizes.small};
+    font-weight: ${({ theme }) => theme.fonts.weights.regular};
+    color: ${({ theme }) => theme.colors.tertiary};
+    margin: 0;
   }
   gap: 12px;
   display: flex;
   flex-direction: column;
 `;
+
+export const ContainerCardSelectDefaultTemplate = styled.div`
+  display: flex;
+  gap: 16px;
+`;
+
 export const ItemCardSelectDefaultTemplate = styled.button`
   border-radius: 8px;
   padding: 8px;
+  width: 232px;
+  height: 232px;
   border: 1px solid #eeeeee;
   background: none;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  flex-direction: column;
   > div {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
+    img {
+      width: 80px;
+      height: 80px;
+    }
+    p {
+      font-family: ${({ theme }) => theme.fonts.family.default};
+      font-size: ${({ theme }) => theme.fonts.sizes.normal};
+      font-weight: ${({ theme }) => theme.fonts.weights.bold};
+      color: ${({ theme }) => theme.colors.grayscale.primary};
+      margin: 0;
+    }
   }
-`;
-export const CoverCardSelectDefaultTemplate = styled.p`
-  width: 48px;
-  height: 48px;
-  color: #a899f1;
-  background: ${({ theme }) => theme.colors.hover.background};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
-  border-radius: 4px;
 `;
 
 export const CloseButton = styled.button`

@@ -220,6 +220,7 @@ export const PersonalModal = ({
     type,
     name,
   }: Field): Promise<any> => {
+    console.log("oi");
     let templateUpdated = [];
     let newField: any;
     if (!title.trim()) return;
@@ -249,7 +250,7 @@ export const PersonalModal = ({
         limit: type === "relation" ? 20 : characterLimit,
         options: type !== "decimal" ? option || [""] : [decimalPoint],
         required,
-        isUnique: false,
+        is_unique: false,
         is_public: false,
         help_text: "This fiedl will help you to make a new product register",
         description: "Completly random description",
