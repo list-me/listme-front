@@ -254,6 +254,11 @@ export const Container = styled.div`
     border: none;
     height: 22px;
   }
+  /* apagar esse hot table depois */
+  .hot-table {
+    position: relative;
+    top: -24px;
+  }
 
   tbody tr th {
     background-color: ${({ theme }) => theme.colors.grayscale.ninth};

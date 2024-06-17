@@ -3,6 +3,7 @@ import { AuthContextValues } from "./Auth.d";
 
 const AuthContext = createContext<AuthContextValues>({
   isAuthenticated: "",
+  setToken: () => "",
 });
 
 export { AuthContext };

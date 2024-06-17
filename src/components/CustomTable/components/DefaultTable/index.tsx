@@ -453,8 +453,7 @@ function DefaultTable({
 
       let newValue;
       const regex = /https:\/\/[^/]+\//;
-
-      if (value && !Array.isArray(value)) {
+      if (value && !regex.test(value)) {
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
             const lastDotIndex: number = itemValue.lastIndexOf(".");
@@ -682,6 +681,10 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
+      // eslint-disable-next-line no-param-reassign
+      value = value?.map((itemBoolean: string) => {
+        return itemBoolean?.toLowerCase();
+      });
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;
@@ -1118,9 +1121,23 @@ function DefaultTable({
             product_id: parentId,
             childs: childsSelectedIds,
           };
-          await productRequests.postProductChildren(body);
-          toast.success("Subitems adicionados com sucesso");
-          clearSubItensMode();
+          const patchPromises = childsSelectedIds.map((childId) =>
+            productRequests.patchProductValue({
+              value: ["true"],
+              productId: childId,
+              fieldId: "785634",
+            }),
+          );
+
+          Promise.all(patchPromises).then(async () => {
+            await productRequests.postProductChildren(body);
+            toast.success("Subitems adicionados com sucesso");
+            clearSubItensMode();
+            const id = window.location.pathname.substring(10);
+            if (id) {
+              handleRedirectAndGetProducts(id);
+            }
+          });
         } else {
           await productRequests.deleteProductChildren({
             parent_id: parentId,
@@ -1327,7 +1344,12 @@ function DefaultTable({
             if (coords.row >= 0) {
               const cellX = coords.col;
               const currentCol = cols[cellX];
-              if (currentCol?.limit && event?.button === 0) {
+              if (
+                currentCol?.limit &&
+                currentCol.type !== "boolean" &&
+                currentCol.type !== "file" &&
+                event?.button === 0
+              ) {
                 afterSelectionHandler(event, coords);
               }
             }
