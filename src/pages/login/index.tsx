@@ -31,7 +31,6 @@ function Login(): JSX.Element {
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { isAuthenticated, setToken } = useAuth();
-  console.log("🚀 ~ Login ~ isAuthenticated:", isAuthenticated);
 
   const navigate = useNavigate();
 
