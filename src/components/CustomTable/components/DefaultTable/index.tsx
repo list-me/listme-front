@@ -1327,7 +1327,12 @@ function DefaultTable({
             if (coords.row >= 0) {
               const cellX = coords.col;
               const currentCol = cols[cellX];
-              if (currentCol?.limit && event?.button === 0) {
+              console.log("🚀 ~ currentCol:", currentCol);
+              if (
+                currentCol?.limit &&
+                currentCol.type !== "boolean" &&
+                event?.button === 0
+              ) {
                 afterSelectionHandler(event, coords);
               }
             }
