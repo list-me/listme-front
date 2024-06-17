@@ -30,7 +30,8 @@ function Login(): JSX.Element {
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, setToken } = useAuth();
+  console.log("🚀 ~ Login ~ isAuthenticated:", isAuthenticated);
 
   const navigate = useNavigate();
 
@@ -64,8 +65,9 @@ function Login(): JSX.Element {
   useEffect(() => {
     if (isAuthenticated) {
       navigate(ROUTES.TEMPLATES);
+      setToken("");
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, setToken]);
 
   if (isAuthenticated) return <LoadingFetch />;
 
