@@ -454,7 +454,6 @@ function DefaultTable({
       let newValue;
       const regex = /https:\/\/[^/]+\//;
       if (value && !regex.test(value)) {
-        console.log("entrou");
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
             const lastDotIndex: number = itemValue.lastIndexOf(".");
