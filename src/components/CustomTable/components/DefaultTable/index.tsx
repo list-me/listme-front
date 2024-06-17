@@ -430,6 +430,7 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ) => {
+      console.log("🚀 ~ value:", value);
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;
@@ -1118,9 +1119,23 @@ function DefaultTable({
             product_id: parentId,
             childs: childsSelectedIds,
           };
-          await productRequests.postProductChildren(body);
-          toast.success("Subitems adicionados com sucesso");
-          clearSubItensMode();
+          const patchPromises = childsSelectedIds.map((childId) =>
+            productRequests.patchProductValue({
+              value: ["true"],
+              productId: childId,
+              fieldId: "785634",
+            }),
+          );
+
+          Promise.all(patchPromises).then(async () => {
+            await productRequests.postProductChildren(body);
+            toast.success("Subitems adicionados com sucesso");
+            clearSubItensMode();
+            const id = window.location.pathname.substring(10);
+            if (id) {
+              handleRedirectAndGetProducts(id);
+            }
+          });
         } else {
           await productRequests.deleteProductChildren({
             parent_id: parentId,
@@ -1327,10 +1342,10 @@ function DefaultTable({
             if (coords.row >= 0) {
               const cellX = coords.col;
               const currentCol = cols[cellX];
-              console.log("🚀 ~ currentCol:", currentCol);
               if (
                 currentCol?.limit &&
                 currentCol.type !== "boolean" &&
+                currentCol.type !== "file" &&
                 event?.button === 0
               ) {
                 afterSelectionHandler(event, coords);
