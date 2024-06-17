@@ -430,7 +430,6 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ) => {
-      console.log("🚀 ~ value:", value);
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;
@@ -454,8 +453,8 @@ function DefaultTable({
 
       let newValue;
       const regex = /https:\/\/[^/]+\//;
-
-      if (value && !Array.isArray(value)) {
+      if (value && !regex.test(value)) {
+        console.log("entrou");
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
             const lastDotIndex: number = itemValue.lastIndexOf(".");
