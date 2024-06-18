@@ -657,15 +657,16 @@ function DefaultTable({
       if (typeof value === "string" && value?.length && value?.includes("["))
         // eslint-disable-next-line no-param-reassign
         value = JSON?.parse(value);
+
       td.innerHTML =
-        value?.id && value?.length > 0
-          ? value?.map((mValue: any) =>
-              mValue?.field
+        value?.length > 0 && value[0]?.id
+          ? value?.map((mValue: any) => {
+              return mValue?.field
                 ? `<div class="tag-content">${
                     mValue?.value || "Indisponível"
                   }</div>`
-                : `<div class="tag-content">+</div>`,
-            )
+                : `<div class="tag-content">+</div>`;
+            })
           : `<div class="tag-content">+</div>`;
     },
     [cols],
