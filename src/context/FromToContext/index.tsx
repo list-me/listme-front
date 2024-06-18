@@ -186,6 +186,8 @@ export function FromToContextProvider({
           if (!withErrors) {
             const responsePost = await productRequests.postFromToCSV(formData);
             setCsvResponse(responsePost);
+          } else {
+            setCsvResponse(productResponse);
           }
 
           return productResponse;
