@@ -849,7 +849,6 @@ export const ProductContextProvider = ({
           id: element?.data,
         };
       });
-    console.log("veio aqui");
     templateRequests
       .customView(window.location.pathname.substring(10), { fields })
       .then(() => {
