@@ -453,7 +453,7 @@ function DefaultTable({
 
       let newValue;
       const regex = /https:\/\/[^/]+\//;
-      if (value && !regex.test(value)) {
+      if (value && !value.includes("<img")) {
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
             const lastDotIndex: number = itemValue.lastIndexOf(".");
@@ -657,9 +657,8 @@ function DefaultTable({
       if (typeof value === "string" && value?.length && value?.includes("["))
         // eslint-disable-next-line no-param-reassign
         value = JSON?.parse(value);
-
       td.innerHTML =
-        value?.length > 0
+        value?.id && value?.length > 0
           ? value?.map((mValue: any) =>
               mValue?.field
                 ? `<div class="tag-content">${
