@@ -510,7 +510,7 @@ function DefaultTable({
         td.style.border = "2px solid #F1BC02";
       }
     },
-    [hotRef, loadingRef, template, uploadImages],
+    [columns, hotRef, loadingRef, template, uploadImages, products],
   );
 
   const customRendererDropdown = useCallback(
