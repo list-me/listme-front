@@ -94,7 +94,7 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
       ? this.props.dataProvider[row]?.id
       : undefined;
     const regex = /https:\/\/[^/]+\//;
-    const processedOriginalValue = originalValue.map((item: any) => {
+    const processedOriginalValue = originalValue?.map((item: any) => {
       const newItem = item.includes("<img")
         ? item
         : `<img class="imgItem" loading="lazy" src="${
