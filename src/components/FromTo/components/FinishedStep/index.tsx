@@ -26,6 +26,7 @@ function FinishedStep({
 }): JSX.Element {
   const { setFromToIsOpened, setCurrentStep, toClean, csvResponse, stepType } =
     useFromToContext();
+  console.log("🚀 ~ csvResponse:", csvResponse);
   const { handleRedirectAndGetProducts } = useProductContext();
   const { setErrors } = useIntegration();
 
