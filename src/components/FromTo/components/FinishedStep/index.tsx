@@ -38,15 +38,14 @@ function FinishedStep({
     text: {
       success: (
         <>
-          {csvResponse.newFields?.length > 1 ? (
+          {csvResponse?.total > 1 ? (
             <>
               Foram importados{" "}
-              <span>{csvResponse.newFields?.length} itens com sucesso</span>
+              <span>{csvResponse?.total} itens com sucesso</span>
             </>
           ) : (
             <>
-              Foi importado{" "}
-              <span>{csvResponse.newFields?.length} item com sucesso</span>
+              Foi importado <span>{csvResponse?.total} item com sucesso</span>
             </>
           )}
         </>
