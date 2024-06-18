@@ -849,10 +849,18 @@ export const ProductContextProvider = ({
           id: element?.data,
         };
       });
+    console.log("veio aqui");
     templateRequests
       .customView(window.location.pathname.substring(10), { fields })
       .then(() => {
         setColHeaders(titles);
+        const id = window.location.pathname.substring(10);
+        if (id) {
+          setTimeout(() => {
+            console.log("iiih");
+            handleRedirectAndGetProducts(id).then(() => {});
+          }, 0);
+        }
       })
       .catch((_error) =>
         toast.error("Ocorreu um erro ao alterar a posição da coluna"),

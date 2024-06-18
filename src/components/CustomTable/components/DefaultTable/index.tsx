@@ -657,9 +657,9 @@ function DefaultTable({
       if (typeof value === "string" && value?.length && value?.includes("["))
         // eslint-disable-next-line no-param-reassign
         value = JSON?.parse(value);
-
+      console.log(value);
       td.innerHTML =
-        value?.length > 0
+        value?.id && value?.length > 0
           ? value?.map((mValue: any) =>
               mValue?.field
                 ? `<div class="tag-content">${
