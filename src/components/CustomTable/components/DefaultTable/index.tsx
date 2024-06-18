@@ -1121,6 +1121,31 @@ function DefaultTable({
             product_id: parentId,
             childs: childsSelectedIds,
           };
+          const idsRelations = template.fields.fields
+            .filter((item: any) => {
+              return (
+                item.id !== "730291" &&
+                item.id !== "447888" &&
+                item.type === "relation"
+              );
+            })
+            .map((mItem: any) => mItem.id);
+
+          const productsChilds = products.filter((item) => {
+            return childsSelectedIds.includes(item.id);
+          });
+          const allProductsHaveRelation = productsChilds?.every((product) =>
+            idsRelations?.some((relationId: any) => {
+              console.log(product[relationId]);
+              return product[relationId]?.length > 0;
+            }),
+          );
+
+          if (!allProductsHaveRelation) {
+            toast.warn("Variação deve conter ao menos uma característica.");
+            return;
+          }
+
           const patchPromises = childsSelectedIds.map((childId) =>
             productRequests.patchProductValue({
               value: ["true"],
