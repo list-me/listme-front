@@ -899,6 +899,7 @@ function DefaultTable({
         changeAllRowsSelected,
         allRowsSelected,
         isPublic,
+        setEditModeGroup,
       );
     },
     [

@@ -2,6 +2,7 @@ import React from "react";
 
 import styled from "styled-components";
 import { NavigationButton } from "../../../NavigationButton/styles";
+import { useProductContext } from "../../../../context/products";
 
 const ContainerModalSelectColumns = styled.div`
   border-radius: 6px 6px 0px 0px;
@@ -51,6 +52,9 @@ function ModalSelectColumns({
   editModeGroup: "group" | "ungroup" | "";
   groupReferenceEditMode: string;
 }): JSX.Element {
+  const { template } = useProductContext();
+  const numberNewGroup = template?.fields?.groups?.length + 1;
+
   return (
     <ContainerModalSelectColumns>
       <Text>{ids.length} colunas selecionadas</Text>
@@ -63,7 +67,7 @@ function ModalSelectColumns({
           onClick={() =>
             onFinishProductChild(
               editModeGroup === "group"
-                ? `Novo Grupo #${ids[0]}`
+                ? `Novo Grupo #${numberNewGroup}`
                 : groupReferenceEditMode,
             )
           }
