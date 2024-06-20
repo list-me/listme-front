@@ -57,9 +57,19 @@ function ModalSelectColumns({
 
   return (
     <ContainerModalSelectColumns>
-      <Text>{ids.length} colunas selecionadas</Text>
-      <ContainerButtons>
-        <NavigationButton abort onClick={clearSubItensMode}>
+      <Text
+        style={{
+          width: "220px",
+        }}
+      >
+        {ids.length} colunas selecionadas
+      </Text>
+      <ContainerButtons style={{ width: "400px" }}>
+        <NavigationButton
+          abort
+          onClick={clearSubItensMode}
+          style={{ fontSize: "14px" }}
+        >
           Cancelar
         </NavigationButton>
         <NavigationButton
@@ -71,6 +81,7 @@ function ModalSelectColumns({
                 : groupReferenceEditMode,
             )
           }
+          style={{ fontSize: "14px", width: "100%" }}
         >
           {editModeGroup === "group" ? "Agrupar colunas" : "Desagrupar colunas"}
         </NavigationButton>
