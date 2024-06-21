@@ -40,7 +40,7 @@ export const SuspenseMenu = styled.div`
   }
 `;
 
-export const Item = styled.span<{ isLast?: boolean }>`
+export const Item = styled.span<{ isLast?: boolean; isDisabled?: boolean }>`
   font-family: "Satoshi Regular", sans-serif;
   font-style: normal;
   font-weight: 400;
@@ -48,7 +48,6 @@ export const Item = styled.span<{ isLast?: boolean }>`
   line-height: 19px;
   color: ${({ isLast }) => (isLast ? "red" : "#495057")};
   position: relative;
-
   width: 100%;
   height: 19px;
 
@@ -78,7 +77,9 @@ export const Item = styled.span<{ isLast?: boolean }>`
       border-radius: 6px;
       top: 28px;
       left: -8px;
-      display: flex;
+      display: ${(props) =>
+        // eslint-disable-next-line no-nested-ternary
+        !props.isLast ? "none" : props.isDisabled ? "flex" : "none"};
       align-items: center;
       justify-content: center;
       flex-shrink: 1;
@@ -95,6 +96,9 @@ export const Item = styled.span<{ isLast?: boolean }>`
       border-left: 8px solid transparent;
       border-right: 8px solid transparent;
       border-bottom: 8px solid #000000bf;
+      display: ${(props) =>
+        // eslint-disable-next-line no-nested-ternary
+        !props.isLast ? "none" : props.isDisabled ? "initial" : "none"};
     }
   }
 `;

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Container = styled.div`
+export const Container = styled.div<{ isDisabled?: boolean }>`
   width: 100%;
   height: fit-content;
 
@@ -10,6 +10,41 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   /* padding: 20px; */
+  input:hover {
+    position: relative;
+    ::before {
+      content: "Não é possível editar este campo. Campo obrigatório para integração";
+      font-family: ${({ theme }) => theme.fonts.family.default};
+      font-weight: ${({ theme }) => theme.fonts.weights.regular};
+      font-size: ${({ theme }) => theme.fonts.sizes.small};
+      color: ${({ theme }) => theme.colors.secondary};
+      background: #000000bf;
+      position: absolute;
+      border-radius: 6px;
+      top: 28px;
+      left: -8px;
+      display: ${(props) => (props.isDisabled ? "flex" : "none")};
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 1;
+      width: 470px;
+      height: 35px;
+    }
+    ::after {
+      content: "";
+      position: absolute;
+      top: 20px;
+      left: 0px;
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid #000000bf;
+      display: ${(props) => (props.isDisabled ? "initial" : "none")};
+    }
+  }
+  input:hover {
+  }
 
   .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
     background-color: unset !important;

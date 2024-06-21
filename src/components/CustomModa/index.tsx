@@ -62,6 +62,7 @@ export const PersonalModal = ({
   template,
   onUpdate,
 }: PropsModal) => {
+  console.log("🚀 ~ data:", data);
   const url = window.location.href;
   const isPublic = url.includes("public");
 
@@ -318,7 +319,7 @@ export const PersonalModal = ({
         style={{ marginBottom: "2vh", top: 30, maxHeight: "90vh" }}
         footer={null}
       >
-        <Container>
+        <Container isDisabled={data.default}>
           <div className="titleContainer">
             <Title> {TYPES[type]?.label} </Title>
             <Description>{TYPES[type]?.description}</Description>
@@ -436,6 +437,7 @@ export const PersonalModal = ({
                         if (e.target.value.trim()) setTitle(e.target.value);
                       }}
                       placeholder="Informe o titulo da coluna"
+                      disabled={data.default}
                     />
                   </Form.Item>
                   <Form.Item
@@ -458,6 +460,7 @@ export const PersonalModal = ({
                         setTitle(e?.target?.value);
                       }}
                       placeholder="Informe o nome do campo"
+                      disabled={data.default}
                     />
                   </Form.Item>
                   {["decimal"].includes(data?.type) && (
@@ -514,6 +517,7 @@ export const PersonalModal = ({
                           height: "64px",
                           border: "1px solid #DEE2E6",
                         }}
+                        disabled={data.default}
                         value={type}
                         removeIcon
                         onChange={(e: string) => {
@@ -561,6 +565,7 @@ export const PersonalModal = ({
                               checked={activeCharacterLimit}
                               size="small"
                               onChange={(e) => setActiveCharacterLimit(e)}
+                              disabled={data.default}
                             />
                           </div>
                         }
@@ -574,7 +579,7 @@ export const PersonalModal = ({
                           type="number"
                           min={0}
                           max={DefaultLimits[data.type].max}
-                          disabled={!activeCharacterLimit}
+                          disabled={!activeCharacterLimit || data.default}
                           style={{
                             height: "64px",
                             border: "1px solid #DEE2E6",
@@ -642,14 +647,14 @@ export const PersonalModal = ({
                   label="Descrição"
                   style={{ marginBottom: "2px" }}
                 >
-                  <Switch size="small" />
+                  <Switch size="small" disabled={data.default} />
                 </Form.Item>
                 <Form.Item
                   name="help_text"
                   label="Texto de ajuda"
                   style={{ marginBottom: "2px" }}
                 >
-                  <Switch size="small" />
+                  <Switch size="small" disabled={data.default} />
                 </Form.Item>
                 <Form.Item
                   name="required"
@@ -660,6 +665,7 @@ export const PersonalModal = ({
                     size="small"
                     onChange={() => setRequired(!required)}
                     checked={required}
+                    disabled={data.default}
                   />
                 </Form.Item>
                 <Form.Item
@@ -671,6 +677,7 @@ export const PersonalModal = ({
                     size="small"
                     onChange={() => setIsUnique(!isUnique)}
                     checked={isUnique}
+                    disabled={data.default}
                   />
                 </Form.Item>
               </Footer>
@@ -680,7 +687,7 @@ export const PersonalModal = ({
                   {" "}
                   Cancelar{" "}
                 </PrimaryButton>
-                <Principal type="submit" disabled={!enable}>
+                <Principal type="submit" disabled={!enable || data.default}>
                   Salvar
                 </Principal>
               </ButtonContainer>
