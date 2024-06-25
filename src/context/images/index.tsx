@@ -43,7 +43,6 @@ const ImageContextProvider: React.FC<ImageContextProps> = ({ children }) => {
           const [fileName, fileType] = file.name.split(".");
 
           let signedUrl: any;
-
           if (!optionals?.brand || !optionals?.name) {
             // eslint-disable-next-line @typescript-eslint/no-throw-literal
             throw "Marca e Nome devem estar preenchidos";
