@@ -191,7 +191,7 @@ export const ProductContextProvider = ({
           const [fileName, fileType] = file.name.split(".");
 
           let signedUrl: SignedUrlResponse;
-          if (isCollectionCompany(companyId)) {
+          if (companyId && isCollectionCompany(companyId)) {
             if (!optionals?.brand || !optionals?.name) {
               // eslint-disable-next-line @typescript-eslint/no-throw-literal
               throw "Marca e Nome devem estar preenchidos";
