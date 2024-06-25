@@ -178,7 +178,6 @@ function LinkFields(): JSX.Element {
             setCurrentStep((prev) => prev - 1);
           }}
         >
-          <PlusIcon />
           Voltar
         </NavigationButton>
         <NavigationButton
@@ -195,7 +194,6 @@ function LinkFields(): JSX.Element {
             setLoading(false);
           }}
         >
-          <PlusIcon />
           Importar
         </NavigationButton>
       </BoxButtons>

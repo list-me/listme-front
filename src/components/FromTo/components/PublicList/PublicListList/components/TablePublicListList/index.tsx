@@ -34,7 +34,19 @@ function TablePublicListList({
       key: "name",
       dataIndex: "name",
       render: (_: any, record: any) => {
-        return <span className="defaultText">{record.name}</span>;
+        return (
+          <button
+            type="button"
+            style={{ border: "none", background: "none" }}
+            onClick={() => {
+              setFromToIsOpened(false);
+              navigate(`/products/${record.id}`);
+            }}
+            className="defaultText"
+          >
+            {record.name}
+          </button>
+        );
       },
     },
     {
@@ -46,7 +58,19 @@ function TablePublicListList({
           record.total >= 1000
             ? Number(record.total / 1000).toFixed(3)
             : record.total;
-        return <span className="blueText">{total}</span>;
+        return (
+          <button
+            type="button"
+            style={{ border: "none", background: "none" }}
+            onClick={() => {
+              setFromToIsOpened(false);
+              navigate(`/products/${record.id}`);
+            }}
+            className="blueText"
+          >
+            {total}
+          </button>
+        );
       },
     },
     {

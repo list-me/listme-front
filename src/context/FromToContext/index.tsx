@@ -234,8 +234,6 @@ export function FromToContextProvider({
       description: "",
     });
     setCheckedList([false]);
-    setRowsSelected([]);
-    setAllRowsSelected(false);
     setCurrentLinkMethodValue("");
   }
 

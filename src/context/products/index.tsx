@@ -180,8 +180,6 @@ export const ProductContextProvider = ({
       companyId: string,
       optionals?: { brand?: string; name?: string },
     ): Promise<string[] | void> => {
-      console.log("🚀 ~ optionals:", optionals);
-
       try {
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {

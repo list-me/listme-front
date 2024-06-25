@@ -23,12 +23,14 @@ function Cart({ itemsTotal }: { itemsTotal: number }): JSX.Element {
   return (
     <ContainerCart>
       <ContainerCartText>
-        <CartCount>
+        <CartCount colorBlack={itemsTotal > 0}>
           {itemsTotal > 0
             ? `${itemsTotal} itens selecionados`
             : "Selecione os itens que deseja vincular"}
         </CartCount>
-        <CartValue>{itemsTotal > 0 ? totalPrice : "R$ 0,00"}</CartValue>
+        <CartValue colorBlack={itemsTotal > 0}>
+          {itemsTotal > 0 ? totalPrice : "R$ 0,00"}
+        </CartValue>
       </ContainerCartText>
       <CartButton
         disabled={itemsTotal === 0}
