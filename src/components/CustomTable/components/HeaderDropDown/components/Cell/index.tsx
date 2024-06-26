@@ -44,13 +44,13 @@ export const HeaderCell: React.FC<ICellProps> = ({
         icon: <CopyIcon />,
         action: "duplicate",
       },
-      {
-        label: column?.group
-          ? "Desagrupar coluna(s)"
-          : "Agrupar com outra(s) coluna(s)",
-        icon: <GroupIcon />,
-        action: "group",
-      },
+      // {
+      //   label: column?.group
+      //     ? "Desagrupar coluna(s)"
+      //     : "Agrupar com outra(s) coluna(s)",
+      //   icon: <GroupIcon />,
+      //   action: "group",
+      // },
       {
         label: "Ocultar Coluna",
         icon: <EyeOffIcon />,

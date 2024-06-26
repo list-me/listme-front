@@ -80,10 +80,15 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
           companyId,
           optionals,
         );
-
         if (newFiles) {
-          setItems((prev) => [...prev, ...newFiles]);
-          onSuccess([...newFiles, ...items]);
+          setItems((prev) => {
+            console.log(prev);
+            return prev?.length ? [...prev, ...newFiles] : [...newFiles];
+          });
+          const toOnSuccess = items?.length
+            ? [...newFiles, ...items]
+            : [...newFiles];
+          onSuccess(toOnSuccess);
         }
 
         setLoading(false);

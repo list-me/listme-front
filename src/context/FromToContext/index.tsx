@@ -184,10 +184,11 @@ export function FromToContextProvider({
           const withErrors = productResponse.errors.length > 0;
 
           if (!withErrors) {
-            await productRequests.postFromToCSV(formData);
+            const responsePost = await productRequests.postFromToCSV(formData);
+            setCsvResponse(responsePost);
+          } else {
+            setCsvResponse(productResponse);
           }
-
-          setCsvResponse(productResponse);
 
           return productResponse;
         } catch (error: any) {

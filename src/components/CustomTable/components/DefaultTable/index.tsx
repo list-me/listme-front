@@ -453,8 +453,7 @@ function DefaultTable({
 
       let newValue;
       const regex = /https:\/\/[^/]+\//;
-
-      if (value && !Array.isArray(value)) {
+      if (value && !value.includes("<img")) {
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
             const lastDotIndex: number = itemValue.lastIndexOf(".");
@@ -511,7 +510,7 @@ function DefaultTable({
         td.style.border = "2px solid #F1BC02";
       }
     },
-    [hotRef, loadingRef, template, uploadImages],
+    [columns, hotRef, loadingRef, template, uploadImages, products],
   );
 
   const customRendererDropdown = useCallback(
@@ -660,14 +659,14 @@ function DefaultTable({
         value = JSON?.parse(value);
 
       td.innerHTML =
-        value?.length > 0
-          ? value?.map((mValue: any) =>
-              mValue?.field
+        value?.length > 0 && value[0]?.id
+          ? value?.map((mValue: any) => {
+              return mValue?.field
                 ? `<div class="tag-content">${
                     mValue?.value || "Indisponível"
                   }</div>`
-                : `<div class="tag-content">+</div>`,
-            )
+                : `<div class="tag-content">+</div>`;
+            })
           : `<div class="tag-content">+</div>`;
     },
     [cols],
@@ -682,6 +681,10 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
+      // eslint-disable-next-line no-param-reassign
+      value = value?.map((itemBoolean: string) => {
+        return itemBoolean?.toLowerCase();
+      });
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;
@@ -1119,9 +1122,48 @@ function DefaultTable({
             product_id: parentId,
             childs: childsSelectedIds,
           };
-          await productRequests.postProductChildren(body);
-          toast.success("Subitems adicionados com sucesso");
-          clearSubItensMode();
+          const idsRelations = template.fields.fields
+            .filter((item: any) => {
+              return (
+                item.id !== "730291" &&
+                item.id !== "447888" &&
+                item.type === "relation"
+              );
+            })
+            .map((mItem: any) => mItem.id);
+
+          const productsChilds = products.filter((item) => {
+            return childsSelectedIds.includes(item.id);
+          });
+          const allProductsHaveRelation = productsChilds?.every((product) =>
+            idsRelations?.some((relationId: any) => {
+              console.log(product[relationId]);
+              return product[relationId]?.length > 0;
+            }),
+          );
+
+          if (!allProductsHaveRelation) {
+            toast.warn("Variação deve conter ao menos uma característica.");
+            return;
+          }
+
+          const patchPromises = childsSelectedIds.map((childId) =>
+            productRequests.patchProductValue({
+              value: ["true"],
+              productId: childId,
+              fieldId: "785634",
+            }),
+          );
+
+          Promise.all(patchPromises).then(async () => {
+            await productRequests.postProductChildren(body);
+            toast.success("Subitems adicionados com sucesso");
+            clearSubItensMode();
+            const id = window.location.pathname.substring(10);
+            if (id) {
+              handleRedirectAndGetProducts(id);
+            }
+          });
         } else {
           await productRequests.deleteProductChildren({
             parent_id: parentId,
@@ -1328,7 +1370,12 @@ function DefaultTable({
             if (coords.row >= 0) {
               const cellX = coords.col;
               const currentCol = cols[cellX];
-              if (currentCol?.limit && event?.button === 0) {
+              if (
+                currentCol?.limit &&
+                currentCol.type !== "boolean" &&
+                currentCol.type !== "file" &&
+                event?.button === 0
+              ) {
                 afterSelectionHandler(event, coords);
               }
             }

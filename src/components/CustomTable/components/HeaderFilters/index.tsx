@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { SetStateAction, useCallback, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Contents,
@@ -28,6 +28,7 @@ import { ReactComponent as LinkIcon } from "../../../../assets/linkPublicList.sv
 
 import { integrationsRequest } from "../../../../services/apis/requests/integration";
 import { useIntegration } from "../../../../context/IntegrationContext";
+import ButtonError from "../../../Integration/Error/ButtonError";
 
 function HeaderFilters({
   template,
@@ -119,6 +120,10 @@ function HeaderFilters({
           <MoreOptions>
             <EllipsisIcon />
           </MoreOptions>
+          <ButtonError
+            errors={errors}
+            setSidebarErrorOpened={setSidebarErrorOpened}
+          />
           {!isPublic && (
             <>
               {template?.templates_sync_ids && (
@@ -135,6 +140,7 @@ function HeaderFilters({
                   Gerenciar vínculos
                 </Button>
               )}
+
               <Button
                 height="52px"
                 width="227px"
