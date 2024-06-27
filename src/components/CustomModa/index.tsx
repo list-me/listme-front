@@ -220,69 +220,67 @@ export const PersonalModal = ({
     type,
     name,
   }: Field): Promise<any> => {
-    let templateUpdated = [];
-    let newField: any;
+    let currentField: any;
     if (!title.trim()) return;
     if (isUpdate) {
-      templateUpdated = currentTemplate.fields.fields.map((item: any) => {
-        if (item.id === data.id) {
-          data.options = type !== "decimal" ? option || [""] : [decimalPoint];
-          data.type = type;
-          data.name = name;
-          data.title = title;
-          data.required = required;
-          data.is_unique = isUnique;
-          data.limit = type === "relation" ? 20 : characterLimit;
-          item = data;
-          return item;
-        }
-
-        return item;
+      const fieldToUpdate = template.fields.fields.find((item: any) => {
+        return item.id === data?.id;
       });
+
+      currentField = {
+        ...fieldToUpdate,
+        options:
+          type !== "decimal"
+            ? option[0] === ""
+              ? []
+              : option || []
+            : [decimalPoint],
+        type: type,
+        name: name,
+        title: title,
+        required: required,
+        limit: type === "relation" ? 20 : characterLimit || 255,
+      };
     } else {
-      templateUpdated.push(...currentTemplate.fields.fields);
-      newField = {
+      currentField = {
         id: Math.floor(100000 + Math.random() * 900000).toString(),
         type,
         title,
         name,
-        limit: type === "relation" ? 20 : characterLimit,
-        options: type !== "decimal" ? option || [""] : [decimalPoint],
+        limit: type === "relation" ? 20 : characterLimit || 255,
+        options: type !== "decimal" ? option || [] : [decimalPoint],
         required,
-        isUnique: false,
+        is_unique: false,
         is_public: false,
         help_text: "This fiedl will help you to make a new product register",
         description: "Completly random description",
         enforce_exact_length: false,
+        group: "",
       };
-      templateUpdated.push(newField);
     }
 
-    templateUpdated.forEach((item: any) => {
-      delete item.frozen;
-      delete item.order;
-      delete item.width;
-      delete item.hidden;
-      delete item.integrations;
-    });
-
-    const newFields = templateUpdated.map((item: any) => {
-      if (item.limit) {
-        return item;
-      }
-      const newObj = { ...item, limit: DefaultLimits[item.type].default };
-      return newObj;
-    });
-
-    const newTemplates = {
-      fields: newFields,
-      groups: template.fields.groups.map((mGroup: any) => mGroup.label),
-    };
+    delete currentField.frozen;
+    delete currentField.order;
+    delete currentField.width;
+    delete currentField.hidden;
+    delete currentField.integrations;
 
     try {
-      await templateRequests.update(currentTemplate?.id, newTemplates);
-      toast.success("Template atualizado com sucesso");
-      return templateUpdated;
+      if (!isUpdate) {
+        await templateRequests.postColumn(currentTemplate?.id, currentField);
+        toast.success("Coluna criada com sucesso");
+        const newFields = [...template.fields.fields, currentField];
+        return newFields;
+      } else {
+        await templateRequests.patchColumn(currentTemplate?.id, currentField);
+        toast.success("Coluna atualizada com sucesso");
+        const newFields = [
+          ...template.fields.fields.map((item: any) => {
+            return item.id === currentField.id ? currentField : item;
+          }),
+        ];
+        return newFields;
+      }
     } catch (error) {
       console.error(error);
       toast.error("Não foi possível alterar o template, tente novamente!");
@@ -317,7 +315,7 @@ export const PersonalModal = ({
         style={{ marginBottom: "2vh", top: 30, maxHeight: "90vh" }}
         footer={null}
       >
-        <Container>
+        <Container isDisabled={data?.default}>
           <div className="titleContainer">
             <Title> {TYPES[type]?.label} </Title>
             <Description>{TYPES[type]?.description}</Description>
@@ -435,6 +433,7 @@ export const PersonalModal = ({
                         if (e.target.value.trim()) setTitle(e.target.value);
                       }}
                       placeholder="Informe o titulo da coluna"
+                      disabled={data?.default}
                     />
                   </Form.Item>
                   <Form.Item
@@ -457,6 +456,7 @@ export const PersonalModal = ({
                         setTitle(e?.target?.value);
                       }}
                       placeholder="Informe o nome do campo"
+                      disabled={data?.default}
                     />
                   </Form.Item>
                   {["decimal"].includes(data?.type) && (
@@ -513,6 +513,7 @@ export const PersonalModal = ({
                           height: "64px",
                           border: "1px solid #DEE2E6",
                         }}
+                        disabled={data?.default}
                         value={type}
                         removeIcon
                         onChange={(e: string) => {
@@ -555,11 +556,12 @@ export const PersonalModal = ({
                         colon={false}
                         label={
                           <div className="label-content">
-                            <span>{limitText[data.type]}</span>
+                            <span>{limitText[data?.type]}</span>
                             <Switch
                               checked={activeCharacterLimit}
                               size="small"
                               onChange={(e) => setActiveCharacterLimit(e)}
+                              disabled={data?.default}
                             />
                           </div>
                         }
@@ -572,8 +574,8 @@ export const PersonalModal = ({
                         <Input
                           type="number"
                           min={0}
-                          max={DefaultLimits[data.type].max}
-                          disabled={!activeCharacterLimit}
+                          max={DefaultLimits[data?.type].max}
+                          disabled={!activeCharacterLimit || data?.default}
                           style={{
                             height: "64px",
                             border: "1px solid #DEE2E6",
@@ -582,7 +584,7 @@ export const PersonalModal = ({
                           onChange={(e) => {
                             e.preventDefault();
                             const inputValue = +e.target.value;
-                            const maxLimit = DefaultLimits[data.type].max;
+                            const maxLimit = DefaultLimits[data?.type].max;
 
                             if (inputValue > maxLimit) {
                               setCharacterLimit(maxLimit);
@@ -641,14 +643,14 @@ export const PersonalModal = ({
                   label="Descrição"
                   style={{ marginBottom: "2px" }}
                 >
-                  <Switch size="small" />
+                  <Switch size="small" disabled={data?.default} />
                 </Form.Item>
                 <Form.Item
                   name="help_text"
                   label="Texto de ajuda"
                   style={{ marginBottom: "2px" }}
                 >
-                  <Switch size="small" />
+                  <Switch size="small" disabled={data?.default} />
                 </Form.Item>
                 <Form.Item
                   name="required"
@@ -659,6 +661,7 @@ export const PersonalModal = ({
                     size="small"
                     onChange={() => setRequired(!required)}
                     checked={required}
+                    disabled={data?.default}
                   />
                 </Form.Item>
                 <Form.Item
@@ -670,6 +673,7 @@ export const PersonalModal = ({
                     size="small"
                     onChange={() => setIsUnique(!isUnique)}
                     checked={isUnique}
+                    disabled={data?.default}
                   />
                 </Form.Item>
               </Footer>
@@ -679,7 +683,7 @@ export const PersonalModal = ({
                   {" "}
                   Cancelar{" "}
                 </PrimaryButton>
-                <Principal type="submit" disabled={!enable}>
+                <Principal type="submit" disabled={!enable || data?.default}>
                   Salvar
                 </Principal>
               </ButtonContainer>

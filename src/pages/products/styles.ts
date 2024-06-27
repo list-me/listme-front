@@ -177,7 +177,7 @@ export const Container = styled.div`
     }
   }
 
-  .handsontable table.htCore thead tr:first-child th {
+  /* .handsontable table.htCore thead tr:first-child th {
     height: 24px !important;
     padding: 0;
     margin: 0;
@@ -186,11 +186,11 @@ export const Container = styled.div`
       padding: 0;
     }
     border: none;
-  }
+  } */
 
-  .style-th-group {
+  /* .style-th-group {
     border: none !important;
-  }
+  } */
 
   thead {
     th {
@@ -245,20 +245,15 @@ export const Container = styled.div`
     background-color: ${({ theme }) => theme.colors.grayscale.ninth};
   }
 
-  thead tr:first-child th {
+  /* thead tr:first-child th {
     background-color: white;
     border: none;
-  }
+  } */
 
-  .style-th-group {
+  /* .style-th-group {
     border: none;
     height: 22px;
-  }
-  /* apagar esse hot table depois */
-  .hot-table {
-    position: relative;
-    top: -24px;
-  }
+  } */
 
   tbody tr th {
     background-color: ${({ theme }) => theme.colors.grayscale.ninth};

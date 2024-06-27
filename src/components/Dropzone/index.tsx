@@ -82,7 +82,6 @@ const Dropzone: React.FC<DropzoneRendererProps> = ({
         );
         if (newFiles) {
           setItems((prev) => {
-            console.log(prev);
             return prev?.length ? [...prev, ...newFiles] : [...newFiles];
           });
           const toOnSuccess = items?.length

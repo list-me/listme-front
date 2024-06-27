@@ -23,15 +23,15 @@ export const ContainerCartText = styled.div`
   align-items: center;
   gap: 27px;
 `;
-export const CartCount = styled.p`
-  color: #868e96;
+export const CartCount = styled.p<{ colorBlack?: boolean }>`
+  color: ${(props) => (props.colorBlack ? "#000" : "#868e96")};
   font-size: 16px;
   margin: 0;
   font-weight: 500;
 `;
-export const CartValue = styled.p`
+export const CartValue = styled.p<{ colorBlack?: boolean }>`
   margin: 0;
-  color: #868e96;
+  color: ${(props) => (props.colorBlack ? "#000" : "#868e96")};
   font-size: 16px;
   font-weight: 500;
   position: relative;

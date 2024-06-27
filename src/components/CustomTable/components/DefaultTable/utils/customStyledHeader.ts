@@ -1,72 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { HotTable } from "@handsontable/react";
 import { ReactElement } from "react";
-import { toast } from "react-toastify";
 import { IHeaderTable } from "../../../../../context/products/product.context";
 import { IconType } from "../../../../Cell/Cell";
 import getStyledContent from "./getStyledContent";
 import generateColorArray from "./generateColorArray";
 import { ICol } from "../../../CustomTable";
-import { templateRequests } from "../../../../../services/apis/requests/template";
 
-async function createNewGroup(
-  cols: ICol[],
-  currentColumnIndex: number,
-  template: any,
-  handleRedirectAndGetProducts: (template: any) => Promise<any>,
-): Promise<void> {
-  try {
-    const currentColumn = cols[currentColumnIndex];
-    let templateUpdated = [];
-
-    templateUpdated = template.fields.fields.map((field: any) => {
-      if (field.id === currentColumn.data) {
-        field.group = `Novo grupo #${currentColumn.data}`;
-        delete field.order;
-        delete field.width;
-        delete field.frozen;
-        delete field.hidden;
-        delete field.integrations;
-
-        return {
-          ...field,
-          enforce_exact_length: field.enforce_exact_length || false,
-          limit: field.limit || 500,
-        };
-      }
-      delete field.order;
-      delete field.width;
-      delete field.frozen;
-      delete field.hidden;
-      delete field.integrations;
-      return {
-        ...field,
-        enforce_exact_length: field.enforce_exact_length || false,
-        limit: field.limit || 500,
-      };
-    });
-
-    const newTemplates = {
-      fields: templateUpdated,
-      groups: [
-        ...template.fields.groups.map((itemgroup: any) => itemgroup.label),
-        `Novo grupo #${currentColumn.data}`,
-      ],
-    };
-    await templateRequests.update(template.id, newTemplates);
-    toast.success("Grupo criado com sucesso");
-    const id = window.location.pathname.substring(10);
-    if (id) {
-      setTimeout(() => {
-        handleRedirectAndGetProducts(id).then(() => {});
-      }, 0);
-    }
-  } catch (error) {
-    toast.error("Ocorreu um erro durante a criação do novo grupo:");
-    console.log(error);
-    throw error;
-  }
-}
 function customStyledHeader(
   TH: HTMLTableHeaderCellElement,
   groups: {
@@ -93,9 +33,11 @@ function customStyledHeader(
   changeAllRowsSelected: () => void,
   allRowsSelected: boolean | undefined,
   isPublic: boolean | undefined,
+  setEditModeGroup: React.Dispatch<
+    React.SetStateAction<"" | "group" | "ungroup">
+  >,
 ): void {
   const spanContent = TH.querySelector("span")?.textContent;
-
   const groupsName = groups.map((group: any) => group.label);
 
   function selectParentHeader(): void {
@@ -115,9 +57,7 @@ function customStyledHeader(
       : "";
 
     const configSvgDiv = TH.querySelector(".newGroupHeader");
-    configSvgDiv?.addEventListener("click", () =>
-      createNewGroup(cols, column, template, handleRedirectAndGetProducts),
-    );
+    configSvgDiv?.addEventListener("click", () => setEditModeGroup("group"));
 
     return;
   }

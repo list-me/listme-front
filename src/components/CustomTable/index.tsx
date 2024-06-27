@@ -128,11 +128,8 @@ const CustomTable: React.FC<CustomTableProps> = ({
           return item;
         }
       });
-
       const newColumns = [...headerTable];
-
       newColumns.splice(currentCell.order, 1);
-
       handleRemoveColumn(
         Number(currentCell?.order),
         fields,
