@@ -863,11 +863,11 @@ function DefaultTable({
     return [];
   }, [totalUngroupedColumns]);
 
-  const groupsToView = useMemo(() => {
-    return groups[0]?.label
-      ? [[...groups, ...ungroupeds], colHeaders]
-      : [ungroupeds, colHeaders];
-  }, [groups, ungroupeds, colHeaders]);
+  // const groupsToView = useMemo(() => {
+  //   return groups[0]?.label
+  //     ? [[...groups, ...ungroupeds], colHeaders]
+  //     : [ungroupeds, colHeaders];
+  // }, [groups, ungroupeds, colHeaders]);
 
   const newHiddens = useMemo(() => {
     return groups
@@ -1137,7 +1137,6 @@ function DefaultTable({
           });
           const allProductsHaveRelation = productsChilds?.every((product) =>
             idsRelations?.some((relationId: any) => {
-              console.log(product[relationId]);
               return product[relationId]?.length > 0;
             }),
           );
@@ -1323,7 +1322,7 @@ function DefaultTable({
         <HotTable
           key={parentId + newHiddens.join() + groups.join() + cols.join()}
           nestedRows
-          nestedHeaders={groupsToView}
+          // nestedHeaders={groupsToView}
           bindRowsWithHeaders
           className="hot-table"
           readOnly={

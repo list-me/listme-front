@@ -856,7 +856,6 @@ export const ProductContextProvider = ({
         const id = window.location.pathname.substring(10);
         if (id) {
           setTimeout(() => {
-            console.log("iiih");
             handleRedirectAndGetProducts(id).then(() => {});
           }, 0);
         }

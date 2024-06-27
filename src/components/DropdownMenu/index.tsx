@@ -21,7 +21,6 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   const currentCol = headerTable.find((item) => {
     return +item.order === +col;
   });
-  console.log("🚀 ~ currentCol:", currentCol);
 
   useEffect(() => {
     const handleScroll = () => {

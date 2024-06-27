@@ -34,17 +34,16 @@ function ModalSelectDefaultTemplate({
   const navigate = useNavigate();
   async function createTemplate(indexItem: number): Promise<void> {
     try {
-      // await templateRequests.postDefault(
-      //   "list",
-      //   (templates[indexItem] as any).id,
-      // );
-      // handleGetTemplatesAll({ page: 0, limit: 100 });
-      // toast.success("Template criado com sucesso");
-      // const newTemplateId = templatesAll[templatesAll.length - 1]?.id;
-      // if (newTemplateId) {
-      //   navigate(`${ROUTES.PRODUCTS}/${newTemplateId}`);
-      // }
-      console.log("VEIO");
+      await templateRequests.postDefault(
+        "list",
+        (templates[indexItem] as any).id,
+      );
+      handleGetTemplatesAll({ page: 0, limit: 100 });
+      toast.success("Template criado com sucesso");
+      const newTemplateId = templatesAll[templatesAll.length - 1]?.id;
+      if (newTemplateId) {
+        navigate(`${ROUTES.PRODUCTS}/${newTemplateId}`);
+      }
     } catch (error) {
       toast.error("Ocorreu um erro ao criar o template");
     }
@@ -54,16 +53,7 @@ function ModalSelectDefaultTemplate({
     templateRequests
       .listDefault()
       .then((response) => {
-        setTemplates([
-          // @ts-ignore
-          ...response,
-          // @ts-ignore
-          { name: "Estoque próprio (mock)" },
-          // @ts-ignore
-          { name: "Drop Shipping (mock)" },
-          // @ts-ignore
-          { name: "S/ modelo pré-definido (mock)" },
-        ]);
+        setTemplates(response);
       })
       .catch((error) => {
         toast.error("Ocorreu um erro ao listar os catálogos");
@@ -91,13 +81,7 @@ function ModalSelectDefaultTemplate({
           {templates.map((item: any, index) => (
             <ItemCardSelectDefaultTemplate
               key={item}
-              onClick={
-                index === 0
-                  ? () => {
-                      createTemplate(index);
-                    }
-                  : () => ""
-              }
+              onClick={() => createTemplate(index)}
             >
               <div>
                 <img src={index < 3 ? imageBag : imagePlus} alt={item.name} />

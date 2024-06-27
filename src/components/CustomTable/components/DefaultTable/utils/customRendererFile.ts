@@ -92,7 +92,6 @@ function customRendererFile(
           };
           if (template.id === "7a14b251-3eb8-4ed5-8f33-531dd1e104b8") {
             const brand = _instance.getDataAtRowProp(row, "525546");
-            console.log("🚀 ~ td.ondrop= ~ brand:", brand);
             optionals.brand = brand?.length ? brand[0]?.id : undefined;
             optionals.name = _instance.getDataAtRowProp(row, "837714");
           }
