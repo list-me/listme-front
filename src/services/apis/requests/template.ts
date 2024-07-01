@@ -159,7 +159,7 @@ export const templateRequests = {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.post(
       `/template`,
-      { type, templateId },
+      { type, defaultTemplateId: templateId },
       {
         headers: {
           Authorization: `Bearer ${token}`,
