@@ -315,7 +315,7 @@ export const PersonalModal = ({
         style={{ marginBottom: "2vh", top: 30, maxHeight: "90vh" }}
         footer={null}
       >
-        <Container isDisabled={data?.default}>
+        <Container isDisabled={data?.default && data?.required}>
           <div className="titleContainer">
             <Title> {TYPES[type]?.label} </Title>
             <Description>{TYPES[type]?.description}</Description>
@@ -433,7 +433,7 @@ export const PersonalModal = ({
                         if (e.target.value.trim()) setTitle(e.target.value);
                       }}
                       placeholder="Informe o titulo da coluna"
-                      disabled={data?.default}
+                      disabled={data?.default && data?.required}
                     />
                   </Form.Item>
                   <Form.Item
@@ -456,7 +456,7 @@ export const PersonalModal = ({
                         setTitle(e?.target?.value);
                       }}
                       placeholder="Informe o nome do campo"
-                      disabled={data?.default}
+                      disabled={data?.default && data?.required}
                     />
                   </Form.Item>
                   {["decimal"].includes(data?.type) && (
@@ -513,7 +513,7 @@ export const PersonalModal = ({
                           height: "64px",
                           border: "1px solid #DEE2E6",
                         }}
-                        disabled={data?.default}
+                        disabled={data?.default && data?.required}
                         value={type}
                         removeIcon
                         onChange={(e: string) => {
@@ -561,7 +561,7 @@ export const PersonalModal = ({
                               checked={activeCharacterLimit}
                               size="small"
                               onChange={(e) => setActiveCharacterLimit(e)}
-                              disabled={data?.default}
+                              disabled={data?.default && data?.required}
                             />
                           </div>
                         }
@@ -575,7 +575,10 @@ export const PersonalModal = ({
                           type="number"
                           min={0}
                           max={DefaultLimits[data?.type].max}
-                          disabled={!activeCharacterLimit || data?.default}
+                          disabled={
+                            !activeCharacterLimit ||
+                            (data?.default && data?.required)
+                          }
                           style={{
                             height: "64px",
                             border: "1px solid #DEE2E6",
@@ -643,14 +646,20 @@ export const PersonalModal = ({
                   label="Descrição"
                   style={{ marginBottom: "2px" }}
                 >
-                  <Switch size="small" disabled={data?.default} />
+                  <Switch
+                    size="small"
+                    disabled={data?.default && data?.required}
+                  />
                 </Form.Item>
                 <Form.Item
                   name="help_text"
                   label="Texto de ajuda"
                   style={{ marginBottom: "2px" }}
                 >
-                  <Switch size="small" disabled={data?.default} />
+                  <Switch
+                    size="small"
+                    disabled={data?.default && data?.required}
+                  />
                 </Form.Item>
                 <Form.Item
                   name="required"
@@ -661,7 +670,7 @@ export const PersonalModal = ({
                     size="small"
                     onChange={() => setRequired(!required)}
                     checked={required}
-                    disabled={data?.default}
+                    disabled={data?.default && data?.required}
                   />
                 </Form.Item>
                 <Form.Item
@@ -673,7 +682,7 @@ export const PersonalModal = ({
                     size="small"
                     onChange={() => setIsUnique(!isUnique)}
                     checked={isUnique}
-                    disabled={data?.default}
+                    disabled={data?.default && data?.required}
                   />
                 </Form.Item>
               </Footer>
@@ -683,7 +692,10 @@ export const PersonalModal = ({
                   {" "}
                   Cancelar{" "}
                 </PrimaryButton>
-                <Principal type="submit" disabled={!enable || data?.default}>
+                <Principal
+                  type="submit"
+                  disabled={!enable || (data?.default && data?.required)}
+                >
                   Salvar
                 </Principal>
               </ButtonContainer>

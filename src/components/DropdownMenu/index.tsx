@@ -85,7 +85,8 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                       openModal(item, col);
                     } else if (
                       item?.label.toLowerCase().includes("excluir") &&
-                      !currentCol?.default
+                      !currentCol?.default &&
+                      !currentCol?.required
                     ) {
                       openModal(item, col);
                     }
@@ -93,7 +94,8 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   isLast={item?.label.toLowerCase().includes("excluir")}
                   isDisabled={
                     item?.label.toLowerCase().includes("excluir") &&
-                    currentCol?.default
+                    currentCol?.default &&
+                    currentCol?.required
                   }
                 >
                   {item?.icon}
