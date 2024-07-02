@@ -10,10 +10,10 @@ export const Container = styled.div<{ isDisabled?: boolean }>`
   flex-direction: column;
   align-items: center;
   /* padding: 20px; */
-  input:hover {
+  > div:hover {
     position: relative;
     ::before {
-      content: "Não é possível editar este campo. Campo obrigatório para integração";
+      content: "Não é possível editar estes campos. Campos obrigatórios para integração";
       font-family: ${({ theme }) => theme.fonts.family.default};
       font-weight: ${({ theme }) => theme.fonts.weights.regular};
       font-size: ${({ theme }) => theme.fonts.sizes.small};
@@ -21,20 +21,21 @@ export const Container = styled.div<{ isDisabled?: boolean }>`
       background: #000000bf;
       position: absolute;
       border-radius: 6px;
-      top: 28px;
-      left: -8px;
+      top: 100px;
+      left: 0px;
       display: ${(props) => (props.isDisabled ? "flex" : "none")};
       align-items: center;
       justify-content: center;
       flex-shrink: 1;
       width: 470px;
       height: 35px;
+      z-index: 1;
     }
     ::after {
       content: "";
       position: absolute;
-      top: 20px;
-      left: 0px;
+      top: 92px;
+      left: 8px;
       width: 0;
       height: 0;
       border-left: 8px solid transparent;

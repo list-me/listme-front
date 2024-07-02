@@ -90,11 +90,14 @@ function HeaderDropDown({
     };
   }, [dropDownStatus.type, setDropDownStatus]);
 
-  const col = template?.fields?.fields.find((item) => {
+  let colIndex;
+  const col = template?.fields?.fields.find((item, index) => {
     if (item.id === columns[dropDownStatus.col]?.data) {
+      colIndex = index;
       return item;
     }
   });
+  const collToCell = { ...col, order: col?.order || `${colIndex}` };
 
   if (dropDownStatus.type === "cell")
     return (
@@ -107,7 +110,7 @@ function HeaderDropDown({
         >
           <Cell
             label={colHeaders[dropDownStatus.col]}
-            column={col}
+            column={collToCell}
             template={template}
             handleHidden={() => {
               handleHidden(dropDownStatus.col, template, true);

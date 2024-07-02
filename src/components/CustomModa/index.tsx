@@ -421,20 +421,22 @@ export const PersonalModal = ({
                     ]}
                     style={{ marginBottom: "6px" }}
                   >
-                    <Input
-                      autoFocus
-                      style={{
-                        height: "64px",
-                        border: "1px solid #DEE2E6",
-                      }}
-                      value={title}
-                      onChange={(e) => {
-                        e.preventDefault();
-                        if (e.target.value.trim()) setTitle(e.target.value);
-                      }}
-                      placeholder="Informe o titulo da coluna"
-                      disabled={data?.default && data?.required}
-                    />
+                    <div>
+                      <Input
+                        autoFocus
+                        style={{
+                          height: "64px",
+                          border: "1px solid #DEE2E6",
+                        }}
+                        value={title}
+                        onChange={(e) => {
+                          e.preventDefault();
+                          if (e.target.value.trim()) setTitle(e.target.value);
+                        }}
+                        placeholder="Informe o titulo da coluna"
+                        disabled={data?.default && data?.required}
+                      />
+                    </div>
                   </Form.Item>
                   <Form.Item
                     wrapperCol={{ flex: "auto" }}
