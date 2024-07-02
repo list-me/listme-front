@@ -10,7 +10,10 @@ export const Container = styled.div<{ isDisabled?: boolean }>`
   flex-direction: column;
   align-items: center;
   /* padding: 20px; */
-  > div:hover {
+  .modalNotEdit {
+    width: 100%;
+  }
+  .modalNotEdit:hover {
     position: relative;
     ::before {
       content: "Não é possível editar estes campos. Campos obrigatórios para integração";
