@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
   ButtonAction,
   CardAction,
@@ -12,7 +14,13 @@ import cloud from "../../../../assets/images/cloud.png";
 import { useFromToContext } from "../../../../context/FromToContext";
 
 function InitialStep(): JSX.Element {
-  const { setCurrentStep } = useFromToContext();
+  const location = useLocation();
+  const { setCurrentStep, setStepType } = useFromToContext();
+  const isTemplatesPage = location.pathname.includes("templates");
+
+  useEffect(() => {
+    setStepType("fromTo");
+  }, [setStepType]);
 
   return (
     <ContainerInitialStep>
@@ -32,12 +40,29 @@ function InitialStep(): JSX.Element {
       </ul>
       <ContainerActions>
         <CardAction>
-          <img src={guitar} alt="Vincular List pública" />
-          <ButtonAction>Vincular List pública</ButtonAction>
+          <img src={guitar} alt="Vincular lista pública" />
+          <ButtonAction
+            onClick={() => {
+              setCurrentStep((prev) => prev + 1);
+              setStepType(isTemplatesPage ? "publicListOutside" : "publicList");
+            }}
+          >
+            Vincular lista pública
+          </ButtonAction>
         </CardAction>
         <CardAction>
           <img src={cloud} alt="Importar arquivo" />
-          <ButtonAction onClick={() => setCurrentStep((prev) => prev + 1)}>
+          <ButtonAction
+            onClick={() => {
+              if (!isTemplatesPage) {
+                setCurrentStep((prev) => prev + 1);
+                setStepType("fromTo");
+              } else {
+                setCurrentStep((prev) => prev + 1);
+                setStepType("fromToOutside");
+              }
+            }}
+          >
             Importar arquivo
           </ButtonAction>
         </CardAction>

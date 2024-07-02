@@ -90,6 +90,11 @@ function customRendererFile(
             brand: "",
             name: "",
           };
+          if (template.id === "7a14b251-3eb8-4ed5-8f33-531dd1e104b8") {
+            const brand = _instance.getDataAtRowProp(row, "525546");
+            optionals.brand = brand?.length ? brand[0]?.id : undefined;
+            optionals.name = _instance.getDataAtRowProp(row, "837714");
+          }
 
           if (template.id === "8956d969-d769-4f09-8736-e0b4d73b3e3d") {
             const brand = _instance.getDataAtRowProp(row, "730291");

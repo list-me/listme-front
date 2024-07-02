@@ -63,7 +63,11 @@ const handleCellChange: any = async (
 
       try {
         if (!isNew) setIsTableLocked(true);
-        if (newValue()?.toString() === previousCellValue?.toString()) {
+
+        if (
+          newValue()?.toString() === previousCellValue?.toString() &&
+          type !== "relation"
+        ) {
           return;
         }
         const response = await handleSave(

@@ -94,3 +94,36 @@ export const Content = styled.div`
     }
   }
 `;
+
+export const HeaderTemplates = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const ImportButton = styled.button`
+  width: 231px;
+  height: 52px;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 6px;
+  background: none;
+  color: ${({ theme }) => theme.colors.primary};
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  font-family: ${({ theme }) => theme.fonts.family.default};
+  font-size: ${({ theme }) => theme.fonts.sizes.normal};
+  font-weight: ${({ theme }) => theme.fonts.weights.bold};
+  transition: all 0.3s ease;
+  path {
+    transition: all 0.3s ease;
+  }
+  :hover {
+    color: ${({ theme }) => theme.colors.secondary};
+    background: ${({ theme }) => theme.colors.primary};
+    path {
+      stroke: ${({ theme }) => theme.colors.secondary};
+    }
+  }
+`;

@@ -1,6 +1,12 @@
+/* eslint-disable import/prefer-default-export */
 import { useState } from "react";
 
 export const useLocalStorage = <T>(key: string) => {
+  const [itemStorage, setItemStorage] = useState<T>(() => {
+    const item = window.localStorage.getItem(key) as T;
+    return item;
+  });
+
   const getItem = (): T => {
     const item = window.localStorage.getItem(key) as T;
     setItemStorage(item);
@@ -8,11 +14,10 @@ export const useLocalStorage = <T>(key: string) => {
     return item;
   };
 
-  const [itemStorage, setItemStorage] = useState<T>(getItem);
-
   const setItem = (value: string): void => {
     window.localStorage.setItem(key, value);
+    setItemStorage(value as T);
   };
 
-  return [itemStorage, setItem];
+  return [itemStorage, setItem, getItem];
 };

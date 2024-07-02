@@ -93,9 +93,17 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
     const productId = this.props.dataProvider[row][prop]
       ? this.props.dataProvider[row]?.id
       : undefined;
-
+    const regex = /https:\/\/[^/]+\//;
+    const processedOriginalValue = originalValue?.map((item: any) => {
+      const newItem = item.includes("<img")
+        ? item
+        : `<img class="imgItem" loading="lazy" src="${
+            regex.test(item) ? item : `${template.bucket}/${item}`
+          }" style="width:25px;height:25px;margin-right:4px;">`;
+      return newItem;
+    });
     this.setState({
-      newValue: originalValue,
+      newValue: processedOriginalValue,
       field: prop,
       productId,
       row,

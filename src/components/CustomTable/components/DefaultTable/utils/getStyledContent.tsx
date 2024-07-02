@@ -89,18 +89,46 @@ const REQUIRED_INTEGRATION_BUTTON = `
   background: none;
   padding: 0;
 `;
+const CHECKBOX_STYLE = `
+ height: 100%;
+`;
 
 const getStyledContent = (
   iconType: any,
-  valueToVisible: string,
+  valueToVisible: string | number | undefined,
   isRequired: boolean,
   colData: any,
-) => {
+  editModeGroup: "group" | "ungroup" | "",
+  idsColumnsSelecteds: string[],
+  groupReferenceEditMode: string,
+  changeAllRowsSelected: () => void,
+  allRowsSelected?: boolean,
+): string => {
+  (window as any).changeAllRowsSelected = changeAllRowsSelected;
+
+  if (valueToVisible === "checkPublic") {
+    return `<input type='checkbox' style='${CHECKBOX_STYLE}' onclick="window.changeAllRowsSelected()" ${
+      allRowsSelected ? "checked" : ""
+    }/>`;
+  }
   const integrationsList = colData?.integrations;
   const moreNumber = integrationsList - 1;
-
+  const colSelected = idsColumnsSelecteds.includes(colData?.id);
   return `
     <div style="${valueToVisible !== "+" ? BASE_STYLES : PLUS_BASE_STYLES}">
+     ${
+       valueToVisible !== "+" &&
+       editModeGroup &&
+       valueToVisible &&
+       ((!colData.group && editModeGroup === "group") ||
+         (colData.group &&
+           editModeGroup === "ungroup" &&
+           colData.group === groupReferenceEditMode))
+         ? `<input class='checkGroup' type="checkbox" ${
+             colSelected ? "checked" : ""
+           } />`
+         : ""
+     }
       <div style="${FLEX_GAP_STYLE}">
         ${renderToString(iconType)}
         <p style="${

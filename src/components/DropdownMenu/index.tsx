@@ -5,6 +5,7 @@ import { Divider } from "antd";
 import React, { useEffect, useRef } from "react";
 import { DropdownMenuProps } from "./DropdownMenu.d";
 import { SuspenseMenu, Item } from "./styles";
+import { useProductContext } from "../../context/products";
 
 export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   isOpen,
@@ -16,6 +17,10 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const variable: string[] = [];
+  const { headerTable } = useProductContext();
+  const currentCol = headerTable.find((item) => {
+    return +item.order === +col;
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -76,9 +81,22 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   className="item"
                   key={item?.label}
                   onClick={() => {
-                    openModal(item, col);
+                    if (!item?.label.toLowerCase().includes("excluir")) {
+                      openModal(item, col);
+                    } else if (
+                      item?.label.toLowerCase().includes("excluir") &&
+                      !currentCol?.default &&
+                      !currentCol?.required
+                    ) {
+                      openModal(item, col);
+                    }
                   }}
                   isLast={item?.label.toLowerCase().includes("excluir")}
+                  isDisabled={
+                    item?.label.toLowerCase().includes("excluir") &&
+                    currentCol?.default &&
+                    currentCol?.required
+                  }
                 >
                   {item?.icon}
                   {item?.label}

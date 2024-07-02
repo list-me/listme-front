@@ -12,6 +12,8 @@ import {
   CSVRow,
   FromToContextType,
   ICSVResponse,
+  ILinkConfigurationValue,
+  ILinkMethodValue,
   IValuesImportConfiguration,
   IValuesImportOptions,
   IValuesIntegrationsConfig,
@@ -42,6 +44,16 @@ export function FromToContextProvider({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
+  const { products, colHeaders } = useProductContext();
+
+  const [templates, setTemplates] = useState([]);
+  const [stepType, setStepType] = useState<
+    | "fromTo"
+    | "fromToOutside"
+    | "publicList"
+    | "publicListOutside"
+    | "manageLinkedLists"
+  >("fromTo");
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<CSVRow[]>([]);
   const [currentFile, setCurrentFile] = useState<File>();
@@ -53,11 +65,40 @@ export function FromToContextProvider({
   const [csvResponse, setCsvResponse] = useState<ICSVResponse>(
     {} as ICSVResponse,
   );
-
+  const [currentLinkConfigurationValue, setCurrentLinkConfigurationValue] =
+    useState<ILinkConfigurationValue>({
+      value: "",
+      label: "",
+      description: "",
+    });
+  const [currentLinkMethodValue, setCurrentLinkMethodValue] =
+    useState<ILinkMethodValue>("add");
   const colHeadersToPreviewTable = useMemo((): string[] | null => {
     if (data[0]) return Object.keys(data[0]);
     return null;
   }, [data]);
+
+  const [checkedList, setCheckedList] = useState<boolean[]>([false]);
+
+  useEffect(() => {
+    if (colHeaders && colHeaders?.length > 1) {
+      const copyColHeaders = [...colHeaders];
+      copyColHeaders.pop();
+      const checksToChekedList = copyColHeaders?.map(() => {
+        return currentLinkConfigurationValue.value === "keepProductsLinked";
+      });
+      setCheckedList(checksToChekedList);
+    }
+  }, [colHeaders, currentLinkConfigurationValue.value]);
+
+  const [rowsSelected, setRowsSelected] = useState<string[]>([]);
+
+  const [allRowsSelected, setAllRowsSelected] = useState<boolean>(false);
+  const selectedProductsId = useMemo(() => {
+    return rowsSelected.map((item) => {
+      return products[+item].id;
+    });
+  }, [products, rowsSelected]);
 
   const [valuesImportConfiguration, setValuesImportConfiguration] =
     useState<IValuesImportConfiguration>(initialValuesImportConfiguration);
@@ -95,7 +136,7 @@ export function FromToContextProvider({
 
   const { template } = useProductContext();
 
-  function finishFromTo(): Promise<any> {
+  async function finishFromTo(): Promise<any> {
     const keys = Object.keys(selectedLinkFields);
     const validKeys = keys.filter((key) => {
       return selectedLinkFields[key].value !== "Ignorar";
@@ -131,39 +172,49 @@ export function FromToContextProvider({
     let templateId = "";
     const result = templateRequests
       .postFromTo(dataFromTo as unknown as ITemplate)
-      .then((templateResponse) => {
+      .then(async (templateResponse) => {
         templateId = templateResponse.id;
 
         const formData = new FormData();
         formData.append("file", currentFile as Blob);
+        formData.append("templateId", templateId);
 
-        formData.append("templateId", templateId);
-        return productRequests.validateCSV(formData);
-      })
-      .then((productResponse) => {
-        const formData = new FormData();
-        formData.append("file", currentFile as Blob);
-        formData.append("templateId", templateId);
-        const withErrors = productResponse.errors.length > 0;
-        if (!withErrors) {
-          productRequests.postFromToCSV(formData);
+        try {
+          const productResponse = await productRequests.validateCSV(formData);
+          const withErrors = productResponse.errors.length > 0;
+
+          if (!withErrors) {
+            const responsePost = await productRequests.postFromToCSV(formData);
+            setCsvResponse(responsePost);
+          } else {
+            setCsvResponse(productResponse);
+          }
+
+          return productResponse;
+        } catch (error: any) {
+          if (error.response) {
+            const message =
+              typeof error.response.data.message === "string"
+                ? error.response.data.message
+                : error.response.data.message[0];
+            toast.error(message);
+          } else {
+            console.error("Erro na requisição:", error.message);
+            toast.error(error.message);
+          }
+          throw error;
         }
-        setCsvResponse(productResponse);
-        templateRequests.deleteTemplateImport(templateId);
-        return productResponse;
       })
       .catch((error) => {
-        if (error.response) {
-          const message =
-            typeof error.response.data.message === "string"
-              ? error.response.data.message
-              : error.response.data.message[0];
-          toast.error(message);
-        } else {
-          console.error("Erro na requisição:", error.message);
-          toast.error(error.message);
+        console.error("Erro na requisição:", error.message);
+        toast.error("Ocorreu um erro ao processar a solicitação.");
+      })
+      .finally(async () => {
+        if (templateId) {
+          await templateRequests.deleteTemplateImport(templateId);
         }
       });
+
     return result;
   }
 
@@ -175,6 +226,16 @@ export function FromToContextProvider({
     setSelectedLinkFields({});
     setValuesImportConfiguration(initialValuesImportConfiguration);
     setValuesImportOptions(initialValuesImportOptions);
+    setStepType("fromTo");
+    setTemplates([]);
+    setFromToIsOpened(false);
+    setCurrentLinkConfigurationValue({
+      value: "",
+      label: "",
+      description: "",
+    });
+    setCheckedList([false]);
+    setCurrentLinkMethodValue("");
   }
 
   useEffect(() => {
@@ -207,12 +268,27 @@ export function FromToContextProvider({
     setSelectedLinkFields,
     csvResponse,
     toClean,
+    stepType,
+    setStepType,
+    templates,
+    setTemplates,
+    currentLinkConfigurationValue,
+    setCurrentLinkConfigurationValue,
+    checkedList,
+    setCheckedList,
+    rowsSelected,
+    setRowsSelected,
+    allRowsSelected,
+    setAllRowsSelected,
+    selectedProductsId,
     valuesIntegrationsConfig,
     setValuesIntegrationsConfig,
     providersToIntegration,
     setProdvidersToIntegration,
     allProductsToIntegration,
     setAllProductsToIntegration,
+    currentLinkMethodValue,
+    setCurrentLinkMethodValue,
   };
 
   return (

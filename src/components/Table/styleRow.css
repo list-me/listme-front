@@ -1,0 +1,10 @@
+.list-linked {
+  background: #f7f7f7;
+  margin: 0 8px;
+  margin-left: 100px;
+}
+
+.list-linked:hover {
+  margin: 0 8px;
+  margin-left: 100px;
+}
