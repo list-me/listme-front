@@ -15,14 +15,12 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   setIsOpen = () => {},
   col,
 }) => {
-  console.log("🚀 ~ options:", options);
   const modalRef = useRef<HTMLDivElement>(null);
   const variable: string[] = [];
   const { headerTable } = useProductContext();
   const currentCol = headerTable.find((item) => {
     return +item.order === +col;
   });
-  console.log("🚀 ~ currentCol ~ currentCol:", currentCol);
 
   useEffect(() => {
     const handleScroll = () => {
