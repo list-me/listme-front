@@ -63,9 +63,22 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                     className="item"
                     key={Math.random()}
                     onClick={(_e) => {
-                      openModal(item, col);
+                      if (!item?.label.toLowerCase().includes("excluir")) {
+                        openModal(item, col);
+                      } else if (
+                        item?.action === "delete" &&
+                        !currentCol?.default &&
+                        !currentCol?.required
+                      ) {
+                        openModal(item, col);
+                      }
                     }}
                     isLast={item?.label.toLowerCase().includes("excluir")}
+                    isDisabled={
+                      item?.action === "delete" &&
+                      currentCol?.default &&
+                      currentCol.required
+                    }
                   >
                     {item?.icon}
                     {item?.label}
@@ -84,18 +97,19 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                     if (!item?.label.toLowerCase().includes("excluir")) {
                       openModal(item, col);
                     } else if (
-                      item?.label.toLowerCase().includes("excluir") &&
+                      item?.action === "delete" &&
                       !currentCol?.default &&
                       !currentCol?.required
                     ) {
                       openModal(item, col);
                     }
                   }}
-                  isLast={item?.label.toLowerCase().includes("excluir")}
+                  isLast={item?.action === "delete"}
+                  // @ts-ignore
                   isDisabled={
-                    item?.label.toLowerCase().includes("excluir") &&
+                    item?.action === "delete" &&
                     currentCol?.default &&
-                    currentCol?.required
+                    currentCol.required
                   }
                 >
                   {item?.icon}

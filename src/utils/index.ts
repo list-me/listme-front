@@ -64,6 +64,5 @@ export const generateUUID = (): string => {
 };
 
 export const isCollectionCompany = (companyId: string): boolean => {
-  console.log("🚀 ~ isCollectionCompany ~ companyId:", companyId);
   return companyId === process.env.REACT_COLLECTION_COMPANY_ID;
 };

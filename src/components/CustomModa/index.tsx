@@ -320,387 +320,407 @@ export const PersonalModal = ({
             <Title> {TYPES[type]?.label} </Title>
             <Description>{TYPES[type]?.description}</Description>
           </div>
-          <BodyContent>
-            <Form
-              form={form}
-              initialValues={{
-                required,
-                is_unique: isUnique,
-                title,
-                name: data?.name,
-                type: data?.type,
-                limit: characterLimit,
-              }}
-              onFinish={(fields) => {
-                if (!title.trim()) return;
-                if (!fields.type) fields.type = type;
-                if (
-                  fields.type == "relation" &&
-                  (options[0].field == "" || !options[0].originField)
-                ) {
-                  toast.warn("O campo para exibição não pode ser vazio");
-                  return;
-                }
-                if (activeCharacterLimit) {
-                  if (isNaN(characterLimit)) {
-                    toast.warn(
-                      "O campo de limite de caracteres contém um valor invalido",
-                    );
+          <div className="modalNotEdit">
+            <BodyContent>
+              <Form
+                form={form}
+                initialValues={{
+                  required,
+                  is_unique: isUnique,
+                  title,
+                  name: data?.name,
+                  type: data?.type,
+                  limit: characterLimit,
+                }}
+                onFinish={(fields) => {
+                  if (!title.trim()) return;
+                  if (!fields.type) fields.type = type;
+                  if (
+                    fields.type == "relation" &&
+                    (options[0].field == "" || !options[0].originField)
+                  ) {
+                    toast.warn("O campo para exibição não pode ser vazio");
                     return;
                   }
-                  if (!characterLimit) {
-                    toast.warn(
-                      "O campo de limite de caracteres não pode ser vazio",
-                    );
-                    return;
-                  }
-                  if (!characterLimit) {
-                    toast.warn(
-                      "O campo de limite de caracteres não pode ser menor do que 0",
-                    );
-                    return;
-                  }
-                }
-
-                const customOptions: any[] = [];
-                Object.keys(fields).forEach((key) => {
-                  if (/option/.test(key) && fields[key]) {
-                    customOptions.push(fields[key]);
-                    delete fields[key];
-                  }
-                });
-
-                if (
-                  !draggerOptions.length &&
-                  ["text", "paragraph", "file"].includes(fields.type)
-                ) {
-                  fields.option = [""];
-                } else if (["radio", "list", "checked"].includes(fields.type)) {
-                  fields.option = draggerOptions;
-                } else if (fields.type == "relation") {
-                  fields.option = options;
-                }
-
-                if (draggerOptions.length < 2 && MULTI_SELECT.includes(type)) {
-                  toast.warn(
-                    `Os campos do to tipo ${TYPES[type]?.label} devem conter mais de uma opção`,
-                  );
-                  return;
-                }
-                handleUpdateTemplate(fields).then((response) => {
-                  if (response) {
-                    const newColumn = {
-                      ...fields,
-                      data: response[response?.length - 1]?.id,
-                      options: fields.option,
-                    };
-                    onClickModal();
-                    onUpdate(newColumn, response);
-                    const id = window.location.pathname.substring(10);
-                    if (id) {
-                      setTimeout(() => {
-                        handleRedirectAndGetProducts(id).then(() => {});
-                      }, 0);
+                  if (activeCharacterLimit) {
+                    if (isNaN(characterLimit)) {
+                      toast.warn(
+                        "O campo de limite de caracteres contém um valor invalido",
+                      );
+                      return;
+                    }
+                    if (!characterLimit) {
+                      toast.warn(
+                        "O campo de limite de caracteres não pode ser vazio",
+                      );
+                      return;
+                    }
+                    if (!characterLimit) {
+                      toast.warn(
+                        "O campo de limite de caracteres não pode ser menor do que 0",
+                      );
+                      return;
                     }
                   }
-                });
-              }}
-            >
-              <div className="encapsulator">
-                <InputContainer>
-                  <Form.Item
-                    wrapperCol={{ flex: "auto" }}
-                    label="Defina o titulo desta coluna"
-                    name="title"
-                    rules={[
-                      {
-                        required: true,
-                        message: "O título deve conter no máximo 15 caracteres",
-                        max: 15,
-                      },
-                    ]}
-                    style={{ marginBottom: "6px" }}
-                  >
-                    <Input
-                      autoFocus
-                      style={{
-                        height: "64px",
-                        border: "1px solid #DEE2E6",
-                      }}
-                      value={title}
-                      onChange={(e) => {
-                        e.preventDefault();
-                        if (e.target.value.trim()) setTitle(e.target.value);
-                      }}
-                      placeholder="Informe o titulo da coluna"
-                      disabled={data?.default && data?.required}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    wrapperCol={{ flex: "auto" }}
-                    label="Defina o nome da coluna"
-                    name="name"
-                    rules={[
-                      { required: true, message: "O nome não pode ser vazio" },
-                    ]}
-                    style={{ marginBottom: "6px" }}
-                  >
-                    <Input
-                      style={{
-                        height: "64px",
-                        border: "1px solid #DEE2E6",
-                      }}
-                      onChange={(e) => {
-                        e.preventDefault();
 
-                        setTitle(e?.target?.value);
-                      }}
-                      placeholder="Informe o nome do campo"
-                      disabled={data?.default && data?.required}
-                    />
-                  </Form.Item>
-                  {["decimal"].includes(data?.type) && (
+                  const customOptions: any[] = [];
+                  Object.keys(fields).forEach((key) => {
+                    if (/option/.test(key) && fields[key]) {
+                      customOptions.push(fields[key]);
+                      delete fields[key];
+                    }
+                  });
+
+                  if (
+                    !draggerOptions.length &&
+                    ["text", "paragraph", "file"].includes(fields.type)
+                  ) {
+                    fields.option = [""];
+                  } else if (
+                    ["radio", "list", "checked"].includes(fields.type)
+                  ) {
+                    fields.option = draggerOptions;
+                  } else if (fields.type == "relation") {
+                    fields.option = options;
+                  }
+
+                  if (
+                    draggerOptions.length < 2 &&
+                    MULTI_SELECT.includes(type)
+                  ) {
+                    toast.warn(
+                      `Os campos do to tipo ${TYPES[type]?.label} devem conter mais de uma opção`,
+                    );
+                    return;
+                  }
+                  handleUpdateTemplate(fields).then((response) => {
+                    if (response) {
+                      const newColumn = {
+                        ...fields,
+                        data: response[response?.length - 1]?.id,
+                        options: fields.option,
+                      };
+                      onClickModal();
+                      onUpdate(newColumn, response);
+                      const id = window.location.pathname.substring(10);
+                      if (id) {
+                        setTimeout(() => {
+                          handleRedirectAndGetProducts(id).then(() => {});
+                        }, 0);
+                      }
+                    }
+                  });
+                }}
+              >
+                <div className="encapsulator">
+                  <InputContainer>
                     <Form.Item
                       wrapperCol={{ flex: "auto" }}
-                      label="Escolha o separador decimal"
+                      label="Defina o titulo desta coluna"
+                      name="title"
                       rules={[
                         {
                           required: true,
-                          message: "Escolha o separador decimal",
+                          message:
+                            "O título deve conter no máximo 15 caracteres",
+                          max: 15,
                         },
                       ]}
                       style={{ marginBottom: "6px" }}
                     >
-                      <Select
+                      <Input
+                        autoFocus
                         style={{
                           height: "64px",
                           border: "1px solid #DEE2E6",
                         }}
-                        value={decimalPoint}
-                        onChange={(e: string) => {
-                          setDecimalPoint(e as any);
+                        value={title}
+                        onChange={(e) => {
+                          e.preventDefault();
+                          if (e.target.value.trim()) setTitle(e.target.value);
                         }}
-                        placeholder="Escolha o separador decimal"
-                      >
-                        <Select.Option value="." label="Ponto(.)">
-                          Ponto(.)
-                        </Select.Option>
-                        <Select.Option value="," label="Vírgula(,)">
-                          Vírgula(,)
-                        </Select.Option>
-                      </Select>
+                        placeholder="Informe o titulo da coluna"
+                        disabled={data?.default && data?.required}
+                      />
                     </Form.Item>
-                  )}
-                  {!MULTI_SELECT.includes(data?.type) &&
-                  ![
-                    "relation",
-                    "file",
-                    "numeric",
-                    "decimal",
-                    "boolean",
-                  ].includes(data?.type) ? (
                     <Form.Item
                       wrapperCol={{ flex: "auto" }}
-                      label="Escolha o tipo de valor"
-                      name="type"
+                      label="Defina o nome da coluna"
+                      name="name"
                       rules={[
-                        { required: true, message: "Escolha o tipo de valor" },
+                        {
+                          required: true,
+                          message: "O nome não pode ser vazio",
+                        },
                       ]}
                       style={{ marginBottom: "6px" }}
                     >
-                      <Select
+                      <Input
                         style={{
                           height: "64px",
                           border: "1px solid #DEE2E6",
                         }}
-                        disabled={data?.default && data?.required}
-                        value={type}
-                        removeIcon
-                        onChange={(e: string) => {
-                          if (e === "text") {
-                            setCharacterLimit(100);
-                          }
-                          if (e === "paragraph") {
-                            setCharacterLimit(512);
-                          }
-                          setType(e);
+                        onChange={(e) => {
+                          e.preventDefault();
+
+                          setTitle(e?.target?.value);
                         }}
-                        placeholder="Informe o tipo do campo"
-                        options={
-                          ["text", "paragraph"].includes(type)
-                            ? textOptions
-                            : fileOptions
-                        }
+                        placeholder="Informe o nome do campo"
+                        disabled={data?.default && data?.required}
                       />
                     </Form.Item>
-                  ) : data?.type == "relation" ? (
-                    <RelationForm
-                      value={data}
-                      currentFields={currentTemplate.fields.fields}
-                      handleChangeOptions={handleChangeOptions}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                  {[
-                    "text",
-                    "paragraph",
-                    "checked",
-                    "file",
-                    "numeric",
-                    "decimal",
-                  ].includes(data?.type) && (
-                    <CharacterLimitContainer>
+                    {["decimal"].includes(data?.type) && (
                       <Form.Item
                         wrapperCol={{ flex: "auto" }}
-                        colon={false}
-                        label={
-                          <div className="label-content">
-                            <span>{limitText[data?.type]}</span>
-                            <Switch
-                              checked={activeCharacterLimit}
-                              size="small"
-                              onChange={(e) => setActiveCharacterLimit(e)}
-                              disabled={data?.default && data?.required}
-                            />
-                          </div>
-                        }
-                        name="limit"
-                        style={{
-                          marginBottom: "6px",
-                          position: "relative",
-                        }}
+                        label="Escolha o separador decimal"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Escolha o separador decimal",
+                          },
+                        ]}
+                        style={{ marginBottom: "6px" }}
                       >
-                        <Input
-                          type="number"
-                          min={0}
-                          max={DefaultLimits[data?.type].max}
-                          disabled={
-                            !activeCharacterLimit ||
-                            (data?.default && data?.required)
-                          }
+                        <Select
                           style={{
                             height: "64px",
                             border: "1px solid #DEE2E6",
                           }}
-                          value={characterLimit}
-                          onChange={(e) => {
-                            e.preventDefault();
-                            const inputValue = +e.target.value;
-                            const maxLimit = DefaultLimits[data?.type].max;
-
-                            if (inputValue > maxLimit) {
-                              setCharacterLimit(maxLimit);
-                            } else {
-                              setCharacterLimit(inputValue);
-                            }
+                          value={decimalPoint}
+                          onChange={(e: string) => {
+                            setDecimalPoint(e as any);
                           }}
-                          placeholder="Ex.: 10"
+                          placeholder="Escolha o separador decimal"
+                        >
+                          <Select.Option value="." label="Ponto(.)">
+                            Ponto(.)
+                          </Select.Option>
+                          <Select.Option value="," label="Vírgula(,)">
+                            Vírgula(,)
+                          </Select.Option>
+                        </Select>
+                      </Form.Item>
+                    )}
+                    {!MULTI_SELECT.includes(data?.type) &&
+                    ![
+                      "relation",
+                      "file",
+                      "numeric",
+                      "decimal",
+                      "boolean",
+                    ].includes(data?.type) ? (
+                      <Form.Item
+                        wrapperCol={{ flex: "auto" }}
+                        label="Escolha o tipo de valor"
+                        name="type"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Escolha o tipo de valor",
+                          },
+                        ]}
+                        style={{ marginBottom: "6px" }}
+                      >
+                        <Select
+                          style={{
+                            height: "64px",
+                            border: "1px solid #DEE2E6",
+                          }}
+                          disabled={data?.default && data?.required}
+                          value={type}
+                          removeIcon
+                          onChange={(e: string) => {
+                            if (e === "text") {
+                              setCharacterLimit(100);
+                            }
+                            if (e === "paragraph") {
+                              setCharacterLimit(512);
+                            }
+                            setType(e);
+                          }}
+                          placeholder="Informe o tipo do campo"
+                          options={
+                            ["text", "paragraph"].includes(type)
+                              ? textOptions
+                              : fileOptions
+                          }
                         />
                       </Form.Item>
-                    </CharacterLimitContainer>
-                  )}
-                </InputContainer>
-
-                {MULTI_SELECT.includes(data?.type) ? (
-                  <div className="dragger">
-                    <p>Opções</p>
-                    <Form.Item name="options" className="onDragger">
-                      <Dragger
-                        options={draggerOptions}
-                        setOptions={(e: any) => {
-                          setDraggerOptions(e);
-                        }}
-                        form={form}
+                    ) : data?.type == "relation" ? (
+                      <RelationForm
+                        value={data}
+                        currentFields={currentTemplate.fields.fields}
+                        handleChangeOptions={handleChangeOptions}
                       />
-                    </Form.Item>
-                    <ButtonContainer2>
-                      <BulkButton type="button" onClick={() => onClickModal()}>
-                        {" "}
-                        Adicionar opções em massa{" "}
-                      </BulkButton>
-                      <AddNew
-                        type="button"
-                        onClick={() => {
-                          if (draggerOptions.length === 12) {
-                            toast.warn(
-                              "Este campo não pode conter mais que 12 opções",
-                            );
-                            return;
+                    ) : (
+                      <></>
+                    )}
+                    {[
+                      "text",
+                      "paragraph",
+                      "checked",
+                      "file",
+                      "numeric",
+                      "decimal",
+                    ].includes(data?.type) && (
+                      <CharacterLimitContainer>
+                        <Form.Item
+                          wrapperCol={{ flex: "auto" }}
+                          colon={false}
+                          label={
+                            <div className="label-content">
+                              <span>{limitText[data?.type]}</span>
+                              <Switch
+                                checked={activeCharacterLimit}
+                                size="small"
+                                onChange={(e) => setActiveCharacterLimit(e)}
+                                disabled={data?.default && data?.required}
+                              />
+                            </div>
                           }
-                          setDraggerOptions((prevState) => [...prevState, ""]);
-                        }}
-                      >
-                        <PlusIcon />
-                        Adicionar opção
-                      </AddNew>
-                    </ButtonContainer2>
-                  </div>
-                ) : (
-                  <></>
-                )}
-              </div>
-              <Footer>
-                <Form.Item
-                  name="description"
-                  label="Descrição"
-                  style={{ marginBottom: "2px" }}
-                >
-                  <Switch
-                    size="small"
-                    disabled={data?.default && data?.required}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="help_text"
-                  label="Texto de ajuda"
-                  style={{ marginBottom: "2px" }}
-                >
-                  <Switch
-                    size="small"
-                    disabled={data?.default && data?.required}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="required"
-                  label="Campo obrigatório"
-                  style={{ marginBottom: "2px" }}
-                >
-                  <Switch
-                    size="small"
-                    onChange={() => setRequired(!required)}
-                    checked={required}
-                    disabled={data?.default && data?.required}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="is_unique"
-                  label="Campo único"
-                  style={{ marginBottom: "2px" }}
-                >
-                  <Switch
-                    size="small"
-                    onChange={() => setIsUnique(!isUnique)}
-                    checked={isUnique}
-                    disabled={data?.default && data?.required}
-                  />
-                </Form.Item>
-              </Footer>
-              <Divider style={{ marginTop: "8px", marginBottom: "0" }} />
-              <ButtonContainer>
-                <PrimaryButton type="button" onClick={() => onClickModal()}>
-                  {" "}
-                  Cancelar{" "}
-                </PrimaryButton>
-                <Principal
-                  type="submit"
-                  disabled={!enable || (data?.default && data?.required)}
-                >
-                  Salvar
-                </Principal>
-              </ButtonContainer>
-            </Form>
-          </BodyContent>
+                          name="limit"
+                          style={{
+                            marginBottom: "6px",
+                            position: "relative",
+                          }}
+                        >
+                          <Input
+                            type="number"
+                            min={0}
+                            max={DefaultLimits[data?.type].max}
+                            disabled={
+                              !activeCharacterLimit ||
+                              (data?.default && data?.required)
+                            }
+                            style={{
+                              height: "64px",
+                              border: "1px solid #DEE2E6",
+                            }}
+                            value={characterLimit}
+                            onChange={(e) => {
+                              e.preventDefault();
+                              const inputValue = +e.target.value;
+                              const maxLimit = DefaultLimits[data?.type].max;
+
+                              if (inputValue > maxLimit) {
+                                setCharacterLimit(maxLimit);
+                              } else {
+                                setCharacterLimit(inputValue);
+                              }
+                            }}
+                            placeholder="Ex.: 10"
+                          />
+                        </Form.Item>
+                      </CharacterLimitContainer>
+                    )}
+                  </InputContainer>
+
+                  {MULTI_SELECT.includes(data?.type) ? (
+                    <div className="dragger">
+                      <p>Opções</p>
+                      <Form.Item name="options" className="onDragger">
+                        <Dragger
+                          options={draggerOptions}
+                          setOptions={(e: any) => {
+                            setDraggerOptions(e);
+                          }}
+                          form={form}
+                        />
+                      </Form.Item>
+                      <ButtonContainer2>
+                        <BulkButton
+                          type="button"
+                          onClick={() => onClickModal()}
+                        >
+                          {" "}
+                          Adicionar opções em massa{" "}
+                        </BulkButton>
+                        <AddNew
+                          type="button"
+                          onClick={() => {
+                            if (draggerOptions.length === 12) {
+                              toast.warn(
+                                "Este campo não pode conter mais que 12 opções",
+                              );
+                              return;
+                            }
+                            setDraggerOptions((prevState) => [
+                              ...prevState,
+                              "",
+                            ]);
+                          }}
+                        >
+                          <PlusIcon />
+                          Adicionar opção
+                        </AddNew>
+                      </ButtonContainer2>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+                <Footer>
+                  <Form.Item
+                    name="description"
+                    label="Descrição"
+                    style={{ marginBottom: "2px" }}
+                  >
+                    <Switch
+                      size="small"
+                      disabled={data?.default && data?.required}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="help_text"
+                    label="Texto de ajuda"
+                    style={{ marginBottom: "2px" }}
+                  >
+                    <Switch
+                      size="small"
+                      disabled={data?.default && data?.required}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="required"
+                    label="Campo obrigatório"
+                    style={{ marginBottom: "2px" }}
+                  >
+                    <Switch
+                      size="small"
+                      onChange={() => setRequired(!required)}
+                      checked={required}
+                      disabled={data?.default && data?.required}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="is_unique"
+                    label="Campo único"
+                    style={{ marginBottom: "2px" }}
+                  >
+                    <Switch
+                      size="small"
+                      onChange={() => setIsUnique(!isUnique)}
+                      checked={isUnique}
+                      disabled={data?.default && data?.required}
+                    />
+                  </Form.Item>
+                </Footer>
+                <Divider style={{ marginTop: "8px", marginBottom: "0" }} />
+                <ButtonContainer>
+                  <PrimaryButton type="button" onClick={() => onClickModal()}>
+                    {" "}
+                    Cancelar{" "}
+                  </PrimaryButton>
+                  <Principal
+                    type="submit"
+                    disabled={!enable || (data?.default && data?.required)}
+                  >
+                    Salvar
+                  </Principal>
+                </ButtonContainer>
+              </Form>
+            </BodyContent>
+          </div>
         </Container>
       </Modal>
     </>
