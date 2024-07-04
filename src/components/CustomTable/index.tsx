@@ -39,6 +39,7 @@ import {
 import Filter from "../Filter";
 import { useFilterContext } from "../../context/FilterContext";
 import NotFound from "./components/NotFound";
+import HeaderGroups from "../HeaderGroups";
 
 registerAllModules();
 registerAllEditors();
@@ -77,7 +78,31 @@ const CustomTable: React.FC<CustomTableProps> = ({
   } = useProductContext();
 
   const [cols, setCols] = useState<ICol[]>([]);
+
   const [page, setPage] = useState<number>(1);
+  const [selectedGroup, setSelectedGroup] = useState("");
+  const headerTableToView = headerTable.filter((item) => {
+    if (selectedGroup.length) {
+      if (selectedGroup !== "others") {
+        return item.group === selectedGroup;
+      }
+      return !item.group;
+    }
+    return item;
+  });
+
+  const colHeadersParams = headerTableToView.map((item) => {
+    return item.title;
+  });
+
+  const colHeadersToView = colHeaders.filter((item) => {
+    return colHeadersParams.includes(item);
+  });
+
+  const colsToView = cols.filter((item) => {
+    return colHeadersParams.includes(item.title) || !item.title;
+  });
+  console.log("🚀 ~ colsToView ~ colsToView:", colsToView);
 
   const [currentCell, setCurrentCell] = useState<any>({});
 
@@ -248,7 +273,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
     isCustom: false,
     bucket: "",
   };
-
   return (
     <>
       <Confirmation
@@ -274,19 +298,30 @@ const CustomTable: React.FC<CustomTableProps> = ({
             handleGetProductFiltered={handleGetProductFiltered}
             handleAddProductClick={() => handleAddProductClick()}
           />
+          {template?.fields?.groups && (
+            <HeaderGroups
+              groups={template.fields.groups}
+              selectedGroup={selectedGroup}
+              setSelectedGroup={setSelectedGroup}
+            />
+          )}
         </Content>
         <Container>
           <DefaultTable
-            cols={parentId || isPublic ? [checkToCols, ...cols] : (cols as any)}
+            cols={
+              parentId || isPublic
+                ? [checkToCols, ...colsToView]
+                : (colsToView as any)
+            }
             colHeaders={
               parentId || isPublic
-                ? [checkToColHeaders, ...colHeaders]
-                : colHeaders
+                ? [checkToColHeaders, ...colHeadersToView]
+                : colHeadersToView
             }
             headerTable={
               parentId || isPublic
-                ? [checkToHeaderTable, ...headerTable]
-                : headerTable
+                ? [checkToHeaderTable, ...headerTableToView]
+                : headerTableToView
             }
             parentId={parentId}
             setParentId={setParentId}

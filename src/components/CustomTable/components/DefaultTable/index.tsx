@@ -1320,7 +1320,7 @@ function DefaultTable({
       )}
       <ContainerHotTable isPublic={isPublic}>
         <HotTable
-          key={parentId + newHiddens.join() + groups.join() + cols.join()}
+          key={`${parentId}${cols.length}`}
           nestedRows
           // nestedHeaders={groupsToView}
           bindRowsWithHeaders
