@@ -55,7 +55,7 @@ import { ReactComponent as ArrowRightHeaderGroup } from "../../../../assets/arro
 import ParentHeaderEdit from "./components/ParentHeaderEdit";
 import customStyledHeader from "./utils/customStyledHeader";
 import { templateRequests } from "../../../../services/apis/requests/template";
-import ModalSelectColumns from "../ModalSelectColumns";
+import ModalColumnManagement from "../ModalColumnManagement";
 import LimitAlert from "./components/LimitAlert";
 import { ContainerHotTable } from "./styles";
 
@@ -97,6 +97,12 @@ function DefaultTable({
   setParentId,
   subItensMode,
   setSubItemsMode,
+  editModeGroup,
+  setEditModeGroup,
+  groupReferenceEditMode,
+  setGroupReferenceEditMode,
+  idsColumnsSelecteds,
+  setIdsColumnsSelecteds,
 }: IDefaultTable): JSX.Element {
   const { handleRedirectAndGetProducts, setHidden } = useProductContext();
   const [parentHeaderSelectedIndex, setParentHeaderSelectedIndex] =
@@ -116,28 +122,13 @@ function DefaultTable({
   const { conditionsFilter } = useProductContext();
 
   const [groups, setGroups] = useState<
-    { label: string; colspan: number; newHiddens: number[] }[]
+    { label: string; total: number; color: string }[]
   >([]);
   useEffect(() => {
-    if (template?.fields?.groups) {
-      const toGroups = template?.fields?.groups
-        .map((mItemGroup: any) => {
-          const countRealItems = cols.filter(
-            (item) => item.group === mItemGroup.label,
-          );
-
-          const colspan =
-            countRealItems.length === mItemGroup.total ? mItemGroup.total : 1;
-
-          return { label: mItemGroup.label, colspan };
-        })
-        .filter((fItemGroup: any) => fItemGroup.colspan > 0);
-
-      if (toGroups?.length > 0) {
-        setGroups(toGroups);
-      }
+    if (template?.fields?.groups?.length > 0) {
+      setGroups(template?.fields?.groups);
     }
-  }, [cols, template?.fields?.groups]);
+  }, [template?.fields?.groups]);
 
   useEffect(() => {
     if (hotRef.current) {
@@ -736,139 +727,6 @@ function DefaultTable({
     [ICON_HEADER],
   );
 
-  const [editModeGroup, setEditModeGroup] = useState<"group" | "ungroup" | "">(
-    "",
-  );
-  const [groupReferenceEditMode, setGroupReferenceEditMode] = useState("");
-
-  const [idsColumnsSelecteds, setIdsColumnsSelecteds] = useState<string[]>([]);
-
-  const createHeaderGroup = async (newGroup: string): Promise<void> => {
-    try {
-      const newGroups = [...[...groups].map((group) => group.label), newGroup];
-
-      const newFields = template.fields.fields.map((field: any) => {
-        if (idsColumnsSelecteds.includes(field.id)) {
-          const newField = { ...field, group: newGroup };
-          delete newField.order;
-          delete newField.width;
-          delete newField.frozen;
-          delete newField.hidden;
-          delete newField.integrations;
-          return newField;
-        }
-        const newField = { ...field };
-        delete newField.order;
-        delete newField.width;
-        delete newField.frozen;
-        delete newField.hidden;
-        delete newField.integrations;
-        return newField;
-      });
-
-      const newTemplates = {
-        fields: newFields,
-        groups: newGroups,
-      };
-      await templateRequests.update(template.id, newTemplates);
-      toast.success("Grupo criado com sucesso");
-      const id = window.location.pathname.substring(10);
-      if (id) {
-        setTimeout(() => {
-          handleRedirectAndGetProducts(id).then(() => {});
-        }, 0);
-      }
-      setIdsColumnsSelecteds([]);
-      setEditModeGroup("");
-    } catch (error) {
-      toast.error("Ocorreu um erro durante a criação do novo grupo");
-      console.log(error);
-      throw error;
-    }
-  };
-
-  const removeHeaderGroup = async (referenceGroup: string): Promise<void> => {
-    try {
-      const newFields = template.fields.fields.map((field: any) => {
-        if (idsColumnsSelecteds.includes(field.id)) {
-          const newField = { ...field, group: "" };
-          delete newField.order;
-          delete newField.width;
-          delete newField.frozen;
-          delete newField.hidden;
-          delete newField.integrations;
-          delete newField.group;
-          return newField;
-        }
-        const newField = { ...field };
-        delete newField.order;
-        delete newField.width;
-        delete newField.frozen;
-        delete newField.hidden;
-        delete newField.integrations;
-        return newField;
-      });
-
-      const fieldsFiltered = newFields.filter((fItem: any) => {
-        return fItem.group === referenceGroup;
-      });
-
-      if (fieldsFiltered.length === 0) {
-        const indexGroup = groups.findIndex(
-          (obj) => obj.label === referenceGroup,
-        );
-        groups.splice(indexGroup, 1);
-      }
-      const newTemplates = {
-        fields: newFields,
-        groups: groups.map((mGroup) => mGroup.label),
-      };
-      await templateRequests.update(template.id, newTemplates);
-      toast.success("Grupo criado com sucesso");
-      const id = window.location.pathname.substring(10);
-      if (id) {
-        setTimeout(() => {
-          handleRedirectAndGetProducts(id).then(() => {});
-        }, 0);
-      }
-      setIdsColumnsSelecteds([]);
-      setEditModeGroup("");
-    } catch (error) {
-      toast.error("Ocorreu um erro tentar remover coluna de grupo");
-      console.log(error);
-      throw error;
-    }
-  };
-
-  const totalGroupedColumns = useMemo(() => {
-    if (groups && groups.length > 0 && groups[0]?.label) {
-      return groups.reduce(
-        (ttl, itemGroup) => ttl + (itemGroup?.colspan || 0),
-        0,
-      );
-    }
-    return 0;
-  }, [groups]);
-  const totalUngroupedColumns = useMemo(() => {
-    if (cols && cols.length > 0) {
-      return cols.length - 1 - totalGroupedColumns;
-    }
-    return 0;
-  }, [cols, totalGroupedColumns]);
-
-  const ungroupeds = useMemo(() => {
-    if (totalUngroupedColumns > 0) {
-      return new Array(totalUngroupedColumns).fill("+ Criar novo grupo");
-    }
-    return [];
-  }, [totalUngroupedColumns]);
-
-  // const groupsToView = useMemo(() => {
-  //   return groups[0]?.label
-  //     ? [[...groups, ...ungroupeds], colHeaders]
-  //     : [ungroupeds, colHeaders];
-  // }, [groups, ungroupeds, colHeaders]);
-
   const newHiddens = useMemo(() => {
     return groups
       .map((itemGroup: any) => {
@@ -895,14 +753,9 @@ function DefaultTable({
         editModeGroup,
         idsColumnsSelecteds,
         setIdsColumnsSelecteds,
-        handleRedirectAndGetProducts,
         groupReferenceEditMode,
-        setHidden,
-        setGroups,
         changeAllRowsSelected,
         allRowsSelected,
-        isPublic,
-        setEditModeGroup,
       );
     },
     [
@@ -1677,16 +1530,15 @@ function DefaultTable({
         />
       )}
       {editModeGroup && (
-        <ModalSelectColumns
+        <ModalColumnManagement
           ids={idsColumnsSelecteds}
           editModeGroup={editModeGroup}
           clearSubItensMode={() => {
             setIdsColumnsSelecteds([]);
             setEditModeGroup("");
           }}
-          onFinishProductChild={
-            editModeGroup === "group" ? createHeaderGroup : removeHeaderGroup
-          }
+          groups={groups}
+          template={template}
           groupReferenceEditMode={groupReferenceEditMode}
         />
       )}

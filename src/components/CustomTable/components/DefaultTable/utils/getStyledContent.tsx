@@ -12,6 +12,7 @@ const BASE_STYLES = `
   height: 51px;
   padding: 0 1.5rem;
   font-family: 'Satoshi Regular';
+  position: relative;
   `;
 const PLUS_BASE_STYLES = `
   display: flex;
@@ -93,6 +94,14 @@ const CHECKBOX_STYLE = `
  height: 100%;
 `;
 
+const COLORGROUP = `
+ width: 100%;
+ height: 2px;
+ position: absolute;
+ top: 0;
+ left: 0;
+`;
+
 const getStyledContent = (
   iconType: any,
   valueToVisible: string | number | undefined,
@@ -102,6 +111,11 @@ const getStyledContent = (
   idsColumnsSelecteds: string[],
   groupReferenceEditMode: string,
   changeAllRowsSelected: () => void,
+  groups: {
+    label: string;
+    total: number;
+    color: string;
+  }[],
   allRowsSelected?: boolean,
 ): string => {
   (window as any).changeAllRowsSelected = changeAllRowsSelected;
@@ -111,19 +125,23 @@ const getStyledContent = (
       allRowsSelected ? "checked" : ""
     }/>`;
   }
+  const selectedGroup = groups.filter((item) => {
+    return item.label === colData?.group;
+  })[0];
+
   const integrationsList = colData?.integrations;
   const moreNumber = integrationsList - 1;
   const colSelected = idsColumnsSelecteds.includes(colData?.id);
   return `
     <div style="${valueToVisible !== "+" ? BASE_STYLES : PLUS_BASE_STYLES}">
+    <div style="${COLORGROUP}; background:${selectedGroup?.color};"></div>
      ${
        valueToVisible !== "+" &&
        editModeGroup &&
        valueToVisible &&
-       ((!colData.group && editModeGroup === "group") ||
-         (colData.group &&
-           editModeGroup === "ungroup" &&
-           colData.group === groupReferenceEditMode))
+       ((!colData?.group && editModeGroup === "group") ||
+         (editModeGroup === "ungroup" &&
+           (colData.group === groupReferenceEditMode || !colData.group)))
          ? `<input class='checkGroup' type="checkbox" ${
              colSelected ? "checked" : ""
            } />`

@@ -76,6 +76,11 @@ const CustomTable: React.FC<CustomTableProps> = ({
     handleFreeze,
     conditionsFilter,
   } = useProductContext();
+  const [editModeGroup, setEditModeGroup] = useState<"group" | "ungroup" | "">(
+    "",
+  );
+  const [groupReferenceEditMode, setGroupReferenceEditMode] = useState("");
+  const [idsColumnsSelecteds, setIdsColumnsSelecteds] = useState<string[]>([]);
 
   const [cols, setCols] = useState<ICol[]>([]);
 
@@ -96,13 +101,12 @@ const CustomTable: React.FC<CustomTableProps> = ({
   });
 
   const colHeadersToView = colHeaders.filter((item) => {
-    return colHeadersParams.includes(item);
+    return colHeadersParams.includes(item) || item === " ";
   });
 
   const colsToView = cols.filter((item) => {
-    return colHeadersParams.includes(item.title) || !item.title;
+    return colHeadersParams.includes(item.title);
   });
-  console.log("🚀 ~ colsToView ~ colsToView:", colsToView);
 
   const [currentCell, setCurrentCell] = useState<any>({});
 
@@ -298,13 +302,15 @@ const CustomTable: React.FC<CustomTableProps> = ({
             handleGetProductFiltered={handleGetProductFiltered}
             handleAddProductClick={() => handleAddProductClick()}
           />
-          {template?.fields?.groups && (
-            <HeaderGroups
-              groups={template.fields.groups}
-              selectedGroup={selectedGroup}
-              setSelectedGroup={setSelectedGroup}
-            />
-          )}
+          <HeaderGroups
+            setEditModeGroup={setEditModeGroup}
+            fields={template?.fields?.fields}
+            groups={template?.fields?.groups}
+            selectedGroup={selectedGroup}
+            setSelectedGroup={setSelectedGroup}
+            setGroupReferenceEditMode={setGroupReferenceEditMode}
+            setIdsColumnsSelecteds={setIdsColumnsSelecteds}
+          />
         </Content>
         <Container>
           <DefaultTable
@@ -358,6 +364,12 @@ const CustomTable: React.FC<CustomTableProps> = ({
             setRowsSelected={setRowsSelected}
             subItensMode={subItensMode}
             setSubItemsMode={setSubItemsMode}
+            editModeGroup={editModeGroup}
+            setEditModeGroup={setEditModeGroup}
+            groupReferenceEditMode={groupReferenceEditMode}
+            setGroupReferenceEditMode={setGroupReferenceEditMode}
+            idsColumnsSelecteds={idsColumnsSelecteds}
+            setIdsColumnsSelecteds={setIdsColumnsSelecteds}
           />
           {!!conditionsFilter.length && products.length < 1 && <NotFound />}
         </Container>
