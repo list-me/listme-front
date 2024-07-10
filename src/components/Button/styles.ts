@@ -14,7 +14,7 @@ export const Container = styled.div<{ disabled: boolean }>`
 
 const Secondary = css`
   color: ${({ theme }) => theme.colors.primary};
-  background-color: ${({ theme }) => theme.colors.background.default};
+  background-color: ${({ theme }) => theme.colors.secondary};
   border: 1px solid ${({ theme }) => theme.colors.primary};
 
   &:hover {

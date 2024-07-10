@@ -9,8 +9,8 @@
     "eject": "react-scripts eject",
     "lint": "eslint .",
     "lint:fix": "yarn lint -- --fix",
-    "clean": "aws cloudfront create-invalidation --distribution-id E3GMQHJYL74MAN --paths '/*'",
-    "deploy": "aws s3 sync build/ s3://test-app.listme.io",
+    "clean": "aws cloudfront create-invalidation --distribution-id E2YT6GK3M7TUHE --paths '/*'",
+    "deploy": "aws s3 sync build/ s3://app.listme.io",
     "prod": "yarn build && yarn deploy"
   },
   "dependencies": {

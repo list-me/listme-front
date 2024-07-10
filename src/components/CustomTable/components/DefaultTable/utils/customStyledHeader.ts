@@ -11,8 +11,8 @@ function customStyledHeader(
   TH: HTMLTableHeaderCellElement,
   groups: {
     label: string;
-    colspan: number;
-    newHiddens: number[];
+    total: number;
+    color: string;
   }[],
   setParentHeaderSelectedIndex: React.Dispatch<React.SetStateAction<number>>,
   template: any,
@@ -26,16 +26,9 @@ function customStyledHeader(
   editModeGroup: "group" | "ungroup" | "",
   idsColumnsSelecteds: string[],
   setIdsColumnsSelecteds: React.Dispatch<React.SetStateAction<string[]>>,
-  handleRedirectAndGetProducts: (template: any) => Promise<any>,
   groupReferenceEditMode: string,
-  setHidden: any,
-  setGroups: any,
   changeAllRowsSelected: () => void,
   allRowsSelected: boolean | undefined,
-  isPublic: boolean | undefined,
-  setEditModeGroup: React.Dispatch<
-    React.SetStateAction<"" | "group" | "ungroup">
-  >,
 ): void {
   const spanContent = TH.querySelector("span")?.textContent;
   const groupsName = groups.map((group: any) => group.label);
@@ -46,20 +39,6 @@ function customStyledHeader(
         setParentHeaderSelectedIndex(index + 1);
       }
     });
-  }
-
-  if (spanContent === "+ Criar novo grupo") {
-    TH.innerHTML = !isPublic
-      ? `
-        <div class='newGroupHeader'>
-          <span>${spanContent}</span>
-        </div>`
-      : "";
-
-    const configSvgDiv = TH.querySelector(".newGroupHeader");
-    configSvgDiv?.addEventListener("click", () => setEditModeGroup("group"));
-
-    return;
   }
 
   if (spanContent && !groupsName.includes(spanContent)) {
@@ -80,6 +59,7 @@ function customStyledHeader(
       idsColumnsSelecteds,
       groupReferenceEditMode,
       changeAllRowsSelected,
+      groups,
       allRowsSelected,
     );
 
@@ -148,7 +128,6 @@ function customStyledHeader(
     TH.className = "style-th-group";
 
     const currentCols = cols.filter((item) => item.group === spanContent);
-    const indexes = currentCols.map((item) => cols.indexOf(item));
 
     TH.innerHTML = `<div style="${containerGroupStyle}" class='groupHeader'>
         <div></div>
@@ -167,48 +146,6 @@ function customStyledHeader(
 
     const configSvgDiv = TH.querySelector(".configSvgDiv");
     configSvgDiv?.addEventListener("click", selectParentHeader);
-    const collapseDiv = TH.querySelector(".collapseIconGroup");
-    collapseDiv?.addEventListener("click", () => {
-      const index = groups.findIndex(
-        (group) => group.label === spanContent && group?.newHiddens?.length > 0,
-      );
-      const currentObjectWithHiddens = groups[index];
-      if (currentObjectWithHiddens?.label) {
-        const filtered = groups.filter(
-          (group) => group.label !== currentObjectWithHiddens.label,
-        );
-        // @ts-ignore
-        filtered.splice(index, 0, {
-          label: currentObjectWithHiddens.label,
-          colspan: currentObjectWithHiddens.newHiddens.length + 1,
-        });
-        setGroups(filtered);
-      }
-      if (!currentObjectWithHiddens?.label) {
-        indexes.shift();
-        const countHiddens = 0;
-        const newGroups = groups.map((group) => {
-          if (group.label === spanContent) {
-            return [
-              { ...group, colspan: 1, newHiddens: indexes },
-              ...Array.from({ length: group.colspan - 1 }, () => ({
-                label: group.label,
-                colspan: 1,
-              })),
-            ];
-          }
-          return group;
-        });
-        setGroups(() =>
-          countHiddens > 0
-            ? [
-                ...newGroups,
-                { label: spanContent, colspan: countHiddens },
-              ].flat()
-            : [...newGroups.flat()],
-        );
-      }
-    });
   }
 }
 

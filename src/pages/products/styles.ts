@@ -52,7 +52,6 @@ export const RightContent = styled.div`
 
   .secondButton {
     margin-left: 9px;
-
     svg {
       margin: 0 0 0 10px;
     }
@@ -71,13 +70,13 @@ export const RightContent = styled.div`
 `;
 
 export const Header = styled.header`
-  height: 128px;
-  background: ${({ theme }) => theme.colors.grayscale.tenth};
+  height: 80px;
+  background: white;
 
   display: flex;
   justify-content: space-between;
-
-  padding: 32px 16px;
+  align-items: center;
+  padding: 0 16px;
 `;
 
 export const MoreOptions = styled.div`
@@ -569,9 +568,9 @@ export const Filters = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 68px;
+  height: 53px;
 
-  padding: 16px;
+  padding: 0 16px;
   background: white;
   border: 1px solid #e9ecef;
   border-bottom: none;
