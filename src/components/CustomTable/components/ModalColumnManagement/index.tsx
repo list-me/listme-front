@@ -227,19 +227,25 @@ function ModalColumnManagement({
               <NavigationButton
                 abort
                 onClick={() => removeHeaderGroup(groupReferenceEditMode)}
+                style={{ width: "114px" }}
               >
                 Excluir grupo
               </NavigationButton>
             </DeleteGroupButton>
           )}
-          <NavigationButton abort onClick={clearSubItensMode}>
+          <NavigationButton
+            abort
+            onClick={clearSubItensMode}
+            style={{ width: "91px" }}
+          >
             Cancelar
           </NavigationButton>
           <NavigationButton
             disabled={!groupName || !selectedColor || !(ids.length > 0)}
             onClick={() => createHeaderGroup(groupName)}
+            style={{ width: "143px" }}
           >
-            Salvar
+            Salvar alterações
           </NavigationButton>
         </ContainerButtons>
       </BottomContainerModalColumnManagement>

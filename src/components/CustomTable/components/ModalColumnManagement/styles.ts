@@ -56,8 +56,8 @@ export const ItemColor = styled.div<{ background: string; active: boolean }>`
 export const BottomContainerModalColumnManagement = styled.div`
   padding: 24px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 `;
 
 export const Selecteds = styled.p`
@@ -72,7 +72,6 @@ export const ContainerButtons = styled.div`
   font-size: 16px;
   font-weight: 500;
   display: flex;
-  width: 300px;
   gap: 20px;
   button {
     height: 36px;
@@ -81,6 +80,10 @@ export const ContainerButtons = styled.div`
 `;
 
 export const DeleteGroupButton = styled.div`
-  background: #fa525214;
-  color: #fa5252;
+  > button {
+    background: #fa525214 !important;
+    color: #fa5252 !important;
+    background: blue;
+    width: 114px;
+  }
 `;
