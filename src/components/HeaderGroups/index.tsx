@@ -49,11 +49,13 @@ function HeaderGroups({
     }
   }
 
+  const groupsToView = groups.filter((item) => item.label);
+
   return (
     <ContainerHeaderGroups>
       <ContainerGroups>
-        {groups?.length > 0 &&
-          groups.map((group) => (
+        {groupsToView?.length > 0 &&
+          groupsToView.map((group) => (
             <ItemGroup
               onClick={() => handleSelectGroup(group.label)}
               active={selectedGroup === group.label}

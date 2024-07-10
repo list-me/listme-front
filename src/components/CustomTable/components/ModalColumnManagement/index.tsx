@@ -135,7 +135,11 @@ function ModalColumnManagement({
     try {
       const newFields = template.fields.fields.map((field: any) => {
         if (ids.includes(field.id)) {
-          const newField = { ...field, group: "" };
+          const newField = {
+            ...field,
+            group: "",
+            options: !field.options[0] ? [""] : field.options || [""],
+          };
           delete newField.order;
           delete newField.width;
           delete newField.frozen;
@@ -144,7 +148,10 @@ function ModalColumnManagement({
           delete newField.group;
           return newField;
         }
-        const newField = { ...field };
+        const newField = {
+          ...field,
+          options: !field.options[0] ? [""] : field.options || [""],
+        };
         delete newField.order;
         delete newField.width;
         delete newField.frozen;
@@ -153,15 +160,17 @@ function ModalColumnManagement({
         return newField;
       });
 
+      const newGroups = groups
+        .filter((fGroup) => {
+          return fGroup.label !== referenceGroup;
+        })
+        .map((mGroup) => {
+          return { label: mGroup.label, color: mGroup.color };
+        });
+
       const newTemplates = {
         fields: newFields,
-        groups: groups
-          .filter((fGroup) => {
-            return fGroup.label !== referenceGroup;
-          })
-          .map((mGroup) => {
-            return { label: mGroup.label, color: mGroup.color };
-          }),
+        groups: newGroups.length > 0 ? newGroups : [{ label: "", color: "" }],
       };
       await templateRequests.update(template.id, newTemplates);
       toast.success("Grupo criado com sucesso");
