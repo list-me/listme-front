@@ -672,7 +672,6 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
-      console.log("🚀 ~ value:", value);
       // eslint-disable-next-line no-param-reassign
       value =
         typeof value === "string"
