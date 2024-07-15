@@ -484,6 +484,9 @@ export const Container = styled.div`
     #blur {
       filter: blur(4px);
     }
+    .linked-icon-container {
+      position: relative;
+    }
     .blurCenter {
       display: flex;
       height: 100%;

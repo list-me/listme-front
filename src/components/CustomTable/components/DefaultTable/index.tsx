@@ -22,6 +22,7 @@ import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers
 import { ReactComponent as NumericIcon } from "../../../../assets/numeric-icon.svg";
 import { ReactComponent as DecimalIcon } from "../../../../assets/decimal-icon.svg";
 import { ReactComponent as BooleanIcon } from "../../../../assets/boolean-icon.svg";
+import { ReactComponent as LinkedIcon } from "../../../../assets/linked-product.svg";
 import { IDefaultTable } from "./DefaultTable";
 import handleCellChange from "./utils/handleCellChange";
 import handleBeforeCopy from "./utils/handleBeforeCopy";
@@ -343,6 +344,10 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
       } else {
@@ -356,12 +361,16 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      _row: number,
+      row: number,
       col: number,
       _prop: string | number,
       value: string | string[],
     ): void => {
       if (cols) {
+        const haveSync = products[row].have_sync;
+        if (haveSync) {
+          td.style.background = "#DEE2E6";
+        }
         if (value === "valor censurado") {
           // eslint-disable-next-line no-param-reassign
           td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
@@ -383,11 +392,15 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      _row: number,
+      row: number,
       col: number,
       _prop: string | number,
       value: string | string[],
     ): void => {
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
       } else if (cols) {
@@ -416,11 +429,15 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      _row: number,
+      row: number,
       col: number,
       prop: string | number,
       value: any,
     ) => {
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;
@@ -440,7 +457,7 @@ function DefaultTable({
 
       const colType = columns[col]?.type;
       const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
-      const previousValue = _instance.getDataAtCell(_row, col);
+      const previousValue = _instance.getDataAtCell(row, col);
 
       let newValue;
       const regex = /https:\/\/[^/]+\//;
@@ -484,7 +501,7 @@ function DefaultTable({
       customRendererFile(
         _instance,
         td,
-        _row,
+        row,
         col,
         prop,
         newValue,
@@ -508,11 +525,15 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      _row: number,
+      row: number,
       col: number,
       _prop: string | number,
       value: string | string[],
     ): void => {
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
       } else {
@@ -532,7 +553,7 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      _row: number,
+      row: number,
       col: number,
       _prop: string | number,
       value: string | string[],
@@ -541,8 +562,11 @@ function DefaultTable({
       const maxLength = cols[col].limit || DefaultLimits[colType].max;
       const textValue = value as string;
 
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       td.style.border = "";
-
       if (textValue?.length > maxLength) {
         td.style.border = "2px solid #F1BC02";
       }
@@ -559,17 +583,21 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      _row: number,
+      row: number,
       col: number,
       _prop: string | number,
       value: string | string[],
     ): void => {
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;
       }
       const numericValue = value as string;
-      const previousValue = _instance.getDataAtCell(_row, col);
+      const previousValue = _instance.getDataAtCell(row, col);
       const colType = columns[col]?.type;
       const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
 
@@ -594,11 +622,15 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      _row: number,
+      row: number,
       col: number,
       _prop: string | number,
       value: string | string[],
     ): void => {
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;
@@ -641,6 +673,10 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;
@@ -679,6 +715,12 @@ function DefaultTable({
           : value?.map((itemBoolean: string) => {
               return itemBoolean?.toLowerCase();
             });
+
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
+
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;
@@ -897,6 +939,10 @@ function DefaultTable({
       _value: any,
     ) => {
       const stringRow = String(row);
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
 
       const isChecked = isPublic
         ? rowsSelected?.includes(stringRow)
@@ -934,7 +980,27 @@ function DefaultTable({
 
       td.innerHTML = "";
 
-      td.appendChild(checkboxContainer);
+      const linkedIconContainer = document.createElement("div");
+
+      const iconContainer = document.createElement("div");
+      iconContainer.style.width = "100%";
+      iconContainer.style.height = "50px";
+      iconContainer.style.display = "flex";
+      iconContainer.style.alignItems = "center";
+      iconContainer.style.justifyContent = "center";
+      iconContainer.className = "linked-icon-container";
+
+      ReactDOM.render(<LinkedIcon />, iconContainer);
+      linkedIconContainer.appendChild(iconContainer);
+
+      if (haveSync) {
+        const linkedIconElement = linkedIconContainer.firstChild;
+        if (linkedIconElement) {
+          td.appendChild(linkedIconElement);
+        }
+      } else {
+        td.appendChild(checkboxContainer);
+      }
     },
     [
       isPublic,
