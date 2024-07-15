@@ -673,9 +673,12 @@ function DefaultTable({
       value: any,
     ): void => {
       // eslint-disable-next-line no-param-reassign
-      value = value?.map((itemBoolean: string) => {
-        return itemBoolean?.toLowerCase();
-      });
+      value =
+        typeof value === "string"
+          ? value
+          : value?.map((itemBoolean: string) => {
+              return itemBoolean?.toLowerCase();
+            });
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;

@@ -49,7 +49,7 @@ function HeaderGroups({
     }
   }
 
-  const groupsToView = groups.filter((item) => item.label);
+  const groupsToView = groups?.filter((item) => item.label) || [];
 
   return (
     <ContainerHeaderGroups>
