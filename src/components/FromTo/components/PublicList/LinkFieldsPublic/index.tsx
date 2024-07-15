@@ -69,7 +69,6 @@ function LinkFieldsPublic(): JSX.Element {
         };
 
         const response = await templateRequests.postFromTo(templateBody as any);
-        console.log("🚀 ~ onFinish ~ response:", response);
         if (response.id) {
           const body = new FormData();
           if (allRowsSelected) {
