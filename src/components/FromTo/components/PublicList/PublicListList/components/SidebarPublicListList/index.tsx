@@ -31,7 +31,6 @@ function SidebarPublicListListComponent({
   setCurrentCategoryId: React.Dispatch<React.SetStateAction<string>>;
 }): JSX.Element {
   const [categories, setCategories] = useState<ICategory[]>([]);
-  const { templates } = useFromToContext();
 
   const items = [
     { name: "Ver tudo", icon: <SofaIcon /> },
@@ -46,15 +45,7 @@ function SidebarPublicListListComponent({
     await categoriesRequest
       .list()
       .then((response) => {
-        const categoryIdsTemplates = templates.map((item: any) => {
-          return item.id;
-        });
-
-        const categoriesFiltered = response.filter((item: any) => {
-          return categoryIdsTemplates.includes(item.id);
-        });
-
-        setCategories(categoriesFiltered);
+        setCategories(response);
       })
       .catch((error) => {
         toast.error("Ocorreu um erro ao listar as categorias");
@@ -79,7 +70,7 @@ function SidebarPublicListListComponent({
         <ItemSidebarPublicListList
           onClick={() => setCurrentCategoryId(item.id)}
         >
-          {items[0].icon}
+          {items[3].icon}
           <ItemSidebarNamePublicListList>
             {item.name}
           </ItemSidebarNamePublicListList>
