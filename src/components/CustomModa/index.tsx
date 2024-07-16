@@ -312,7 +312,7 @@ export const PersonalModal = ({
         onCancel={onClickModal}
         onOk={onClickModal}
         width="470px"
-        style={{ marginBottom: "2vh", top: 30, maxHeight: "90vh" }}
+        style={{ marginBottom: "2vh", top: 30, maxHeight: "80vh" }}
         footer={null}
       >
         <Container isDisabled={data?.default && data?.required}>

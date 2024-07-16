@@ -104,6 +104,7 @@ function DefaultTable({
   setGroupReferenceEditMode,
   idsColumnsSelecteds,
   setIdsColumnsSelecteds,
+  setSelectedGroup,
 }: IDefaultTable): JSX.Element {
   const { handleRedirectAndGetProducts, setHidden } = useProductContext();
   const [parentHeaderSelectedIndex, setParentHeaderSelectedIndex] =
@@ -461,7 +462,7 @@ function DefaultTable({
 
       let newValue;
       const regex = /https:\/\/[^/]+\//;
-      if (value && !value.includes("<img")) {
+      if (value && !value.includes("<img") && typeof value !== "string") {
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
             const lastDotIndex: number = itemValue.lastIndexOf(".");
@@ -1609,6 +1610,7 @@ function DefaultTable({
           groups={groups}
           template={template}
           groupReferenceEditMode={groupReferenceEditMode}
+          setSelectedGroup={setSelectedGroup}
         />
       )}
       {parentHeaderSelectedIndex && (

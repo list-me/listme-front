@@ -303,6 +303,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
             handleAddProductClick={() => handleAddProductClick()}
           />
           <HeaderGroups
+            editModeGroup={editModeGroup}
             setEditModeGroup={setEditModeGroup}
             fields={template?.fields?.fields}
             groups={template?.fields?.groups}
@@ -370,6 +371,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
             setGroupReferenceEditMode={setGroupReferenceEditMode}
             idsColumnsSelecteds={idsColumnsSelecteds}
             setIdsColumnsSelecteds={setIdsColumnsSelecteds}
+            setSelectedGroup={setSelectedGroup}
           />
           {!!conditionsFilter.length && products.length < 1 && <NotFound />}
         </Container>

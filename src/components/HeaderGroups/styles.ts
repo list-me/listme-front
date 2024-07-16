@@ -106,3 +106,17 @@ export const IconButton = styled.button`
   align-items: center;
   border: none;
 `;
+export const Tuto = styled.div`
+  width: 100%;
+  height: 24px;
+  border-top: 1px solid ${({ theme }) => theme.colors.grayscale.seventh};
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  p {
+    margin: 0;
+    text-align: center;
+    width: 100%;
+    font-size: ${({ theme }) => theme.fonts.sizes.normal};
+  }
+`;
