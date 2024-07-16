@@ -1,10 +1,31 @@
 import styled from "styled-components";
 
 export const Container = styled.div<{ isDisabled?: boolean }>`
-  width: 100%;
+  width: calc(100% + 16px);
   height: fit-content;
-
+  max-height: 85vh;
+  overflow-y: auto;
   background: #ffffff;
+
+  ::-webkit-scrollbar {
+    width: 8px; /* largura da barra de rolagem */
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: unset;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #cccccc; /* cor do botão da barra de rolagem */
+    border-radius: 4px; /* raio da borda do botão da barra de rolagem */
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #3818d9; /* cor do botão da barra de rolagem quando hover */
+  }
+  .ant-modal-content {
+    margin-right: 0 !important;
+  }
 
   display: flex;
   flex-direction: column;
@@ -138,38 +159,12 @@ export const Description = styled.h2`
 `;
 
 export const BodyContent = styled.div`
-  height: fit-content;
   width: 100%;
 
   .encapsulator {
-    overflow: auto;
-
-    height: fit-content;
-    max-height: 600px;
     width: 100%;
 
     padding-right: 16px;
-
-    ::-webkit-scrollbar {
-      width: 8px; /* largura da barra de rolagem */
-    }
-
-    ::-webkit-scrollbar-track {
-      background-color: unset;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background-color: #cccccc; /* cor do botão da barra de rolagem */
-      border-radius: 4px; /* raio da borda do botão da barra de rolagem */
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background-color: #3818d9; /* cor do botão da barra de rolagem quando hover */
-    }
-
-    @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-      max-height: 400px;
-    }
   }
 `;
 
@@ -348,6 +343,10 @@ export const Item = styled.span`
   justify-content: space-between;
 
   margin-bottom: 16px;
+  .ant-modal-close {
+    position: relative;
+    right: 20px;
+  }
 
   .ant-switch-inner {
     &:hover {
