@@ -20,6 +20,7 @@ import {
 } from "./styles";
 import { useProductContext } from "../../../../context/products";
 import DefaultInput from "../../../DefaultInput";
+import { Confirmation } from "../../../Confirmation";
 
 function ModalColumnManagement({
   clearSubItensMode,
@@ -28,6 +29,7 @@ function ModalColumnManagement({
   template,
   editModeGroup,
   groupReferenceEditMode,
+  setSelectedGroup,
 }: {
   clearSubItensMode: () => void;
   ids: string[];
@@ -39,10 +41,12 @@ function ModalColumnManagement({
   template: any;
   editModeGroup: "group" | "ungroup" | "";
   groupReferenceEditMode: string;
+  setSelectedGroup: React.Dispatch<React.SetStateAction<string>>;
 }): JSX.Element {
   const { handleRedirectAndGetProducts } = useProductContext();
   const [groupName, setGroupName] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   const colors = [
     "#CC5DE8",
@@ -58,6 +62,13 @@ function ModalColumnManagement({
   ];
 
   const createHeaderGroup = async (newGroup: string): Promise<void> => {
+    const names = groups.map((item) => {
+      return item.label;
+    });
+    if (names.includes(newGroup)) {
+      newGroup = `${newGroup} (1)`;
+    }
+
     try {
       const newGroups = [
         ...groups.map((item) => {
@@ -132,6 +143,7 @@ function ModalColumnManagement({
   };
 
   const removeHeaderGroup = async (referenceGroup: string): Promise<void> => {
+    setSelectedGroup("");
     try {
       const newFields = template.fields.fields.map((field: any) => {
         if (ids.includes(field.id)) {
@@ -173,7 +185,7 @@ function ModalColumnManagement({
         groups: newGroups.length > 0 ? newGroups : [{ label: "", color: "" }],
       };
       await templateRequests.update(template.id, newTemplates);
-      toast.success("Grupo criado com sucesso");
+      toast.success("Grupo removido com sucesso");
       const id = window.location.pathname.substring(10);
       if (id) {
         setTimeout(() => {
@@ -199,66 +211,77 @@ function ModalColumnManagement({
   }, [editModeGroup, groupReferenceEditMode, groups]);
 
   return (
-    <ContainerModalColumnManagement>
-      <TopContainerModalColumnManagement>
-        <TopLeftContainerModalColumnManagement>
-          <TitleContent>Nome do grupo</TitleContent>
-          <DefaultInput
-            label=""
-            type="text"
-            value={groupName}
-            changeValue={setGroupName}
-            required={false}
-            placeHolder="Nome do grupo"
-            alertTitle=""
-            alertContent=""
-          />
-        </TopLeftContainerModalColumnManagement>
-        <TopRightContainerModalColumnManagement>
-          <TitleContent>Selecione a cor da tag</TitleContent>
-          <ContainerColors>
-            {colors.map((color) => (
-              <ItemColor
-                key={color}
-                background={color}
-                active={selectedColor === color}
-                onClick={() => setSelectedColor(color)}
-              />
-            ))}
-          </ContainerColors>
-        </TopRightContainerModalColumnManagement>
-      </TopContainerModalColumnManagement>
-      <BottomContainerModalColumnManagement>
-        <Selecteds>{ids?.length || 0} colunas selecionados</Selecteds>
-        <ContainerButtons>
-          {editModeGroup === "ungroup" && (
-            <DeleteGroupButton>
-              <NavigationButton
-                abort
-                onClick={() => removeHeaderGroup(groupReferenceEditMode)}
-                style={{ width: "114px" }}
-              >
-                Excluir grupo
-              </NavigationButton>
-            </DeleteGroupButton>
-          )}
-          <NavigationButton
-            abort
-            onClick={clearSubItensMode}
-            style={{ width: "91px" }}
-          >
-            Cancelar
-          </NavigationButton>
-          <NavigationButton
-            disabled={!groupName || !selectedColor || !(ids.length > 0)}
-            onClick={() => createHeaderGroup(groupName)}
-            style={{ width: "143px" }}
-          >
-            Salvar alterações
-          </NavigationButton>
-        </ContainerButtons>
-      </BottomContainerModalColumnManagement>
-    </ContainerModalColumnManagement>
+    <>
+      <Confirmation
+        description="Ao excluir este grupo, você irá desagrupar 3 itens. Essa ação é irreversível."
+        action="DELETE"
+        title="Excluir Produto"
+        pass="excluir"
+        handleChangeVisible={() => setIsOpenModal(!isOpenModal)}
+        isOpen={isOpenModal}
+        handleConfirmation={() => removeHeaderGroup(groupReferenceEditMode)}
+      />
+      <ContainerModalColumnManagement>
+        <TopContainerModalColumnManagement>
+          <TopLeftContainerModalColumnManagement>
+            <TitleContent>Nome do grupo</TitleContent>
+            <DefaultInput
+              label=""
+              type="text"
+              value={groupName}
+              changeValue={setGroupName}
+              required={false}
+              placeHolder="Nome do grupo"
+              alertTitle=""
+              alertContent=""
+            />
+          </TopLeftContainerModalColumnManagement>
+          <TopRightContainerModalColumnManagement>
+            <TitleContent>Selecione a cor da tag</TitleContent>
+            <ContainerColors>
+              {colors.map((color) => (
+                <ItemColor
+                  key={color}
+                  background={color}
+                  active={selectedColor === color}
+                  onClick={() => setSelectedColor(color)}
+                />
+              ))}
+            </ContainerColors>
+          </TopRightContainerModalColumnManagement>
+        </TopContainerModalColumnManagement>
+        <BottomContainerModalColumnManagement>
+          <Selecteds>{ids?.length || 0} colunas selecionadas</Selecteds>
+          <ContainerButtons>
+            {editModeGroup === "ungroup" && (
+              <DeleteGroupButton>
+                <NavigationButton
+                  abort
+                  onClick={() => setIsOpenModal(true)}
+                  style={{ width: "114px", fontSize: "14px" }}
+                >
+                  Excluir grupo
+                </NavigationButton>
+              </DeleteGroupButton>
+            )}
+            <NavigationButton
+              abort
+              onClick={clearSubItensMode}
+              style={{ width: "91px", fontSize: "14px" }}
+            >
+              Cancelar
+            </NavigationButton>
+            <NavigationButton
+              disabled={!groupName || !selectedColor || !(ids.length > 0)}
+              onClick={() => createHeaderGroup(groupName)}
+              style={{ width: "143px", fontSize: "14px" }}
+            >
+              Salvar alterações
+            </NavigationButton>
+          </ContainerButtons>
+        </BottomContainerModalColumnManagement>
+      </ContainerModalColumnManagement>
+    </>
   );
 }
 

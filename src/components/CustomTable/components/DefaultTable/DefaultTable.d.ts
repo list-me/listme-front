@@ -62,4 +62,5 @@ export interface IDefaultTable {
   setGroupReferenceEditMode: React.Dispatch<React.SetStateAction<string>>;
   idsColumnsSelecteds: string[];
   setIdsColumnsSelecteds: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedGroup: React.Dispatch<React.SetStateAction<string>>;
 }
