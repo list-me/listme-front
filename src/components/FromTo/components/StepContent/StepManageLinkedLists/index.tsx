@@ -91,7 +91,7 @@ function StepManageLinkedLists(): JSX.Element {
         setCurrentStep(0);
       }
     }
-  }, [setCurrentStep, templateSelected?.id]);
+  }, [templateSelected?.id]);
 
   return (
     <StepContentContainer>
