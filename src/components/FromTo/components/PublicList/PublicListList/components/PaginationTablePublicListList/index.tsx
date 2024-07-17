@@ -19,6 +19,7 @@ function PaginationTablePublicListListComponent({
   totalPages: number;
 }): JSX.Element {
   const buttons = Array(totalPages).fill("");
+  console.log("🚀 ~ totalPages:", totalPages);
 
   return (
     <PaginationTablePublicListList>
