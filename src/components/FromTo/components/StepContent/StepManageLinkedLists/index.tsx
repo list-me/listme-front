@@ -82,16 +82,17 @@ function StepManageLinkedLists(): JSX.Element {
   }, [dataTemplateSelected, items, setCurrentStep, templateSelected?.id]);
 
   const onFinishDeleteAll = useCallback(async () => {
-    if (templateSelected?.id) {
+    if (deleteAll && templateSelected?.id) {
       try {
         await templateRequests.deleteTemplateSync(templateSelected.id);
         setCurrentStep(4);
+        setTemplateSelected(null);
       } catch (error) {
         toast.error("Não foi excluir o vínculo, tente novamente!");
         setCurrentStep(0);
       }
     }
-  }, [templateSelected?.id]);
+  }, [deleteAll, setCurrentStep, templateSelected?.id]);
 
   return (
     <StepContentContainer>

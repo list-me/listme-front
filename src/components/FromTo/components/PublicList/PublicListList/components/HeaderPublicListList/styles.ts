@@ -5,7 +5,9 @@ export const HeaderPublicListList = styled.div`
   width: 100%;
   justify-content: space-between;
 `;
-export const CotainerSelectPublicListList = styled.div``;
+export const CotainerSelectPublicListList = styled.div`
+  width: 180px;
+`;
 
 export const TitlePublicListList = styled.h3`
   color: ${({ theme }) => theme.colors.fourth};

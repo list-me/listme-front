@@ -56,7 +56,7 @@ export const templateRequests = {
       },
     );
 
-    return response.data.templates;
+    return response.data;
   },
   listPublicList: async ({
     page = 0,
