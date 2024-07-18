@@ -20,8 +20,8 @@ const ContainerButton = styled.button`
   }
 `;
 const Container = styled.div`
-  width: 262px;
-  min-height: 52px;
+  width: 280px;
+  min-height: 44px;
   padding: 0px 16px;
   border-radius: 8px;
   background: rgba(255, 107, 107, 0.1);

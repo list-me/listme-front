@@ -22,6 +22,7 @@ import { ReactComponent as RelationIcon } from "../../../../assets/icons/headers
 import { ReactComponent as NumericIcon } from "../../../../assets/numeric-icon.svg";
 import { ReactComponent as DecimalIcon } from "../../../../assets/decimal-icon.svg";
 import { ReactComponent as BooleanIcon } from "../../../../assets/boolean-icon.svg";
+import { ReactComponent as LinkedIcon } from "../../../../assets/linked-product.svg";
 import { IDefaultTable } from "./DefaultTable";
 import handleCellChange from "./utils/handleCellChange";
 import handleBeforeCopy from "./utils/handleBeforeCopy";
@@ -55,7 +56,7 @@ import { ReactComponent as ArrowRightHeaderGroup } from "../../../../assets/arro
 import ParentHeaderEdit from "./components/ParentHeaderEdit";
 import customStyledHeader from "./utils/customStyledHeader";
 import { templateRequests } from "../../../../services/apis/requests/template";
-import ModalSelectColumns from "../ModalSelectColumns";
+import ModalColumnManagement from "../ModalColumnManagement";
 import LimitAlert from "./components/LimitAlert";
 import { ContainerHotTable } from "./styles";
 
@@ -97,6 +98,13 @@ function DefaultTable({
   setParentId,
   subItensMode,
   setSubItemsMode,
+  editModeGroup,
+  setEditModeGroup,
+  groupReferenceEditMode,
+  setGroupReferenceEditMode,
+  idsColumnsSelecteds,
+  setIdsColumnsSelecteds,
+  setSelectedGroup,
 }: IDefaultTable): JSX.Element {
   const { handleRedirectAndGetProducts, setHidden } = useProductContext();
   const [parentHeaderSelectedIndex, setParentHeaderSelectedIndex] =
@@ -116,28 +124,13 @@ function DefaultTable({
   const { conditionsFilter } = useProductContext();
 
   const [groups, setGroups] = useState<
-    { label: string; colspan: number; newHiddens: number[] }[]
+    { label: string; total: number; color: string }[]
   >([]);
   useEffect(() => {
-    if (template?.fields?.groups) {
-      const toGroups = template?.fields?.groups
-        .map((mItemGroup: any) => {
-          const countRealItems = cols.filter(
-            (item) => item.group === mItemGroup.label,
-          );
-
-          const colspan =
-            countRealItems.length === mItemGroup.total ? mItemGroup.total : 1;
-
-          return { label: mItemGroup.label, colspan };
-        })
-        .filter((fItemGroup: any) => fItemGroup.colspan > 0);
-
-      if (toGroups?.length > 0) {
-        setGroups(toGroups);
-      }
+    if (template?.fields?.groups?.length > 0) {
+      setGroups(template?.fields?.groups);
     }
-  }, [cols, template?.fields?.groups]);
+  }, [template?.fields?.groups]);
 
   useEffect(() => {
     if (hotRef.current) {
@@ -352,6 +345,10 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
       } else {
@@ -365,12 +362,16 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      _row: number,
+      row: number,
       col: number,
       _prop: string | number,
       value: string | string[],
     ): void => {
       if (cols) {
+        const haveSync = products[row].have_sync;
+        if (haveSync) {
+          td.style.background = "#DEE2E6";
+        }
         if (value === "valor censurado") {
           // eslint-disable-next-line no-param-reassign
           td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
@@ -392,11 +393,15 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      _row: number,
+      row: number,
       col: number,
       _prop: string | number,
       value: string | string[],
     ): void => {
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
       } else if (cols) {
@@ -425,11 +430,15 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      _row: number,
+      row: number,
       col: number,
       prop: string | number,
       value: any,
     ) => {
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;
@@ -449,11 +458,11 @@ function DefaultTable({
 
       const colType = columns[col]?.type;
       const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
-      const previousValue = _instance.getDataAtCell(_row, col);
+      const previousValue = _instance.getDataAtCell(row, col);
 
       let newValue;
       const regex = /https:\/\/[^/]+\//;
-      if (value && !value.includes("<img")) {
+      if (value && !value.includes("<img") && typeof value !== "string") {
         newValue = value?.map((itemValue: string) => {
           if (itemValue[0] !== undefined && itemValue[0] !== "<") {
             const lastDotIndex: number = itemValue.lastIndexOf(".");
@@ -493,7 +502,7 @@ function DefaultTable({
       customRendererFile(
         _instance,
         td,
-        _row,
+        row,
         col,
         prop,
         newValue,
@@ -517,11 +526,15 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      _row: number,
+      row: number,
       col: number,
       _prop: string | number,
       value: string | string[],
     ): void => {
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
       } else {
@@ -541,7 +554,7 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      _row: number,
+      row: number,
       col: number,
       _prop: string | number,
       value: string | string[],
@@ -550,8 +563,11 @@ function DefaultTable({
       const maxLength = cols[col].limit || DefaultLimits[colType].max;
       const textValue = value as string;
 
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       td.style.border = "";
-
       if (textValue?.length > maxLength) {
         td.style.border = "2px solid #F1BC02";
       }
@@ -568,17 +584,21 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      _row: number,
+      row: number,
       col: number,
       _prop: string | number,
       value: string | string[],
     ): void => {
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;
       }
       const numericValue = value as string;
-      const previousValue = _instance.getDataAtCell(_row, col);
+      const previousValue = _instance.getDataAtCell(row, col);
       const colType = columns[col]?.type;
       const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
 
@@ -603,11 +623,15 @@ function DefaultTable({
     (
       _instance: Handsontable,
       td: HTMLTableCellElement,
-      _row: number,
+      row: number,
       col: number,
       _prop: string | number,
       value: string | string[],
     ): void => {
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;
@@ -650,6 +674,10 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;
@@ -682,9 +710,18 @@ function DefaultTable({
       value: any,
     ): void => {
       // eslint-disable-next-line no-param-reassign
-      value = value?.map((itemBoolean: string) => {
-        return itemBoolean?.toLowerCase();
-      });
+      value =
+        typeof value === "string"
+          ? value
+          : value?.map((itemBoolean: string) => {
+              return itemBoolean?.toLowerCase();
+            });
+
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
+
       if (value === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
         return;
@@ -736,139 +773,6 @@ function DefaultTable({
     [ICON_HEADER],
   );
 
-  const [editModeGroup, setEditModeGroup] = useState<"group" | "ungroup" | "">(
-    "",
-  );
-  const [groupReferenceEditMode, setGroupReferenceEditMode] = useState("");
-
-  const [idsColumnsSelecteds, setIdsColumnsSelecteds] = useState<string[]>([]);
-
-  const createHeaderGroup = async (newGroup: string): Promise<void> => {
-    try {
-      const newGroups = [...[...groups].map((group) => group.label), newGroup];
-
-      const newFields = template.fields.fields.map((field: any) => {
-        if (idsColumnsSelecteds.includes(field.id)) {
-          const newField = { ...field, group: newGroup };
-          delete newField.order;
-          delete newField.width;
-          delete newField.frozen;
-          delete newField.hidden;
-          delete newField.integrations;
-          return newField;
-        }
-        const newField = { ...field };
-        delete newField.order;
-        delete newField.width;
-        delete newField.frozen;
-        delete newField.hidden;
-        delete newField.integrations;
-        return newField;
-      });
-
-      const newTemplates = {
-        fields: newFields,
-        groups: newGroups,
-      };
-      await templateRequests.update(template.id, newTemplates);
-      toast.success("Grupo criado com sucesso");
-      const id = window.location.pathname.substring(10);
-      if (id) {
-        setTimeout(() => {
-          handleRedirectAndGetProducts(id).then(() => {});
-        }, 0);
-      }
-      setIdsColumnsSelecteds([]);
-      setEditModeGroup("");
-    } catch (error) {
-      toast.error("Ocorreu um erro durante a criação do novo grupo");
-      console.log(error);
-      throw error;
-    }
-  };
-
-  const removeHeaderGroup = async (referenceGroup: string): Promise<void> => {
-    try {
-      const newFields = template.fields.fields.map((field: any) => {
-        if (idsColumnsSelecteds.includes(field.id)) {
-          const newField = { ...field, group: "" };
-          delete newField.order;
-          delete newField.width;
-          delete newField.frozen;
-          delete newField.hidden;
-          delete newField.integrations;
-          delete newField.group;
-          return newField;
-        }
-        const newField = { ...field };
-        delete newField.order;
-        delete newField.width;
-        delete newField.frozen;
-        delete newField.hidden;
-        delete newField.integrations;
-        return newField;
-      });
-
-      const fieldsFiltered = newFields.filter((fItem: any) => {
-        return fItem.group === referenceGroup;
-      });
-
-      if (fieldsFiltered.length === 0) {
-        const indexGroup = groups.findIndex(
-          (obj) => obj.label === referenceGroup,
-        );
-        groups.splice(indexGroup, 1);
-      }
-      const newTemplates = {
-        fields: newFields,
-        groups: groups.map((mGroup) => mGroup.label),
-      };
-      await templateRequests.update(template.id, newTemplates);
-      toast.success("Grupo criado com sucesso");
-      const id = window.location.pathname.substring(10);
-      if (id) {
-        setTimeout(() => {
-          handleRedirectAndGetProducts(id).then(() => {});
-        }, 0);
-      }
-      setIdsColumnsSelecteds([]);
-      setEditModeGroup("");
-    } catch (error) {
-      toast.error("Ocorreu um erro tentar remover coluna de grupo");
-      console.log(error);
-      throw error;
-    }
-  };
-
-  const totalGroupedColumns = useMemo(() => {
-    if (groups && groups.length > 0 && groups[0]?.label) {
-      return groups.reduce(
-        (ttl, itemGroup) => ttl + (itemGroup?.colspan || 0),
-        0,
-      );
-    }
-    return 0;
-  }, [groups]);
-  const totalUngroupedColumns = useMemo(() => {
-    if (cols && cols.length > 0) {
-      return cols.length - 1 - totalGroupedColumns;
-    }
-    return 0;
-  }, [cols, totalGroupedColumns]);
-
-  const ungroupeds = useMemo(() => {
-    if (totalUngroupedColumns > 0) {
-      return new Array(totalUngroupedColumns).fill("+ Criar novo grupo");
-    }
-    return [];
-  }, [totalUngroupedColumns]);
-
-  // const groupsToView = useMemo(() => {
-  //   return groups[0]?.label
-  //     ? [[...groups, ...ungroupeds], colHeaders]
-  //     : [ungroupeds, colHeaders];
-  // }, [groups, ungroupeds, colHeaders]);
-
   const newHiddens = useMemo(() => {
     return groups
       .map((itemGroup: any) => {
@@ -895,14 +799,9 @@ function DefaultTable({
         editModeGroup,
         idsColumnsSelecteds,
         setIdsColumnsSelecteds,
-        handleRedirectAndGetProducts,
         groupReferenceEditMode,
-        setHidden,
-        setGroups,
         changeAllRowsSelected,
         allRowsSelected,
-        isPublic,
-        setEditModeGroup,
       );
     },
     [
@@ -1041,6 +940,10 @@ function DefaultTable({
       _value: any,
     ) => {
       const stringRow = String(row);
+      const haveSync = products[row].have_sync;
+      if (haveSync) {
+        td.style.background = "#DEE2E6";
+      }
 
       const isChecked = isPublic
         ? rowsSelected?.includes(stringRow)
@@ -1078,7 +981,27 @@ function DefaultTable({
 
       td.innerHTML = "";
 
-      td.appendChild(checkboxContainer);
+      const linkedIconContainer = document.createElement("div");
+
+      const iconContainer = document.createElement("div");
+      iconContainer.style.width = "100%";
+      iconContainer.style.height = "50px";
+      iconContainer.style.display = "flex";
+      iconContainer.style.alignItems = "center";
+      iconContainer.style.justifyContent = "center";
+      iconContainer.className = "linked-icon-container";
+
+      ReactDOM.render(<LinkedIcon />, iconContainer);
+      linkedIconContainer.appendChild(iconContainer);
+
+      if (haveSync) {
+        const linkedIconElement = linkedIconContainer.firstChild;
+        if (linkedIconElement) {
+          td.appendChild(linkedIconElement);
+        }
+      } else {
+        td.appendChild(checkboxContainer);
+      }
     },
     [
       isPublic,
@@ -1320,7 +1243,7 @@ function DefaultTable({
       )}
       <ContainerHotTable isPublic={isPublic}>
         <HotTable
-          key={parentId + newHiddens.join() + groups.join() + cols.join()}
+          key={`${parentId}${cols.length}`}
           nestedRows
           // nestedHeaders={groupsToView}
           bindRowsWithHeaders
@@ -1677,17 +1600,17 @@ function DefaultTable({
         />
       )}
       {editModeGroup && (
-        <ModalSelectColumns
+        <ModalColumnManagement
           ids={idsColumnsSelecteds}
           editModeGroup={editModeGroup}
           clearSubItensMode={() => {
             setIdsColumnsSelecteds([]);
             setEditModeGroup("");
           }}
-          onFinishProductChild={
-            editModeGroup === "group" ? createHeaderGroup : removeHeaderGroup
-          }
+          groups={groups}
+          template={template}
           groupReferenceEditMode={groupReferenceEditMode}
+          setSelectedGroup={setSelectedGroup}
         />
       )}
       {parentHeaderSelectedIndex && (

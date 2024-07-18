@@ -42,8 +42,9 @@ function LinkedListSelector({
           page,
           limit,
         });
-        setCurrentTotalItems(response.length);
-        setTemplates(response);
+
+        setCurrentTotalItems(response.total);
+        setTemplates(response.templates);
       } catch (error) {
         toast.error("Ocorreu um erro ao listar os catálogos");
         console.error(error);
@@ -55,9 +56,9 @@ function LinkedListSelector({
   useEffect(() => {
     handleGetTemplates({
       page: currentPage - 1,
-      limit: 100,
+      limit: 7,
     });
-  }, [currentPage, handleGetTemplates, updateModalOpened]);
+  }, [currentPage, handleGetTemplates]);
 
   return (
     <>

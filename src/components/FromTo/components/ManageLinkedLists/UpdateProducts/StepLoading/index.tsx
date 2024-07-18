@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ContainerLoading, ContainerModal, ContentLoading } from "./styles";
 import {
   BoxFromTo,
@@ -21,9 +21,15 @@ function StepLoading({
   setIsOpened: React.Dispatch<React.SetStateAction<boolean>>;
   onFinish: () => void;
 }): JSX.Element {
+  const hasFinished = useRef(false);
+
   useEffect(() => {
-    onFinish();
+    if (!hasFinished.current) {
+      onFinish();
+      hasFinished.current = true;
+    }
   }, [onFinish]);
+
   return (
     <ContainerModal>
       <ContainerLoading>

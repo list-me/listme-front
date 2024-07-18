@@ -63,6 +63,7 @@ function PublicListList(): JSX.Element {
       is_public: true,
       sort: selectFilter.value,
       name: debouncedInputValue,
+      category_id: currentCategoryId,
     });
   }, [
     currentCategoryId,

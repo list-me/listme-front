@@ -36,8 +36,9 @@ function PaginationTablePublicListListComponent({
       >
         <ArrowLeftPagination />
       </ButtonPaginationPublicListList>
-      {buttons.map((_item, index: number) => (
+      {buttons.map((item, index: number) => (
         <ButtonPaginationPublicListList
+          key={item}
           isActive={index + 1 === currentPage}
           type="button"
           onClick={() => setCurrentPage(index + 1)}

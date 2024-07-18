@@ -54,4 +54,13 @@ export interface IDefaultTable {
   setParentId: React.Dispatch<React.SetStateAction<string | null>>;
   subItensMode: "add" | "remove";
   setSubItemsMode: React.Dispatch<React.SetStateAction<"add" | "remove">>;
+  editModeGroup: "" | "group" | "ungroup";
+  setEditModeGroup: React.Dispatch<
+    React.SetStateAction<"" | "group" | "ungroup">
+  >;
+  groupReferenceEditMode: string;
+  setGroupReferenceEditMode: React.Dispatch<React.SetStateAction<string>>;
+  idsColumnsSelecteds: string[];
+  setIdsColumnsSelecteds: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedGroup: React.Dispatch<React.SetStateAction<string>>;
 }

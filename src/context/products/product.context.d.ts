@@ -109,6 +109,7 @@ interface IProduct {
   parent_id: string;
   is_parent: boolean;
   children: any[];
+  have_sync: boolean;
 }
 
 interface IProductToTable {
@@ -118,6 +119,7 @@ interface IProductToTable {
   id: string;
   created_at: string;
   childrens?: IProductToTable[];
+  have_sync: boolean;
 }
 
 interface IProductsRequest {

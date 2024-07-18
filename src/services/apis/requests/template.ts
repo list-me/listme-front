@@ -56,7 +56,7 @@ export const templateRequests = {
       },
     );
 
-    return response.data.templates;
+    return response.data;
   },
   listPublicList: async ({
     page = 0,
@@ -234,6 +234,16 @@ export const templateRequests = {
   deleteTemplateImport: async (id: string): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
     const response = await api.delete(`/template/${id}/import`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data[0];
+  },
+  deleteTemplateSync: async (id: string): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.delete(`/template/${id}/sync`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -103,7 +103,7 @@ function HeaderFilters({
         <RightContent>
           {isPublic && (
             <Button
-              height="52px"
+              height="44px"
               width="331px"
               className="secondButton linkButton"
               onClick={() => {
@@ -120,16 +120,18 @@ function HeaderFilters({
           <MoreOptions>
             <EllipsisIcon />
           </MoreOptions>
-          <ButtonError
-            errors={errors}
-            setSidebarErrorOpened={setSidebarErrorOpened}
-          />
+          {errors.total > 0 && (
+            <ButtonError
+              errors={errors}
+              setSidebarErrorOpened={setSidebarErrorOpened}
+            />
+          )}
           {!isPublic && (
             <>
               {template?.templates_sync_ids && (
                 <Button
-                  height="52px"
-                  width="227px"
+                  height="44px"
+                  width="212px"
                   isSecondary
                   onClick={() => {
                     setFromToIsOpened(true);
@@ -142,8 +144,8 @@ function HeaderFilters({
               )}
 
               <Button
-                height="52px"
-                width="227px"
+                height="44px"
+                width="212px"
                 isSecondary
                 className="secondButton"
                 onClick={() => setFromToIsOpened(true)}
@@ -152,8 +154,8 @@ function HeaderFilters({
                 Importar produtos
               </Button>
               <Button
-                height="52px"
-                width="226px"
+                height="44px"
+                width="212px"
                 className="secondButton"
                 onClick={handleAddProductClick}
               >

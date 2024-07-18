@@ -226,12 +226,11 @@ export const PersonalModal = ({
       const fieldToUpdate = template.fields.fields.find((item: any) => {
         return item.id === data?.id;
       });
-
       currentField = {
         ...fieldToUpdate,
         options:
           type !== "decimal"
-            ? option[0] === ""
+            ? option === undefined || option[0] === ""
               ? []
               : option || []
             : [decimalPoint],
@@ -240,6 +239,7 @@ export const PersonalModal = ({
         title: title,
         required: required,
         limit: type === "relation" ? 20 : characterLimit || 255,
+        group: fieldToUpdate.group || "",
       };
     } else {
       currentField = {
@@ -312,7 +312,7 @@ export const PersonalModal = ({
         onCancel={onClickModal}
         onOk={onClickModal}
         width="470px"
-        style={{ marginBottom: "2vh", top: 30, maxHeight: "90vh" }}
+        style={{ marginBottom: "2vh", top: 30, maxHeight: "80vh" }}
         footer={null}
       >
         <Container isDisabled={data?.default && data?.required}>

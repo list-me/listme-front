@@ -82,46 +82,17 @@ function StepManageLinkedLists(): JSX.Element {
   }, [dataTemplateSelected, items, setCurrentStep, templateSelected?.id]);
 
   const onFinishDeleteAll = useCallback(async () => {
-    try {
-      // Mapeia os itens removendo os nomes
-      const removedNames = items.map((mItem: any) => ({
-        target: mItem.target,
-        is_sync: false,
-        origin: mItem.origin,
-      }));
-
-      const {
-        id,
-        company_id,
-        template_id,
-        created_at,
-        updated_at,
-        deleted_at,
-        storage,
-        category_id,
-        integration_config_id,
-        status,
-        default: defaultStatus,
-        bucket,
-        fields: { fields: fieldsName, name, ...fieldsRest },
-        ...restTemplateData
-      } = dataTemplateSelected;
-
-      const copyData = {
-        ...restTemplateData,
-        fields: {
-          fields: removedNames,
-          ...fieldsRest,
-        },
-      };
-      await templateRequests.update(templateSelected.id, copyData);
-
-      setCurrentStep(4);
-    } catch (error) {
-      toast.error("Não foi possível atualizar o catálogo, tente novamente!");
-      setCurrentStep(0);
+    if (deleteAll && templateSelected?.id) {
+      try {
+        await templateRequests.deleteTemplateSync(templateSelected.id);
+        setCurrentStep(4);
+        setTemplateSelected(null);
+      } catch (error) {
+        toast.error("Não foi excluir o vínculo, tente novamente!");
+        setCurrentStep(0);
+      }
     }
-  }, [dataTemplateSelected, items, setCurrentStep, templateSelected?.id]);
+  }, [deleteAll, setCurrentStep, templateSelected?.id]);
 
   return (
     <StepContentContainer>

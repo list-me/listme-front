@@ -2,14 +2,14 @@ import styled from "styled-components";
 
 export const TitleEditable = styled.h3`
   font-family: ${({ theme }) => theme.fonts.family.bold};
-  font-size: ${({ theme }) => theme.fonts.sizes.xlarge};
+  font-size: ${({ theme }) => theme.fonts.sizes.medium};
   font-weight: 700;
   line-height: 150%;
   margin: 0;
 `;
 export const InputEditable = styled.input<{ error: string }>`
   font-family: ${({ theme }) => theme.fonts.family.bold};
-  font-size: ${({ theme }) => theme.fonts.sizes.xlarge};
+  font-size: ${({ theme }) => theme.fonts.sizes.medium};
   font-weight: 700;
   line-height: 150%;
   margin: 0;
@@ -25,7 +25,7 @@ export const InputEditable = styled.input<{ error: string }>`
 `;
 export const SpanEditable = styled.p`
   font-family: ${({ theme }) => theme.fonts.family.default};
-  font-size: ${({ theme }) => theme.fonts.sizes.xlarge};
+  font-size: ${({ theme }) => theme.fonts.sizes.medium};
   font-weight: ${({ theme }) => theme.fonts.weights.bold};
   max-width: 50%;
   line-height: 150%;
