@@ -345,7 +345,7 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
-      const haveSync = products[row].have_sync;
+      const haveSync = products[row]?.have_sync;
       if (haveSync) {
         td.style.background = "#DEE2E6";
       }
@@ -368,7 +368,7 @@ function DefaultTable({
       value: string | string[],
     ): void => {
       if (cols) {
-        const haveSync = products[row].have_sync;
+        const haveSync = products[row]?.have_sync;
         if (haveSync) {
           td.style.background = "#DEE2E6";
         }
@@ -398,7 +398,7 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
-      const haveSync = products[row].have_sync;
+      const haveSync = products[row]?.have_sync;
       if (haveSync) {
         td.style.background = "#DEE2E6";
       }
@@ -435,7 +435,7 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ) => {
-      const haveSync = products[row].have_sync;
+      const haveSync = products[row]?.have_sync;
       if (haveSync) {
         td.style.background = "#DEE2E6";
       }
@@ -531,7 +531,7 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
-      const haveSync = products[row].have_sync;
+      const haveSync = products[row]?.have_sync;
       if (haveSync) {
         td.style.background = "#DEE2E6";
       }
@@ -563,7 +563,7 @@ function DefaultTable({
       const maxLength = cols[col].limit || DefaultLimits[colType].max;
       const textValue = value as string;
 
-      const haveSync = products[row].have_sync;
+      const haveSync = products[row]?.have_sync;
       if (haveSync) {
         td.style.background = "#DEE2E6";
       }
@@ -589,7 +589,7 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
-      const haveSync = products[row].have_sync;
+      const haveSync = products[row]?.have_sync;
       if (haveSync) {
         td.style.background = "#DEE2E6";
       }
@@ -628,7 +628,7 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
-      const haveSync = products[row].have_sync;
+      const haveSync = products[row]?.have_sync;
       if (haveSync) {
         td.style.background = "#DEE2E6";
       }
@@ -674,7 +674,7 @@ function DefaultTable({
       prop: string | number,
       value: any,
     ): void => {
-      const haveSync = products[row].have_sync;
+      const haveSync = products[row]?.have_sync;
       if (haveSync) {
         td.style.background = "#DEE2E6";
       }
@@ -717,7 +717,7 @@ function DefaultTable({
               return itemBoolean?.toLowerCase();
             });
 
-      const haveSync = products[row].have_sync;
+      const haveSync = products[row]?.have_sync;
       if (haveSync) {
         td.style.background = "#DEE2E6";
       }
@@ -940,7 +940,7 @@ function DefaultTable({
       _value: any,
     ) => {
       const stringRow = String(row);
-      const haveSync = products[row].have_sync;
+      const haveSync = products[row]?.have_sync;
       if (haveSync) {
         td.style.background = "#DEE2E6";
       }
