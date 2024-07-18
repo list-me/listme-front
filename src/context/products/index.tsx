@@ -853,13 +853,8 @@ export const ProductContextProvider = ({
     templateRequests
       .customView(window.location.pathname.substring(10), { fields })
       .then(() => {
-        setColHeaders(titles);
-        const id = window.location.pathname.substring(10);
-        if (id) {
-          setTimeout(() => {
-            handleRedirectAndGetProducts(id).then(() => {});
-          }, 0);
-        }
+        setCustomFields(fields as any);
+        // setColHeaders(titles);
       })
       .catch((_error) =>
         toast.error("Ocorreu um erro ao alterar a posição da coluna"),

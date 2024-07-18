@@ -393,6 +393,7 @@ export const PersonalModal = ({
                     );
                     return;
                   }
+                  console.log("🚀 ~ handleUpdateTemplate ~ fields:", fields);
                   handleUpdateTemplate(fields).then((response) => {
                     if (response) {
                       const newColumn = {
@@ -400,6 +401,7 @@ export const PersonalModal = ({
                         data: response[response?.length - 1]?.id,
                         options: fields.option,
                       };
+
                       onClickModal();
                       onUpdate(newColumn, response);
                       const id = window.location.pathname.substring(10);

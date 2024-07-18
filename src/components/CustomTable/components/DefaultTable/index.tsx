@@ -106,7 +106,7 @@ function DefaultTable({
   setIdsColumnsSelecteds,
   setSelectedGroup,
 }: IDefaultTable): JSX.Element {
-  const { handleRedirectAndGetProducts, setHidden } = useProductContext();
+  const { handleRedirectAndGetProducts, customFields } = useProductContext();
   const [parentHeaderSelectedIndex, setParentHeaderSelectedIndex] =
     useState<number>(0);
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
@@ -484,10 +484,13 @@ function DefaultTable({
           }
 
           const regexSRC = /src="([^"]+)"/;
+          if (typeof itemValue !== "string") {
+            return "";
+          }
 
           const match = itemValue?.match(regexSRC);
 
-          if (match && regex.test(match[1])) {
+          if (match && regex?.test(match[1])) {
             return itemValue;
           }
           return (
@@ -519,7 +522,7 @@ function DefaultTable({
         td.style.border = "2px solid #F1BC02";
       }
     },
-    [columns, hotRef, loadingRef, template, uploadImages, products],
+    [columns, hotRef, loadingRef, products, template, uploadImages],
   );
 
   const customRendererDropdown = useCallback(
@@ -559,8 +562,9 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
-      const colType = cols[col].type;
-      const maxLength = cols[col].limit || DefaultLimits[colType].max;
+      const colType = columns[col].type;
+      const maxLength = columns[col].limit || DefaultLimits[colType].max;
+      console.log("🚀 ~ columns:", columns);
       const textValue = value as string;
 
       const haveSync = products[row]?.have_sync;
@@ -577,7 +581,7 @@ function DefaultTable({
         td.innerHTML = textValue;
       }
     },
-    [cols, svgStringDropDown],
+    [columns, svgStringDropDown, products],
   );
 
   const customRendererNumeric = useCallback(
@@ -812,12 +816,10 @@ function DefaultTable({
       getIconByType,
       groupReferenceEditMode,
       groups,
-      handleRedirectAndGetProducts,
       headerTable,
       hotRef,
       idsColumnsSelecteds,
-      isPublic,
-      setHidden,
+      setIdsColumnsSelecteds,
       svgArrowRightHeaderGroup,
       svgStringConfigHeaderGroup,
       template,
@@ -1243,9 +1245,8 @@ function DefaultTable({
       )}
       <ContainerHotTable isPublic={isPublic}>
         <HotTable
-          key={`${parentId}${cols.length}`}
+          key={`${parentId}${cols.length}${colHeaders.length}`}
           nestedRows
-          // nestedHeaders={groupsToView}
           bindRowsWithHeaders
           className="hot-table"
           readOnly={
@@ -1294,8 +1295,8 @@ function DefaultTable({
               const currentCol = cols[cellX];
               if (
                 currentCol?.limit &&
-                currentCol.type !== "boolean" &&
-                currentCol.type !== "file" &&
+                (currentCol.type === "text" ||
+                  currentCol.type === "paragraph") &&
                 event?.button === 0
               ) {
                 afterSelectionHandler(event, coords);

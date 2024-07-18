@@ -12,7 +12,13 @@ import ReactDOM from "react-dom/client";
 import { renderToString } from "react-dom/server";
 
 import { unmountComponentAtNode } from "react-dom";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { registerAllEditors, registerAllModules } from "handsontable/registry";
 import { HotTable } from "@handsontable/react";
@@ -75,6 +81,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
     uploadImages,
     handleFreeze,
     conditionsFilter,
+    customFields,
   } = useProductContext();
   const [editModeGroup, setEditModeGroup] = useState<"group" | "ungroup" | "">(
     "",
@@ -104,9 +111,9 @@ const CustomTable: React.FC<CustomTableProps> = ({
     return colHeadersParams.includes(item) || item === " ";
   });
 
-  const colsToView = cols.filter((item) => {
-    return colHeadersParams.includes(item.title);
-  });
+  const colsToView = useMemo(() => {
+    return cols.filter((item) => colHeadersParams.includes(item.title));
+  }, [cols, colHeadersParams]);
 
   const [currentCell, setCurrentCell] = useState<any>({});
 
@@ -120,7 +127,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   }
 
   const handleMountColumns = useCallback(() => {
-    const columnsCustom = headerTable.sort().map((column) => {
+    const columnsCustom = headerTable.map((column) => {
       if (
         Object.keys(COMPONENT_CELL_PER_TYPE).includes(
           column.type?.toString()?.toUpperCase(),
@@ -148,6 +155,10 @@ const CustomTable: React.FC<CustomTableProps> = ({
 
     setCols(columnsCustom);
   }, [COMPONENT_CELL_PER_TYPE, headerTable]);
+
+  useEffect(() => {
+    handleMountColumns();
+  }, [handleMountColumns]);
 
   const handleDeleteColumn = (columnIndex: number): void => {
     setIsOpen(!isOpen);
@@ -240,10 +251,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
         toast.error(err?.response?.data?.message);
       });
   };
-
-  useEffect(() => {
-    handleMountColumns();
-  }, [handleMountColumns]);
 
   const [parentId, setParentId] = useState<string | null>(null);
   const [subItensMode, setSubItemsMode] = useState<"add" | "remove">("add");

@@ -73,6 +73,11 @@ export function RelationForm({
     getTemplateId(value.options),
   );
 
+  useEffect(() => {
+    const newTemplate = getTemplateId(value.options);
+    setTemplateId(newTemplate);
+  }, [value.options]);
+
   const [isEdit, setIsEdit] = useState<boolean>(Object.keys(value).length > 1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -102,7 +107,6 @@ export function RelationForm({
     currentTemplateId: string,
   ): Promise<void> => {
     setIsLoading(true);
-
     try {
       templateRequests.get(currentTemplateId).then((temp) => {
         const customFields = temp.fields.fields
@@ -204,7 +208,7 @@ export function RelationForm({
             </Space>
           </Radio.Group>
         </div>
-        {templateRelation == "Outro Catálogo" ? (
+        {templateRelation === "Outro Catálogo" ? (
           <div className="containerFields">
             <div className="selectCatalog">
               <label className="label">Selecione o catálogo</label>
@@ -228,12 +232,14 @@ export function RelationForm({
                 defaultValue={
                   template.find((e) => e.value == templateId)?.value
                 }
-                value={templateId}
+                value={
+                  template.find((item) => item.value === templateId)?.label
+                }
                 disabled={isEdit}
               >
-                {template.map((item, index) => {
+                {template.map((item) => {
                   return (
-                    <Select.Option key={index} value={item.value}>
+                    <Select.Option key={item.value} value={item.value}>
                       {" "}
                       {item.label}{" "}
                     </Select.Option>
