@@ -2,8 +2,18 @@ interface ImageContextProps {
   children: any;
 }
 
+type FileOptional = {
+  brand: string;
+  name: string;
+};
+
 interface ImageContext {
-  uploadImages: (files: File[], bucket_url: string) => Promise<string[] | void>;
+  uploadImages: (
+    files: File[],
+    bucket: string,
+    companyId: string,
+    optionals?: { brand?: string; name?: string },
+  ) => Promise<string[] | void>;
   isDragActive: boolean;
   handleActiveDrag: () => void;
 }
@@ -13,4 +23,9 @@ interface SignedUrlResponse {
   access_url: string;
 }
 
-export type { ImageContextProps, ImageContext, SignedUrlResponse };
+export type {
+  ImageContextProps,
+  ImageContext,
+  SignedUrlResponse,
+  FileOptional,
+};

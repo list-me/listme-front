@@ -13,22 +13,29 @@ export interface IDefaultTable {
   products: IProductToTable[];
   setProducts: React.Dispatch<React.SetStateAction<IProductToTable[]>>;
   handleDelete: Function;
-  handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>;
+  handleSave: (
+    value: any,
+    isNew: boolean,
+    productId: string,
+    fieldId: string,
+    newValue: string,
+  ) => Promise<any>;
   loadingRef: React.RefObject<HTMLDivElement>;
   componentCellPerType: ICustomCellType;
   total: number;
   setTotal: React.Dispatch<React.SetStateAction<number>>;
   template: any;
-  renderHeaderComponent: (
-    column: number,
-    TH: HTMLTableHeaderCellElement,
-  ) => void;
   hidden: number[];
   handleResize: Function;
   columns: IHeader[];
   setColumns: React.Dispatch<React.SetStateAction<IHeader[]>>;
   handleMove: Function;
-  uploadImages: (files: File[], bucketUrl: string) => Promise<void | string[]>;
+  uploadImages: (
+    files: File[],
+    bucketUrl: string,
+    companyId: string,
+    optionals?: { brand?: string; name?: string },
+  ) => Promise<void | string[]>;
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   headerTable: IHeaderTable[];
@@ -38,4 +45,22 @@ export interface IDefaultTable {
   setCurrentCell: React.Dispatch<any>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleFreeze: any;
+  isPublic?: boolean;
+  allRowsSelected?: boolean;
+  setAllRowsSelected?: React.Dispatch<React.SetStateAction<boolean>>;
+  rowsSelected?: string[];
+  setRowsSelected?: React.Dispatch<React.SetStateAction<string[]>>;
+  parentId: string | null;
+  setParentId: React.Dispatch<React.SetStateAction<string | null>>;
+  subItensMode: "add" | "remove";
+  setSubItemsMode: React.Dispatch<React.SetStateAction<"add" | "remove">>;
+  editModeGroup: "" | "group" | "ungroup";
+  setEditModeGroup: React.Dispatch<
+    React.SetStateAction<"" | "group" | "ungroup">
+  >;
+  groupReferenceEditMode: string;
+  setGroupReferenceEditMode: React.Dispatch<React.SetStateAction<string>>;
+  idsColumnsSelecteds: string[];
+  setIdsColumnsSelecteds: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedGroup: React.Dispatch<React.SetStateAction<string>>;
 }

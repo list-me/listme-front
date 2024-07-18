@@ -2,11 +2,9 @@
 /* eslint-disable import/prefer-default-export */
 import React, { ReactNode, createRef } from "react";
 import { BaseEditorComponent } from "@handsontable/react";
-import { toast } from "react-toastify";
 import { FileProps, FileState } from "./File.d";
 import Dropzone from "../../../Dropzone";
 import { productContext } from "../../../../context/products";
-import { isEquivalent } from "../../../../utils";
 
 export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
   rootRef = createRef<HTMLDivElement>();
@@ -30,6 +28,8 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
       currentIndex: 0,
       isOpen: false,
       isLoading: false,
+      companyId: "",
+      optionals: { brand: "", name: "" },
     };
 
     this.containerStyle = {
@@ -69,17 +69,47 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
     cellProperties: any,
   ): void {
     super.prepare(row, col, prop, td, originalValue, cellProperties);
+    const { hotInstance } = this.props.hotRef.current;
+    const { template } = this.props;
+    const companyId = template.company_id;
+
+    const optionals = {
+      brand: "",
+      name: "",
+    };
+    if (template.id === "8956d969-d769-4f09-8736-e0b4d73b3e3d") {
+      const brand = hotInstance.getDataAtRowProp(row, "730291");
+
+      optionals.brand = brand?.length ? brand[0]?.id : undefined;
+      optionals.name = hotInstance.getDataAtRowProp(row, "474091");
+    }
+
+    if (template.id === "a13f5317-d855-4766-9063-c916f4d90b83") {
+      const brand = hotInstance.getDataAtRowProp(row, "956614");
+      optionals.brand = brand?.length ? brand[0]?.id : undefined;
+      optionals.name = hotInstance.getDataAtRowProp(row, "889711");
+    }
 
     const productId = this.props.dataProvider[row][prop]
       ? this.props.dataProvider[row]?.id
       : undefined;
-
+    const regex = /https:\/\/[^/]+\//;
+    const processedOriginalValue = originalValue?.map((item: any) => {
+      const newItem = item.includes("<img")
+        ? item
+        : `<img class="imgItem" loading="lazy" src="${
+            regex.test(item) ? item : `${template.bucket}/${item}`
+          }" style="width:25px;height:25px;margin-right:4px;">`;
+      return newItem;
+    });
     this.setState({
-      newValue: originalValue,
+      newValue: processedOriginalValue,
       field: prop,
       productId,
       row,
       col,
+      companyId,
+      optionals,
     });
   }
 
@@ -124,6 +154,7 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
               value={this.state.newValue}
               field={this.state.field}
               productId={this.state.productId}
+              companyId={this.state.companyId}
               onCancel={() => {
                 this.finishEditing();
                 this.navigateToNextRightCell();
@@ -134,6 +165,10 @@ export class FileEditor extends BaseEditorComponent<FileProps, FileState, any> {
 
                 this.TD.setAttribute("data-new-value", JSON.stringify(images));
               }}
+              instance={this.hotInstance}
+              row={this.row}
+              optionals={this.state.optionals}
+              template={this.props.template}
             />
           ) : (
             <></>

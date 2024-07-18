@@ -1,63 +1,39 @@
-import React, { ReactComponentElement, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Space, Table, Tag } from "antd";
-import { TableRowSelection } from "antd/es/table/interface";
+import React, { useEffect, useState } from "react";
+import { Space, Tag } from "antd";
 import { toast } from "react-toastify";
-import { Sidebar } from "../../components/Sidebar";
-import { Header } from "../../components/Header";
-import { TitlePage, Container, Content, Capsule } from "./styles";
-import Button from "../../components/Button";
-// @ts-ignore
-import { ReactComponent as AddIcon } from "../../assets/add-secondary.svg";
-// @ts-ignore
-import { ReactComponent as EditIcon } from "../../assets/edit-icon.svg";
-// @ts-ignore
-import { ReactComponent as CopyIcon } from "../../assets/copy-icon.svg";
-// @ts-ignore
-import { ReactComponent as TrashIcon } from "../../assets/trash-icon.svg";
-import { CustomTable } from "../../components/Table/index";
+import { TitlePage, Content, HeaderTemplates, ImportButton } from "./styles";
+import { ReactComponent as RefreshIcon } from "../../assets/refresh.svg";
+import { ReactComponent as ImportIcon } from "../../assets/import-icon.svg";
+import { ReactComponent as EllipsisIcon } from "../../assets/verticalEllipsis.svg";
+import CustomTable from "../../components/Table/index";
 import { templateRequests } from "../../services/apis/requests/template";
-import { TemplateDefault } from "../../components/TemplateDefault";
-import Select from "../../components/Select";
+import TemplateDefault from "../../components/TemplateDefault";
+import { IPaginationTemplate } from "./templates";
+import { useFilterContext } from "../../context/FilterContext";
+import formatDate from "../../components/FromTo/utils/formatDate";
+import { useFromToContext } from "../../context/FromToContext";
+import FromTo from "../../components/FromTo";
+import UpdateProducts from "../../components/FromTo/components/ManageLinkedLists/UpdateProducts";
 
-interface IPaginationTemplate {
-  page?: number;
-  limit?: number;
-}
-
-const Template = () => {
+function Template(): JSX.Element {
   const [templates, setTemplates] = useState();
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [updateModalOpened, setUpdateModalOpened] = useState(false);
+  const [templatesSyncIds, setTemplatesSyncIds] = useState<string[]>([]);
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const { setFromToIsOpened } = useFromToContext();
 
-  const navigate = useNavigate();
+  const { setFilters, defaultFilter, setFilterStatus, setConditions } =
+    useFilterContext();
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
+  useEffect(() => {
+    setConditions([]);
+    setFilters([defaultFilter]);
+    setFilterStatus(false);
+  }, []);
 
-  const handleTakeNewPages = async ({
-    limit,
-    page,
-  }: IPaginationTemplate): Promise<void> => {
-    setLoading(true);
-    try {
-      handleGetTemplates({ page, limit });
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      toast.error("Ocorreu um erro ao carregar os demais catálogos");
-    }
-  };
-
-  const handleGetTemplates = ({
-    page = 0,
-    limit = 50,
-  }: IPaginationTemplate) => {
+  const handleGetTemplates = ({ page, limit }: IPaginationTemplate): void => {
     templateRequests
-      .list({ limit, page })
+      .list({ limit, page, list: true })
       .then((response) => {
         setTemplates(response);
       })
@@ -67,12 +43,20 @@ const Template = () => {
       });
   };
 
-  const rowSelection: TableRowSelection<any> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
+  const handleTakeNewPages = async ({
+    limit,
+    page,
+  }: IPaginationTemplate): Promise<void> => {
+    try {
+      handleGetTemplates({ page, limit });
+    } catch (error) {
+      toast.error("Ocorreu um erro ao carregar os demais catálogos");
+    }
   };
 
-  const handleClick = (record: any, rowIndex: number | undefined): void => {};
+  useEffect(() => {
+    handleGetTemplates({ page: 0, limit: 100 });
+  }, []);
 
   const columns = [
     {
@@ -97,14 +81,53 @@ const Template = () => {
       title: "Produtos",
       key: "total",
       dataIndex: "total",
-      width: "5%",
+      width: "20%",
       align: "center",
       render: (_: any, record: any) => {
         const total =
           record.total >= 1000
             ? Number(record.total / 1000).toFixed(3)
             : record.total;
-        return <span style={{ color: "#3818D9" }}> {total} </span>;
+
+        const totalNewProducts = record?.templates_sync_ids?.reduce(
+          (sum: number, item: any) => sum + item.new_products_amount,
+          0,
+        );
+
+        return (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              justifyContent: "center",
+            }}
+          >
+            <span style={{ color: "#3818D9" }}> {total} </span>
+            {totalNewProducts > 0 ? (
+              <button
+                type="button"
+                style={{
+                  background: "#F15757",
+                  color: "#fff",
+                  fontSize: "12px",
+                  height: "17px",
+                  padding: "0 4px",
+                  borderRadius: "99px",
+                  border: "none",
+                  flexShrink: 0,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                +{totalNewProducts} Novos
+              </button>
+            ) : (
+              <></>
+            )}
+          </div>
+        );
       },
     },
     {
@@ -113,6 +136,11 @@ const Template = () => {
       dataIndex: "created_at",
       width: "13%",
       align: "center",
+      render: (_: any, record: any) => {
+        return (
+          <span className="grayText">{formatDate(record.created_at)}</span>
+        );
+      },
     },
     {
       title: "Última edição",
@@ -120,6 +148,11 @@ const Template = () => {
       dataIndex: "updated_at",
       width: "15%",
       align: "center",
+      render: (_: any, record: any) => {
+        return (
+          <span className="grayText">{formatDate(record.updated_at)}</span>
+        );
+      },
     },
     {
       title: "Visibilidade",
@@ -127,9 +160,7 @@ const Template = () => {
       dataIndex: "is_public",
       width: "10%",
       align: "center",
-      render: (_: any, record: any) => {
-        // const background = record.is_public ? "#3818D9" : "#DEE2E6";
-        // const color = record.is_public ? "#FFFFFF" : "#212529";
+      render: (_: any, _record: any) => {
         const background = "#DEE2E6";
         const color = "#212529";
         return (
@@ -149,7 +180,6 @@ const Template = () => {
             }}
           >
             Privado
-            {/* {record.is_public ? "Público" : "Privado"} */}
           </Tag>
         );
       },
@@ -159,41 +189,80 @@ const Template = () => {
       key: "action",
       width: "15%",
       align: "center",
-      render: () => (
-        <Space size="large">
-          <span className="actionButtons">
-            <EditIcon />
-          </span>
-          <span className="actionButtons">
-            <CopyIcon />
-          </span>
-          <span className="actionButtons">
-            <TrashIcon />
-          </span>
-        </Space>
-      ),
+      render: (_: any, record: any) => {
+        const totalNewProducts = record?.templates_sync_ids?.reduce(
+          (sum: number, item: any) => sum + item.new_products_amount,
+          0,
+        );
+        return (
+          <Space size="large">
+            {record.templates_sync_ids && totalNewProducts > 0 && (
+              <button
+                type="button"
+                className="actionButtons refresh"
+                onClick={(e) => {
+                  const ids = record.templates_sync_ids
+                    .map((item: any) => item)
+                    .filter((fItem: any) => fItem.new_products_amount > 0)
+                    .map((mItem: any) => mItem.template_sync_id);
+                  setTemplatesSyncIds(ids);
+                  setUpdateModalOpened(true);
+                  e.stopPropagation();
+                }}
+              >
+                <RefreshIcon />
+              </button>
+            )}
+            <button
+              type="button"
+              className="actionButtons ellipsis"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <EllipsisIcon />
+            </button>
+          </Space>
+        );
+      },
     },
   ];
 
-  useEffect(() => {
-    handleGetTemplates({});
-  }, [modalIsOpen]);
-
   return (
-    <TemplateDefault>
-      <Content>
-        <TitlePage> Templates </TitlePage>
-        <CustomTable
-          columns={columns}
-          dataProvider={templates}
-          size="large"
-          rowSelection={rowSelection}
-          onLoadMore={handleTakeNewPages}
+    <>
+      <TemplateDefault
+        handleGetTemplates={handleGetTemplates}
+        templates={templates}
+      >
+        <Content>
+          <HeaderTemplates>
+            <TitlePage>Templates</TitlePage>
+            <ImportButton
+              onClick={() => {
+                setFromToIsOpened(true);
+              }}
+            >
+              <ImportIcon />
+              Importar produtos
+            </ImportButton>
+          </HeaderTemplates>
+          <CustomTable
+            columns={columns}
+            dataProvider={templates}
+            size="large"
+            onLoadMore={handleTakeNewPages}
+          />
+        </Content>
+      </TemplateDefault>
+      <FromTo />
+      {updateModalOpened && (
+        <UpdateProducts
+          setIsOpened={setUpdateModalOpened}
+          ids={templatesSyncIds}
         />
-      </Content>
-    </TemplateDefault>
+      )}
+    </>
   );
-};
+}
 
-// eslint-disable-next-line import/prefer-default-export
-export { Template };
+export default Template;

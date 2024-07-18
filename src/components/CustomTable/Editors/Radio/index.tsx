@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable class-methods-use-this */
@@ -21,6 +22,7 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
         React.createRef<HTMLInputElement>(),
       ),
       currentIndex: 0,
+      isOpened: false,
     };
 
     this.containerStyle = {
@@ -104,11 +106,13 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
         selectedRadio.focus();
       }
     });
+    this.setState({ ...this.state.isOpened, isOpened: true });
   }
 
   close(): void {
     if (this.rootRef.current) this.rootRef.current.style.display = "none";
     document.removeEventListener("keydown", this.onBeforeKeyDown, true);
+    this.setState({ ...this.state.isOpened, isOpened: false });
   }
 
   prepare(
@@ -120,6 +124,7 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
     cellProperties: any,
   ): void {
     super.prepare(row, col, prop, td, originalValue, cellProperties);
+
     let value: string;
     if (originalValue) {
       value =
@@ -164,34 +169,52 @@ class RadioEditor extends BaseEditorComponent<RadioProps, RadioState, any> {
 
   render(): ReactNode {
     return (
-      <div
-        style={this.containerStyle}
-        ref={this.rootRef}
-        id="editorElement"
-        onMouseDown={this.stopMousedownPropagation}
-      >
-        <Container>
-          {this.props.options.map((option: string, index: number) => {
-            const isChecked = option === this.state.newValue;
-            return (
-              <Option
-                key={index}
-                isChecked={isChecked}
-                onClick={() => this.handleSelectOption(index)}
-              >
-                <Input
-                  type="radio"
-                  value={option}
-                  checked={isChecked}
-                  onChange={(e) => this.handleChange(e.target.value)}
-                  ref={this.state.radioRefs[index]}
-                />
-                <Label>{option}</Label>
-              </Option>
-            );
-          })}
-        </Container>
-      </div>
+      <>
+        {this.state.isOpened && (
+          <button
+            type="button"
+            onClick={() => this.close()}
+            style={{
+              width: "100%",
+              height: "100vh",
+              background: "transparent",
+              position: "fixed",
+              top: "0",
+              left: "0",
+              zIndex: "2",
+              cursor: "default",
+            }}
+          />
+        )}
+        <div
+          style={this.containerStyle}
+          ref={this.rootRef}
+          id="editorElement"
+          onMouseDown={this.stopMousedownPropagation}
+        >
+          <Container>
+            {this.props.options.map((option: string, index: number) => {
+              const isChecked = option === this.state.newValue;
+              return (
+                <Option
+                  key={index}
+                  isChecked={isChecked}
+                  onClick={() => this.handleSelectOption(index)}
+                >
+                  <Input
+                    type="radio"
+                    value={option}
+                    checked={isChecked}
+                    onChange={(e) => this.handleChange(e.target.value)}
+                    ref={this.state.radioRefs[index]}
+                  />
+                  <Label>{option}</Label>
+                </Option>
+              );
+            })}
+          </Container>
+        </div>
+      </>
     );
   }
 }

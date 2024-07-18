@@ -1,30 +1,18 @@
-import React, { useContext, useEffect, useState } from "react";
-import { InputNumber, Radio, RadioChangeEvent, Select, Space } from "antd";
+import React, { useEffect, useState } from "react";
+import { Radio, RadioChangeEvent, Select, Space } from "antd";
+import { toast } from "react-toastify";
 import { Content, CustomNumber, Loader } from "./styles";
 import { IPropsRelationForm, RelationOptions, Mapping } from "./RelationForm.d";
 import { templateRequests } from "../../../../../../../services/apis/requests/template";
 
-import { toast } from "react-toastify";
-import { productContext } from "../../../../../../../context/products";
-
-export const RelationForm: React.FC<IPropsRelationForm> = ({
+// eslint-disable-next-line import/prefer-default-export
+export function RelationForm({
   value,
   handleChangeOptions,
-}) => {
+}: IPropsRelationForm): JSX.Element {
   const OPTIONS_TEMPLATE = {
     OTHER: "Outro Catálogo",
     SAME: "Mesmo Catálogo",
-  };
-
-  const OPTIONS_MAPPING = {
-    FOR_ONE: {
-      label: "Entre um produto",
-      value: "oneToOne",
-    },
-    FOR_MORE: {
-      label: "Entre muitos",
-      value: "manyToMany",
-    },
   };
 
   const OPTIONS_AGREEMENT = {
@@ -33,24 +21,24 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   };
 
   const getLimit = (options?: any): string => {
-    return options ? options[0]["limit"] : "1";
+    return options ? options[0].limit : "1";
   };
 
   const getAgreementType = (options?: any): string => {
-    return options ? options[0]["agreementType"] : "unilateral";
+    return options ? options[0].agreementType : "unilateral";
   };
 
   const getCurrentField = (options?: any): string => {
-    return options ? options[0]["field"] : "";
+    return options ? options[0].field : "";
   };
 
   const getCurrentOriginField = (options?: any): string => {
-    return options ? options[0]["originField"] : "";
+    return options ? options[0].originField : "";
   };
 
   const getTemplateRelation = (options?: any): string => {
     if (options) {
-      return options[0]["templateId"] == window.location.pathname.substring(10)
+      return options[0].templateId == window.location.pathname.substring(10)
         ? OPTIONS_TEMPLATE.SAME
         : OPTIONS_TEMPLATE.OTHER;
     }
@@ -59,7 +47,7 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   };
 
   const getTemplateId = (options?: any): string => {
-    return options && options[0]["templateId"] ? options[0]["templateId"] : "";
+    return options && options[0].templateId ? options[0].templateId : "";
   };
 
   const [template, setTemplate] = useState<Mapping[]>([]);
@@ -89,7 +77,7 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleState = (e: RadioChangeEvent) => {
-    const { value } = e.target;
+    const currentValue = e.target.value;
 
     if (!template.length) {
       setTemplateId("");
@@ -107,14 +95,17 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
       });
     }
 
-    setTemplateRelation(value);
+    setTemplateRelation(currentValue);
   };
 
-  const handleChangeTemplate = async (templateId: string): Promise<void> => {
+  const handleChangeTemplate = async (
+    currentTemplateId: string,
+  ): Promise<void> => {
     setIsLoading(true);
+
     try {
-      templateRequests.get(templateId).then((template) => {
-        const customFields = template.fields.fields
+      templateRequests.get(currentTemplateId).then((temp) => {
+        const customFields = temp.fields.fields
           .filter((e: any) => e.type !== "relation")
           .map((field: any) => {
             return {
@@ -143,8 +134,8 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
     }
 
     if (value && Object.keys(value).length > 1) {
-      const options = value.options[0] as unknown as RelationOptions;
-      setLimit(options.limit);
+      const currentOptions = value.options[0] as unknown as RelationOptions;
+      setLimit(currentOptions.limit);
 
       if (getTemplateRelation(value?.options) === OPTIONS_TEMPLATE.OTHER) {
         handleChangeTemplate(getTemplateId(value.options)).then();
@@ -225,10 +216,10 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
                 onChange={(e: string) => {
                   handleChangeTemplate(e);
                   const current = {
-                    limit: limit,
+                    limit,
                     field: fieldId,
                     originField: originFieldId,
-                    agreementType: agreementType,
+                    agreementType,
                     templateId: e,
                   };
                   handleChangeOptions(current);
@@ -260,11 +251,11 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
                 onChange={(e: string) => {
                   setFieldId(e);
                   const current = {
-                    limit: limit,
+                    limit,
                     field: e,
                     originField: originFieldId,
-                    agreementType: agreementType,
-                    templateId: templateId,
+                    agreementType,
+                    templateId,
                   };
                   handleChangeOptions(current);
                 }}
@@ -304,8 +295,8 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
                   limit: e,
                   field: fieldId,
                   originField: originFieldId,
-                  agreementType: agreementType,
-                  templateId: templateId,
+                  agreementType,
+                  templateId,
                 };
                 handleChangeOptions(current);
               }
@@ -316,7 +307,7 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
         </div>
         {isLoading ? (
           <Loader className="lds-roller">
-            <div className="loading-spinner"></div>
+            <div className="loading-spinner" />
           </Loader>
         ) : (
           <div className="selectField">
@@ -332,11 +323,11 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
                 if (templateRelation == OPTIONS_TEMPLATE.SAME) {
                   setFieldId(e);
                   const current = {
-                    limit: limit,
+                    limit,
                     field: e,
                     originField: e,
-                    agreementType: agreementType,
-                    templateId: templateId,
+                    agreementType,
+                    templateId,
                   };
                   handleChangeOptions(current);
                 }
@@ -371,11 +362,11 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
           onChange={(e) => {
             setAgreementType(e.target.value);
             const current = {
-              limit: limit,
+              limit,
               field: fieldId,
               originField: originFieldId,
               agreementType: e.target.value,
-              templateId: templateId,
+              templateId,
             };
             handleChangeOptions(current);
           }}
@@ -396,4 +387,4 @@ export const RelationForm: React.FC<IPropsRelationForm> = ({
       </div>
     </Content>
   );
-};
+}

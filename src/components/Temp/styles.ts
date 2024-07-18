@@ -8,7 +8,7 @@ export const Contents = styled.div`
   }
 `;
 
-export const Item = styled.span`
+export const Item = styled.span<{ isDisabled?: boolean }>`
   font-family: ${({ theme }) => theme.fonts.family.bold};
   font-size: ${({ theme }) => theme.fonts.sizes.normal};
   font-style: normal;
@@ -34,6 +34,8 @@ export const Item = styled.span`
   &:hover {
     cursor: pointer;
   }
+  pointer-events: ${(props) => (props.isDisabled ? "none" : "initial")};
+  opacity: ${(props) => (props.isDisabled ? "0.5" : "initial")};
 `;
 
 export const ButtonCustom = styled.button<{ width: string; height: string }>`
@@ -83,4 +85,35 @@ export const ButtonCustom = styled.button<{ width: string; height: string }>`
 
     font-size: ${({ theme }) => theme.fonts.sizes.xxxsmall};
   }
+`;
+
+export const ButtonFilter = styled.div<{
+  filterActive: boolean;
+  isDisabled?: boolean;
+}>`
+  display: flex;
+  border: ${(props) => props.filterActive && "1px solid  #3818D9"};
+  margin-right: 24px;
+  padding: ${(props) => props.filterActive && "8px 8px 8px 0px"};
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  pointer-events: ${(props) => (props.isDisabled ? "none" : "initial")};
+  opacity: ${(props) => (props.isDisabled ? "0.5" : "initial")};
+`;
+export const CountFilter = styled.div`
+  width: 20px;
+  height: 20px;
+  padding: 4px;
+  background: #3818d9;
+  position: absolute;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  top: -8px;
+  right: -8px;
 `;

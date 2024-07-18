@@ -14,7 +14,7 @@ export const Container = styled.div<{ disabled: boolean }>`
 
 const Secondary = css`
   color: ${({ theme }) => theme.colors.primary};
-  background-color: ${({ theme }) => theme.colors.background.default};
+  background-color: ${({ theme }) => theme.colors.secondary};
   border: 1px solid ${({ theme }) => theme.colors.primary};
 
   &:hover {
@@ -68,7 +68,7 @@ export const ButtonCustom = styled.button<IButtonPropsStyles>`
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
     width: 100%;
     height: 60px;
-    font-size: ${({ theme }) => theme.fonts.sizes.xxsmall};
+    font-size: ${({ theme }) => theme.fonts.sizes.normal};
   }
 
   ${(props) => props.disabled && ContainerDisabled}

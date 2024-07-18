@@ -11,25 +11,30 @@ import {
   Capsule,
   LogoContainer,
 } from "./styles";
-// @ts-ignore
 import { ReactComponent as Logo } from "../../assets/logo.svg";
 import { ROUTES } from "../../constants/routes";
-// @ts-ignore
 import { ReactComponent as TemplateIcon } from "../../assets/templates.svg";
-// @ts-ignore
 import { ReactComponent as SettingsIcon } from "../../assets/settings.svg";
-// @ts-ignore
 import { ReactComponent as LogoutIcon } from "../../assets/log-out.svg";
 import { ReactComponent as KeyIcon } from "../../assets/key-icon.svg";
+import { ReactComponent as IntegrationIcon } from "../../assets/integration-icon.svg";
 import { STORAGE } from "../../constants/localStorage";
 import { Loading } from "../Loading";
 
-export function Sidebar() {
+interface IFuntions {
+  order: string;
+  label: string;
+  value: string;
+  icon: JSX.Element;
+  to: string;
+  action: () => void;
+}
+
+function Sidebar(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isSelected, setIsSelected] = useState<boolean>(true);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     setIsLoading(true);
     try {
       window.localStorage.removeItem(STORAGE.TOKEN);
@@ -43,9 +48,9 @@ export function Sidebar() {
     }
   };
 
-  const handleGetCurrentActiveButton = (item: any) => {
+  const handleGetCurrentActiveButton = (item: any): boolean => {
     return (
-      window.location.pathname.replace("/", "") === item.label.toLowerCase()
+      window.location.pathname.replace("/", "") === item.value.toLowerCase()
     );
   };
 
@@ -53,36 +58,66 @@ export function Sidebar() {
     return <Loading />;
   }
 
-  const options = [
+  const options: IFuntions[] = [
     {
       order: "0",
-      label: "Templates",
+      label: "Lists",
+      value: "templates",
       icon: <TemplateIcon />,
       to: ROUTES.TEMPLATES,
+      action: () => "",
     },
   ];
 
-  const functions = [
+  const functions: IFuntions[] = [
+    {
+      order: "1",
+      label: "Integrações",
+      value: "integration",
+      icon: <IntegrationIcon />,
+      to: ROUTES.INTEGRATION,
+      action: () => "",
+    },
     {
       order: "2",
       label: "Configurações",
+      value: "config",
       icon: <SettingsIcon />,
       to: ROUTES.TEMPLATES,
+      action: () => "",
     },
     {
       order: "3",
       label: "Chaves de API",
+      value: "key",
       icon: <KeyIcon />,
       to: ROUTES.TEMPLATES,
+      action: () => "",
     },
     {
       order: "4",
       label: "Sair",
+      value: "logout",
       icon: <LogoutIcon />,
       to: ROUTES.TEMPLATES,
       action: handleLogout,
     },
   ];
+
+  function handleClick(currentItem: {
+    order: string;
+    label: string;
+    value: string;
+    icon: JSX.Element;
+    to: string;
+    action: () => void;
+  }): any {
+    if (currentItem.value === "logout") {
+      currentItem.action();
+    } else {
+      navigate(currentItem.to);
+    }
+  }
 
   return (
     <Container>
@@ -96,9 +131,10 @@ export function Sidebar() {
               position="center"
               key={item.order}
               isItem
+              onClick={() => handleClick(item)}
               isActive={handleGetCurrentActiveButton(item)}
             >
-              <Icon>{item.icon}</Icon>
+              <Icon isItem>{item.icon}</Icon>
               <Label isItem> {item.label} </Label>
             </Shape>
           ))}
@@ -107,8 +143,8 @@ export function Sidebar() {
           {functions.map((item) => (
             <Shape
               key={item.order}
-              onClick={item.action}
-              isActive={window.location.pathname.toLowerCase() === item.label}
+              onClick={() => handleClick(item)}
+              isActive={handleGetCurrentActiveButton(item)}
             >
               <Icon> {item.icon} </Icon>
               <Label> {item.label} </Label>
@@ -119,3 +155,5 @@ export function Sidebar() {
     </Container>
   );
 }
+
+export default Sidebar;

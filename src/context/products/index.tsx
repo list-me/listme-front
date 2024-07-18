@@ -2,7 +2,6 @@ import React, {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -16,11 +15,15 @@ import {
   IField,
   IHeader,
   IHeaderTable,
+  IProduct,
   IProductToTable,
   IProductsRequest,
   ITemplate,
 } from "./product.context";
 import { fileRequests } from "../../services/apis/requests/file";
+import { isCollectionCompany } from "../../utils";
+import { IConditions } from "../FilterContext/FilterContextType";
+import getImage from "../../utils/getImage";
 
 export interface ICustom {
   show?: boolean;
@@ -39,7 +42,14 @@ interface ITypeProductContext {
   headerTable: IHeader[];
   setHeaderTable: React.Dispatch<React.SetStateAction<IHeader[]>>;
   handleAdd: Function;
-  handleSave: (value: any, isNew: boolean, productId: string) => Promise<any>;
+  handleSave: (
+    value: any,
+    isNew: boolean,
+    productId: string,
+    fieldId: string,
+    newValue: string,
+    prevValue?: string,
+  ) => Promise<any>;
   editing: boolean;
   setEditing: Function;
   colHeaders: string[];
@@ -79,12 +89,25 @@ interface ITypeProductContext {
   uploadImages: (
     files: Array<File>,
     bucketUrl: string,
+    companyId: string,
+    optionals?: { brand?: string; name?: string },
   ) => Promise<Array<string> | void>;
   customFields: ICustomField[];
+  conditionsFilter: IConditions[];
+  setConditionsFilter: React.Dispatch<React.SetStateAction<IConditions[]>>;
+  targetTemplatePublic: ITemplate | undefined;
+  setTargetTemplatePublic: React.Dispatch<
+    React.SetStateAction<ITemplate | undefined>
+  >;
+  targetHeaderTable: IHeader[];
+  setTargetHeaderTable: React.Dispatch<React.SetStateAction<IHeader[]>>;
+  targetColHeaders: string[];
+  setTargetColHeaders: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 interface SignedUrlResponse {
   url: string;
+  key?: string;
   access_url: string;
 }
 
@@ -107,7 +130,12 @@ export const ProductContextProvider = ({
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [filter, setFilter] = useState<string | undefined>(undefined);
   const [total, setTotal] = useState<number>(0);
-
+  const [conditionsFilter, setConditionsFilter] = useState<IConditions[]>([
+    {},
+  ] as IConditions[]);
+  const [targetTemplatePublic, setTargetTemplatePublic] = useState<ITemplate>();
+  const [targetHeaderTable, setTargetHeaderTable] = useState<IHeader[]>([]);
+  const [targetColHeaders, setTargetColHeaders] = useState<string[]>([]);
   const COMPONENT_CELL_PER_TYPE: ICustomCellType = useMemo(
     () => ({
       RADIO: "radio",
@@ -115,6 +143,7 @@ export const ProductContextProvider = ({
       CHECKED: "checkbox",
       FILE: "file",
       RELATION: "relation",
+      BOOLEAN: "boolean",
     }),
     [],
   );
@@ -136,46 +165,68 @@ export const ProductContextProvider = ({
     fileName: string,
     fileType: string,
     templateId: string,
+    optionals?: { brand?: string; name?: string },
   ): Promise<SignedUrlResponse> => {
-    return fileRequests.getSignedUrl(fileName, fileType, templateId);
+    return fileRequests.getSignedUrl(fileName, fileType, templateId, {
+      brand: optionals?.brand,
+      name: optionals?.name,
+    });
   };
 
   const uploadImages = useCallback(
-    async (files: File[], bucketUrl: string): Promise<string[] | void> => {
+    async (
+      files: File[],
+      bucketUrl: string,
+      companyId: string,
+      optionals?: { brand?: string; name?: string },
+    ): Promise<string[] | void> => {
       try {
         const filesNames: string[] = [];
         const uploadPromises = files.map(async (file) => {
+          const numberOfDots = file.name.split(".");
+          if (numberOfDots.length > 2) {
+            // eslint-disable-next-line @typescript-eslint/no-throw-literal
+            throw "O nome do arquivo não pode conter ponto(.)";
+          }
           const [fileName, fileType] = file.name.split(".");
 
-          const signedUrl = await getSignedUrl(fileName, fileType, bucketUrl);
-          filesNames.push(signedUrl.access_url);
+          let signedUrl: SignedUrlResponse;
+          if (companyId && isCollectionCompany(companyId)) {
+            if (!optionals?.brand || !optionals?.name) {
+              // eslint-disable-next-line @typescript-eslint/no-throw-literal
+              throw "Marca e Nome devem estar preenchidos";
+            }
+
+            signedUrl = await getSignedUrl(fileName, fileType, bucketUrl, {
+              brand: optionals.brand,
+              name: optionals.name,
+            });
+          } else {
+            signedUrl = await getSignedUrl(fileName, fileType, bucketUrl);
+          }
+
+          if (signedUrl?.key) filesNames.push(signedUrl.key);
+
           return fileRequests.uploadFile(file, signedUrl.url);
         });
 
         await Promise.all(uploadPromises);
         return filesNames;
       } catch (error) {
-        console.log({ error });
-        throw new Error("Ocorreu um erro ao realizar o upload dos arquivos");
+        if (typeof error === "string") {
+          toast.warning(error);
+        } else {
+          throw new Error("Ocorreu um erro ao realizar o upload dos arquivos");
+        }
       }
     },
     [],
   );
 
-  const handleActiveDrag = (): void => {
-    // setIsDragActive(true);
-  };
-
   const handleUpdateTemplate = (_field: any) => {};
 
   const handleDelete = (product: any) => {
     try {
-      const currentProducts = filteredData.filter((itemProduct: any) => {
-        if (itemProduct.id !== product.id) {
-          return itemProduct;
-        }
-      });
-
       productRequests
         .delete(product.id)
         .then((_response: any) => {
@@ -190,6 +241,26 @@ export const ProductContextProvider = ({
     }
   };
 
+  function reorganizeArrayWithChildren(list: IProduct[]): IProduct[] {
+    const newArray: IProduct[] = [];
+
+    list.forEach((fItem) => {
+      newArray.push(fItem);
+
+      if (fItem.children) {
+        fItem.children.forEach((child) => {
+          newArray.push(child);
+        });
+
+        // @ts-ignore
+        // eslint-disable-next-line no-param-reassign
+        delete fItem.children;
+      }
+    });
+
+    return newArray;
+  }
+
   const handleGetProducts = useCallback(
     async (
       templateId: string,
@@ -197,43 +268,104 @@ export const ProductContextProvider = ({
       page: number = 0,
       limit: number = 100,
       keyword: string = "",
+      conditions: IConditions[] | undefined = undefined,
+      operator?: string,
     ) => {
-      const { data }: { data: IProductsRequest } = await productRequests.list(
+      const url = window.location.href;
+      const isPublic = url.includes("public");
+      const requestFunction = isPublic
+        ? productRequests.listPublic
+        : productRequests.list;
+      const { data }: { data: IProductsRequest } = await requestFunction(
         { page, limit, keyword },
         templateId,
+        conditions,
+        operator,
       );
 
+      const listProducts = reorganizeArrayWithChildren(data?.products);
+
       const productFields: {
-        [key: string]: string | string[];
+        [key: string]: string | string[] | boolean;
         id: string;
         created_at: string;
+        is_parent: boolean;
+        childrens: any[];
       }[] = [];
-      data?.products?.forEach((item) => {
-        const object: { [key: string]: string | string[] } = {};
-        item.fields.forEach((field) => {
-          const currentField = templateFields.find((e) => e.data === field.id);
 
-          if (currentField && field.value) {
-            const test = !COMPONENT_CELL_PER_TYPE[
-              currentField?.type?.toUpperCase()
-            ]
-              ? field?.value[0]
-              : field?.value;
+      if (listProducts.length) {
+        listProducts.forEach((item) => {
+          const object: { [key: string]: string | string[] } = {};
+          if (item?.fields?.length) {
+            item?.fields?.forEach((field) => {
+              const currentField = templateFields.find(
+                (e) => e.data === field.id,
+              );
 
-            object[field?.id] = test;
+              if (currentField && field.value) {
+                const test = !COMPONENT_CELL_PER_TYPE[
+                  currentField?.type?.toUpperCase()
+                ]
+                  ? field?.value[0]
+                  : field?.value;
+
+                object[field?.id] = test;
+              }
+            });
           }
+
+          const toProductFields = {
+            ...object,
+            id: item.id,
+            created_at: item.created_at,
+            parent_id: item.parent_id,
+            childrens: item.children,
+            is_parent: item?.is_parent,
+            have_sync: item?.have_sync,
+          };
+
+          productFields.push(toProductFields);
         });
+      }
 
-        const toProductFields = {
-          ...object,
-          id: item.id,
-          created_at: item.created_at,
-        };
-
-        productFields.push(toProductFields);
-      });
-
-      setProducts(productFields);
+      const dataFiles = templateFields
+        .map((mField) => {
+          if (mField.type === "file") {
+            return mField.data;
+          }
+          return null;
+        })
+        .filter(Boolean);
+      const newProductsFields = Promise.all(
+        productFields.map(async (mProductFields) => {
+          const newData: any = {};
+          await Promise.all(
+            dataFiles.map(async (fDataFiles: any) => {
+              if (mProductFields[fDataFiles]) {
+                try {
+                  const newValue = getImage(
+                    mProductFields[fDataFiles],
+                    templateFields,
+                  );
+                  newData[fDataFiles] = newValue;
+                } catch (error) {
+                  console.error(error);
+                  newData[fDataFiles] = null;
+                }
+              }
+            }),
+          );
+          return { ...mProductFields, ...newData };
+        }),
+      );
+      (async () => {
+        try {
+          const toProducts = await newProductsFields;
+          setProducts(toProducts as any);
+        } catch (error) {
+          console.error("Erro ao processar:", error);
+        }
+      })();
       setTotal(data?.total);
       return { productFields, headerTable };
     },
@@ -257,19 +389,28 @@ export const ProductContextProvider = ({
             className: "htLeft htMiddle",
             type: item.type,
             required: item.required,
+            group: item.group,
             options: item.options,
             order: item.order !== undefined ? item.order : index.toString(),
             hidden: item.hidden ? item.hidden : false,
             width: item.width ? item.width : "300px",
             frozen: item.frozen ? item.frozen : false,
-            bucket_url: response?.bucket_url,
+            bucket: response?.bucket,
+            limit: item.limit,
+            integrations: item.integrations,
+            enforce_exact_length: item.enforce_exact_length,
+            default: item.default,
           };
         },
       );
+      const groupeds = headers.filter((fItem) => fItem.group);
+      const ungroupeds = headers.filter((fItem) => !fItem.group);
 
-      const sortedHeaders: IHeader[] = headers.sort((a, b) => {
+      const sortedUngroupeds: IHeader[] = ungroupeds.sort((a, b) => {
         return Number(a.order) - Number(b.order);
       });
+
+      const sortedHeaders: IHeader[] = [...groupeds, ...sortedUngroupeds];
 
       const headerTitles = sortedHeaders.map((item: any) => {
         return item?.title;
@@ -295,6 +436,8 @@ export const ProductContextProvider = ({
             width: result.width,
             frozen: result.frozen,
             id: result.data,
+            default: result.default,
+            enforce_exact_length: result.enforce_exact_length,
           };
         });
       setCustomFields(toCustomFields);
@@ -331,43 +474,9 @@ export const ProductContextProvider = ({
   );
 
   const handlePost = async (product: any): Promise<any> => {
-    return productRequests.save(product);
-  };
+    const responseHandlePost = productRequests.save(product);
 
-  const handleSave = async (
-    value: any,
-    isNew: boolean,
-    productId: string,
-  ): Promise<any> => {
-    try {
-      const fields = buildProduct(value);
-
-      if (isNew) {
-        await productRequests.update({ id: productId, fields });
-        toast.success("Produto atualizado com sucesso");
-      } else {
-        const newProduct = {
-          id: productId,
-          templateId: window.location.pathname.substring(10),
-          is_public: true,
-          fields,
-        };
-        let newItem;
-
-        const product = await handlePost(newProduct);
-        newItem = product.id;
-
-        toast.success("Produto cadastrado com sucesso");
-        return newItem;
-      }
-    } catch (error: any) {
-      const message =
-        typeof error?.response?.data?.message === "object"
-          ? error?.response?.data?.message[0]
-          : error?.response?.data?.message;
-
-      toast.error(message);
-    }
+    return responseHandlePost;
   };
 
   const buildProduct = (fields: any) => {
@@ -375,22 +484,176 @@ export const ProductContextProvider = ({
     if (Object.keys(fields).length) {
       // @ts-ignore
       const columnKeys = headerTable.map((column) => column?.data);
+      let newValue;
+
       Object.keys(fields).forEach((field: any) => {
         if (
           !["id", "created_at"].includes(field) &&
           columnKeys.includes(field)
         ) {
-          const newValue =
-            typeof fields[field] === "object" ? fields[field] : [fields[field]];
-          obj.push({
-            id: field,
-            value: newValue || [""],
-          });
+          newValue =
+            typeof fields[field] === "object"
+              ? fields[field] || ""
+              : [fields[field]];
+
+          if (newValue[0] !== "")
+            obj.push({
+              id: field,
+              value: newValue || [],
+            });
         }
       });
     }
 
     return obj;
+  };
+
+  function adjustItems(items: any[]): any {
+    const newItems = items?.map((item: any) => {
+      const copyItem = { ...item };
+      delete copyItem.value;
+      return copyItem;
+    });
+    return newItems;
+  }
+
+  const handleSave = async (
+    value: any,
+    isNew: boolean,
+    productId: string,
+    fieldId: string,
+    newValue: string,
+    prevValue?: string,
+    type?: string,
+  ): Promise<any> => {
+    try {
+      const fields = buildProduct(value);
+
+      if (isNew) {
+        const newValueToPatch = () => {
+          if (newValue && !prevValue) {
+            if (type === "relation") {
+              return newValue;
+            }
+            if (
+              (type === "file" || type === "boolean") &&
+              typeof newValue !== "string"
+            ) {
+              if (typeof newValue[0] !== "string") {
+                return (newValue as any).flat();
+              }
+              return newValue;
+            }
+            return [newValue || ""];
+          }
+          if (
+            !newValue &&
+            prevValue &&
+            (type === "text" ||
+              type === "paragraph" ||
+              type === "decimal" ||
+              type === "numeric" ||
+              type === "radio" ||
+              type === "checked" ||
+              type === "relation" ||
+              type === "list" ||
+              type === "boolean")
+          ) {
+            return [{ value: prevValue || "", destroy: true }];
+          }
+          if (!newValue && prevValue && type === "file") {
+            // @ts-ignore
+            const newArray = prevValue.map((mValue) => {
+              return { value: mValue, destroy: true };
+            });
+            return newArray;
+          }
+          if (newValue && prevValue && type === "file") {
+            // @ts-ignore
+            const missingItems = prevValue.filter(
+              (item: string) => !newValue.includes(item),
+            );
+
+            if (missingItems.length > 0) {
+              const missingItemsObject = missingItems.map((item: string) => ({
+                item,
+                destroy: true,
+              }));
+              // @ts-ignore
+              const combinedArray = [...newValue, ...missingItemsObject];
+
+              return combinedArray.flat();
+            }
+            return (newValue as unknown as []).flat();
+          }
+          if (newValue && prevValue && type === "boolean") {
+            return (newValue as unknown as []).flat();
+          }
+          if (type === "relation" && newValue && prevValue) {
+            const newIds = (newValue as unknown as any[]).map(
+              (item) => item.id,
+            );
+            const prevIds = (prevValue as unknown as any[]).map(
+              (item) => item.id,
+            );
+
+            const addedIds = newIds.filter((id) => !prevIds.includes(id));
+            const removedIds = prevIds.filter((id) => !newIds.includes(id));
+
+            const newArray = (prevValue as unknown as any[]).map((item) => {
+              if (removedIds.includes(item.id)) {
+                return { ...item, destroy: true };
+              }
+              return item;
+            });
+
+            const newItems = (newValue as unknown as any[]).filter((item) =>
+              addedIds.includes(item.id),
+            );
+            newArray.push(...newItems);
+
+            return newArray;
+          }
+
+          return [newValue];
+        };
+
+        const response = await productRequests.patchProductValue({
+          value:
+            type !== "relation"
+              ? (newValueToPatch() as any)
+              : adjustItems(newValueToPatch()),
+          productId,
+          fieldId,
+        });
+        toast.success("Produto atualizado com sucesso");
+        return response;
+      }
+      const newProduct = {
+        id: productId,
+        templateId: window.location.pathname.substring(10),
+        is_public: true,
+        fields,
+      };
+
+      const product = await handlePost(newProduct);
+
+      toast.success("Produto cadastrado com sucesso");
+      return product;
+    } catch (error: any) {
+      const message =
+        typeof error?.response?.data?.message === "object"
+          ? error?.response?.data?.message[0]
+          : error?.response?.data?.message;
+      let fieldTitle;
+      if (message.includes("Limite do campo excedido")) {
+        const arrayMessage = message.split('"');
+        fieldTitle = template?.fields.fields.find(
+          (item) => item.id === arrayMessage[1],
+        )?.title;
+      }
+      toast.error(fieldTitle ? `Limite excedido em "${fieldTitle}"` : message);
+    }
   };
 
   const handleAdd = () => {
@@ -440,44 +703,62 @@ export const ProductContextProvider = ({
   const buildCustomFields = (
     _fields: any,
     { order, show, width, frozen }: ICustom,
-    col: number,
+    cols: number[],
     newfields: any,
   ): ICustomField[] => {
     const toBuild = [...newfields];
-
     const builded = toBuild?.map((custom) => {
-      if (custom?.order === col) {
-        return {
+      if (cols.includes(custom?.order)) {
+        const newItem = {
           id: custom?.id,
           order: order ? order.toString() : custom?.order,
           hidden: show !== undefined ? show : custom?.hidden,
           width: width || custom?.width,
           frozen: frozen || custom?.frozen,
         };
+        return newItem;
       }
       return custom;
     });
     return builded;
   };
-
   const handleHidden = async (
-    col: number,
+    col: number[] | number,
     temp: any,
     able: boolean,
-  ): Promise<number[]> => {
+  ): Promise<any> => {
     const content = hidden;
+
+    const convertColl = typeof col === "number" ? [col] : col;
+
     let newValue;
+
     if (content.includes(col)) {
-      newValue = content.filter((element) => element !== col);
+      newValue = content.filter((element) => !convertColl.includes(element));
     } else {
-      newValue = [...content, col];
+      newValue = [...content, ...convertColl];
     }
 
     setHidden(newValue);
+
+    customFields.forEach((item: any) => {
+      // eslint-disable-next-line no-param-reassign
+      delete item.default;
+      // eslint-disable-next-line no-param-reassign
+      delete item.enforce_exact_length;
+    });
+
     const newfields = customFields.map((item) => {
-      if (item?.order === col.toString()) {
+      if (convertColl.includes(+item?.order)) {
+        const newItem = {
+          order: item.order,
+          hidden: item.hidden,
+          width: item.width,
+          frozen: item.frozen,
+          id: item.id,
+        };
         return {
-          ...item,
+          ...newItem,
           hidden: able,
         };
       }
@@ -485,12 +766,12 @@ export const ProductContextProvider = ({
       return item;
     });
 
-    setCustomFields(newfields);
+    setCustomFields(newfields as ICustomField[]);
 
     const custom = buildCustomFields(
       temp?.fields?.fields,
       { show: able },
-      col,
+      convertColl,
       newfields,
     );
 
@@ -544,6 +825,7 @@ export const ProductContextProvider = ({
         };
       });
     });
+
     templateRequests
       .customView(template!.id, { fields: newCustomFields })
       .catch((_error) =>
@@ -553,11 +835,13 @@ export const ProductContextProvider = ({
   };
 
   const handleMove = (col: any[]) => {
+    const titles: any[] = [];
     const fields = col
       .filter((item) => {
         if (Object.keys(item).length > 0) return item;
       })
       .map((element) => {
+        titles.push(element.title);
         return {
           order: element?.order,
           hidden: element?.hidden,
@@ -566,20 +850,32 @@ export const ProductContextProvider = ({
           id: element?.data,
         };
       });
-    fields.pop();
     templateRequests
       .customView(window.location.pathname.substring(10), { fields })
+      .then(() => {
+        setColHeaders(titles);
+        const id = window.location.pathname.substring(10);
+        if (id) {
+          setTimeout(() => {
+            handleRedirectAndGetProducts(id).then(() => {});
+          }, 0);
+        }
+      })
       .catch((_error) =>
         toast.error("Ocorreu um erro ao alterar a posição da coluna"),
       );
   };
 
   const handleNewColumn = (col: any, fields: any[]) => {
-    const newTemplate = template;
+    const url = window.location.href;
+    const isPublic = url.includes("public");
+    const newTemplate = isPublic ? targetTemplatePublic : template;
     // @ts-ignore
     newTemplate.fields.fields = fields;
-    setTemplate(newTemplate);
-
+    if (isPublic) {
+      setTargetTemplatePublic(newTemplate);
+    } else setTemplate(newTemplate);
+    // @ts-ignore
     setCustomFields((prev) => [
       ...prev,
       {
@@ -594,7 +890,9 @@ export const ProductContextProvider = ({
     const newPosition = [...headerTable, col];
     newPosition.splice(newPosition.length - 2, 1);
     newPosition.push({});
-    setHeaderTable(newPosition);
+    if (isPublic) {
+      setTargetHeaderTable(newPosition);
+    } else setHeaderTable(newPosition);
   };
 
   const handleFilter = (word: string): any[] => {
@@ -643,6 +941,8 @@ export const ProductContextProvider = ({
         if (keys.includes(item?.id)) return item;
       })
       .map((element, index) => {
+        const newItem = element;
+        delete newItem.enforce_exact_length;
         return {
           ...element,
           order: index.toString(),
@@ -708,6 +1008,14 @@ export const ProductContextProvider = ({
     uploadImages,
     setTotal,
     customFields,
+    conditionsFilter,
+    setConditionsFilter,
+    targetTemplatePublic,
+    setTargetTemplatePublic,
+    targetHeaderTable,
+    setTargetHeaderTable,
+    targetColHeaders,
+    setTargetColHeaders,
   };
 
   return (

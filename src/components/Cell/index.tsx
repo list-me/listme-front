@@ -19,6 +19,9 @@ import { ReactComponent as FrozenIcon } from "../../assets/frozen.svg";
 import { ReactComponent as AscIcon } from "../../assets/sort-asc.svg";
 import { ReactComponent as DescIcon } from "../../assets/sort-desc.svg";
 import { ReactComponent as TrashIcon } from "../../assets/trash-red.svg";
+import { ReactComponent as NumericIcon } from "../../assets/numeric-icon.svg";
+import { ReactComponent as DecimalIcon } from "../../assets/decimal-icon.svg";
+import { ReactComponent as BooleanIcon } from "../../assets/boolean-icon.svg";
 import { DropdownMenu } from "../DropdownMenu";
 import { PersonalModal } from "../CustomModa";
 
@@ -37,7 +40,6 @@ export const HeaderCell: React.FC<ICellProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const iconRef = useRef(null);
   const [titleHeader, setTitleHeader] = useState<string>(label);
-  const [posicaoPai, setPosicaoPai] = useState<number | null>(null);
   const [options, setOptions] = useState<any[]>();
 
   const ICON_HEADER: Record<IconType, ReactElement> = {
@@ -48,6 +50,9 @@ export const HeaderCell: React.FC<ICellProps> = ({
     [IconType.File]: <FileIcon />,
     [IconType.Radio]: <RadioIcon />,
     [IconType.Relation]: <RelationIcon />,
+    [IconType.Numeric]: <NumericIcon />,
+    [IconType.Decimal]: <DecimalIcon />,
+    [IconType.Boolean]: <BooleanIcon />,
   };
 
   const getIconByType = (type: IconType): ReactElement => {
@@ -93,20 +98,11 @@ export const HeaderCell: React.FC<ICellProps> = ({
       },
     ];
     setOptions([...customOptions]);
-
-    const pai = ref.current;
-    if (pai) {
-      const left = pai?.getBoundingClientRect().left + window.scrollX;
-      setPosicaoPai(left);
-    }
   }, [isOpen, column, freeze]);
 
   return (
     <>
       <DropdownMenu
-        changeOpen={() => {
-          setIsOpen(!isOpen);
-        }}
         isOpen={isOpen}
         icoRef={iconRef}
         openModal={(option): void => {
@@ -135,11 +131,9 @@ export const HeaderCell: React.FC<ICellProps> = ({
           setIsOpen(!isOpen);
         }}
         options={options as any}
-        left={posicaoPai}
         setIsOpen={() => {
           setIsOpen(false);
         }}
-        template={template}
         col={column?.order}
       />
       <Content ref={ref}>

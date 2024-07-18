@@ -52,21 +52,31 @@ export const RightContent = styled.div`
 
   .secondButton {
     margin-left: 9px;
-
     svg {
       margin: 0 0 0 10px;
+    }
+  }
+  .linkButton {
+    margin-right: 9px;
+    svg {
+      width: 20px;
+      height: 20px;
+      margin: 0 0 0 10px;
+    }
+    path {
+      stroke: white;
     }
   }
 `;
 
 export const Header = styled.header`
-  height: 128px;
-  background: ${({ theme }) => theme.colors.grayscale.tenth};
+  height: 80px;
+  background: white;
 
   display: flex;
   justify-content: space-between;
-
-  padding: 32px 16px;
+  align-items: center;
+  padding: 0 16px;
 `;
 
 export const MoreOptions = styled.div`
@@ -160,13 +170,31 @@ export const Container = styled.div`
 
     height: 50%;
   }
+  thead {
+    * {
+      border-top: none;
+    }
+  }
+
+  /* .handsontable table.htCore thead tr:first-child th {
+    height: 24px !important;
+    padding: 0;
+    margin: 0;
+    * {
+      height: 24px !important;
+      padding: 0;
+    }
+    border: none;
+  } */
+
+  /* .style-th-group {
+    border: none !important;
+  } */
 
   thead {
     th {
       .customHeader {
-        height: 51px;
         background: #f1f3f5;
-
         z-index: 9999;
       }
 
@@ -185,7 +213,7 @@ export const Container = styled.div`
 
         font-family: ${({ theme }) => theme.fonts.family.default};
         font-size: ${({ theme }) => theme.fonts.sizes.small};
-        color: #868e96;
+        color: ${({ theme }) => theme.colors.tertiary};
         font-weight: 400;
         line-height: 150%;
 
@@ -215,6 +243,16 @@ export const Container = styled.div`
   thead tr th {
     background-color: ${({ theme }) => theme.colors.grayscale.ninth};
   }
+
+  /* thead tr:first-child th {
+    background-color: white;
+    border: none;
+  } */
+
+  /* .style-th-group {
+    border: none;
+    height: 22px;
+  } */
 
   tbody tr th {
     background-color: ${({ theme }) => theme.colors.grayscale.ninth};
@@ -252,17 +290,22 @@ export const Container = styled.div`
 
       padding-top: 16px;
       align-content: center;
+      .boolean-switch-cell {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
       .tag-content {
         background-color: #dee2e6 !important;
 
-        width: 140px !important;
         height: 27px !important;
-
-        display: flex;
+        width: auto;
+        display: inline-flex;
         align-items: center;
 
-        padding-left: 8px;
+        padding: 0 8px;
         border-radius: 7px;
 
         margin: 16px 0 0 8px;
@@ -322,6 +365,98 @@ export const Container = styled.div`
         }
       }
     }
+    .radio-item-warn {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 45px;
+      width: fit-content;
+      height: 30px;
+
+      border: 1px solid #f1bc02;
+      border-radius: 24px;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      position: relative;
+    }
+
+    .checked-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 45px;
+      width: fit-content;
+      height: 30px;
+
+      background: #f8f9fa;
+      border-radius: 24px;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .checked-item-warn {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 45px;
+      width: fit-content;
+      height: 30px;
+
+      border-radius: 24px;
+      background: #fffaeb;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      position: relative;
+    }
+
+    .hover-container-info {
+      display: flex;
+      position: relative;
+      top: 1px;
+    }
+    .hover-container-info:hover {
+      svg {
+        stroke: transparent;
+        fill: #f1bc02;
+      }
+      path {
+        stroke: #fff;
+        fill: #f1bc02;
+        :first-child {
+          stroke: #f1bc02;
+        }
+      }
+    }
 
     .dropdown-item {
       display: flex;
@@ -346,13 +481,88 @@ export const Container = styled.div`
         }
       }
     }
+    #blur {
+      filter: blur(4px);
+    }
+    .linked-icon-container {
+      position: relative;
+    }
+    .blurCenter {
+      display: flex;
+      height: 100%;
+      align-items: center;
+      padding-left: 5px;
+    }
+    .dropdown-item-warn {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
+      min-width: 50px;
+      width: fit-content;
+      height: 30px;
+
+      border: 1px solid #f1bc02;
+      border-radius: 8px;
+
+      padding-left: 8px;
+      margin: 10.5px 0 0 8px;
+
+      svg {
+        margin: 0 4px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
 
     .drag-over {
       border: 2px dashed #3818d9;
+      text-justify: center;
     }
 
     .drag-over::after {
       content: "Solte aqui";
+    }
+  }
+
+  .groupHeader {
+    position: relative;
+    .buttonsGroupHeader {
+      position: absolute;
+      right: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease-in-out;
+    }
+    :hover {
+      .buttonsGroupHeader {
+        display: initial;
+        pointer-events: initial;
+        opacity: 1;
+      }
+    }
+  }
+  .newGroupHeader {
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    height: 20px;
+    border-radius: 5px 5px 0px 0px;
+    transition: all 0.1s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: transparent;
+    background: transparent;
+    :hover {
+      color: #3818d9;
+      background: #e2e0ff;
     }
   }
 `;
@@ -361,11 +571,12 @@ export const Filters = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 68px;
+  height: 53px;
 
-  padding: 16px;
+  padding: 0 16px;
   background: white;
   border: 1px solid #e9ecef;
+  border-bottom: none;
 `;
 
 export const Line = styled.div`

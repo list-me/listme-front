@@ -1,6 +1,8 @@
+/* eslint-disable import/prefer-default-export */
 import { AxiosResponse } from "axios";
 import { api } from "../api";
 import { STORAGE } from "../../../constants/localStorage";
+import { IConditions } from "../../../context/FilterContext/FilterContextType";
 
 interface IPagination {
   page?: number;
@@ -12,10 +14,38 @@ export const productRequests = {
   list: async (
     { page = 0, limit = 200, keyword }: IPagination,
     templateId?: string,
+    conditions?: IConditions[] | undefined,
+    operator?: string,
   ): Promise<AxiosResponse> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
+
+    const requestData = {
+      template_id: templateId,
+      key: keyword || undefined,
+      limit,
+      conditions,
+      operator,
+      offset: page,
+    };
+
+    const response = await api.post(`/products/filter`, requestData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response;
+  },
+  listPublic: async (
+    { page = 0, limit = 200 }: IPagination,
+    templateId?: string,
+  ): Promise<AxiosResponse> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+
     const response = await api.get(
-      `/products/?template_id=${templateId}&key=${keyword}&limit=${limit}&offset=${page}`,
+      `/products/public?${templateId && `template_id=${templateId}`}${
+        limit && `&limit=${limit}`
+      }&offset=${page}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -47,7 +77,7 @@ export const productRequests = {
       },
     );
 
-    return response.data;
+    return response;
   },
   delete: async (id: string): Promise<any> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
@@ -66,6 +96,96 @@ export const productRequests = {
         Authorization: `Bearer ${token}`,
       },
     });
+
+    return response.data;
+  },
+  postFromToCSV: async (formData: FormData): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(`/products/import/csv`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data;
+  },
+  postLink: async (formData: FormData): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(`/products/link`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data;
+  },
+
+  validateCSV: async (formData: FormData): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(`/products/validate/csv`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data;
+  },
+  postProductChildren: async (body: {
+    product_id: string;
+    childs: string[];
+  }): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.post(`/product/children`, body, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  },
+  deleteProductChildren: async ({
+    parent_id,
+    childs,
+  }: {
+    parent_id: string;
+    childs: string[];
+  }): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: { childs },
+    };
+
+    const response = await api.delete(`/product/${parent_id}/children`, config);
+
+    return response.data;
+  },
+  patchProductValue: async ({
+    value,
+    productId,
+    fieldId,
+  }: {
+    value: string[];
+    productId: string;
+    fieldId: string;
+  }): Promise<any> => {
+    const token = window.localStorage.getItem(STORAGE.TOKEN);
+    const response = await api.patch(
+      `/product/${productId}/field/${fieldId}`,
+      {
+        value,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
 
     return response.data;
   },

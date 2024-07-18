@@ -13,28 +13,27 @@ const Active = css`
   span {
     color: ${({ theme }) => theme.colors.hover.text};
   }
+
+  svg,
+  path {
+    stroke: ${({ theme }) => theme.colors.hover.text} !important;
+  }
 `;
 
 export const Container = styled.div`
   width: 222px;
   height: 100vh;
-
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: fixed;
+  left: 0;
 
   margin: 0;
 
   background: ${({ theme }) => theme.colors.background.primary};
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-size: ${({ theme }) => theme.fonts.sizes.small};
-
-  //@media screen
-  //and (min-device-width: 1200px)
-  //and (max-device-width: 1600px)
-  //and (-webkit-min-device-pixel-ratio: 1) {
-  //  width: 12vw;
-  //}
 `;
 
 export const LogoContainer = styled.span`
@@ -57,7 +56,6 @@ export const Content = styled.div`
 export const Functions = styled.div`
   width: 100%;
   height: auto;
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -80,14 +78,20 @@ export const Shape = styled.div<IPositions>`
   &:hover {
     background: ${({ theme }) => theme.colors.hover.background};
     cursor: pointer;
-    transition: all 0.4s ease-in-out;
 
     span:last-child {
       color: ${({ theme }) => theme.colors.hover.text};
-      transition: all 0.4s ease-in-out;
+    }
+    svg,
+    path {
+      stroke: ${({ theme }) => theme.colors.hover.text};
     }
   }
 
+  svg,
+  path {
+    stroke: ${({ theme }) => theme.colors.tertiary};
+  }
   span:first-child {
     margin-right: 7px;
   }
@@ -95,11 +99,16 @@ export const Shape = styled.div<IPositions>`
   ${({ isActive }) => isActive && Active}
 `;
 
-export const Icon = styled.span`
+export const Icon = styled.span<{ isItem?: boolean }>`
   height: 16px;
 
   display: flex;
   align-items: center;
+  svg,
+  path {
+    stroke: ${({ theme, isItem }) =>
+      isItem === true ? theme.colors.fourth : theme.colors.tertiary};
+  }
 `;
 
 export const Label = styled.span<{ isItem?: boolean }>`
@@ -107,7 +116,7 @@ export const Label = styled.span<{ isItem?: boolean }>`
 
   font-family: ${({ theme }) => theme.fonts.family.default};
   font-weight: ${({ isItem }) => (isItem === true ? 700 : 400)};
-  font-size: ${({ theme }) => theme.fonts.sizes.xxxsmall};
+  font-size: ${({ theme }) => theme.fonts.sizes.small};
   color: ${({ theme, isItem }) =>
     isItem === true ? theme.colors.fourth : theme.colors.tertiary};
   line-height: 150%;
@@ -117,7 +126,6 @@ export const Capsule = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
   height: 100%;
   width: 100%;
 

@@ -2,31 +2,32 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable import/prefer-default-export */
 import { Divider } from "antd";
-import React, { useContext, useEffect, useRef } from "react";
-import { productContext } from "../../context/products";
+import React, { useEffect, useRef } from "react";
 import { DropdownMenuProps } from "./DropdownMenu.d";
 import { SuspenseMenu, Item } from "./styles";
+import { useProductContext } from "../../context/products";
 
 export const DropdownMenu: React.FC<DropdownMenuProps> = ({
-  changeOpen = () => {},
   isOpen,
   icoRef,
   openModal = () => {},
   options,
-  left,
   setIsOpen = () => {},
   col,
-  template,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const variable: string[] = [];
+  const { headerTable } = useProductContext();
+  const currentCol = headerTable.find((item) => {
+    return +item.order === +col;
+  });
 
   useEffect(() => {
     const handleScroll = () => {
       setIsOpen();
     };
 
-    function handleOutsideClick(event: any) {
+    function handleOutsideClick(event: any): void {
       if (icoRef.current && icoRef.current!.contains(event.target)) {
         return;
       }
@@ -48,7 +49,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   return (
     <>
       {isOpen ? (
-        <SuspenseMenu left={left} ref={modalRef}>
+        <SuspenseMenu ref={modalRef}>
           {options?.map((item) => {
             if (variable.length === 2) {
               variable.pop();
@@ -61,10 +62,23 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   <Item
                     className="item"
                     key={Math.random()}
-                    onClick={(e) => {
-                      openModal(item, col);
+                    onClick={(_e) => {
+                      if (!item?.label.toLowerCase().includes("excluir")) {
+                        openModal(item, col);
+                      } else if (
+                        item?.action === "delete" &&
+                        !currentCol?.default &&
+                        !currentCol?.required
+                      ) {
+                        openModal(item, col);
+                      }
                     }}
                     isLast={item?.label.toLowerCase().includes("excluir")}
+                    isDisabled={
+                      item?.action === "delete" &&
+                      currentCol?.default &&
+                      currentCol.required
+                    }
                   >
                     {item?.icon}
                     {item?.label}
@@ -80,9 +94,23 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   className="item"
                   key={item?.label}
                   onClick={() => {
-                    openModal(item, col);
+                    if (!item?.label.toLowerCase().includes("excluir")) {
+                      openModal(item, col);
+                    } else if (
+                      item?.action === "delete" &&
+                      !currentCol?.default &&
+                      !currentCol?.required
+                    ) {
+                      openModal(item, col);
+                    }
                   }}
-                  isLast={item?.label.toLowerCase().includes("excluir")}
+                  isLast={item?.action === "delete"}
+                  // @ts-ignore
+                  isDisabled={
+                    item?.action === "delete" &&
+                    currentCol?.default &&
+                    currentCol.required
+                  }
                 >
                   {item?.icon}
                   {item?.label}

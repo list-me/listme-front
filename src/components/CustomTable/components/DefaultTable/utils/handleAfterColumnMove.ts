@@ -1,4 +1,5 @@
 /* eslint-disable no-plusplus */
+import React from "react";
 import { IHeader } from "../../../../../context/products/product.context";
 
 /* eslint-disable no-param-reassign */
@@ -48,7 +49,6 @@ const handleAfterColumnMove = (
     }
     newColumns[lastIndex].frozen = false;
   }
-
   handleMove(newColumns);
 };
 

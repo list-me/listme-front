@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { SetStateAction, useCallback, useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Contents,
   Filters,
@@ -22,22 +22,65 @@ import Button from "../../../Button";
 import { Temp } from "../../../Temp";
 import { IHeaderTable } from "../../../../context/products/product.context";
 import EditableText from "../../../EditableText";
+import FromTo from "../../../FromTo";
+import { useFromToContext } from "../../../../context/FromToContext";
+import { ReactComponent as LinkIcon } from "../../../../assets/linkPublicList.svg";
+
+import { integrationsRequest } from "../../../../services/apis/requests/integration";
+import { useIntegration } from "../../../../context/IntegrationContext";
+import ButtonError from "../../../Integration/Error/ButtonError";
 
 function HeaderFilters({
   template,
   headerTable,
   handleGetProductFiltered,
   handleAddProductClick,
+  isPublic,
+  total,
 }: {
   template: any;
   headerTable: IHeaderTable[];
   handleGetProductFiltered: (keyword: string) => void;
   handleAddProductClick: () => void;
+  isPublic?: boolean;
+  total: number;
 }): JSX.Element {
+  const location = useLocation();
+  const isOutsidePage = location.pathname.includes("outside");
+
   const navigate = useNavigate();
+  const totalPrice = (total * 3).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
 
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
+  const { setFromToIsOpened, setCurrentStep, setStepType, setAllRowsSelected } =
+    useFromToContext();
 
+  const { setErrors, errors, setSidebarErrorOpened, offset, limit } =
+    useIntegration();
+
+  const getErrors = useCallback(async () => {
+    try {
+      const id = window.location.pathname.split("/")[2];
+      if (!id.includes("public")) {
+        const response = await integrationsRequest.listIntegrationsErrors({
+          limit,
+          offset,
+          id,
+        });
+        setErrors(response);
+      }
+    } catch (error) {
+      // Handle errors here
+      console.error("Error fetching errors:", error);
+    }
+  }, [limit, offset, setErrors]);
+
+  useEffect(() => {
+    getErrors();
+  }, [getErrors]);
   return (
     <>
       <Header>
@@ -58,26 +101,77 @@ function HeaderFilters({
           <EditIcon onClick={() => setIsEditingTitle(true)} />
         </LeftContent>
         <RightContent>
+          {isPublic && (
+            <Button
+              height="44px"
+              width="331px"
+              className="secondButton linkButton"
+              onClick={() => {
+                setStepType(isOutsidePage ? "publicListOutside" : "publicList");
+                setCurrentStep(2);
+                setFromToIsOpened(true);
+                setAllRowsSelected(true);
+              }}
+            >
+              Vincular lista completa ({totalPrice})
+              <LinkIcon />
+            </Button>
+          )}
           <MoreOptions>
             <EllipsisIcon />
           </MoreOptions>
-          <Button height="52px" width="227px" isSecondary>
-            <DownloadIcon />
-            Importar produtos
-          </Button>
-          <Button
-            height="52px"
-            width="226px"
-            className="secondButton"
-            onClick={handleAddProductClick}
-          >
-            Adicionar produto
-            <PlusIcon />
-          </Button>
+          {errors.total > 0 && (
+            <ButtonError
+              errors={errors}
+              setSidebarErrorOpened={setSidebarErrorOpened}
+            />
+          )}
+          {!isPublic && (
+            <>
+              {template?.templates_sync_ids && (
+                <Button
+                  height="44px"
+                  width="212px"
+                  isSecondary
+                  onClick={() => {
+                    setFromToIsOpened(true);
+                    setStepType("manageLinkedLists");
+                  }}
+                >
+                  <DownloadIcon />
+                  Gerenciar vínculos
+                </Button>
+              )}
+
+              <Button
+                height="44px"
+                width="212px"
+                isSecondary
+                className="secondButton"
+                onClick={() => setFromToIsOpened(true)}
+              >
+                <DownloadIcon />
+                Importar produtos
+              </Button>
+              <Button
+                height="44px"
+                width="212px"
+                className="secondButton"
+                onClick={handleAddProductClick}
+              >
+                Adicionar produto
+                <PlusIcon />
+              </Button>
+            </>
+          )}
         </RightContent>
       </Header>
       <Filters>
-        <Temp options={headerTable} handleSearch={handleGetProductFiltered} />
+        <Temp
+          options={headerTable}
+          handleSearch={handleGetProductFiltered}
+          isPublic={isPublic}
+        />
         <Contents>
           <Item>
             <HelpIcon />
@@ -85,6 +179,7 @@ function HeaderFilters({
           </Item>
         </Contents>
       </Filters>
+      <FromTo />
     </>
   );
 }

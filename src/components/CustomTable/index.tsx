@@ -23,7 +23,7 @@ import "handsontable/dist/handsontable.full.min.css";
 import { CustomTableProps, ICol } from "./CustomTable.d";
 import { useProductContext } from "../../context/products";
 import { Cell } from "../Cell/index";
-import { NewColumn } from "../NewColumn";
+import { NewColumn } from "./components/HeaderDropDown/components/NewColumn";
 import { Confirmation } from "../Confirmation";
 
 import { Content } from "../../pages/products/styles";
@@ -36,11 +36,21 @@ import {
   IHeader,
   IProductToTable,
 } from "../../context/products/product.context";
+import Filter from "../Filter";
+import { useFilterContext } from "../../context/FilterContext";
+import NotFound from "./components/NotFound";
+import HeaderGroups from "../HeaderGroups";
 
 registerAllModules();
 registerAllEditors();
 
-const CustomTable: React.FC<CustomTableProps> = () => {
+const CustomTable: React.FC<CustomTableProps> = ({
+  isPublic,
+  allRowsSelected,
+  setAllRowsSelected,
+  rowsSelected,
+  setRowsSelected,
+}) => {
   const hotRef = useRef<HotTable>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
   const {
@@ -64,10 +74,39 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     setTotal,
     uploadImages,
     handleFreeze,
+    conditionsFilter,
   } = useProductContext();
+  const [editModeGroup, setEditModeGroup] = useState<"group" | "ungroup" | "">(
+    "",
+  );
+  const [groupReferenceEditMode, setGroupReferenceEditMode] = useState("");
+  const [idsColumnsSelecteds, setIdsColumnsSelecteds] = useState<string[]>([]);
 
   const [cols, setCols] = useState<ICol[]>([]);
+
   const [page, setPage] = useState<number>(1);
+  const [selectedGroup, setSelectedGroup] = useState("");
+  const headerTableToView = headerTable.filter((item) => {
+    if (selectedGroup.length) {
+      if (selectedGroup !== "others") {
+        return item.group === selectedGroup;
+      }
+      return !item.group;
+    }
+    return item;
+  });
+
+  const colHeadersParams = headerTableToView.map((item) => {
+    return item.title;
+  });
+
+  const colHeadersToView = colHeaders.filter((item) => {
+    return colHeadersParams.includes(item) || item === " ";
+  });
+
+  const colsToView = cols.filter((item) => {
+    return colHeadersParams.includes(item.title);
+  });
 
   const [currentCell, setCurrentCell] = useState<any>({});
 
@@ -92,6 +131,13 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           isCustom: true,
         };
       }
+      if (column.type === "numeric" || column.type === "decimal") {
+        return {
+          ...column,
+          width: column?.order == undefined ? "193" : column.width,
+          isCustom: false,
+        };
+      }
       return {
         ...column,
         width: column?.order == undefined ? "193" : column.width,
@@ -111,11 +157,8 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           return item;
         }
       });
-
       const newColumns = [...headerTable];
-
       newColumns.splice(currentCell.order, 1);
-
       handleRemoveColumn(
         Number(currentCell?.order),
         fields,
@@ -131,112 +174,15 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     }
   };
 
-  const renderHeaderComponent = useCallback(
-    (column: number, TH: HTMLTableHeaderCellElement) => {
-      if (TH.querySelector(".customHeader") && column === -1) {
-        TH.replaceChildren("");
-        return;
-      }
-
-      const existent = TH.querySelector(".customHeader");
-      if (existent) {
-        unmountComponentAtNode(existent);
-        const myComponent = document.createElement("div");
-        myComponent.className = "customHeader";
-
-        const col = template?.fields?.fields.find((item: any) => {
-          if (item.id === headerTable[column]?.data) {
-            return item;
-          }
-        });
-
-        if (colHeaders[column] === " ") {
-          ReactDOM.createRoot(myComponent).render(
-            <NewColumn
-              template={template}
-              newColumn={template}
-              setNewColumn={(newColumn: any, templateUpdated: any) => {
-                newColumn = {
-                  ...newColumn,
-                  className: "htLeft htMiddle",
-                  frozen: false,
-                  hidden: false,
-                  order: String(headerTable.length + 1),
-                  width: "300",
-                };
-
-                const newPosition = [...headerTable, newColumn];
-                newPosition.splice(newPosition.length - 2, 1);
-                newPosition.push({});
-                setHeaderTable(newPosition);
-
-                const contentHeaders = headerTable.map((item) => item?.title);
-                contentHeaders.splice(headerTable.length - 1, 1);
-                contentHeaders.push(newColumn?.title);
-                contentHeaders.push(" ");
-                setColHeaders(contentHeaders);
-                handleNewColumn(newColumn, templateUpdated);
-              }}
-            />,
-          );
-        } else {
-          ReactDOM.createRoot(myComponent).render(
-            <Cell
-              label={colHeaders[column]}
-              column={col}
-              template={template}
-              handleHidden={() => {
-                return handleHidden(column, template, true);
-              }}
-              handleFrozen={() => {
-                const freezePlugins =
-                  hotRef.current!.hotInstance?.getPlugin("manualColumnFreeze");
-
-                if (freezePlugins) {
-                  freezePlugins?.freezeColumn(1);
-                  hotRef.current!.hotInstance?.render();
-                }
-                return true;
-              }}
-              // @ts-ignore
-              freeze={!!headerTable[column]?.frozen}
-              handleSort={() => {}}
-              handleDeleteColumn={() => {
-                col.order = column.toString();
-                setCurrentCell(col);
-                setIsOpen(!isOpen);
-              }}
-            />,
-          );
-        }
-
-        TH.replaceChildren(myComponent);
-        return;
-      }
-
-      const myComponent = document.createElement("div");
-      myComponent.className = "customHeader";
-
-      TH.replaceChildren(myComponent);
-    },
-    [
-      headerTable,
-      colHeaders,
-      handleHidden,
-      handleNewColumn,
-      headerTable,
-      isOpen,
-      setColHeaders,
-      template,
-    ],
-  );
-
   const [currentKeyword, setCurrentKeyword] = useState("");
   const handleGetProductFiltered = (keyword: string): void => {
     loadingRef.current!.style.display = "block";
     setCurrentKeyword(() => keyword);
     productRequests
-      .list({ keyword, limit: 100 }, window.location.pathname.substring(10))
+      .list(
+        { keyword, limit: 100 },
+        window.location.pathname.substring(isPublic ? 17 : 10),
+      )
       .then((response) => {
         const productFields: any[] = [];
 
@@ -244,7 +190,7 @@ const CustomTable: React.FC<CustomTableProps> = () => {
         if (data) {
           data.products?.forEach((item: any) => {
             const object: any = {};
-            item.fields.forEach((field: any) => {
+            item?.fields?.forEach((field: any) => {
               const currentField = headerTable.find(
                 (e: any) => e?.data == field?.id,
               );
@@ -283,15 +229,15 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           }
         }
       })
-      .catch((errr: any) => {
-        console.log(errr);
+      .catch((err: any) => {
+        console.log(err);
         loadingRef.current!.style.display = "none";
 
         const hotInstance = hotRef.current!?.hotInstance;
         if (hotInstance) {
           hotInstance.render();
         }
-        toast.error(errr.response.data.message);
+        toast.error(err?.response?.data?.message);
       });
   };
 
@@ -299,6 +245,38 @@ const CustomTable: React.FC<CustomTableProps> = () => {
     handleMountColumns();
   }, [handleMountColumns]);
 
+  const [parentId, setParentId] = useState<string | null>(null);
+  const [subItensMode, setSubItemsMode] = useState<"add" | "remove">("add");
+
+  const checkToHeaderTable = {
+    title: "Check",
+    data: "000000",
+    className: "htLeft htMiddle",
+    type: isPublic ? "checkPublic" : "checkSubItem",
+    required: false,
+    options: [""],
+    order: "-1",
+    hidden: false,
+    width: "300px",
+    frozen: false,
+  };
+
+  const checkToColHeaders = isPublic ? "checkPublic" : "checkSubItem";
+
+  const checkToCols = {
+    title: "Check",
+    data: "000000",
+    className: "htLeft htMiddle",
+    type: isPublic ? "checkPublic" : "checkSubItem",
+    required: false,
+    options: [""],
+    order: "-1",
+    hidden: false,
+    width: "300px",
+    frozen: false,
+    isCustom: false,
+    bucket: "",
+  };
   return (
     <>
       <Confirmation
@@ -312,23 +290,51 @@ const CustomTable: React.FC<CustomTableProps> = () => {
           handleDeleteColumn(Number(currentCell.order));
         }}
       />
+      <Filter />
       <>
         <Content>
           <HeaderFilters
+            isPublic={isPublic}
             template={template}
+            total={total}
             // @ts-ignore
             headerTable={headerTable}
             handleGetProductFiltered={handleGetProductFiltered}
             handleAddProductClick={() => handleAddProductClick()}
           />
+          <HeaderGroups
+            editModeGroup={editModeGroup}
+            setEditModeGroup={setEditModeGroup}
+            fields={template?.fields?.fields}
+            groups={template?.fields?.groups}
+            selectedGroup={selectedGroup}
+            setSelectedGroup={setSelectedGroup}
+            setGroupReferenceEditMode={setGroupReferenceEditMode}
+            setIdsColumnsSelecteds={setIdsColumnsSelecteds}
+          />
         </Content>
         <Container>
           <DefaultTable
+            cols={
+              parentId || isPublic
+                ? [checkToCols, ...colsToView]
+                : (colsToView as any)
+            }
+            colHeaders={
+              parentId || isPublic
+                ? [checkToColHeaders, ...colHeadersToView]
+                : colHeadersToView
+            }
+            headerTable={
+              parentId || isPublic
+                ? [checkToHeaderTable, ...headerTableToView]
+                : headerTableToView
+            }
+            parentId={parentId}
+            setParentId={setParentId}
             key={colHeaders.join()}
             hotRef={hotRef}
-            colHeaders={colHeaders}
             setColHeaders={setColHeaders}
-            cols={cols}
             products={products}
             setProducts={setProducts}
             handleDelete={handleDelete}
@@ -338,7 +344,6 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             total={total}
             setTotal={setTotal}
             template={template}
-            renderHeaderComponent={renderHeaderComponent}
             hidden={hidden}
             handleResize={handleResize}
             columns={headerTable}
@@ -347,14 +352,28 @@ const CustomTable: React.FC<CustomTableProps> = () => {
             uploadImages={uploadImages}
             page={page}
             setPage={setPage}
-            headerTable={headerTable}
             currentKeyword={currentKeyword}
             handleNewColumn={handleNewColumn}
             handleHidden={handleHidden}
             setCurrentCell={setCurrentCell}
             setIsOpen={setIsOpen}
             handleFreeze={handleFreeze}
+            isPublic={isPublic}
+            allRowsSelected={allRowsSelected}
+            setAllRowsSelected={setAllRowsSelected}
+            rowsSelected={rowsSelected}
+            setRowsSelected={setRowsSelected}
+            subItensMode={subItensMode}
+            setSubItemsMode={setSubItemsMode}
+            editModeGroup={editModeGroup}
+            setEditModeGroup={setEditModeGroup}
+            groupReferenceEditMode={groupReferenceEditMode}
+            setGroupReferenceEditMode={setGroupReferenceEditMode}
+            idsColumnsSelecteds={idsColumnsSelecteds}
+            setIdsColumnsSelecteds={setIdsColumnsSelecteds}
+            setSelectedGroup={setSelectedGroup}
           />
+          {!!conditionsFilter.length && products.length < 1 && <NotFound />}
         </Container>
         <div ref={loadingRef} style={{ display: "none" }}>
           <LoadingFetch />

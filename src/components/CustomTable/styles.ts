@@ -19,9 +19,15 @@ export const AddColumn = styled.div`
 
 export const Container = styled.div`
   overflow: hidden;
-  height: 79vh !important;
+  position: relative;
+  height: calc(100vh - 193px) !important;
+  /* Arquivo CSS */
+  .hot-table .corner {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 
   @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-    height: 72vh !important;
+    height: calc(80.9vh - 60px) !important;
   }
 `;

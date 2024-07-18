@@ -4,11 +4,17 @@ import axios from "axios";
 import { STORAGE } from "../../../constants/localStorage";
 import { api } from "../api";
 import { toast } from "react-toastify";
+import { DEVELOPMENT_ENVIRONMENT } from "../../../constants/environments";
 
 interface SignedUrlResponse {
   url: string;
   access_url: string;
 }
+
+type Headers = {
+  "Content-Type": string;
+  "x-amz-acl"?: string;
+};
 
 function generateUUID(): string {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
@@ -23,25 +29,47 @@ export const fileRequests = {
     fileName: string,
     fileType: string,
     templateId: string,
+    optionals?: { brand?: string; name?: string },
   ): Promise<SignedUrlResponse> => {
     const token = window.localStorage.getItem(STORAGE.TOKEN);
+    let url: string = `template/signed-url?file_type=${fileType}&template_id=${templateId}&file_name=${fileName}`;
 
-    const response = await api.get(
-      `template/signed-url?fileType=${fileType}&templateId=${templateId}&fileName=${fileName}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    if (optionals?.brand && optionals?.name) {
+      url = `template/signed-url?file_type=${fileType}&template_id=${templateId}&file_name=${fileName}&brand=${
+        optionals.brand
+      }&name=${encodeURIComponent(optionals.name)}`;
+    }
+
+    const response = await api.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
 
     return response.data;
   },
   uploadFile: async (file: File, url: string): Promise<void> => {
-    await axios.put(url, file).catch((error) => {
+    try {
+      let contentType: string = file.type;
+      if (["skp", "sku"].includes(file.type))
+        contentType = `application/${file.type}`;
+
+      const headers: Headers = {
+        "Content-Type": contentType,
+      };
+
+      const currentEnviroment: string | undefined =
+        process.env.REACT_APP_ENVIRONMENT;
+
+      if (currentEnviroment !== DEVELOPMENT_ENVIRONMENT)
+        headers["x-amz-acl"] = "public-read";
+
+      await axios.put(url, file, { headers });
+    } catch (error) {
       toast.error("Ocorreu um erro ao realizar o upload de uma das imagens");
-    });
+    }
   },
+
   dropFile: async (
     file: string,
     entity: string,

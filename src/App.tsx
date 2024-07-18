@@ -6,7 +6,7 @@ import GlobalStyles from "./styles/globalStyles";
 import { Toast } from "./components/Toast";
 import { AppContextProvider } from "./context";
 
-function App() {
+function App(): JSX.Element {
   return (
     <AppContextProvider>
       <ThemeProvider theme={theme}>

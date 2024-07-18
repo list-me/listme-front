@@ -37,10 +37,17 @@ interface IField {
   hidden?: boolean;
   width?: string;
   frozen?: boolean;
+  limit: number;
+  integrations: {
+    provider: string;
+    entities: string[];
+  }[];
+  enforce_exact_length: boolean;
+  default: boolean;
 }
 
 interface ITemplate {
-  bucket_url: string;
+  bucket: string;
   company_id: string;
   created_at: string;
   deleted_at: string | null;
@@ -48,7 +55,10 @@ interface ITemplate {
   name: string;
   templateId: string;
   updated_at: string | null;
-  fields: { fields: IField[]; groups: string[] };
+  fields: {
+    fields: IField[];
+    groups: { label: string; colspan: number; newHiddens: number[] }[];
+  };
 }
 
 interface IHeader {
@@ -58,14 +68,23 @@ interface IHeader {
   type: string;
   required: boolean;
   options: string[];
+  group: string;
   order: string | number;
   hidden: boolean;
   width: string;
   frozen: boolean;
-  bucket_url: string;
+  bucket: string;
+  limit: number;
+  integrations: {
+    provider: string;
+    entities: string[];
+  }[];
+  enforce_exact_length: boolean;
+  default: boolean;
 }
 
 interface ICustomField {
+  enforce_exact_length: any;
   order: string | number;
   hidden: boolean;
   width: string;
@@ -87,12 +106,20 @@ interface IProduct {
   product_template_id: string;
   status: string;
   fields: IProductFields[];
+  parent_id: string;
+  is_parent: boolean;
+  children: any[];
+  have_sync: boolean;
 }
 
 interface IProductToTable {
   [key: string]: string | string[];
+  parent_id: string;
+  is_parent: boolean;
   id: string;
   created_at: string;
+  childrens?: IProductToTable[];
+  have_sync: boolean;
 }
 
 interface IProductsRequest {

@@ -20,6 +20,7 @@ import {
   PrimaryButton,
   Tag,
   Title,
+  ContainerTitleSearch,
 } from "./styles";
 
 import { ReactComponent as CloseIcon } from "../../../assets/close-xsmall-blue.svg";
@@ -162,10 +163,12 @@ const RelationComponent: React.FC<PropsRelation> = ({
         if (e?.id !== product?.id) return e;
       });
     });
+    product[field];
     const newProduct = {
       id: product.id,
       field: fieldTemplate,
       templateId: column.options[0].templateId,
+      value: product[field][0],
     };
     const products: any[] = [newProduct, ...currentProducts];
     setCurrentProducts(products);
@@ -222,10 +225,16 @@ const RelationComponent: React.FC<PropsRelation> = ({
 
   const listItems = (items: any[], relTemplate: any): void => {
     if (relTemplate.options) {
+      const selfId: string = dataProvider[row]
+        ? dataProvider[row]["id"]
+        : undefined;
       const fields: any[] = [];
       const allFields: any[] = [];
+
       items.forEach((product: any) => {
         const currentIds = currentProducts?.map((e) => e.id);
+        if (selfId === product.id) return;
+
         if (currentIds && !currentIds.includes(product.id)) {
           const props: any = {};
 
@@ -356,12 +365,14 @@ const RelationComponent: React.FC<PropsRelation> = ({
               ) : (
                 <>
                   <HeaderTable>
-                    <Title> Relacionar items </Title>
-                    <SearchBar
-                      handleChangeInput={(value: string) => setKeyword(value)}
-                      onPressEnter={handleSearchProducts}
-                      onFocus
-                    />
+                    <ContainerTitleSearch>
+                      <Title> Relacionar items </Title>
+                      <SearchBar
+                        handleChangeInput={(value: string) => setKeyword(value)}
+                        onPressEnter={handleSearchProducts}
+                        onFocus
+                      />
+                    </ContainerTitleSearch>
                   </HeaderTable>
                   {isLoading ? (
                     <Loading />

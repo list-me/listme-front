@@ -1,15 +1,75 @@
 import styled from "styled-components";
 
-export const Container = styled.div`
-  width: 100%;
+export const Container = styled.div<{ isDisabled?: boolean }>`
+  width: calc(100% + 16px);
   height: fit-content;
-
+  max-height: 85vh;
+  overflow-y: auto;
   background: #ffffff;
+
+  ::-webkit-scrollbar {
+    width: 8px; /* largura da barra de rolagem */
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: unset;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #cccccc; /* cor do botão da barra de rolagem */
+    border-radius: 4px; /* raio da borda do botão da barra de rolagem */
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #3818d9; /* cor do botão da barra de rolagem quando hover */
+  }
+  .ant-modal-content {
+    margin-right: 0 !important;
+  }
 
   display: flex;
   flex-direction: column;
   align-items: center;
   /* padding: 20px; */
+  .modalNotEdit {
+    width: 100%;
+  }
+  .modalNotEdit:hover {
+    position: relative;
+    ::before {
+      content: "Não é possível editar estes campos. Campos obrigatórios para integração";
+      font-family: ${({ theme }) => theme.fonts.family.default};
+      font-weight: ${({ theme }) => theme.fonts.weights.regular};
+      font-size: ${({ theme }) => theme.fonts.sizes.small};
+      color: ${({ theme }) => theme.colors.secondary};
+      background: #000000bf;
+      position: absolute;
+      border-radius: 6px;
+      top: 100px;
+      left: 0px;
+      display: ${(props) => (props.isDisabled ? "flex" : "none")};
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 1;
+      width: 470px;
+      height: 35px;
+      z-index: 1;
+    }
+    ::after {
+      content: "";
+      position: absolute;
+      top: 92px;
+      left: 8px;
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid #000000bf;
+      display: ${(props) => (props.isDisabled ? "initial" : "none")};
+    }
+  }
+  input:hover {
+  }
 
   .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
     background-color: unset !important;
@@ -86,7 +146,7 @@ export const Description = styled.h2`
   font-weight: 400;
   font-size: 16px;
   line-height: 150%;
-  color: #868e96;
+  color: ${({ theme }) => theme.colors.tertiary};
 
   flex: none;
   order: 1;
@@ -99,38 +159,12 @@ export const Description = styled.h2`
 `;
 
 export const BodyContent = styled.div`
-  height: fit-content;
   width: 100%;
 
   .encapsulator {
-    overflow: auto;
-
-    height: fit-content;
-    max-height: 600px;
     width: 100%;
 
     padding-right: 16px;
-
-    ::-webkit-scrollbar {
-      width: 8px; /* largura da barra de rolagem */
-    }
-
-    ::-webkit-scrollbar-track {
-      background-color: unset;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background-color: #cccccc; /* cor do botão da barra de rolagem */
-      border-radius: 4px; /* raio da borda do botão da barra de rolagem */
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background-color: #3818d9; /* cor do botão da barra de rolagem quando hover */
-    }
-
-    @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-      max-height: 400px;
-    }
   }
 `;
 
@@ -309,6 +343,10 @@ export const Item = styled.span`
   justify-content: space-between;
 
   margin-bottom: 16px;
+  .ant-modal-close {
+    position: relative;
+    right: 20px;
+  }
 
   .ant-switch-inner {
     &:hover {
@@ -480,5 +518,23 @@ export const IconContent = styled.span`
   &:hover {
     filter: brightness(0.2);
     transition: 0.5s;
+  }
+`;
+export const CharacterLimitContainer = styled.div`
+  .ant-form-item-label {
+    .ant-form-item-no-colon {
+      width: 100%;
+      padding: 0;
+    }
+  }
+  .label-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+  }
+  button {
+    position: relative;
+    right: -10px;
   }
 `;

@@ -16,9 +16,22 @@ function customRendererFile(
   value: any,
   hotRef: React.RefObject<HotTable>,
   loadingRef: React.RefObject<HTMLDivElement>,
-  uploadImages: (files: File[], bucketUrl: string) => Promise<void | string[]>,
+  uploadImages: (
+    files: File[],
+    bucketUrl: string,
+    companyId: string,
+    optionals?: { brand?: string; name?: string },
+  ) => Promise<void | string[]>,
   template: any,
+  totalExistingImages: number,
+  limit: number,
 ): void {
+  let totalImages = totalExistingImages;
+
+  if (value && Array.isArray(value)) {
+    totalImages += value.length;
+  }
+
   td.className = "file-cell";
 
   td.draggable = true;
@@ -46,6 +59,10 @@ function customRendererFile(
   td.ondrop = async (event: DragEvent) => {
     event.preventDefault();
     event.stopPropagation();
+    // if (totalImages >= limit) {
+    //   toast.warn(`Limite de imagens excedido`);
+    //   return;
+    // }
 
     const { hotInstance } = hotRef.current!;
     const target = event.target as HTMLElement;
@@ -68,9 +85,40 @@ function customRendererFile(
         if (event.dataTransfer?.files.length) {
           const { files } = event.dataTransfer;
           const parsedFiles: Array<File> = Array.from(files);
+
+          const optionals = {
+            brand: "",
+            name: "",
+          };
+          if (template.id === "7a14b251-3eb8-4ed5-8f33-531dd1e104b8") {
+            const brand = _instance.getDataAtRowProp(row, "525546");
+            optionals.brand = brand?.length ? brand[0]?.id : undefined;
+            optionals.name = _instance.getDataAtRowProp(row, "837714");
+          }
+
+          if (template.id === "8956d969-d769-4f09-8736-e0b4d73b3e3d") {
+            const brand = _instance.getDataAtRowProp(row, "730291");
+            optionals.brand = brand?.length ? brand[0]?.id : undefined;
+            optionals.name = _instance.getDataAtRowProp(row, "474091");
+          }
+
+          if (template.id === "a13f5317-d855-4766-9063-c916f4d90b83") {
+            const brand = _instance.getDataAtRowProp(row, "956614");
+            optionals.brand = brand?.length ? brand[0]?.id : undefined;
+            optionals.name = _instance.getDataAtRowProp(row, "889711");
+          }
+
+          if (template.id === "23625c16-ca24-48d7-9f4d-d00364c66d8b") {
+            const brand = _instance.getDataAtRowProp(row, "771752");
+            optionals.brand = brand?.length ? brand[0]?.id : undefined;
+            optionals.name = _instance.getDataAtRowProp(row, "993384");
+          }
+
           const newFiles: Array<string> | void = await uploadImages(
             parsedFiles,
             template.id,
+            template.companyId,
+            optionals,
           );
 
           if (newFiles && newFiles.length) {
@@ -102,64 +150,31 @@ function customRendererFile(
     }
   };
 
-  if (typeof value === "string" && value.length) {
-    value = JSON.parse(value);
-  }
+  const newValue = value?.map((itemValue: string) => {
+    const regexSRC = /src="([^"]+)"/;
+    const match = itemValue?.match(regexSRC);
+    if (match && match?.length > 0) {
+      const lastDotIndex: number = match[1].lastIndexOf(".");
+      const fileType: string = match[1].substring(lastDotIndex + 1);
+      if (!["jpg", "jpeg", "png", "thumb", "svg", "webp"].includes(fileType)) {
+        const imageDocument = `<img class="imgItem" loading="lazy" src="${DocumentIcon}" style="width:25px;height:25px;margin-right:4px;">`;
+        return imageDocument;
+      }
 
-  if (value?.length) {
-    td.innerHTML = value
-      .map((url: string) => {
-        let imageSource: string = url;
-        const fileNameWithExtension: string = getFilenameFromUrl(url);
-        const lastDotIndex: number = fileNameWithExtension.lastIndexOf(".");
-        const fileType: string = fileNameWithExtension.substring(
-          lastDotIndex + 1,
-        );
+      return itemValue;
+    }
+    return itemValue;
+  });
 
-        if (!["jpg", "jpeg", "png", "thumb", "svg"].includes(fileType)) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          imageSource = DocumentIcon;
-        }
+  const toInnerHTML =
+    newValue?.length > 1
+      ? `<div style="display:flex; align-items: center; margin-top: 16px; margin-left: 8px;">
+        ${newValue[0].concat(
+          `<div class="itens-amount"> +${newValue.length - 1}</div>`,
+        )} </div>`
+      : newValue || "";
 
-        const placeholder: string = `<img class="imgItem" title="${fileNameWithExtension}" loading='lazy' src="${ImageErrorIcon}" style="width:25px;height:25px;margin-right:4px;">`;
-        return placeholder;
-      })
-      .join("");
-
-    const imgUrl: string = value[value.length - 1];
-    fetch(imgUrl, { method: "HEAD", cache: "no-cache" })
-      .then((response: Response) => {
-        const contentLength: string | null =
-          response.headers.get("Content-Length");
-
-        if (contentLength && parseInt(contentLength) <= 1000 * 1024) {
-          let imageSource: string = imgUrl;
-          const fileNameWithExtension: string = getFilenameFromUrl(imgUrl);
-          const lastDotIndex: number = fileNameWithExtension.lastIndexOf(".");
-          const fileType: string = fileNameWithExtension.substring(
-            lastDotIndex + 1,
-          );
-
-          if (!["jpg", "jpeg", "png", "thumb", "svg"].includes(fileType)) {
-            imageSource = DocumentIcon;
-          }
-
-          const imgTag: string = `<img class="imgItem" title="${fileNameWithExtension}" src="${imageSource}" style="width:25px;height:25px; margin-right:4px;" loading="lazy">`;
-          td.innerHTML =
-            value.length > 1
-              ? `<div style="display:flex; align-items: center; margin-top: 16px; margin-left: 8px;">
-                  ${imgTag.concat(
-                    `<div class="itens-amount"> +${value.length - 1}</div>`,
-                  )} </div>`
-              : imgTag;
-        }
-      })
-      .catch((error) => {
-        console.error("Erro ao verificar o tamanho da imagem:", error);
-      });
-  } else {
-    td.innerHTML = "";
-  }
+  td.innerHTML = toInnerHTML;
 }
 
 export default customRendererFile;

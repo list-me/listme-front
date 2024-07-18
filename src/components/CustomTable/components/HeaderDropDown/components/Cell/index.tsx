@@ -9,6 +9,8 @@ import { ReactComponent as FrozenIcon } from "../../../../../../assets/frozen.sv
 import { ReactComponent as AscIcon } from "../../../../../../assets/sort-asc.svg";
 import { ReactComponent as DescIcon } from "../../../../../../assets/sort-desc.svg";
 import { ReactComponent as TrashIcon } from "../../../../../../assets/trash-red.svg";
+import { ReactComponent as GroupIcon } from "../../../../../../assets/group-icon.svg";
+
 import { DropdownMenu } from "../../../../../DropdownMenu";
 import { PersonalModal } from "../../../../../CustomModa";
 
@@ -21,13 +23,13 @@ export const HeaderCell: React.FC<ICellProps> = ({
   handleHidden = () => {},
   freeze,
   handleDeleteColumn,
+  handleGroupEdit,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement>(null);
   const iconRef = useRef(null);
   const [titleHeader, setTitleHeader] = useState<string>(label);
-  const [posicaoPai, setPosicaoPai] = useState<number | null>(null);
   const [options, setOptions] = useState<any[]>();
 
   useEffect(() => {
@@ -42,6 +44,13 @@ export const HeaderCell: React.FC<ICellProps> = ({
         icon: <CopyIcon />,
         action: "duplicate",
       },
+      // {
+      //   label: column?.group
+      //     ? "Desagrupar coluna(s)"
+      //     : "Agrupar com outra(s) coluna(s)",
+      //   icon: <GroupIcon />,
+      //   action: "group",
+      // },
       {
         label: "Ocultar Coluna",
         icon: <EyeOffIcon />,
@@ -69,23 +78,19 @@ export const HeaderCell: React.FC<ICellProps> = ({
       },
     ];
     setOptions([...customOptions]);
-
-    const pai = ref.current;
-    if (pai) {
-      const left = pai?.getBoundingClientRect().left + window.scrollX;
-      setPosicaoPai(left);
-    }
   }, [isOpen, column, freeze]);
 
   return (
     <>
       <DropdownMenu
-        changeOpen={() => {
-          setIsOpen(!isOpen);
-        }}
         isOpen
         icoRef={iconRef}
         openModal={(option): void => {
+          if (option.action === "group") {
+            handleGroupEdit();
+            setIsOpen(!isOpen);
+            return;
+          }
           if (option.action === "delete") {
             handleDeleteColumn();
             setIsOpen(!isOpen);
@@ -111,11 +116,9 @@ export const HeaderCell: React.FC<ICellProps> = ({
           setIsOpen(!isOpen);
         }}
         options={options as any}
-        left={posicaoPai}
         setIsOpen={() => {
           setIsOpen(false);
         }}
-        template={template}
         col={column?.order}
       />
       <Content ref={ref}>

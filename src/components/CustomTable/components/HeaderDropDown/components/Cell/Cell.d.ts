@@ -9,6 +9,7 @@ interface ICellProps {
   handleHidden: Function;
   handleDeleteColumn: () => void;
   freeze: boolean;
+  handleGroupEdit: () => void;
 }
 
 interface IOption {
@@ -25,6 +26,9 @@ enum IconType {
   File = "file",
   Radio = "radio",
   Relation = "relation",
+  Numeric = "numeric",
+  Decimal = "decimal",
+  Boolean = "boolean",
 }
 
 export { ICellProps, IOption, IconType };
