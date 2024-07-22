@@ -802,9 +802,11 @@ function DefaultTable({
         groupReferenceEditMode,
         changeAllRowsSelected,
         allRowsSelected,
+        isPublic,
       );
     },
     [
+      isPublic,
       allRowsSelected,
       changeAllRowsSelected,
       cols,
