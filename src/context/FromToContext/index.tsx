@@ -96,7 +96,7 @@ export function FromToContextProvider({
   const [allRowsSelected, setAllRowsSelected] = useState<boolean>(false);
   const selectedProductsId = useMemo(() => {
     return rowsSelected.map((item) => {
-      return products[+item].id;
+      return products[+item]?.id;
     });
   }, [products, rowsSelected]);
 

@@ -1,6 +1,4 @@
 import { useEffect, useRef } from "react";
-import { HotTable } from "@handsontable/react";
-import { toast } from "react-toastify";
 import { IDropDownStatus } from "./HeaderDropDown";
 import { BoxDropDown, ContainerHeaderDropDown } from "./styles";
 import {
