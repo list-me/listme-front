@@ -117,6 +117,7 @@ const getStyledContent = (
     color: string;
   }[],
   allRowsSelected?: boolean,
+  isPublic?: boolean,
 ): string => {
   (window as any).changeAllRowsSelected = changeAllRowsSelected;
 
@@ -156,7 +157,7 @@ const getStyledContent = (
       <div style="${FLEX_GAP_STYLE}">
         ${isRequired ? `<p style="${REQUIRED_STYLE}">Obrigatório</p>` : ""}
         ${
-          valueToVisible && valueToVisible !== "+"
+          valueToVisible && !isPublic && valueToVisible !== "+"
             ? `<button style="${SVG_STYLE}" class="dropDown">
                 <div style="${ICON_STYLE}">${svgStringDropDownSmall}</div>
               </button>`

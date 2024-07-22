@@ -29,6 +29,7 @@ function customStyledHeader(
   groupReferenceEditMode: string,
   changeAllRowsSelected: () => void,
   allRowsSelected: boolean | undefined,
+  isPublic: boolean | undefined,
 ): void {
   const spanContent = TH.querySelector("span")?.textContent;
   const groupsName = groups.map((group: any) => group.label);
@@ -61,6 +62,7 @@ function customStyledHeader(
       changeAllRowsSelected,
       groups,
       allRowsSelected,
+      isPublic,
     );
 
     const addOrRemoveStringFromArray = (

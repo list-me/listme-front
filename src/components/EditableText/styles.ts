@@ -22,6 +22,11 @@ export const InputEditable = styled.input<{ error: string }>`
     props.error ? "1px solid #fa5252" : "1px solid #3818D9"};
   background: #fff;
   padding: 8px 16px;
+
+  &:disabled {
+    background: #f0f0f0;
+    cursor: not-allowed;
+  }
 `;
 export const SpanEditable = styled.p`
   font-family: ${({ theme }) => theme.fonts.family.default};

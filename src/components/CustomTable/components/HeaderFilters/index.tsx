@@ -97,6 +97,7 @@ function HeaderFilters({
             initialContent={template?.name}
             isEditing={isEditingTitle}
             setIsEditing={setIsEditingTitle}
+            isPublic
           />
           <EditIcon onClick={() => setIsEditingTitle(true)} />
         </LeftContent>
