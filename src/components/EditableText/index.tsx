@@ -14,10 +14,12 @@ function EditableText({
   initialContent,
   isEditing,
   setIsEditing,
+  isPublic,
 }: {
   initialContent: string;
   isEditing: boolean;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  isPublic: boolean;
 }): JSX.Element {
   const [initial, setInitial] = useState(initialContent);
   const { template } = useProductContext();
@@ -91,6 +93,7 @@ function EditableText({
             ref={refInput}
             type="text"
             value={text}
+            disabled={isPublic}
             onChange={(e) => {
               setError("");
               setText(() => e.target.value);
