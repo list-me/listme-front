@@ -46,6 +46,7 @@ import Filter from "../Filter";
 import { useFilterContext } from "../../context/FilterContext";
 import NotFound from "./components/NotFound";
 import HeaderGroups from "../HeaderGroups";
+import { IAContextProvider } from "../../context/IAContext";
 
 registerAllModules();
 registerAllEditors();
@@ -286,106 +287,108 @@ const CustomTable: React.FC<CustomTableProps> = ({
   };
   return (
     <>
-      <Confirmation
-        description="Ao excluir este produto, você perderá todas as informações, inclusive no catálogo em que está cadastrado."
-        action="DELETE"
-        title="Excluir Produto"
-        pass="excluir"
-        handleChangeVisible={() => setIsOpen(!isOpen)}
-        isOpen={isOpen}
-        handleConfirmation={() => {
-          handleDeleteColumn(Number(currentCell.order));
-        }}
-      />
-      <Filter />
-      <>
-        <Content>
-          <HeaderFilters
-            isPublic={isPublic}
-            template={template}
-            total={total}
-            // @ts-ignore
-            headerTable={headerTable}
-            handleGetProductFiltered={handleGetProductFiltered}
-            handleAddProductClick={() => handleAddProductClick()}
-          />
-          <HeaderGroups
-            editModeGroup={editModeGroup}
-            setEditModeGroup={setEditModeGroup}
-            fields={template?.fields?.fields}
-            groups={template?.fields?.groups}
-            selectedGroup={selectedGroup}
-            setSelectedGroup={setSelectedGroup}
-            setGroupReferenceEditMode={setGroupReferenceEditMode}
-            setIdsColumnsSelecteds={setIdsColumnsSelecteds}
-          />
-        </Content>
-        <Container>
-          <DefaultTable
-            cols={
-              parentId || isPublic
-                ? [checkToCols, ...colsToView]
-                : (colsToView as any)
-            }
-            colHeaders={
-              parentId || isPublic
-                ? [checkToColHeaders, ...colHeadersToView]
-                : colHeadersToView
-            }
-            headerTable={
-              parentId || isPublic
-                ? [checkToHeaderTable, ...headerTableToView]
-                : headerTableToView
-            }
-            parentId={parentId}
-            setParentId={setParentId}
-            key={colHeaders.join()}
-            hotRef={hotRef}
-            setColHeaders={setColHeaders}
-            products={products}
-            setProducts={setProducts}
-            handleDelete={handleDelete}
-            handleSave={handleSave}
-            loadingRef={loadingRef}
-            componentCellPerType={COMPONENT_CELL_PER_TYPE}
-            total={total}
-            setTotal={setTotal}
-            template={template}
-            hidden={hidden}
-            handleResize={handleResize}
-            columns={headerTable}
-            setColumns={setHeaderTable}
-            handleMove={handleMove}
-            uploadImages={uploadImages}
-            page={page}
-            setPage={setPage}
-            currentKeyword={currentKeyword}
-            handleNewColumn={handleNewColumn}
-            handleHidden={handleHidden}
-            setCurrentCell={setCurrentCell}
-            setIsOpen={setIsOpen}
-            handleFreeze={handleFreeze}
-            isPublic={isPublic}
-            allRowsSelected={allRowsSelected}
-            setAllRowsSelected={setAllRowsSelected}
-            rowsSelected={rowsSelected}
-            setRowsSelected={setRowsSelected}
-            subItensMode={subItensMode}
-            setSubItemsMode={setSubItemsMode}
-            editModeGroup={editModeGroup}
-            setEditModeGroup={setEditModeGroup}
-            groupReferenceEditMode={groupReferenceEditMode}
-            setGroupReferenceEditMode={setGroupReferenceEditMode}
-            idsColumnsSelecteds={idsColumnsSelecteds}
-            setIdsColumnsSelecteds={setIdsColumnsSelecteds}
-            setSelectedGroup={setSelectedGroup}
-          />
-          {!!conditionsFilter.length && products.length < 1 && <NotFound />}
-        </Container>
-        <div ref={loadingRef} style={{ display: "none" }}>
-          <LoadingFetch />
-        </div>
-      </>
+      <IAContextProvider>
+        <Confirmation
+          description="Ao excluir este produto, você perderá todas as informações, inclusive no catálogo em que está cadastrado."
+          action="DELETE"
+          title="Excluir Produto"
+          pass="excluir"
+          handleChangeVisible={() => setIsOpen(!isOpen)}
+          isOpen={isOpen}
+          handleConfirmation={() => {
+            handleDeleteColumn(Number(currentCell.order));
+          }}
+        />
+        <Filter />
+        <>
+          <Content>
+            <HeaderFilters
+              isPublic={isPublic}
+              template={template}
+              total={total}
+              // @ts-ignore
+              headerTable={headerTable}
+              handleGetProductFiltered={handleGetProductFiltered}
+              handleAddProductClick={() => handleAddProductClick()}
+            />
+            <HeaderGroups
+              editModeGroup={editModeGroup}
+              setEditModeGroup={setEditModeGroup}
+              fields={template?.fields?.fields}
+              groups={template?.fields?.groups}
+              selectedGroup={selectedGroup}
+              setSelectedGroup={setSelectedGroup}
+              setGroupReferenceEditMode={setGroupReferenceEditMode}
+              setIdsColumnsSelecteds={setIdsColumnsSelecteds}
+            />
+          </Content>
+          <Container>
+            <DefaultTable
+              cols={
+                parentId || isPublic
+                  ? [checkToCols, ...colsToView]
+                  : (colsToView as any)
+              }
+              colHeaders={
+                parentId || isPublic
+                  ? [checkToColHeaders, ...colHeadersToView]
+                  : colHeadersToView
+              }
+              headerTable={
+                parentId || isPublic
+                  ? [checkToHeaderTable, ...headerTableToView]
+                  : headerTableToView
+              }
+              parentId={parentId}
+              setParentId={setParentId}
+              key={colHeaders.join()}
+              hotRef={hotRef}
+              setColHeaders={setColHeaders}
+              products={products}
+              setProducts={setProducts}
+              handleDelete={handleDelete}
+              handleSave={handleSave}
+              loadingRef={loadingRef}
+              componentCellPerType={COMPONENT_CELL_PER_TYPE}
+              total={total}
+              setTotal={setTotal}
+              template={template}
+              hidden={hidden}
+              handleResize={handleResize}
+              columns={headerTable}
+              setColumns={setHeaderTable}
+              handleMove={handleMove}
+              uploadImages={uploadImages}
+              page={page}
+              setPage={setPage}
+              currentKeyword={currentKeyword}
+              handleNewColumn={handleNewColumn}
+              handleHidden={handleHidden}
+              setCurrentCell={setCurrentCell}
+              setIsOpen={setIsOpen}
+              handleFreeze={handleFreeze}
+              isPublic={isPublic}
+              allRowsSelected={allRowsSelected}
+              setAllRowsSelected={setAllRowsSelected}
+              rowsSelected={rowsSelected}
+              setRowsSelected={setRowsSelected}
+              subItensMode={subItensMode}
+              setSubItemsMode={setSubItemsMode}
+              editModeGroup={editModeGroup}
+              setEditModeGroup={setEditModeGroup}
+              groupReferenceEditMode={groupReferenceEditMode}
+              setGroupReferenceEditMode={setGroupReferenceEditMode}
+              idsColumnsSelecteds={idsColumnsSelecteds}
+              setIdsColumnsSelecteds={setIdsColumnsSelecteds}
+              setSelectedGroup={setSelectedGroup}
+            />
+            {!!conditionsFilter.length && products.length < 1 && <NotFound />}
+          </Container>
+          <div ref={loadingRef} style={{ display: "none" }}>
+            <LoadingFetch />
+          </div>
+        </>
+      </IAContextProvider>
     </>
   );
 };

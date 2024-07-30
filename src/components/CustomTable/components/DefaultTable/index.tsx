@@ -59,6 +59,7 @@ import { templateRequests } from "../../../../services/apis/requests/template";
 import ModalColumnManagement from "../ModalColumnManagement";
 import LimitAlert from "./components/LimitAlert";
 import { ContainerHotTable } from "./styles";
+import { useIAContext } from "../../../../context/IAContext";
 
 function DefaultTable({
   hotRef,
@@ -106,7 +107,11 @@ function DefaultTable({
   setIdsColumnsSelecteds,
   setSelectedGroup,
 }: IDefaultTable): JSX.Element {
-  const { handleRedirectAndGetProducts, customFields } = useProductContext();
+  const { IAMode, setRowSelectedToIA, rowSelectedToIA } = useIAContext();
+
+  const [productsToView, setproductsToView] = useState<IProductToTable[]>([]);
+
+  const { handleRedirectAndGetProducts } = useProductContext();
   const [parentHeaderSelectedIndex, setParentHeaderSelectedIndex] =
     useState<number>(0);
   const svgStringDropDown: string = renderToString(<DropDownIcon />);
@@ -354,8 +359,11 @@ function DefaultTable({
       } else {
         td.innerHTML = value;
       }
+      if (IAMode) {
+        td.style.background = "#DEE2E6";
+      }
     },
-    [],
+    [IAMode],
   );
 
   const customRendererRadio = useCallback(
@@ -385,9 +393,12 @@ function DefaultTable({
             setAlertTooltip,
           });
         }
+        if (IAMode) {
+          td.style.background = "#DEE2E6";
+        }
       }
     },
-    [columns, svgStringDropDown],
+    [columns, svgStringDropDown, IAMode],
   );
   const customRendererChecked = useCallback(
     (
@@ -422,8 +433,11 @@ function DefaultTable({
           td.style.border = "2px solid #F1BC02";
         }
       }
+      if (IAMode) {
+        td.style.background = "#DEE2E6";
+      }
     },
-    [columns, svgStringDropDown],
+    [columns, svgStringDropDown, IAMode],
   );
 
   const customRendererFileCallBack = useCallback(
@@ -521,8 +535,11 @@ function DefaultTable({
       if (itemCountNumber > maxLength) {
         td.style.border = "2px solid #F1BC02";
       }
+      if (IAMode) {
+        td.style.background = "#DEE2E6";
+      }
     },
-    [columns, hotRef, loadingRef, products, template, uploadImages],
+    [columns, hotRef, loadingRef, products, template, uploadImages, IAMode],
   );
 
   const customRendererDropdown = useCallback(
@@ -549,9 +566,24 @@ function DefaultTable({
           setAlertTooltip,
         });
       }
+      if (IAMode) {
+        td.style.background = "#DEE2E6";
+      }
       // eslint-disable-next-line no-param-reassign
     },
-    [cols, svgStringDropDown],
+    [cols, svgStringDropDown, IAMode],
+  );
+
+  const changeProductsList = useCallback(
+    (rowselected: number) => {
+      setRowSelectedToIA((prev) => {
+        if (prev.includes(rowselected)) {
+          return prev.filter((item) => item !== rowselected);
+        }
+        return [...prev, rowselected];
+      });
+    },
+    [setRowSelectedToIA],
   );
   const customRendererText = useCallback(
     (
@@ -563,8 +595,9 @@ function DefaultTable({
       value: string | string[],
     ): void => {
       const colType = columns[col].type;
-      const maxLength = columns[col].limit || DefaultLimits[colType].max;
-      console.log("🚀 ~ columns:", columns);
+      const colId = columns[col].data;
+
+      const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
       const textValue = value as string;
 
       const haveSync = products[row]?.have_sync;
@@ -580,10 +613,53 @@ function DefaultTable({
       } else {
         td.innerHTML = textValue;
       }
-    },
-    [columns, svgStringDropDown, products],
-  );
+      if (IAMode && colId !== "125806") {
+        td.style.background = "#DEE2E6";
+      }
+      if (IAMode && colId === "125806") {
+        const isChecked = rowSelectedToIA.includes(row);
+        const divContainer = document.createElement("div");
+        divContainer.style.width = "100%";
+        divContainer.style.padding = "0px 16px";
+        divContainer.style.overflow = "hidden";
+        divContainer.style.textOverflow = "ellipsis";
+        divContainer.style.whiteSpace = "nowrap";
+        divContainer.style.display = "flex";
+        divContainer.style.alignItems = "center";
+        if (isChecked) {
+          td.style.border = "2px solid #3818D9";
+        }
 
+        while (td.firstChild) {
+          divContainer.appendChild(td.firstChild);
+        }
+
+        td.appendChild(divContainer);
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = isChecked || false;
+        checkbox.style.marginRight = "8px";
+        checkbox.style.width = "16px";
+        checkbox.style.height = "16px";
+        checkbox.style.borderRadius = "4px";
+        checkbox.style.borderColor = "#DEE2E6";
+        checkbox.style.flexShrink = "0";
+        divContainer.prepend(checkbox);
+
+        // Adicione um listener de clique apenas uma vez
+        if (!td.dataset.listenerAdded) {
+          td.addEventListener("click", () => {
+            if (!checkbox.disabled) {
+              changeProductsList(row);
+            }
+          });
+          td.dataset.listenerAdded = "true";
+        }
+      }
+    },
+    [columns, products, IAMode, rowSelectedToIA, changeProductsList],
+  );
   const customRendererNumeric = useCallback(
     (
       _instance: Handsontable,
@@ -619,8 +695,11 @@ function DefaultTable({
       } else {
         td.innerHTML = numericValue;
       }
+      if (IAMode) {
+        td.style.background = "#DEE2E6";
+      }
     },
-    [svgStringDropDown],
+    [svgStringDropDown, IAMode],
   );
 
   const customRendererDecimal = useCallback(
@@ -663,10 +742,12 @@ function DefaultTable({
       }
 
       const replacedValue = numericValue.replace(/[.,]/g, colDecimalPoint);
-
+      if (IAMode) {
+        td.style.background = "#DEE2E6";
+      }
       td.innerHTML = replacedValue;
     },
-    [svgStringDropDown, cols],
+    [svgStringDropDown, cols, IAMode],
   );
 
   const customRendererRelation = useCallback(
@@ -689,7 +770,9 @@ function DefaultTable({
       if (typeof value === "string" && value?.length && value?.includes("["))
         // eslint-disable-next-line no-param-reassign
         value = JSON?.parse(value);
-
+      if (IAMode) {
+        td.style.background = "#DEE2E6";
+      }
       td.innerHTML =
         value?.length > 0 && value[0]?.id
           ? value?.map((mValue: any) => {
@@ -701,7 +784,7 @@ function DefaultTable({
             })
           : `<div class="tag-content">+</div>`;
     },
-    [cols],
+    [cols, IAMode],
   );
 
   const customRendererBoolean = useCallback(
@@ -751,8 +834,11 @@ function DefaultTable({
       }
 
       td.appendChild(switchContainer);
+      if (IAMode) {
+        td.style.background = "#DEE2E6";
+      }
     },
-    [],
+    [IAMode],
   );
 
   const ICON_HEADER = useMemo(
@@ -1113,7 +1199,6 @@ function DefaultTable({
     }
   };
 
-  const [productsToView, setproductsToView] = useState<IProductToTable[]>([]);
   useEffect(() => {
     if (isPublic) {
       if (!headerTable.length || !products.length) return;
@@ -1130,8 +1215,10 @@ function DefaultTable({
       });
 
       setproductsToView(censoredProducts as IProductToTable[]);
-    } else setproductsToView(products);
-  }, [headerTable, isPublic, products]);
+    } else {
+      setproductsToView(products);
+    }
+  }, [headerTable, isPublic, products, IAMode]);
 
   const changeHeaderGroup = async (
     value: string,
@@ -1189,11 +1276,13 @@ function DefaultTable({
     if (cellX >= 0 && cellY >= 0 && !currentCol.enforce_exact_length) {
       const mouseX = event.clientX;
       const mouseY = event.clientY;
-      setCoordsLimitAlert({
-        coordX: mouseX,
-        coordY: mouseY,
-        text: `Este campo deve ter ${currentCol.limit} caracteres`,
-      });
+      if (!IAMode) {
+        setCoordsLimitAlert({
+          coordX: mouseX,
+          coordY: mouseY,
+          text: `Este campo deve ter ${currentCol.limit} caracteres`,
+        });
+      }
     } else {
       setCoordsLimitAlert({
         coordX: 0,
@@ -1252,6 +1341,7 @@ function DefaultTable({
           bindRowsWithHeaders
           className="hot-table"
           readOnly={
+            IAMode ||
             !!parentId ||
             isPublic ||
             isTableLocked ||

@@ -23,6 +23,7 @@ import Button from "../Button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFilterContext } from "../../context/FilterContext";
 import { useIntegration } from "../../context/IntegrationContext";
+import MenuIA from "../IA/MenuIA";
 
 interface IProps {
   options?: any[];
@@ -75,13 +76,14 @@ export const Temp: React.FC<IProps> = ({
     <Contents>
       {/* <Modal /> */}
       <DropdownMenu
-        left={150}
+        left={455}
         key={Math.random()}
         iconRef={iconRef}
         handleOpen={() => setIsOpen(false)}
         isOpen={isOpen}
         colHeaders={options ?? []}
       />
+      <MenuIA />
       <Item isDisabled={isPublic}>
         <MenuIcon />
         Visualização

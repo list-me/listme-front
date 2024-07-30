@@ -26,11 +26,19 @@ function DefaultInput({
 }): JSX.Element {
   return (
     <LabelDefaultInput>
-      <LabelTextDefaultInput>
-        {label}
-        <span>{required && "*"}</span>
-        <InfoAlert title={alertTitle} content={alertContent} />
-      </LabelTextDefaultInput>
+      {label || required || alertTitle || alertContent ? (
+        <LabelTextDefaultInput>
+          {label}
+          {required ? <span>{required && "*"}</span> : <></>}
+          {alertTitle || alertContent ? (
+            <InfoAlert title={alertTitle} content={alertContent} />
+          ) : (
+            <></>
+          )}
+        </LabelTextDefaultInput>
+      ) : (
+        <></>
+      )}
       <InputDefaultInput
         type={type}
         value={value}

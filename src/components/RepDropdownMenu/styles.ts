@@ -16,7 +16,7 @@ export const Container = styled.div<IStyleProps>`
   background: white;
   position: fixed;
   left: ${({ left }) => `${left}px`};
-  top: 19%;
+  top: 14%;
 
   z-index: 999;
 
