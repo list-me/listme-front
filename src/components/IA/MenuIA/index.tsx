@@ -6,8 +6,9 @@ import {
   WrapperMenuIA,
 } from "./styles";
 import { ReactComponent as StarsIcon } from "./svgs/stars.svg";
-import { ReactComponent as DocIcon } from "./svgs/doc.svg";
 import { ReactComponent as LineIcon } from "./svgs/line.svg";
+import { ReactComponent as SmallLineIcon } from "./svgs/smallLine.svg";
+import { ReactComponent as LargeLineIcon } from "./svgs/LargeLine.svg";
 import { useIAContext } from "../../../context/IAContext";
 
 function MenuIA(): JSX.Element {
@@ -31,22 +32,10 @@ function MenuIA(): JSX.Element {
             <button
               type="button"
               onClick={() => setTertiaryOpened((prev) => !prev)}
+              className="button"
             >
-              <DocIcon />
-              Enriquecimento de descrição dos produtos por IA
-            </button>
-          </li>
-          <li>
-            <button
-              type="button"
-              onClick={() => {
-                setModalInformationOpened(true);
-                setSecondaryOpened(false);
-                setTertiaryOpened(false);
-              }}
-            >
-              <LineIcon />
-              Melhorar título dos produtos por IA
+              <StarsIcon />
+              Gerar descrições
             </button>
           </li>
         </SecondaryMenuIA>
@@ -62,7 +51,7 @@ function MenuIA(): JSX.Element {
                 setTertiaryOpened(false);
               }}
             >
-              Enriquecimento
+              Gerar descrições
             </button>
           </li>
           <li>
@@ -73,9 +62,10 @@ function MenuIA(): JSX.Element {
                 setSecondaryOpened(false);
                 setTertiaryOpened(false);
               }}
+              className="button"
             >
-              <DocIcon />
-              Gerar descrições inexistentes
+              <SmallLineIcon />
+              Texto pequeno
             </button>
           </li>
           <li>
@@ -86,22 +76,10 @@ function MenuIA(): JSX.Element {
                 setSecondaryOpened(false);
                 setTertiaryOpened(false);
               }}
-            >
-              <LineIcon />
-              Melhorar descrições
-            </button>
-          </li>
-          <li>
-            <button
-              type="button"
-              onClick={() => {
-                setModalInformationOpened(true);
-                setSecondaryOpened(false);
-                setTertiaryOpened(false);
-              }}
+              className="button"
             >
               <LineIcon />
-              Reescrever com outro tom de voz
+              Texto médio
             </button>
           </li>
           <li>
@@ -112,22 +90,10 @@ function MenuIA(): JSX.Element {
                 setSecondaryOpened(false);
                 setTertiaryOpened(false);
               }}
+              className="button"
             >
-              <LineIcon />
-              Reduzir texto(s)
-            </button>
-          </li>
-          <li>
-            <button
-              type="button"
-              onClick={() => {
-                setModalInformationOpened(true);
-                setSecondaryOpened(false);
-                setTertiaryOpened(false);
-              }}
-            >
-              <LineIcon />
-              Aumentar texto(s)
+              <LargeLineIcon />
+              Texto grande
             </button>
           </li>
         </TertiaryMenuIA>

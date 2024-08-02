@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from "react";
-import { Switch } from "antd";
 import Modal from "../../Modal";
 import { ReactComponent as CloseIcon } from "../../../assets/close-gray.svg";
 import {

@@ -32,7 +32,6 @@ export const SecondaryMenuIA = styled.ul`
   top: 133px;
   left: 18px;
   z-index: 12;
-  height: 96px;
   width: 416px;
   display: flex;
   flex-direction: column;
@@ -44,7 +43,7 @@ export const SecondaryMenuIA = styled.ul`
   box-shadow: 0px 20px 40px 0px rgba(0, 0, 0, 0.1);
 
   li {
-    button {
+    .button {
       border: none;
       background: none;
       font-family: ${({ theme }) => theme.fonts.family.default};
@@ -58,6 +57,15 @@ export const SecondaryMenuIA = styled.ul`
       gap: 8px;
       padding: 8px;
       cursor: pointer;
+      width: 100%;
+      border-radius: 8px;
+      :hover {
+        background: ${({ theme }) => theme.colors.hover.background};
+      }
+    }
+    path {
+      stroke: ${({ theme }) => theme.colors.primary};
+      fill: none;
     }
   }
 `;
@@ -66,7 +74,6 @@ export const TertiaryMenuIA = styled.ul`
   top: 141px;
   left: 440px;
   z-index: 12;
-  height: 272px;
   width: 346px;
   display: flex;
   flex-direction: column;
@@ -79,7 +86,8 @@ export const TertiaryMenuIA = styled.ul`
 
   li {
     position: relative;
-    button {
+    button,
+    .button {
       border: none;
       background: none;
       font-family: ${({ theme }) => theme.fonts.family.default};
@@ -92,7 +100,13 @@ export const TertiaryMenuIA = styled.ul`
       align-items: center;
       gap: 8px;
       padding: 8px;
-      cursor: pointer;
+      width: 100%;
+      border-radius: 8px;
+    }
+    .button {
+      :hover {
+        background: ${({ theme }) => theme.colors.hover.background};
+      }
     }
   }
   .liHeader {

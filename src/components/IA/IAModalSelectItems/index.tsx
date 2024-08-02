@@ -1,23 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 // eslint-disable-next-line import/no-cycle
 import { ContainerButtons, ContainerModal, Text } from "./styles";
 import DefaultInput from "../../DefaultInput";
 import { NavigationButton } from "../../NavigationButton/styles";
-import useDebounce from "../../../hooks/useDebounce/useDebounce";
 
 // import { Container } from './styles';
 
 function IAModalSelectItems({
-  parseInputToList,
+  convertData,
+  setTextSelectedToIa,
+  textSelectedToIa,
 }: {
-  parseInputToList: (input: string) => number[];
+  convertData({ data }: { data: string | number[] }): void;
+  setTextSelectedToIa: React.Dispatch<React.SetStateAction<string>>;
+  textSelectedToIa: string;
 }): JSX.Element {
-  const [inputValue, setInputValue] = useState("");
-  const debouncedInputValue = useDebounce(inputValue, 250);
+  // const [currentValue, setCurrentValue] = useState("");
 
-  useEffect(() => {
-    parseInputToList(debouncedInputValue);
-  }, [debouncedInputValue, parseInputToList]);
+  const handleChangeValue = useCallback(
+    (value: string): void => {
+      convertData({ data: value });
+      setTextSelectedToIa(value);
+    },
+    [convertData, setTextSelectedToIa],
+  );
 
   return (
     <ContainerModal>
@@ -26,8 +32,8 @@ function IAModalSelectItems({
         <DefaultInput
           label=""
           type=""
-          value={inputValue}
-          changeValue={setInputValue}
+          value={textSelectedToIa}
+          changeValue={handleChangeValue}
           required={false}
           placeHolder=""
           alertTitle=""

@@ -107,7 +107,8 @@ function DefaultTable({
   setIdsColumnsSelecteds,
   setSelectedGroup,
 }: IDefaultTable): JSX.Element {
-  const { IAMode, setRowSelectedToIA, rowSelectedToIA } = useIAContext();
+  const { IAMode, setRowSelectedToIA, rowSelectedToIA, convertData } =
+    useIAContext();
 
   const [productsToView, setproductsToView] = useState<IProductToTable[]>([]);
 
@@ -578,12 +579,16 @@ function DefaultTable({
     (rowselected: number) => {
       setRowSelectedToIA((prev) => {
         if (prev.includes(rowselected)) {
-          return prev.filter((item) => item !== rowselected);
+          const update = prev.filter((item) => item !== rowselected);
+          convertData({ data: update });
+          return update;
         }
-        return [...prev, rowselected];
+        const update = [...prev, rowselected];
+        convertData({ data: update });
+        return update;
       });
     },
-    [setRowSelectedToIA],
+    [convertData, setRowSelectedToIA],
   );
   const customRendererText = useCallback(
     (
@@ -594,31 +599,31 @@ function DefaultTable({
       _prop: string | number,
       value: string | string[],
     ): void => {
-      const colType = columns[col].type;
-      const colId = columns[col].data;
-
+      const colType = columns[col]?.type;
+      const colId = columns[col]?.data;
       const maxLength = columns[col]?.limit || DefaultLimits[colType]?.max;
       const textValue = value as string;
-
       const haveSync = products[row]?.have_sync;
+
+      // Resetando estilos e conteúdo da célula
+      td.style.background = "";
+      td.style.border = "";
+      td.innerHTML = "";
+
       if (haveSync) {
         td.style.background = "#DEE2E6";
       }
-      td.style.border = "";
+
       if (textValue?.length > maxLength) {
         td.style.border = "2px solid #F1BC02";
       }
+
       if (textValue === "valor censurado") {
         td.innerHTML = `<div class='blurCenter' id='blur'>valor censurado</div>`;
-      } else {
-        td.innerHTML = textValue;
-      }
-      if (IAMode && colId !== "125806") {
-        td.style.background = "#DEE2E6";
-      }
-      if (IAMode && colId === "125806") {
+      } else if (IAMode && colId === "125806") {
         const isChecked = rowSelectedToIA.includes(row);
         const divContainer = document.createElement("div");
+
         divContainer.style.width = "100%";
         divContainer.style.padding = "0px 16px";
         divContainer.style.overflow = "hidden";
@@ -626,15 +631,10 @@ function DefaultTable({
         divContainer.style.whiteSpace = "nowrap";
         divContainer.style.display = "flex";
         divContainer.style.alignItems = "center";
+
         if (isChecked) {
           td.style.border = "2px solid #3818D9";
         }
-
-        while (td.firstChild) {
-          divContainer.appendChild(td.firstChild);
-        }
-
-        td.appendChild(divContainer);
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
@@ -645,21 +645,27 @@ function DefaultTable({
         checkbox.style.borderRadius = "4px";
         checkbox.style.borderColor = "#DEE2E6";
         checkbox.style.flexShrink = "0";
-        divContainer.prepend(checkbox);
 
-        // Adicione um listener de clique apenas uma vez
-        if (!td.dataset.listenerAdded) {
-          td.addEventListener("click", () => {
-            if (!checkbox.disabled) {
-              changeProductsList(row);
-            }
-          });
-          td.dataset.listenerAdded = "true";
+        // Adicione o listener de clique ao divContainer
+        divContainer.addEventListener("click", (e) => {
+          e.stopPropagation();
+          checkbox.checked = !checkbox.checked;
+          changeProductsList(row);
+        });
+
+        divContainer.appendChild(checkbox);
+        // Adicione o texto apenas se existir
+        if (textValue) {
+          divContainer.appendChild(document.createTextNode(textValue));
         }
+        td.appendChild(divContainer);
+      } else {
+        td.textContent = textValue || "";
       }
     },
-    [columns, products, IAMode, rowSelectedToIA, changeProductsList],
+    [IAMode, changeProductsList, columns, products, rowSelectedToIA],
   );
+
   const customRendererNumeric = useCallback(
     (
       _instance: Handsontable,
@@ -1030,6 +1036,7 @@ function DefaultTable({
       _value: any,
     ) => {
       const stringRow = String(row);
+
       const haveSync = products[row]?.have_sync;
       if (haveSync) {
         td.style.background = "#DEE2E6";
@@ -1038,6 +1045,9 @@ function DefaultTable({
       const isChecked = isPublic
         ? rowsSelected?.includes(stringRow)
         : rowsSelectedPosition?.includes(stringRow);
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      isChecked && console.log("🚀 ~ stringRow:", stringRow);
 
       const checkboxContainer = document.createElement("div");
       checkboxContainer.style.width = "100%";
@@ -1292,6 +1302,7 @@ function DefaultTable({
     }
   };
   const hiddensToView = [...newHiddens, ...hidden];
+
   return (
     <>
       {!!coordsLimitAlert.coordX &&
@@ -1337,8 +1348,6 @@ function DefaultTable({
       <ContainerHotTable isPublic={isPublic}>
         <HotTable
           key={`${parentId}${cols.length}${colHeaders.length}`}
-          nestedRows
-          bindRowsWithHeaders
           className="hot-table"
           readOnly={
             IAMode ||
@@ -1378,9 +1387,6 @@ function DefaultTable({
             if (!parentId || !isPublic)
               await handleResize(column, newSize, template);
           }}
-          // afterOnCellMouseDown={(event: any) => {
-          //   const clickedElementClassList = event.target.classList;
-          // }}
           afterOnCellMouseUp={(event: any, coords, _TD) => {
             if (coords.row >= 0) {
               const cellX = coords.col;
